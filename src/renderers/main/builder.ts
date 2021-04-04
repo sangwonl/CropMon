@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import {
   app,
   Menu,
@@ -11,7 +12,7 @@ interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   submenu?: DarwinMenuItemConstructorOptions[] | Menu;
 }
 
-export default class MenuBuilder {
+class MenuBuilder {
   mainWindow: BrowserWindow;
 
   constructor(mainWindow: BrowserWindow) {
@@ -286,5 +287,59 @@ export default class MenuBuilder {
     ];
 
     return templateDefault;
+  }
+}
+
+type AssetResolverFunc = (path: string) => string;
+
+export default class MainWindowBuilder {
+  assetResolver: AssetResolverFunc;
+
+  constructor(assetResolver: AssetResolverFunc) {
+    this.assetResolver = assetResolver;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  build(): BrowserWindow {
+    const window = new BrowserWindow({
+      show: false,
+      width: 1024,
+      height: 728,
+      icon: this.assetResolver('icon.png'),
+      webPreferences: {
+        nodeIntegration: true,
+      },
+    });
+
+    window.loadURL(`file://${__dirname}/index.html`);
+
+    // @TODO: Use 'ready-to-show' event
+    //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
+    window.webContents.on('did-finish-load', () => {
+      if (!window) {
+        throw new Error('"mainWindow" is not defined');
+      }
+      if (process.env.START_MINIMIZED) {
+        window.minimize();
+      } else {
+        window.show();
+        window.focus();
+      }
+    });
+
+    // window.on('closed', () => {
+    //   window = null;
+    // });
+
+    const menuBuilder = new MenuBuilder(window);
+    menuBuilder.buildMenu();
+
+    // Open urls in the user's browser
+    window.webContents.on('new-window', (event, url) => {
+      event.preventDefault();
+      shell.openExternal(url);
+    });
+
+    return window;
   }
 }
