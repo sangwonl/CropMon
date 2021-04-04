@@ -11,7 +11,7 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow } from 'electron';
+import { app } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 
@@ -24,8 +24,6 @@ export default class AppUpdater {
     autoUpdater.checkForUpdatesAndNotify();
   }
 }
-
-let mainWindow: BrowserWindow | null = null;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -52,7 +50,19 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
+const RESOURCES_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'assets')
+  : path.join(__dirname, '../assets');
+
+const assetResolver = (...paths: string[]): string => {
+  return path.join(RESOURCES_PATH, ...paths);
+};
+
 const createWindow = async () => {
+  new MainWindowBuilder(assetResolver).build();
+};
+
+const start = async () => {
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
@@ -60,37 +70,23 @@ const createWindow = async () => {
     await installExtensions();
   }
 
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../assets');
+  app.on('window-all-closed', () => {
+    // Respect the OSX convention of having the application in memory even
+    // after all windows have been closed
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
+  });
 
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
+  app.on('activate', () => {
+    createWindow();
+  });
 
-  mainWindow = new MainWindowBuilder(getAssetPath).build();
+  createWindow();
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
 };
 
-/**
- * Add event listeners...
- */
-
-app.on('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
-  // after all windows have been closed
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-
-app.whenReady().then(createWindow).catch(console.log);
-
-app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) createWindow();
-});
+app.whenReady().then(start).catch(console.log);
