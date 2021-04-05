@@ -1,9 +1,9 @@
 import React from 'react';
 import { TypedUseSelectorHook, useSelector, useDispatch } from 'react-redux';
 
-import type { RootState, AppDispatch } from '../../store';
+import type { RootState, AppDispatch } from '../../redux/store';
 
-import { increment, decrement } from './counterSlice';
+import { increment, decrement } from "../../redux/counter/counterSlice";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const useAppDispatch = () => useDispatch<AppDispatch>();

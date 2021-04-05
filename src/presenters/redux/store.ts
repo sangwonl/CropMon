@@ -1,10 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from './features/counter/counterSlice';
+import { stateSyncEnhancer } from 'electron-redux';
+
+import counterReducer from './counter/counterSlice';
 
 const store = configureStore({
   reducer: {
     counter: counterReducer,
   },
+  enhancers: [stateSyncEnhancer()],
 });
 
 export type RootState = ReturnType<typeof store.getState>;

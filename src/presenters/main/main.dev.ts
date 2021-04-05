@@ -15,7 +15,9 @@ import { app } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 
-import MainWindowBuilder from './renderers/main/builder';
+import store from '../redux/store';
+import MainWindowBuilder from '../renderers/main/builder';
+import { increment } from '../redux/counter/counterSlice';
 
 export default class AppUpdater {
   constructor() {
@@ -40,7 +42,7 @@ if (
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS'];
+  const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
 
   return installer
     .default(
@@ -52,7 +54,7 @@ const installExtensions = async () => {
 
 const RESOURCES_PATH = app.isPackaged
   ? path.join(process.resourcesPath, 'assets')
-  : path.join(__dirname, '../assets');
+  : path.join(__dirname, '../../assets');
 
 const assetResolver = (...paths: string[]): string => {
   return path.join(RESOURCES_PATH, ...paths);
@@ -87,6 +89,8 @@ const start = async () => {
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
+
+  store.dispatch(increment());
 };
 
 app.whenReady().then(start).catch(console.log);
