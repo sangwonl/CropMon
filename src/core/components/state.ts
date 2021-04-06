@@ -1,3 +1,4 @@
 /* eslint-disable import/prefer-default-export */
+/* eslint-disable @typescript-eslint/no-empty-interface */
 
-export class StateManager {}
+export interface StateManager {}

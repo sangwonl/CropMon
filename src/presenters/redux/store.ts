@@ -10,6 +10,10 @@ const store = configureStore({
   enhancers: [stateSyncEnhancer()],
 });
 
+export const initializeStore = () => {
+  store.getState();
+};
+
 export type RootState = ReturnType<typeof store.getState>;
 
 export type AppDispatch = typeof store.dispatch;
