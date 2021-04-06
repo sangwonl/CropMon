@@ -3,15 +3,29 @@
 import 'reflect-metadata';
 
 import { Container } from 'inversify';
-import { TYPES } from './types';
+import { TYPES } from '../../core/di/types';
 
-import { CommandDispatcher } from '../../core/components';
+import { CommandDispatcher, ScreenRecorder } from '../../core/components';
 import { CommandDispatcherImpl } from '../components/command';
+import { CaptureUseCase } from '../../core/usecases/capture';
+import { ScreenRecorderImpl } from '../components/recorder';
 
-export const diContainer = new Container();
+const diContainer = new Container();
 
-export const initializeDiContainer = () => {
-  diContainer
-    .bind<CommandDispatcher>(TYPES.CommandDispatcher)
-    .to(CommandDispatcherImpl);
-};
+diContainer
+  .bind<CommandDispatcher>(TYPES.CommandDispatcher)
+  .to(CommandDispatcherImpl)
+  .inSingletonScope();
+
+diContainer
+  .bind<ScreenRecorder>(TYPES.ScreenRecorder)
+  .to(ScreenRecorderImpl)
+  .inSingletonScope();
+
+// eslint-disable-next-line prettier/prettier
+diContainer
+  .bind<CaptureUseCase>(CaptureUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+export { diContainer };

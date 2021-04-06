@@ -7,6 +7,7 @@ const TYPES = {
   ScreenRecorder: Symbol.for('ScreenRecorder'),
   StateManager: Symbol.for('StateManager'),
   PreferenceStore: Symbol.for('PreferenceStore'),
+  CaptureUseCase: Symbol.for('CaptureUseCase'),
 };
 
 export { TYPES };

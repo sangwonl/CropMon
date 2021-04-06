@@ -1,4 +1,3 @@
-export
 export * from './command';
 export * from './encoder';
 export * from './file';

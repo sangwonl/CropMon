@@ -15,7 +15,6 @@ import { app } from 'electron';
 
 import AppUpdater from './updater';
 import { initializeDevTools } from './debug';
-import { initializeDiContainer } from '../../infrastructures/di';
 import { initializeStore } from '../redux/store';
 
 import { assetResolver } from './asset';
@@ -49,8 +48,6 @@ const initializeWindows = () => {
 
 const start = async () => {
   await initializeDevTools();
-
-  initializeDiContainer();
 
   initializeStore();
 

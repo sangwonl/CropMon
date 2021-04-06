@@ -11,7 +11,8 @@ const store = configureStore({
 });
 
 export const initializeStore = () => {
-  store.getState();
+  // eslint-disable-next-line no-console
+  console.log(store.getState());
 };
 
 export type RootState = ReturnType<typeof store.getState>;
