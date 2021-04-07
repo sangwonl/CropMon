@@ -1,23 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { CaptureUseCase } from '../../../core/usecases/capture';
-import { diContainer } from '../../../infrastructures/di';
+export interface CounterState {
+  value: number;
+}
 
-import * as utils from '../../../utils';
-
-const captureUseCase = diContainer.get(CaptureUseCase);
+const initialState: CounterState = {
+  value: 0,
+};
 
 const counterSlice = createSlice({
   name: 'counter',
-  initialState: {
-    value: 0,
-  },
+  initialState,
   reducers: {
     increment: (state) => {
-      if (utils.isMain()) {
-        captureUseCase.prepareCapture();
-      }
-      state.value += 1;
+      console.log(state);
     },
     decrement: (state) => {
       state.value -= 1;
