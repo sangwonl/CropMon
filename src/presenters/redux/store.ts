@@ -3,8 +3,8 @@ import { configureStore } from '@reduxjs/toolkit';
 import { composeWithStateSync } from 'electron-redux';
 import createSagaMiddleware from 'redux-saga';
 
-import counterReducer from './counter/counterSlice';
-import saga from './saga';
+import captureReducer from './capture/slice';
+import captureSaga from './capture/saga';
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -13,16 +13,17 @@ const composedEnhancer = composeWithStateSync(...[middlewares]);
 
 const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    capture: captureReducer,
   },
   enhancers: [composedEnhancer],
 });
 
-export const initializeStore = () => {
+export const initializeSaga = () => {
   // eslint-disable-next-line no-console
   console.log(store.getState());
 
-  (store as any).saga = sagaMiddleware.run(saga);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (store as any).saga = sagaMiddleware.run(captureSaga);
 };
 
 export type RootState = ReturnType<typeof store.getState>;
