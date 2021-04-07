@@ -3,12 +3,9 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import icon from '../../../../assets/icon.svg';
 import './App.global.css';
 
-import { Counter } from './Counter';
-
 const Hello = () => {
   return (
     <div>
-      <Counter />
       <div className="Hello">
         <img width="200px" alt="icon" src={icon} />
       </div>
