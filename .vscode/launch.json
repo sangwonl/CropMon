@@ -7,7 +7,7 @@
       "request": "launch",
       "protocol": "inspector",
       "env": {
-        "HIDE_DEVTOOLS": 1
+        "HIDE_DEVTOOLS": "true"
       },
       "runtimeExecutable": "yarn",
       "runtimeArgs": [

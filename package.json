@@ -35,9 +35,11 @@
     "files": [
       "dist/",
       "node_modules/",
-      "index.html",
-      "main.prod.js",
-      "main.prod.js.map",
+      {
+        "from": "presenters/renderers/main",
+        "to": "main",
+        "filter": ["*.html"]
+      },
       "package.json"
     ],
     "afterSign": ".erb/scripts/Notarize.js",

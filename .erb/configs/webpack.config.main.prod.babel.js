@@ -29,7 +29,7 @@ export default merge(baseConfig, {
 
   output: {
     path: path.join(__dirname, '../../'),
-    filename: './src/presenters/main/main.prod.js',
+    filename: './src/dist/main.prod.js',
   },
 
   optimization: {

@@ -302,17 +302,21 @@ export default class MainWindowBuilder {
   // eslint-disable-next-line class-methods-use-this
   build(): BrowserWindow {
     const window = new BrowserWindow({
-      show: false,
+      show: true, // false,
       width: 1024,
       height: 728,
       icon: this.assetResolver('icon.png'),
       webPreferences: {
         nodeIntegration: true,
-        devTools: !process.env.HIDE_DEVTOOLS,
+        devTools: process.env.HIDE_DEVTOOLS !== 'true',
       },
     });
 
-    window.loadURL(`file://${__dirname}/index.html`);
+    // It is a quick solution to access index.html
+    // in the same way for both dev and prod.
+    // dev: current - renderers/main -> ../main -> current
+    // prod: current - dist -> ../main -> main
+    window.loadURL(`file://${__dirname}/../main/index.html`);
 
     // @TODO: Use 'ready-to-show' event
     //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
