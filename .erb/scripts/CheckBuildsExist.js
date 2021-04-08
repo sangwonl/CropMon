@@ -3,7 +3,7 @@ import path from 'path';
 import chalk from 'chalk';
 import fs from 'fs';
 
-const mainPath = path.join(__dirname, '../../src/presenters/main/main.prod.js');
+const mainPath = path.join(__dirname, '../../src/dist/main.prod.js');
 const rendererPath = path.join(
   __dirname, '../../src/dist/renderer.main.prod.js'
 );
