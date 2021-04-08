@@ -12,8 +12,11 @@ const slice = createSlice({
   name: 'capture',
   initialState,
   reducers: {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     prepareCapture: (state) => {},
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     capturePrepared: (state) => {},
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     captureStarted: (state) => {},
   },
 });

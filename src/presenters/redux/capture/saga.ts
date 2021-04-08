@@ -7,11 +7,13 @@ import { prepareCapture, capturePrepared, captureStarted } from './slice';
 
 const captureUseCase = diContainer.get(CaptureUseCase);
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function* onPrepareCapture(action: PayloadAction) {
   captureUseCase.prepareCapture();
   yield put(capturePrepared());
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function* onCapturePrepared(action: PayloadAction) {
   captureUseCase.startCapture();
   yield put(captureStarted());
