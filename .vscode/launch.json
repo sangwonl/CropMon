@@ -6,9 +6,6 @@
       "type": "node",
       "request": "launch",
       "protocol": "inspector",
-      "env": {
-        "HIDE_DEVTOOLS": "true"
-      },
       "runtimeExecutable": "yarn",
       "runtimeArgs": [
         "start:main",

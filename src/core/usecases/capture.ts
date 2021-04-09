@@ -3,20 +3,21 @@
 import 'reflect-metadata';
 
 import { inject, injectable } from 'inversify';
-import { TYPES } from '../di/types';
+import { TYPES } from '../../di/types';
 import { ScreenRecorder } from '../components';
+import { CaptureContext } from '../entities/capture';
 
 @injectable()
 export class CaptureUseCase {
-  private screenRecorder: ScreenRecorder;
+  public constructor(
+    @inject(TYPES.ScreenRecorder) private screenRecorder: ScreenRecorder
+  ) {}
 
-  public constructor(@inject(TYPES.ScreenRecorder) recorder: ScreenRecorder) {
-    this.screenRecorder = recorder;
-  }
-
-  public prepareCapture() {
+  public prepareCapture(): CaptureContext | never {
     // eslint-disable-next-line no-console
     console.log(this.screenRecorder);
+
+    return new CaptureContext();
   }
 
   public startCapture() {

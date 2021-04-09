@@ -3,12 +3,12 @@
 import 'reflect-metadata';
 
 import { Container } from 'inversify';
-import { TYPES } from '../../core/di/types';
+import { TYPES } from './types';
 
-import { CommandDispatcher, ScreenRecorder } from '../../core/components';
-import { CommandDispatcherImpl } from '../components/command';
-import { CaptureUseCase } from '../../core/usecases/capture';
-import { ScreenRecorderImpl } from '../components/recorder';
+import { CommandDispatcher, ScreenRecorder } from '../core/components';
+import { CommandDispatcherImpl } from '../infrastructures/components/command';
+import { CaptureUseCase } from '../core/usecases/capture';
+import { ScreenRecorderImpl } from '../infrastructures/components/recorder';
 
 const diContainer = new Container();
 

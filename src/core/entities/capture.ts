@@ -6,4 +6,6 @@ export class CaptureTargetGroup {}
 
 export class CaptureOption {}
 
-export class CaptureContext {}
+export class CaptureContext {
+  constructor(private startedAt = new Date()) {}
+}
