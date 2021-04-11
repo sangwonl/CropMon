@@ -21,7 +21,7 @@ function* handleConfiguringCaptureParams(action: PayloadAction) {
 function* handleConfiguredCaptureParams(action: PayloadAction) {
   const captureContext = captureUseCase.prepareCapture();
 
-  yield put(preparedCaptureContext({ sessionId: captureContext.sessionId }));
+  yield put(preparedCaptureContext({ createdAt: captureContext.createdAt }));
 
   // captureUseCase.startCapture(captureContext);
 

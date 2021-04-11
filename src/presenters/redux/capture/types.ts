@@ -1,7 +1,7 @@
-export interface CaptureContextDto {
-  sessionId: string;
+export interface ICaptureContext {
+  createdAt: Date;
 }
 
 export interface CaptureState {
-  curCaptureCtx: CaptureContextDto | undefined;
+  curCaptureCtx: ICaptureContext | undefined;
 }
