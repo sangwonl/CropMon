@@ -16,7 +16,7 @@ import { app, globalShortcut } from 'electron';
 import AppUpdater from './updater';
 import { initializeDevTools } from './debug';
 import store, { initializeSaga } from '../redux/store';
-import { prepareCapture } from '../redux/capture/slice';
+import { configuringCaptureParams } from '../redux/capture/slice';
 
 import { assetResolver } from './asset';
 import MainWindowBuilder from '../renderers/main/builder';
@@ -36,12 +36,12 @@ const configureShortcuts = () => {
     [platform: string]: Array<ShortcutHandler>;
   }
 
-  const handlePrepareCapture = () => {
-    store.dispatch(prepareCapture());
+  const handleCapture = () => {
+    store.dispatch(configuringCaptureParams());
   };
 
   const platformShortcuts: PlatformShortcuts = {
-    win32: [{ shortcut: 'Alt+Control+4', handler: handlePrepareCapture }],
+    win32: [{ shortcut: 'Alt+Control+4', handler: handleCapture }],
     darwin: [],
   };
 

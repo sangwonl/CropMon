@@ -1,9 +1,46 @@
 /* eslint-disable max-classes-per-file */
+/* eslint-disable @typescript-eslint/lines-between-class-members */
 
-export class CaptureTarget {}
+import { assert } from 'console';
+import { nanoid } from 'nanoid';
 
-export class CaptureTargetGroup {}
+export enum CaptureMode {
+  AREA = 1,
+  WINDOW,
+  FULLSCREEN,
+}
 
-export class CaptureOption {}
+class CaptureTarget {
+  mode: CaptureMode;
 
-export class CaptureContext {}
+  constructor(mode: CaptureMode) {
+    this.mode = mode;
+  }
+}
+
+export class CaptureOption {
+  mode: CaptureMode;
+
+  constructor(mode: CaptureMode) {
+    this.mode = mode;
+  }
+}
+
+export class CaptureContext {
+  sessionId: string;
+  createdAt: Date;
+
+  target: CaptureTarget;
+
+  private constructor(option: CaptureOption) {
+    this.sessionId = nanoid(10);
+    this.createdAt = new Date();
+
+    assert(option.mode === CaptureMode.FULLSCREEN);
+    this.target = new CaptureTarget(option.mode);
+  }
+
+  static create(option: CaptureOption): CaptureContext {
+    return new CaptureContext(option);
+  }
+}

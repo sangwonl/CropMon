@@ -1,5 +1,6 @@
 import { applyMiddleware } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
+
 import { composeWithStateSync } from 'electron-redux';
 import createSagaMiddleware from 'redux-saga';
 
@@ -7,7 +8,6 @@ import captureReducer from './capture/slice';
 import captureSaga from './capture/saga';
 
 const sagaMiddleware = createSagaMiddleware();
-
 const middlewares = applyMiddleware(sagaMiddleware);
 const composedEnhancer = composeWithStateSync(...[middlewares]);
 

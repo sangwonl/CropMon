@@ -3,18 +3,18 @@
 import 'reflect-metadata';
 
 import { Container } from 'inversify';
-import { TYPES } from '../../core/di/types';
+import { TYPES } from './types';
 
-import { CommandDispatcher, ScreenRecorder } from '../../core/components';
-import { CommandDispatcherImpl } from '../components/command';
-import { CaptureUseCase } from '../../core/usecases/capture';
-import { ScreenRecorderImpl } from '../components/recorder';
+import { GlobalRegistry, ScreenRecorder } from '../core/components';
+import { CaptureUseCase } from '../core/usecases/capture';
+import { ScreenRecorderImpl } from '../infrastructures/components/recorder';
 
 const diContainer = new Container();
 
+// eslint-disable-next-line prettier/prettier
 diContainer
-  .bind<CommandDispatcher>(TYPES.CommandDispatcher)
-  .to(CommandDispatcherImpl)
+  .bind<GlobalRegistry>(GlobalRegistry)
+  .toSelf()
   .inSingletonScope();
 
 diContainer

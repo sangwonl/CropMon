@@ -308,7 +308,6 @@ export default class MainWindowBuilder {
       icon: this.assetResolver('icon.png'),
       webPreferences: {
         nodeIntegration: true,
-        devTools: process.env.HIDE_DEVTOOLS !== 'true',
       },
     });
 
