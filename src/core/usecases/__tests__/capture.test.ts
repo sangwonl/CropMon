@@ -1,15 +1,28 @@
-import { mock, instance } from 'ts-mockito';
+import 'reflect-metadata';
 
-import { ScreenRecorder } from '../../components';
+import { mock, instance, verify } from 'ts-mockito';
+
+import { GlobalRegistry, ScreenRecorder } from '../../components';
 import { CaptureUseCase } from '../capture';
 
 describe('CaptureUseCase', () => {
+  const MockGlobalRegistry: GlobalRegistry = mock(GlobalRegistry);
   const MockScreenRecorder: ScreenRecorder = mock<ScreenRecorder>();
-  const mockRecorder = instance(MockScreenRecorder);
+
+  let mockRegistry: GlobalRegistry;
+  let mockRecorder: ScreenRecorder;
+
+  let useCase: CaptureUseCase;
+
+  beforeEach(() => {
+    mockRegistry = instance(MockGlobalRegistry);
+    mockRecorder = instance(MockScreenRecorder);
+    useCase = new CaptureUseCase(mockRegistry, mockRecorder);
+  });
 
   it('should return capture context when prepre called', () => {
-    const useCase = new CaptureUseCase(mockRecorder);
     const context = useCase.prepareCapture();
     expect(context).toBeDefined();
+    verify(MockGlobalRegistry.setContext(context)).once();
   });
 });

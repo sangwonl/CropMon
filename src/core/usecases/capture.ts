@@ -4,12 +4,20 @@ import 'reflect-metadata';
 
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../di/types';
+
+import {
+  CaptureContext,
+  CaptureOption,
+  CaptureMode,
+} from '../entities/capture';
+
+import { GlobalRegistry } from '../components/registry';
 import { ScreenRecorder } from '../components';
-import { CaptureContext } from '../entities/capture';
 
 @injectable()
 export class CaptureUseCase {
   public constructor(
+    private globalRegistry: GlobalRegistry,
     @inject(TYPES.ScreenRecorder) private screenRecorder: ScreenRecorder
   ) {}
 
@@ -17,7 +25,13 @@ export class CaptureUseCase {
     // eslint-disable-next-line no-console
     console.log(this.screenRecorder);
 
-    return new CaptureContext();
+    const option = new CaptureOption(CaptureMode.FULLSCREEN);
+
+    const newCtx = CaptureContext.create(option);
+
+    this.globalRegistry.setContext(newCtx);
+
+    return newCtx;
   }
 
   public startCapture() {

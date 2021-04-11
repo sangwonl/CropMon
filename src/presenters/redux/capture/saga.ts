@@ -3,25 +3,35 @@ import { put, takeLatest } from 'redux-saga/effects';
 
 import { diContainer } from '../../../di';
 import { CaptureUseCase } from '../../../core/usecases/capture';
-import { prepareCapture, capturePrepared, captureStarted } from './slice';
+import {
+  configuringCaptureParams,
+  configuredCaptureParams,
+  preparedCaptureContext,
+  startingCapture,
+} from './slice';
 
 const captureUseCase = diContainer.get(CaptureUseCase);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function* handlePrepareCapture(action: PayloadAction) {
-  captureUseCase.prepareCapture();
-  yield put(capturePrepared());
+function* handleConfiguringCaptureParams(action: PayloadAction) {
+  yield put(configuredCaptureParams());
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function* handleCapturePrepared(action: PayloadAction) {
-  captureUseCase.startCapture();
-  yield put(captureStarted());
+function* handleConfiguredCaptureParams(action: PayloadAction) {
+  const captureContext = captureUseCase.prepareCapture();
+
+  yield put(preparedCaptureContext({ sessionId: captureContext.sessionId }));
+
+  // captureUseCase.startCapture(captureContext);
+
+  yield put(startingCapture());
 }
 
 function* sagaEntry() {
-  yield takeLatest(prepareCapture.type, handlePrepareCapture);
-  yield takeLatest(capturePrepared.type, handleCapturePrepared);
+  // eslint-disable-next-line prettier/prettier
+  yield takeLatest(configuringCaptureParams.type, handleConfiguringCaptureParams);
+  yield takeLatest(configuredCaptureParams.type, handleConfiguredCaptureParams);
 }
 
 export default sagaEntry;
