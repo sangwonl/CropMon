@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { CaptureState, CaptureContextDto } from './types';
+import { CaptureState, ICaptureContext } from './types';
 
 const initialState: CaptureState = {
   curCaptureCtx: undefined,
@@ -14,10 +14,7 @@ const slice = createSlice({
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     configuredCaptureParams: (state) => {},
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    preparedCaptureContext: (
-      state,
-      action: PayloadAction<CaptureContextDto>
-    ) => {
+    preparedCaptureContext: (state, action: PayloadAction<ICaptureContext>) => {
       state.curCaptureCtx = action.payload;
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

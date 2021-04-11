@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/lines-between-class-members */
 
 import { assert } from 'console';
-import { nanoid } from 'nanoid';
 
 export enum CaptureMode {
   AREA = 1,
@@ -27,13 +26,11 @@ export class CaptureOption {
 }
 
 export class CaptureContext {
-  sessionId: string;
   createdAt: Date;
 
   target: CaptureTarget;
 
   private constructor(option: CaptureOption) {
-    this.sessionId = nanoid(10);
     this.createdAt = new Date();
 
     assert(option.mode === CaptureMode.FULLSCREEN);
