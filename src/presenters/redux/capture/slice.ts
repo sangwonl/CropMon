@@ -1,11 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit';
-
-export interface CaptureState {
-  test: string;
-}
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { CaptureState, CaptureContextDto } from './types';
 
 const initialState: CaptureState = {
-  test: '',
+  curCaptureCtx: undefined,
 };
 
 const slice = createSlice({
@@ -13,18 +10,29 @@ const slice = createSlice({
   initialState,
   reducers: {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    prepareCapture: (state) => {},
+    configuringCaptureParams: (state) => {},
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    capturePrepared: (state) => {},
+    configuredCaptureParams: (state) => {},
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    captureStarted: (state) => {},
+    preparedCaptureContext: (
+      state,
+      action: PayloadAction<CaptureContextDto>
+    ) => {
+      state.curCaptureCtx = action.payload;
+    },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    startingCapture: (state) => {},
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    finishCapture: (state) => {},
   },
 });
 
 export const {
-  prepareCapture,
-  capturePrepared,
-  captureStarted,
+  configuringCaptureParams,
+  configuredCaptureParams,
+  preparedCaptureContext,
+  startingCapture,
+  finishCapture,
 } = slice.actions;
 
 export default slice.reducer;

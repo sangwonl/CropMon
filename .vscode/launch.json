@@ -6,9 +6,6 @@
       "type": "node",
       "request": "launch",
       "protocol": "inspector",
-      "env": {
-        "HIDE_DEVTOOLS": "true"
-      },
       "runtimeExecutable": "yarn",
       "runtimeArgs": [
         "start:main",
@@ -23,7 +20,7 @@
       "request": "attach",
       "port": 9223,
       "webRoot": "${workspaceFolder}",
-      "timeout": 15000
+      "timeout": 30000
     }
   ],
   "compounds": [
