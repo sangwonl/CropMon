@@ -23,6 +23,9 @@ const slice = createSlice({
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     finishCapture: (state) => {},
+    finishedCapture: (state, action: PayloadAction<ICaptureContext>) => {
+      state.curCaptureCtx = action.payload;
+    },
   },
 });
 
@@ -32,6 +35,7 @@ export const {
   preparedCaptureContext,
   startingCapture,
   finishCapture,
+  finishedCapture,
 } = slice.actions;
 
 export default slice.reducer;

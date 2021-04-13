@@ -54,8 +54,12 @@ export class CaptureUseCase {
     console.log(this.screenRecorder);
   }
 
-  public stopCapture() {
-    // eslint-disable-next-line no-console
-    console.log(this.screenRecorder);
+  public finishCapture(): CaptureContext | never {
+    const curCtx = this.globalRegistry.currentContext();
+    assert(curCtx !== undefined);
+
+    this.screenRecorder.finish(curCtx);
+
+    return curCtx;
   }
 }

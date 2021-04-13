@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { PayloadAction } from '@reduxjs/toolkit';
 import { put, takeLatest } from 'redux-saga/effects';
 
@@ -8,40 +10,46 @@ import {
   configuredCaptureParams,
   preparedCaptureContext,
   startingCapture,
+  finishCapture,
+  finishedCapture,
 } from './slice';
 import { CaptureContext, CaptureMode } from '../../../core/entities/capture';
 import { ICaptureContext } from './types';
 
 const captureUseCase = diContainer.get(CaptureUseCase);
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const captureCtxMapper = (ctx: CaptureContext): ICaptureContext => {
+  return {
+    status: ctx.status,
+    createdAt: Math.floor(ctx.createdAt.getTime() / 1000),
+  };
+};
+
 function* handleConfiguringCaptureParams(action: PayloadAction) {
   yield put(configuredCaptureParams());
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function* handleConfiguredCaptureParams(action: PayloadAction) {
-  const mapper = (ctx: CaptureContext): ICaptureContext => {
-    return {
-      status: ctx.status,
-      createdAt: Math.floor(ctx.createdAt.getTime() / 1000),
-    };
-  };
-
   const captureContext = captureUseCase.prepareCapture({
     mode: CaptureMode.FULLSCREEN,
-    screenIndex: 1,
+    screenIndex: 0,
   });
-  yield put(preparedCaptureContext(mapper(captureContext)));
+  yield put(preparedCaptureContext(captureCtxMapper(captureContext)));
 
   const updatedContext = captureUseCase.startCapture();
-  yield put(startingCapture(mapper(updatedContext)));
+  yield put(startingCapture(captureCtxMapper(updatedContext)));
+}
+
+function* handleFinishCapture(action: PayloadAction) {
+  const updatedContext = captureUseCase.finishCapture();
+  yield put(finishedCapture(captureCtxMapper(updatedContext)));
 }
 
 function* sagaEntry() {
   // eslint-disable-next-line prettier/prettier
   yield takeLatest(configuringCaptureParams.type, handleConfiguringCaptureParams);
   yield takeLatest(configuredCaptureParams.type, handleConfiguredCaptureParams);
+  yield takeLatest(finishCapture.type, handleFinishCapture);
 }
 
 export default sagaEntry;
