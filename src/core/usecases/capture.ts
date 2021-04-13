@@ -2,13 +2,15 @@
 
 import 'reflect-metadata';
 
+import assert from 'assert';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../di/types';
 
 import {
+  CaptureMode,
+  CaptureStatus,
   CaptureContext,
   CaptureOption,
-  CaptureMode,
 } from '../entities/capture';
 
 import { GlobalRegistry } from '../components/registry';
@@ -22,9 +24,6 @@ export class CaptureUseCase {
   ) {}
 
   public prepareCapture(): CaptureContext | never {
-    // eslint-disable-next-line no-console
-    console.log(this.screenRecorder);
-
     const option = new CaptureOption(CaptureMode.FULLSCREEN);
 
     const newCtx = CaptureContext.create(option);
@@ -34,9 +33,18 @@ export class CaptureUseCase {
     return newCtx;
   }
 
-  public startCapture() {
-    // eslint-disable-next-line no-console
-    console.log(this.screenRecorder);
+  public startCapture(): CaptureContext | never {
+    const curCtx = this.globalRegistry.currentContext();
+    assert(curCtx !== undefined);
+
+    try {
+      this.screenRecorder.record(curCtx);
+      curCtx.status = CaptureStatus.IN_PROGRESS;
+    } catch (e) {
+      curCtx.status = CaptureStatus.ERROR;
+    }
+
+    return curCtx;
   }
 
   public pauseCapture() {

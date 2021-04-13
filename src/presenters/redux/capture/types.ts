@@ -1,5 +1,6 @@
 export interface ICaptureContext {
-  createdAt: Date;
+  status: number;
+  createdAt: number;
 }
 
 export interface CaptureState {

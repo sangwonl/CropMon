@@ -7,7 +7,7 @@ import { TYPES } from './types';
 
 import { GlobalRegistry, ScreenRecorder } from '../core/components';
 import { CaptureUseCase } from '../core/usecases/capture';
-import { ScreenRecorderImpl } from '../infrastructures/components/recorder';
+import { ScreenRecorderWindows } from '../infrastructures/components/recorder-win';
 
 const diContainer = new Container();
 
@@ -19,7 +19,7 @@ diContainer
 
 diContainer
   .bind<ScreenRecorder>(TYPES.ScreenRecorder)
-  .to(ScreenRecorderImpl)
+  .to(ScreenRecorderWindows)
   .inSingletonScope();
 
 // eslint-disable-next-line prettier/prettier

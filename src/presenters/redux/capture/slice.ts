@@ -18,7 +18,9 @@ const slice = createSlice({
       state.curCaptureCtx = action.payload;
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    startingCapture: (state) => {},
+    startingCapture: (state, action: PayloadAction<ICaptureContext>) => {
+      state.curCaptureCtx = action.payload;
+    },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     finishCapture: (state) => {},
   },
