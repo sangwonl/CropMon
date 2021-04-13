@@ -15,7 +15,8 @@ import { app, globalShortcut } from 'electron';
 
 import AppUpdater from './updater';
 import { initializeDevTools } from './debug';
-import store, { initializeSaga } from '../redux/store';
+
+import store, { initializeSaga } from '../redux/store-main';
 import { configuringCaptureParams } from '../redux/capture/slice';
 
 import { assetResolver } from './asset';

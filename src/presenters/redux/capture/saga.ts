@@ -9,6 +9,8 @@ import {
   preparedCaptureContext,
   startingCapture,
 } from './slice';
+import { CaptureContext } from '../../../core/entities/capture';
+import { ICaptureContext } from './types';
 
 const captureUseCase = diContainer.get(CaptureUseCase);
 
@@ -19,13 +21,18 @@ function* handleConfiguringCaptureParams(action: PayloadAction) {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function* handleConfiguredCaptureParams(action: PayloadAction) {
+  const mapper = (ctx: CaptureContext): ICaptureContext => {
+    return {
+      status: ctx.status,
+      createdAt: Math.floor(ctx.createdAt.getTime() / 1000),
+    };
+  };
+
   const captureContext = captureUseCase.prepareCapture();
+  yield put(preparedCaptureContext(mapper(captureContext)));
 
-  yield put(preparedCaptureContext({ createdAt: captureContext.createdAt }));
-
-  // captureUseCase.startCapture(captureContext);
-
-  yield put(startingCapture());
+  const updatedContext = captureUseCase.startCapture();
+  yield put(startingCapture(mapper(updatedContext)));
 }
 
 function* sagaEntry() {

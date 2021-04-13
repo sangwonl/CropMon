@@ -1,4 +1,7 @@
 /* eslint-disable import/prefer-default-export */
-/* eslint-disable @typescript-eslint/no-empty-interface */
 
-export interface ScreenRecorder {}
+import { CaptureContext } from '../entities/capture';
+
+export interface ScreenRecorder {
+  record(ctx: CaptureContext): Promise<void>;
+}

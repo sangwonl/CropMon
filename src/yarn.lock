@@ -2,6 +2,18 @@
 # yarn lockfile v1
 
 
+"@types/fluent-ffmpeg@^2.1.17":
+  version "2.1.17"
+  resolved "https://registry.yarnpkg.com/@types/fluent-ffmpeg/-/fluent-ffmpeg-2.1.17.tgz#6958dda400fe1b33c21f3683db76905cb210d053"
+  integrity sha512-/bdvjKw/mtBHlJ2370d04nt4CsWqU5MrwS/NtO96V01jxitJ4+iq8OFNcqc5CegeV3TQOK3uueK02kvRK+zjUg==
+  dependencies:
+    "@types/node" "*"
+
+"@types/node@*":
+  version "14.14.37"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.37.tgz#a3dd8da4eb84a996c36e331df98d82abd76b516e"
+  integrity sha512-XYmBiy+ohOR4Lh5jE379fV2IU+6Jn4g5qASinhitfyO71b/sCo6MKsMLF5tc7Zf2CE8hViVQyYSobJNke8OvUw==
+
 "@types/redux-mock-store@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@types/redux-mock-store/-/redux-mock-store-1.0.2.tgz#c27d5deadfb29d8514bdb0fc2cadae6feea1922d"
