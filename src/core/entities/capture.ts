@@ -18,18 +18,17 @@ export enum CaptureStatus {
 
 class CaptureTarget {
   mode: CaptureMode;
+  screenIndex: number;
 
-  constructor(mode: CaptureMode) {
+  constructor(mode: CaptureMode, screenIdx: number) {
     this.mode = mode;
+    this.screenIndex = screenIdx;
   }
 }
 
-export class CaptureOption {
+export interface CaptureOption {
   mode: CaptureMode;
-
-  constructor(mode: CaptureMode) {
-    this.mode = mode;
-  }
+  screenIndex: number;
 }
 
 export class CaptureContext {
@@ -41,7 +40,7 @@ export class CaptureContext {
 
   private constructor(option: CaptureOption) {
     assert(option.mode === CaptureMode.FULLSCREEN);
-    this.target = new CaptureTarget(option.mode);
+    this.target = new CaptureTarget(option.mode, option.screenIndex);
 
     this.status = CaptureStatus.PREPARED;
 
