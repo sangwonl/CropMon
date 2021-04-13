@@ -58,7 +58,12 @@ export class CaptureUseCase {
     const curCtx = this.globalRegistry.currentContext();
     assert(curCtx !== undefined);
 
-    this.screenRecorder.finish(curCtx);
+    try {
+      this.screenRecorder.finish(curCtx);
+      curCtx.status = CaptureStatus.FINISHED;
+    } catch (e) {
+      curCtx.status = CaptureStatus.ERROR;
+    }
 
     return curCtx;
   }

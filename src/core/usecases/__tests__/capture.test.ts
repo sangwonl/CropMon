@@ -58,4 +58,22 @@ describe('CaptureUseCase', () => {
       verify(mockedScreenRecorder.record(newCtx)).once();
     });
   });
+
+  describe('finishCapture', () => {
+    it('should call recorder finish method', () => {
+      const capCtx = CaptureContext.create({
+        mode: CaptureMode.FULLSCREEN,
+        screenIndex: 0,
+      });
+      when(mockedGlobalRegistry.currentContext()).thenReturn(capCtx);
+
+      const newCtx = useCase.startCapture();
+      expect(newCtx.status).toEqual(CaptureStatus.IN_PROGRESS);
+      verify(mockedGlobalRegistry.currentContext()).once();
+
+      const updatedCtx = useCase.finishCapture();
+      expect(updatedCtx.status).toEqual(CaptureStatus.FINISHED);
+      verify(mockedScreenRecorder.finish(newCtx)).once();
+    });
+  });
 });
