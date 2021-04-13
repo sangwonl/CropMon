@@ -7,7 +7,6 @@ import {
   CaptureMode,
   CaptureStatus,
   CaptureContext,
-  CaptureOption,
 } from '../../entities/capture';
 
 import { CaptureUseCase } from '../capture';
@@ -33,7 +32,10 @@ describe('CaptureUseCase', () => {
 
   describe('prepareCapture', () => {
     it('should return capture context and save it to registry', () => {
-      const context = useCase.prepareCapture();
+      const context = useCase.prepareCapture({
+        mode: CaptureMode.FULLSCREEN,
+        screenIndex: 0,
+      });
       expect(context).toBeDefined();
       expect(context.createdAt).toBeInstanceOf(Date);
       expect(context.target).toBeDefined();
@@ -44,9 +46,10 @@ describe('CaptureUseCase', () => {
 
   describe('startCapture', () => {
     it('should get current context from registry and call record with it', () => {
-      const capCtx = CaptureContext.create(
-        new CaptureOption(CaptureMode.FULLSCREEN)
-      );
+      const capCtx = CaptureContext.create({
+        mode: CaptureMode.FULLSCREEN,
+        screenIndex: 0,
+      });
       when(mockedGlobalRegistry.currentContext()).thenReturn(capCtx);
 
       const newCtx = useCase.startCapture();
