@@ -3,9 +3,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { screen } from 'electron';
+import assert from 'assert';
 
 import { ChildProcess } from 'child_process';
-import Ffmpeg from 'fluent-ffmpeg';
+import Ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
 
 import { injectable } from 'inversify';
 import { ScreenRecorder } from '../../core/components';
@@ -20,6 +21,8 @@ interface ScreenBounds {
 
 @injectable()
 export class ScreenRecorderWindows implements ScreenRecorder {
+  lastFfmpeg!: FfmpegCommand;
+
   // eslint-disable-next-line class-methods-use-this
   async record(ctx: CaptureContext): Promise<void> {
     const { screenIndex } = ctx.target;
@@ -41,11 +44,15 @@ export class ScreenRecorderWindows implements ScreenRecorder {
       .withOptions(['-pix_fmt yuv420p'])
       .save('output.mp4');
 
-    setTimeout(() => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const proc = (ffmpeg as any).ffmpegProc as ChildProcess;
-      proc?.stdin?.write('q');
-    }, 5000);
+    this.lastFfmpeg = ffmpeg;
+  }
+
+  async finish(ctx: CaptureContext): Promise<void> {
+    assert(this.lastFfmpeg !== undefined);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const proc = (this.lastFfmpeg as any).ffmpegProc as ChildProcess;
+    proc?.stdin?.write('q');
   }
 
   private calcAllScreenBounds(): Array<ScreenBounds> {

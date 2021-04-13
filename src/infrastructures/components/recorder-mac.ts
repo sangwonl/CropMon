@@ -12,4 +12,9 @@ export class ScreenRecorderMac implements ScreenRecorder {
     // eslint-disable-next-line prefer-promise-reject-errors
     return Promise.reject(undefined);
   }
+
+  async finish(ctx: CaptureContext): Promise<void> {
+    // eslint-disable-next-line prefer-promise-reject-errors
+    return Promise.reject(undefined);
+  }
 }

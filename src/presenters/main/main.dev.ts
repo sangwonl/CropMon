@@ -17,7 +17,10 @@ import AppUpdater from './updater';
 import { initializeDevTools } from './debug';
 
 import store, { initializeSaga } from '../redux/store-main';
-import { configuringCaptureParams } from '../redux/capture/slice';
+import {
+  configuringCaptureParams,
+  finishCapture,
+} from '../redux/capture/slice';
 
 import { assetResolver } from './asset';
 import MainWindowBuilder from '../renderers/main/builder';
@@ -41,8 +44,15 @@ const configureShortcuts = () => {
     store.dispatch(configuringCaptureParams());
   };
 
+  const handleFinishCapture = () => {
+    store.dispatch(finishCapture());
+  };
+
   const platformShortcuts: PlatformShortcuts = {
-    win32: [{ shortcut: 'Alt+Control+4', handler: handleCapture }],
+    win32: [
+      { shortcut: 'Alt+Control+4', handler: handleCapture },
+      { shortcut: 'Alt+Control+5', handler: handleFinishCapture },
+    ],
     darwin: [],
   };
 
