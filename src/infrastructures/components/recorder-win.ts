@@ -22,8 +22,10 @@ interface ScreenBounds {
 export class ScreenRecorderWindows implements ScreenRecorder {
   // eslint-disable-next-line class-methods-use-this
   async record(ctx: CaptureContext): Promise<void> {
+    const { screenIndex } = ctx.target;
+
     const screenBounds = this.calcAllScreenBounds();
-    const { x, y, width, height } = screenBounds[1];
+    const { x, y, width, height } = screenBounds[screenIndex];
 
     const ffmpeg = Ffmpeg()
       .input('desktop')

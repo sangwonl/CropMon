@@ -7,7 +7,6 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../../di/types';
 
 import {
-  CaptureMode,
   CaptureStatus,
   CaptureContext,
   CaptureOption,
@@ -23,9 +22,7 @@ export class CaptureUseCase {
     @inject(TYPES.ScreenRecorder) private screenRecorder: ScreenRecorder
   ) {}
 
-  public prepareCapture(): CaptureContext | never {
-    const option = new CaptureOption(CaptureMode.FULLSCREEN);
-
+  public prepareCapture(option: CaptureOption): CaptureContext | never {
     const newCtx = CaptureContext.create(option);
 
     this.globalRegistry.setContext(newCtx);

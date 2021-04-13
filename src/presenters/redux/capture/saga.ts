@@ -9,7 +9,7 @@ import {
   preparedCaptureContext,
   startingCapture,
 } from './slice';
-import { CaptureContext } from '../../../core/entities/capture';
+import { CaptureContext, CaptureMode } from '../../../core/entities/capture';
 import { ICaptureContext } from './types';
 
 const captureUseCase = diContainer.get(CaptureUseCase);
@@ -28,7 +28,10 @@ function* handleConfiguredCaptureParams(action: PayloadAction) {
     };
   };
 
-  const captureContext = captureUseCase.prepareCapture();
+  const captureContext = captureUseCase.prepareCapture({
+    mode: CaptureMode.FULLSCREEN,
+    screenIndex: 1,
+  });
   yield put(preparedCaptureContext(mapper(captureContext)));
 
   const updatedContext = captureUseCase.startCapture();
