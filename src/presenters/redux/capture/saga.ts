@@ -3,8 +3,11 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { put, takeLatest } from 'redux-saga/effects';
 
-import { diContainer } from '../../../di';
-import { CaptureUseCase } from '../../../core/usecases/capture';
+import { diContainer } from '@di/container';
+import { CaptureUseCase } from '@core/usecases/capture';
+import { CaptureContext, CaptureMode } from '@core/entities/capture';
+
+import { ICaptureContext } from './types';
 import {
   configuringCaptureParams,
   configuredCaptureParams,
@@ -13,8 +16,6 @@ import {
   finishCapture,
   finishedCapture,
 } from './slice';
-import { CaptureContext, CaptureMode } from '../../../core/entities/capture';
-import { ICaptureContext } from './types';
 
 const captureUseCase = diContainer.get(CaptureUseCase);
 

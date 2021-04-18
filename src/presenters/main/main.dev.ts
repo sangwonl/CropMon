@@ -13,17 +13,16 @@ import 'regenerator-runtime/runtime';
 
 import { app, globalShortcut } from 'electron';
 
-import AppUpdater from './updater';
-import { initializeDevTools } from './debug';
-
-import store, { initializeSaga } from '../redux/store-main';
+import store, { initializeSaga } from '@presenters/redux/store-main';
+import MainWindowBuilder from '@presenters/renderers/main/builder';
 import {
   configuringCaptureParams,
   finishCapture,
-} from '../redux/capture/slice';
+} from '@presenters/redux/capture/slice';
 
+import AppUpdater from './updater';
+import { initializeDevTools } from './debug';
 import { assetResolver } from './asset';
-import MainWindowBuilder from '../renderers/main/builder';
 
 const createWindow = async () => {
   new MainWindowBuilder(assetResolver).build();

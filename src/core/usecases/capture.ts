@@ -4,16 +4,15 @@ import 'reflect-metadata';
 
 import assert from 'assert';
 import { inject, injectable } from 'inversify';
-import { TYPES } from '../../di/types';
+import { TYPES } from '@di/types';
 
 import {
   CaptureStatus,
   CaptureContext,
   CaptureOption,
-} from '../entities/capture';
+} from '@core/entities/capture';
 
-import { GlobalRegistry } from '../components/registry';
-import { ScreenRecorder } from '../components';
+import { GlobalRegistry, ScreenRecorder } from '@core/components';
 
 @injectable()
 export class CaptureUseCase {

@@ -2,14 +2,13 @@ import 'reflect-metadata';
 
 import { mock, instance, verify, when } from 'ts-mockito';
 
-import { GlobalRegistry, ScreenRecorder } from '../../components';
 import {
   CaptureMode,
   CaptureStatus,
   CaptureContext,
-} from '../../entities/capture';
-
-import { CaptureUseCase } from '../capture';
+} from '@core/entities/capture';
+import { GlobalRegistry, ScreenRecorder } from '@core/components';
+import { CaptureUseCase } from '@core/usecases/capture';
 
 describe('CaptureUseCase', () => {
   let mockedGlobalRegistry: GlobalRegistry;

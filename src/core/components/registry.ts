@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 
 import { injectable } from 'inversify';
-import { CaptureContext } from '../entities/capture';
+import { CaptureContext } from '@core/entities/capture';
 
 @injectable()
 export class GlobalRegistry {

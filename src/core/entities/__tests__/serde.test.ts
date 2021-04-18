@@ -1,4 +1,8 @@
-import { CaptureContext, CaptureMode, CaptureOption } from '../capture';
+import {
+  CaptureContext,
+  CaptureMode,
+  CaptureOption,
+} from '@core/entities/capture';
 
 describe('Entities', () => {
   it('should still expose private fields when serialization', () => {

@@ -2,15 +2,15 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { screen } from 'electron';
 import assert from 'assert';
 
+import { screen } from 'electron';
 import { ChildProcess } from 'child_process';
 import Ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
-
 import { injectable } from 'inversify';
-import { ScreenRecorder } from '../../core/components';
-import { CaptureContext } from '../../core/entities/capture';
+
+import { ScreenRecorder } from '@core/components';
+import { CaptureContext } from '@core/entities/capture';
 
 interface ScreenBounds {
   x: number;
