@@ -58,6 +58,19 @@ module.exports = (api) => {
       require('@babel/plugin-proposal-json-strings'),
 
       ...(development ? developmentPlugins : productionPlugins),
+
+      [
+        'module-resolver',
+        {
+          alias: {
+            '@core': './src/core',
+            '@infrastructures': './src/infrastructures',
+            '@presenters': './src/presenters',
+            '@utils': './src/utils',
+            '@di': './src/di',
+          },
+        },
+      ],
     ],
   };
 };

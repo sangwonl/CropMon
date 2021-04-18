@@ -3,8 +3,8 @@
 /* eslint-disable class-methods-use-this */
 
 import { injectable } from 'inversify';
-import { ScreenRecorder } from '../../core/components';
-import { CaptureContext } from '../../core/entities/capture';
+import { ScreenRecorder } from '@core/components';
+import { CaptureContext } from '@core/entities/capture';
 
 @injectable()
 export class ScreenRecorderMac implements ScreenRecorder {

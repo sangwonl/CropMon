@@ -3,11 +3,12 @@
 import 'reflect-metadata';
 
 import { Container } from 'inversify';
-import { TYPES } from './types';
 
-import { GlobalRegistry, ScreenRecorder } from '../core/components';
-import { CaptureUseCase } from '../core/usecases/capture';
-import { ScreenRecorderWindows } from '../infrastructures/components/recorder-win';
+import { GlobalRegistry, ScreenRecorder } from '@core/components';
+import { CaptureUseCase } from '@core/usecases/capture';
+import { ScreenRecorderWindows } from '@infrastructures/components/recorder-win';
+
+import { TYPES } from './types';
 
 const diContainer = new Container();
 
