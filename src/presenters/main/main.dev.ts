@@ -11,10 +11,13 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
-import { app, globalShortcut } from 'electron';
+import { app, BrowserWindow, globalShortcut } from 'electron';
 
-import store, { initializeSaga } from '@presenters/redux/store-main';
+import { CaptureStatus } from '@core/entities/capture';
+import store, { RootState, initializeSaga } from '@presenters/redux/store-main';
 import MainWindowBuilder from '@presenters/renderers/main/builder';
+import TrayBuilder from '@presenters/renderers/tray/builder';
+import { AppTray } from '@presenters/renderers/tray/tray';
 import {
   configuringCaptureParams,
   finishCapture,
@@ -24,9 +27,7 @@ import AppUpdater from './updater';
 import { initializeDevTools } from './debug';
 import { assetResolver } from './asset';
 
-const createWindow = async () => {
-  new MainWindowBuilder(assetResolver).build();
-};
+let tray: AppTray;
 
 const configureShortcuts = () => {
   interface ShortcutHandler {
@@ -39,19 +40,17 @@ const configureShortcuts = () => {
     [platform: string]: Array<ShortcutHandler>;
   }
 
-  const handleCapture = () => {
-    store.dispatch(configuringCaptureParams());
-  };
-
-  const handleFinishCapture = () => {
-    store.dispatch(finishCapture());
+  const handleCaptureShortcut = () => {
+    const state: RootState = store.getState();
+    if (state.capture.curCaptureCtx?.status === CaptureStatus.IN_PROGRESS) {
+      store.dispatch(finishCapture());
+    } else {
+      store.dispatch(configuringCaptureParams());
+    }
   };
 
   const platformShortcuts: PlatformShortcuts = {
-    win32: [
-      { shortcut: 'Alt+Control+4', handler: handleCapture },
-      { shortcut: 'Alt+Control+5', handler: handleFinishCapture },
-    ],
+    win32: [{ shortcut: 'Super+Shift+R', handler: handleCaptureShortcut }],
     darwin: [],
   };
 
@@ -62,6 +61,14 @@ const configureShortcuts = () => {
   platformShortcuts[process.platform].forEach((s) => {
     globalShortcut.register(s.shortcut, s.handler);
   });
+};
+
+const createMainWindow = (): BrowserWindow => {
+  return new MainWindowBuilder(assetResolver).build();
+};
+
+const createAppTray = (mainWindow: BrowserWindow): AppTray => {
+  return new TrayBuilder(assetResolver, mainWindow).build();
 };
 
 const initializeApp = () => {
@@ -80,12 +87,15 @@ const initializeApp = () => {
   });
 
   app.on('activate', () => {
-    createWindow();
+    createMainWindow();
   });
 };
 
 const initializeWindows = () => {
-  createWindow();
+  const mainWindow = createMainWindow();
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  tray = createAppTray(mainWindow);
 };
 
 const start = async () => {

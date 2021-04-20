@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 import { RootState } from '@presenters/redux/store';
 
-import './App.global.css';
+import './App.css';
 
 const Hello = () => {
   // eslint-disable-next-line @typescript-eslint/no-shadow
