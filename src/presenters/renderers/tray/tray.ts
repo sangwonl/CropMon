@@ -4,21 +4,45 @@
 
 import { Tray, nativeImage, BrowserWindow, Menu } from 'electron';
 
+import { CaptureStatus } from '@core/entities/capture';
+import store, { RootState } from '@presenters/redux/store';
+
 export abstract class AppTray {
   mainWindow: BrowserWindow;
 
   tray: Tray;
 
+  contextMenu: Menu;
+
   constructor(iconPath: string, mainWindow: BrowserWindow) {
     this.mainWindow = mainWindow;
     this.tray = new Tray(nativeImage.createFromPath(iconPath));
-    this.tray.setContextMenu(this.buildContextMenu());
+
+    this.contextMenu = this.buildContextMenu();
+    this.tray.setContextMenu(this.contextMenu);
+
+    store.subscribe(() => this.onStateChanged(store.getState()));
   }
 
   protected abstract buildContextMenu(): Menu;
 
+  private onStateChanged(state: RootState): void {
+    const updateRecordMenuItemVisibility = () => {
+      const isRecording =
+        state.capture.curCaptureCtx?.status === CaptureStatus.IN_PROGRESS;
+
+      this.contextMenu.items[0].visible = !isRecording;
+      this.contextMenu.items[1].visible = isRecording;
+    };
+
+    updateRecordMenuItemVisibility();
+  }
+
   // eslint-disable-next-line class-methods-use-this
   protected onStartRecording(): void {}
+
+  // eslint-disable-next-line class-methods-use-this
+  protected onStopRecording(): void {}
 
   // eslint-disable-next-line class-methods-use-this
   protected onPreferences(): void {}
@@ -44,6 +68,11 @@ class WinAppTray extends AppTray {
         click: super.onStartRecording,
       },
       {
+        label: 'Stop &Recording',
+        click: super.onStopRecording,
+        visible: false,
+      },
+      {
         label: '&Preferences',
         click: super.onPreferences,
       },
@@ -62,6 +91,11 @@ class MacAppTray extends AppTray {
       {
         label: 'Start Recording',
         click: super.onStartRecording,
+      },
+      {
+        label: 'Stop Recording',
+        click: super.onStopRecording,
+        visible: false,
       },
       {
         label: 'Preferences',
