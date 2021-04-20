@@ -302,7 +302,7 @@ export default class MainWindowBuilder {
   // eslint-disable-next-line class-methods-use-this
   build(): BrowserWindow {
     const window = new BrowserWindow({
-      show: true, // false,
+      show: false,
       width: 1024,
       height: 728,
       icon: this.assetResolver('icon.png'),
@@ -319,17 +319,17 @@ export default class MainWindowBuilder {
 
     // @TODO: Use 'ready-to-show' event
     //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-    window.webContents.on('did-finish-load', () => {
-      if (!window) {
-        throw new Error('"mainWindow" is not defined');
-      }
-      if (process.env.START_MINIMIZED) {
-        window.minimize();
-      } else {
-        window.show();
-        window.focus();
-      }
-    });
+    // window.webContents.on('did-finish-load', () => {
+    //   if (!window) {
+    //     throw new Error('"mainWindow" is not defined');
+    //   }
+    //   if (process.env.START_MINIMIZED) {
+    //     window.minimize();
+    //   } else {
+    //     window.show();
+    //     window.focus();
+    //   }
+    // });
 
     // window.on('closed', () => {
     //   window = null;
