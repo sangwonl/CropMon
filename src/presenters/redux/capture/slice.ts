@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { CaptureState, ICaptureContext } from './types';
+import { ICaptureState, ICaptureContext } from './types';
 
-const initialState: CaptureState = {
+const initialState: ICaptureState = {
   curCaptureCtx: undefined,
 };
 

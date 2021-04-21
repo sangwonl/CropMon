@@ -13,9 +13,10 @@ import 'regenerator-runtime/runtime';
 
 import { app } from 'electron';
 
+import { diContainer } from '@di/container';
+import { UiDirector } from '@presenters/interactor';
 import { initializeSaga } from '@presenters/redux/store-main';
 import { MainWindowBuilder } from '@presenters/ui/main/builder';
-import { AppTray } from '@presenters/ui/tray';
 import { AppTrayBuilder } from '@presenters/ui/tray/builder';
 
 import { AppUpdater } from './updater';
@@ -23,7 +24,7 @@ import { initializeDevTools } from './debug';
 import { assetResolver } from './asset';
 import { configureShortcuts } from './shortcut';
 
-let tray: AppTray;
+const uiDirector = diContainer.get(UiDirector);
 
 const initializeApp = () => {
   // Remove this if your app does not use auto updates
@@ -46,10 +47,10 @@ const initializeApp = () => {
 };
 
 const initializeWindows = () => {
-  new MainWindowBuilder(assetResolver).build();
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  tray = new AppTrayBuilder(assetResolver).build();
+  uiDirector.register(
+    new AppTrayBuilder(assetResolver).build(),
+    new MainWindowBuilder(assetResolver).build()
+  );
 };
 
 const start = async () => {
