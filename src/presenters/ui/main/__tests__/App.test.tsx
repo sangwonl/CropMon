@@ -7,7 +7,7 @@ import configureStore from 'redux-mock-store';
 
 import { RootState } from '@presenters/redux/store';
 
-import App from '@presenters/renderers/main/App';
+import App from '@presenters/ui/main/App';
 
 describe('App', () => {
   const mockStore = configureStore<RootState>();

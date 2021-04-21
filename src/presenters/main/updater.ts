@@ -1,7 +1,9 @@
+/* eslint-disable import/prefer-default-export */
+
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 
-export default class AppUpdater {
+export class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
     autoUpdater.logger = log;
