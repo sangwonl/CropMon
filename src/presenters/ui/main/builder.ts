@@ -9,6 +9,8 @@ import {
   MenuItemConstructorOptions,
 } from 'electron';
 
+import { isMac } from '@utils/process';
+
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;
   submenu?: DarwinMenuItemConstructorOptions[] | Menu;
@@ -29,10 +31,9 @@ class MenuBuilder {
       this.setupDevelopmentEnvironment();
     }
 
-    const template =
-      process.platform === 'darwin'
-        ? this.buildDarwinTemplate()
-        : this.buildDefaultTemplate();
+    const template = isMac()
+      ? this.buildDarwinTemplate()
+      : this.buildDefaultTemplate();
 
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
