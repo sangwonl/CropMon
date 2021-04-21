@@ -3,6 +3,6 @@ export interface ICaptureContext {
   createdAt: number;
 }
 
-export interface CaptureState {
+export interface ICaptureState {
   curCaptureCtx: ICaptureContext | undefined;
 }
