@@ -7,6 +7,11 @@ import { Tray, nativeImage, Menu } from 'electron';
 
 import { CaptureStatus } from '@core/entities/capture';
 import store, { RootState } from '@presenters/redux/store';
+import { openPreference } from '@presenters/redux/ui/slice';
+import {
+  configuringCaptureParams,
+  finishCapture,
+} from '@presenters/redux/capture/slice';
 
 export abstract class AppTray {
   tray: Tray;
@@ -36,16 +41,22 @@ export abstract class AppTray {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  protected onStartRecording(): void {}
+  protected onStartRecording() {
+    store.dispatch(configuringCaptureParams());
+  }
 
   // eslint-disable-next-line class-methods-use-this
-  protected onStopRecording(): void {}
+  protected onStopRecording() {
+    store.dispatch(finishCapture());
+  }
 
   // eslint-disable-next-line class-methods-use-this
-  protected onPreferences(): void {}
+  protected onPreferences() {
+    store.dispatch(openPreference());
+  }
 
   // eslint-disable-next-line class-methods-use-this
-  protected onQuit(): void {}
+  protected onQuit() {}
 
   static forWindows(iconPath: string): AppTray {
     return new WinAppTray(iconPath);
