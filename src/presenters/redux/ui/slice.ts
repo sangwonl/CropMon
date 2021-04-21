@@ -14,9 +14,10 @@ const slice = createSlice({
     openPreference: (state) => {
       state.preference.show = true;
     },
+    quitApplication: (state) => {},
   },
 });
 
-export const { openPreference } = slice.actions;
+export const { openPreference, quitApplication } = slice.actions;
 
 export default slice.reducer;

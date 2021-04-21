@@ -1,9 +1,10 @@
+/* eslint-disable class-methods-use-this */
 /* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable import/prefer-default-export */
 
 import 'reflect-metadata';
 
-import { BrowserWindow } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import { injectable } from 'inversify';
 
 import { AppTray } from '@presenters/ui/tray';
@@ -16,6 +17,10 @@ export class UiDirector {
   register(tray: AppTray, main: BrowserWindow) {
     this.appTray = tray;
     this.mainWindow = main;
+  }
+
+  quitApplication() {
+    app.quit();
   }
 
   openPreferenceWindow() {
