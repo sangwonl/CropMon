@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable max-classes-per-file */
@@ -7,7 +8,7 @@ import { Tray, nativeImage, Menu } from 'electron';
 
 import { CaptureStatus } from '@core/entities/capture';
 import store, { RootState } from '@presenters/redux/store';
-import { openPreference } from '@presenters/redux/ui/slice';
+import { openPreference, quitApplication } from '@presenters/redux/ui/slice';
 import {
   configuringCaptureParams,
   finishCapture,
@@ -40,23 +41,21 @@ export abstract class AppTray {
     updateRecordMenuItemVisibility();
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected onStartRecording() {
     store.dispatch(configuringCaptureParams());
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected onStopRecording() {
     store.dispatch(finishCapture());
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected onPreferences() {
     store.dispatch(openPreference());
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  protected onQuit() {}
+  protected onQuit() {
+    store.dispatch(quitApplication());
+  }
 
   static forWindows(iconPath: string): AppTray {
     return new WinAppTray(iconPath);
