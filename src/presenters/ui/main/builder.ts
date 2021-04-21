@@ -1,4 +1,6 @@
+/* eslint-disable import/prefer-default-export */
 /* eslint-disable max-classes-per-file */
+
 import {
   app,
   Menu,
@@ -292,7 +294,7 @@ class MenuBuilder {
 
 type AssetResolverFunc = (path: string) => string;
 
-export default class MainWindowBuilder {
+export class MainWindowBuilder {
   assetResolver: AssetResolverFunc;
 
   constructor(assetResolver: AssetResolverFunc) {
@@ -313,7 +315,7 @@ export default class MainWindowBuilder {
 
     // It is a quick solution to access index.html
     // in the same way for both dev and prod.
-    // dev: current - renderers/main -> ../main -> current
+    // dev: current - ui/main -> ../main -> current
     // prod: current - dist -> ../main -> main
     window.loadURL(`file://${__dirname}/../main/index.html`);
 

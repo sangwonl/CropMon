@@ -1,21 +1,18 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable max-classes-per-file */
 /* eslint-disable import/prefer-default-export */
-/* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { Tray, nativeImage, BrowserWindow, Menu } from 'electron';
+import { Tray, nativeImage, Menu } from 'electron';
 
 import { CaptureStatus } from '@core/entities/capture';
 import store, { RootState } from '@presenters/redux/store';
 
 export abstract class AppTray {
-  mainWindow: BrowserWindow;
-
   tray: Tray;
-
   contextMenu: Menu;
 
-  constructor(iconPath: string, mainWindow: BrowserWindow) {
-    this.mainWindow = mainWindow;
+  constructor(iconPath: string) {
     this.tray = new Tray(nativeImage.createFromPath(iconPath));
 
     this.contextMenu = this.buildContextMenu();
@@ -50,12 +47,12 @@ export abstract class AppTray {
   // eslint-disable-next-line class-methods-use-this
   protected onQuit(): void {}
 
-  static forWindows(iconPath: string, mainWindow: BrowserWindow): AppTray {
-    return new WinAppTray(iconPath, mainWindow);
+  static forWindows(iconPath: string): AppTray {
+    return new WinAppTray(iconPath);
   }
 
-  static forMac(iconPath: string, mainWindow: BrowserWindow): AppTray {
-    return new MacAppTray(iconPath, mainWindow);
+  static forMac(iconPath: string): AppTray {
+    return new MacAppTray(iconPath);
   }
 }
 
