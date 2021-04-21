@@ -1,5 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 
+import { isMac } from '@utils/process';
+
 import { AppTray } from '.';
 
 type AssetResolverFunc = (path: string) => string;
@@ -13,8 +15,6 @@ export class AppTrayBuilder {
 
   build(): AppTray {
     const iconPath = this.assetResolver('icon.png');
-    return process.platform === 'darwin'
-      ? AppTray.forMac(iconPath)
-      : AppTray.forWindows(iconPath);
+    return isMac() ? AppTray.forMac(iconPath) : AppTray.forWindows(iconPath);
   }
 }
