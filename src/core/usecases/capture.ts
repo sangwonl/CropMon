@@ -6,12 +6,7 @@ import assert from 'assert';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '@di/types';
 
-import {
-  CaptureStatus,
-  CaptureContext,
-  CaptureOption,
-} from '@core/entities/capture';
-
+import { CaptureStatus, CaptureContext, CaptureOption } from '@core/entities';
 import { GlobalRegistry, ScreenRecorder } from '@core/components';
 
 @injectable()

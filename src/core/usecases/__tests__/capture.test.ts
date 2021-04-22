@@ -2,11 +2,7 @@ import 'reflect-metadata';
 
 import { mock, instance, verify, when } from 'ts-mockito';
 
-import {
-  CaptureMode,
-  CaptureStatus,
-  CaptureContext,
-} from '@core/entities/capture';
+import { CaptureMode, CaptureStatus, CaptureContext } from '@core/entities';
 import { GlobalRegistry, ScreenRecorder } from '@core/components';
 import { CaptureUseCase } from '@core/usecases/capture';
 
