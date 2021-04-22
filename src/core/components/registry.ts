@@ -1,17 +1,28 @@
+/* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable import/prefer-default-export */
 
 import { injectable } from 'inversify';
 import { CaptureContext } from '@core/entities/capture';
+import { Preference } from '@core/entities';
 
 @injectable()
 export class GlobalRegistry {
-  private currentCaptureContext: CaptureContext | undefined;
+  private curCaptureContext: CaptureContext | undefined;
+  private userPreference: Preference | undefined;
 
-  setContext(ctx: CaptureContext) {
-    this.currentCaptureContext = ctx;
+  setCaptureContext(ctx: CaptureContext) {
+    this.curCaptureContext = ctx;
   }
 
-  currentContext(): CaptureContext | undefined {
-    return this.currentCaptureContext;
+  getCaptureContext(): CaptureContext | undefined {
+    return this.curCaptureContext;
+  }
+
+  setUserPreference(pref: Preference) {
+    this.userPreference = pref;
+  }
+
+  getUserPreference(): Preference | undefined {
+    return this.userPreference;
   }
 }

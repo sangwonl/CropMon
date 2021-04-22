@@ -9,7 +9,7 @@ import { CaptureContext, CaptureMode } from '@core/entities/capture';
 
 import { ICaptureContext } from './types';
 import {
-  configuringCaptureParams,
+  configureCaptureParams,
   configuredCaptureParams,
   preparedCaptureContext,
   startingCapture,
@@ -48,7 +48,7 @@ function* handleFinishCapture(action: PayloadAction) {
 
 function* sagaEntry() {
   // eslint-disable-next-line prettier/prettier
-  yield takeLatest(configuringCaptureParams.type, handleConfiguringCaptureParams);
+  yield takeLatest(configureCaptureParams.type, handleConfiguringCaptureParams);
   yield takeLatest(configuredCaptureParams.type, handleConfiguredCaptureParams);
   yield takeLatest(finishCapture.type, handleFinishCapture);
 }

@@ -1,4 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+import { createSlice } from '@reduxjs/toolkit';
 import { IUiState } from './types';
 
 const initialState: IUiState = {
