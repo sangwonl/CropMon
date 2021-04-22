@@ -10,7 +10,7 @@ const slice = createSlice({
   initialState,
   reducers: {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    configuringCaptureParams: (state) => {},
+    configureCaptureParams: (state) => {},
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     configuredCaptureParams: (state) => {},
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -30,7 +30,7 @@ const slice = createSlice({
 });
 
 export const {
-  configuringCaptureParams,
+  configureCaptureParams,
   configuredCaptureParams,
   preparedCaptureContext,
   startingCapture,
