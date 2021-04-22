@@ -6,11 +6,11 @@
 
 import { Tray, nativeImage, Menu } from 'electron';
 
-import { CaptureStatus } from '@core/entities/capture';
+import { CaptureStatus } from '@core/entities';
 import store, { RootState } from '@presenters/redux/store';
 import { openPreference, quitApplication } from '@presenters/redux/ui/slice';
 import {
-  configuringCaptureParams,
+  configureCaptureParams,
   finishCapture,
 } from '@presenters/redux/capture/slice';
 
@@ -42,7 +42,7 @@ export abstract class AppTray {
   }
 
   protected onStartRecording() {
-    store.dispatch(configuringCaptureParams());
+    store.dispatch(configureCaptureParams());
   }
 
   protected onStopRecording() {
