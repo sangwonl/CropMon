@@ -6,7 +6,7 @@ import { CaptureStatus } from '@core/entities';
 import store, { RootState } from '@presenters/redux/store-main';
 
 import {
-  configuringCaptureParams,
+  configureCaptureParams,
   finishCapture,
 } from '@presenters/redux/capture/slice';
 
@@ -26,7 +26,7 @@ export const configureShortcuts = () => {
     if (state.capture.curCaptureCtx?.status === CaptureStatus.IN_PROGRESS) {
       store.dispatch(finishCapture());
     } else {
-      store.dispatch(configuringCaptureParams());
+      store.dispatch(configureCaptureParams());
     }
   };
 

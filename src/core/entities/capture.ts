@@ -36,14 +36,10 @@ export class CaptureContext {
   status: CaptureStatus;
   createdAt: Date;
 
-  private constructor(option: CaptureOption) {
+  constructor(option: CaptureOption) {
     assert(option.mode === CaptureMode.FULLSCREEN);
     this.target = new CaptureTarget(option.mode, option.screenIndex);
     this.status = CaptureStatus.PREPARED;
     this.createdAt = new Date();
-  }
-
-  static create(option: CaptureOption): CaptureContext {
-    return new CaptureContext(option);
   }
 }

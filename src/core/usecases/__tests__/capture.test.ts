@@ -35,36 +35,36 @@ describe('CaptureUseCase', () => {
       expect(context.createdAt).toBeInstanceOf(Date);
       expect(context.target).toBeDefined();
       expect(context.target.mode).toEqual(CaptureMode.FULLSCREEN);
-      verify(mockedGlobalRegistry.setContext(context)).once();
+      verify(mockedGlobalRegistry.setCaptureContext(context)).once();
     });
   });
 
   describe('startCapture', () => {
     it('should get current context from registry and call record with it', () => {
-      const capCtx = CaptureContext.create({
+      const capCtx = new CaptureContext({
         mode: CaptureMode.FULLSCREEN,
         screenIndex: 0,
       });
-      when(mockedGlobalRegistry.currentContext()).thenReturn(capCtx);
+      when(mockedGlobalRegistry.getCaptureContext()).thenReturn(capCtx);
 
       const newCtx = useCase.startCapture();
       expect(newCtx.status).toEqual(CaptureStatus.IN_PROGRESS);
-      verify(mockedGlobalRegistry.currentContext()).once();
+      verify(mockedGlobalRegistry.getCaptureContext()).once();
       verify(mockedScreenRecorder.record(newCtx)).once();
     });
   });
 
   describe('finishCapture', () => {
     it('should call recorder finish method', () => {
-      const capCtx = CaptureContext.create({
+      const capCtx = new CaptureContext({
         mode: CaptureMode.FULLSCREEN,
         screenIndex: 0,
       });
-      when(mockedGlobalRegistry.currentContext()).thenReturn(capCtx);
+      when(mockedGlobalRegistry.getCaptureContext()).thenReturn(capCtx);
 
       const newCtx = useCase.startCapture();
       expect(newCtx.status).toEqual(CaptureStatus.IN_PROGRESS);
-      verify(mockedGlobalRegistry.currentContext()).once();
+      verify(mockedGlobalRegistry.getCaptureContext()).once();
 
       const updatedCtx = useCase.finishCapture();
       expect(updatedCtx.status).toEqual(CaptureStatus.FINISHED);
