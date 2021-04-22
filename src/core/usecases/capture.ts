@@ -17,15 +17,15 @@ export class CaptureUseCase {
   ) {}
 
   public prepareCapture(option: CaptureOption): CaptureContext | never {
-    const newCtx = CaptureContext.create(option);
+    const newCtx = new CaptureContext(option);
 
-    this.globalRegistry.setContext(newCtx);
+    this.globalRegistry.setCaptureContext(newCtx);
 
     return newCtx;
   }
 
   public startCapture(): CaptureContext | never {
-    const curCtx = this.globalRegistry.currentContext();
+    const curCtx = this.globalRegistry.getCaptureContext();
     assert(curCtx !== undefined);
 
     try {
@@ -49,7 +49,7 @@ export class CaptureUseCase {
   }
 
   public finishCapture(): CaptureContext | never {
-    const curCtx = this.globalRegistry.currentContext();
+    const curCtx = this.globalRegistry.getCaptureContext();
     assert(curCtx !== undefined);
 
     try {
