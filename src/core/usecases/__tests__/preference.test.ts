@@ -1,5 +1,5 @@
 /* eslint-disable jest/valid-expect-in-promise */
-/* eslint-disable no-return-await */
+
 import 'reflect-metadata';
 
 import { mock, instance, verify, when, anything, capture } from 'ts-mockito';

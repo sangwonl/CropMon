@@ -5,9 +5,11 @@ import 'reflect-metadata';
 
 import { Container } from 'inversify';
 
-import { GlobalRegistry, ScreenRecorder } from '@core/components';
+import { GlobalRegistry, ScreenRecorder, PreferenceStore } from '@core/components';
 import { CaptureUseCase } from '@core/usecases/capture';
+import { PreferenceUseCase } from '@core/usecases/preference';
 import { ScreenRecorderWindows } from '@infrastructures/components/recorder-win';
+import { PreferenceStoreImpl } from '@infrastructures/components/preference';
 import { UiDirector } from '@presenters/interactor';
 
 import { TYPES } from './types';
@@ -25,7 +27,17 @@ diContainer
   .inSingletonScope();
 
 diContainer
+  .bind<PreferenceStore>(TYPES.PreferenceStore)
+  .to(PreferenceStoreImpl)
+  .inSingletonScope();
+
+diContainer
   .bind<CaptureUseCase>(CaptureUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<PreferenceUseCase>(PreferenceUseCase)
   .toSelf()
   .inSingletonScope();
 
