@@ -7,22 +7,28 @@ import { diContainer } from '@di/container';
 import { PreferenceUseCase } from '@core/usecases/preference';
 import { UiDirector } from '@presenters/interactor';
 
-import { initApplication, willOpenPreference, quitApplication } from './slice';
+import {
+  initApplication,
+  willOpenPreference,
+  didOpenPreference,
+  quitApplication,
+} from './slice';
 
 const uiDirector = diContainer.get(UiDirector);
 const preferenceUseCase = diContainer.get(PreferenceUseCase);
 
-const handleInitApplication = async (action: PayloadAction) => {
+async function handleInitApplication(action: PayloadAction) {
   const preference = await preferenceUseCase.getUserPreference();
-};
+}
 
-const handleOpenPreference = (action: PayloadAction) => {
+function* handleOpenPreference(action: PayloadAction) {
   uiDirector.openPreferenceWindow();
-};
+  yield put(didOpenPreference());
+}
 
-const handleQuitApplication = (action: PayloadAction) => {
+function handleQuitApplication(action: PayloadAction) {
   uiDirector.quitApplication();
-};
+}
 
 function* sagaEntry() {
   // eslint-disable-next-line prettier/prettier

@@ -25,7 +25,7 @@ const slice = createSlice({
 export const {
   initApplication,
   willOpenPreference,
-  didOpenPreference: preferenceOpened,
+  didOpenPreference,
   quitApplication,
 } = slice.actions;
 

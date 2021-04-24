@@ -295,7 +295,7 @@ class MenuBuilder {
 
 type AssetResolverFunc = (path: string) => string;
 
-export class MainWindowBuilder {
+export class PreferenceBuilder {
   assetResolver: AssetResolverFunc;
 
   constructor(assetResolver: AssetResolverFunc) {
@@ -318,7 +318,7 @@ export class MainWindowBuilder {
     // in the same way for both dev and prod.
     // dev: current - ui/main -> ../main -> current
     // prod: current - dist -> ../main -> main
-    window.loadURL(`file://${__dirname}/../main/index.html`);
+    window.loadURL(`file://${__dirname}/../preference/index.html`);
 
     // @TODO: Use 'ready-to-show' event
     //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event

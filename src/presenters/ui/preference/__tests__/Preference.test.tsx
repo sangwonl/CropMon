@@ -7,13 +7,16 @@ import configureStore from 'redux-mock-store';
 
 import { RootState } from '@presenters/redux/store';
 
-import App from '@presenters/ui/main/App';
+import App from '@presenters/ui/preference/Preference';
 
 describe('App', () => {
   const mockStore = configureStore<RootState>();
 
   it('should render', () => {
-    const store = mockStore({ capture: { curCaptureCtx: undefined } });
+    const store = mockStore({
+      ui: { preference: { show: false } },
+      capture: { curCaptureCtx: undefined },
+    });
 
     expect(
       render(
