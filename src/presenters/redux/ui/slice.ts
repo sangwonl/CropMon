@@ -13,13 +13,20 @@ const slice = createSlice({
   name: 'ui',
   initialState,
   reducers: {
-    openPreference: (state) => {
+    initApplication: (state) => {},
+    willOpenPreference: (state) => {},
+    didOpenPreference: (state) => {
       state.preference.show = true;
     },
     quitApplication: (state) => {},
   },
 });
 
-export const { openPreference, quitApplication } = slice.actions;
+export const {
+  initApplication,
+  willOpenPreference,
+  didOpenPreference: preferenceOpened,
+  quitApplication,
+} = slice.actions;
 
 export default slice.reducer;

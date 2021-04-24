@@ -4,7 +4,7 @@
 const isDebugMode = () =>
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
-export const initializeDevTools = async () => {
+const initializeDevTools = async () => {
   if (process.env.NODE_ENV === 'production') {
     const sourceMapSupport = require('source-map-support');
     sourceMapSupport.install();
@@ -27,4 +27,8 @@ export const initializeDevTools = async () => {
       forceDownload
     )
     .catch(console.log);
+};
+
+export const initializeDevEnv = async () => {
+  await initializeDevTools();
 };

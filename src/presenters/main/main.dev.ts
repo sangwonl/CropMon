@@ -15,12 +15,13 @@ import { app } from 'electron';
 
 import { diContainer } from '@di/container';
 import { UiDirector } from '@presenters/interactor';
-import { initializeSaga } from '@presenters/redux/store-main';
+import { initApplication } from '@presenters/redux/ui/slice';
+import store, { initializeSaga } from '@presenters/redux/store-main';
 import { MainWindowBuilder } from '@presenters/ui/main/builder';
 import { AppTrayBuilder } from '@presenters/ui/tray/builder';
 
 import { AppUpdater } from './updater';
-import { initializeDevTools } from './debug';
+import { initializeDevEnv } from './devenv';
 import { assetResolver } from './asset';
 import { configureShortcuts } from './shortcut';
 
@@ -44,6 +45,7 @@ const initializeApp = () => {
   // app.on('activate', () => {
   //   createMainWindow();
   // });
+  store.dispatch(initApplication());
 };
 
 const initializeWindows = () => {
@@ -54,7 +56,7 @@ const initializeWindows = () => {
 };
 
 const start = async () => {
-  await initializeDevTools();
+  await initializeDevEnv();
 
   initializeSaga();
 
