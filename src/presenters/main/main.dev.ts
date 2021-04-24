@@ -17,7 +17,7 @@ import { diContainer } from '@di/container';
 import { UiDirector } from '@presenters/interactor';
 import { initApplication } from '@presenters/redux/ui/slice';
 import store, { initializeSaga } from '@presenters/redux/store-main';
-import { MainWindowBuilder } from '@presenters/ui/main/builder';
+import { PreferenceBuilder } from '@presenters/ui/preference/builder';
 import { AppTrayBuilder } from '@presenters/ui/tray/builder';
 
 import { AppUpdater } from './updater';
@@ -51,7 +51,7 @@ const initializeApp = () => {
 const initializeWindows = () => {
   uiDirector.register(
     new AppTrayBuilder(assetResolver).build(),
-    new MainWindowBuilder(assetResolver).build()
+    new PreferenceBuilder(assetResolver).build()
   );
 };
 

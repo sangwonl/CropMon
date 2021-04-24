@@ -4,11 +4,11 @@ import { Provider } from 'react-redux';
 
 import store from '@presenters/redux/store';
 
-import App from './App';
+import Preference from './Preference';
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <Preference />
   </Provider>,
   document.getElementById('root')
 );
