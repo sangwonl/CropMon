@@ -12,7 +12,7 @@ describe('Entities', () => {
     };
 
     // because nothing is private in js which typescript is transpiled to.
-    const ctx = CaptureContext.create(option);
+    const ctx = new CaptureContext(option);
     const serialized = JSON.parse(JSON.stringify(ctx));
     expect(serialized).toHaveProperty('createdAt');
 

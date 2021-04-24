@@ -8,7 +8,10 @@ import { Tray, nativeImage, Menu } from 'electron';
 
 import { CaptureStatus } from '@core/entities';
 import store, { RootState } from '@presenters/redux/store';
-import { openPreference, quitApplication } from '@presenters/redux/ui/slice';
+import {
+  willOpenPreference,
+  quitApplication,
+} from '@presenters/redux/ui/slice';
 import {
   configureCaptureParams,
   finishCapture,
@@ -50,7 +53,7 @@ export abstract class AppTray {
   }
 
   protected onPreferences() {
-    store.dispatch(openPreference());
+    store.dispatch(willOpenPreference());
   }
 
   protected onQuit() {
