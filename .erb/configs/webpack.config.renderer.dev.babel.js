@@ -42,10 +42,10 @@ export default merge(baseConfig, {
   target: 'electron-renderer',
 
   entry: {
-    'renderer.preference': [
+    'renderer.preferences': [
       'core-js',
       'regenerator-runtime/runtime',
-      require.resolve('../../src/presenters/ui/preference/index.tsx'),
+      require.resolve('../../src/presenters/ui/preferences/index.tsx'),
     ]
   },
 

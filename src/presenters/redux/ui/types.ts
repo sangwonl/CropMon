@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
-export interface IPreference {
+export interface IPreferences {
   show: boolean;
 }
 
 export interface IUiState {
-  preference: IPreference;
+  preferences: IPreferences;
 }
