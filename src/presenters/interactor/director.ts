@@ -12,18 +12,18 @@ import { AppTray } from '@presenters/ui/tray';
 @injectable()
 export class UiDirector {
   private appTray!: AppTray;
-  private mainWindow!: BrowserWindow;
+  private preferencesWindow!: BrowserWindow;
 
   register(tray: AppTray, main: BrowserWindow) {
     this.appTray = tray;
-    this.mainWindow = main;
+    this.preferencesWindow = main;
   }
 
   quitApplication() {
     app.quit();
   }
 
-  openPreferenceWindow() {
-    this.mainWindow.show();
+  openPreferencesWindow() {
+    this.preferencesWindow.show();
   }
 }

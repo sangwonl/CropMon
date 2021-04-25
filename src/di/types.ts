@@ -4,7 +4,7 @@ const TYPES = {
   MediaEncoder: Symbol.for('MediaEncoder'),
   FileManager: Symbol.for('FileManager'),
   ScreenRecorder: Symbol.for('ScreenRecorder'),
-  PreferenceStore: Symbol.for('PreferenceStore'),
+  PreferencesStore: Symbol.for('PreferencesStore'),
 };
 
 export { TYPES };

@@ -4,7 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { IUiState } from './types';
 
 const initialState: IUiState = {
-  preference: {
+  preferences: {
     show: false,
   },
 };
@@ -14,9 +14,9 @@ const slice = createSlice({
   initialState,
   reducers: {
     initApplication: (state) => {},
-    willOpenPreference: (state) => {},
-    didOpenPreference: (state) => {
-      state.preference.show = true;
+    willOpenPreferences: (state) => {},
+    didOpenPreferences: (state) => {
+      state.preferences.show = true;
     },
     quitApplication: (state) => {},
   },
@@ -24,8 +24,8 @@ const slice = createSlice({
 
 export const {
   initApplication,
-  willOpenPreference,
-  didOpenPreference,
+  willOpenPreferences,
+  didOpenPreferences,
   quitApplication,
 } = slice.actions;
 

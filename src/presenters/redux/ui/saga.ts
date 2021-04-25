@@ -4,26 +4,28 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import { put, takeLatest } from 'redux-saga/effects';
 
 import { diContainer } from '@di/container';
-import { PreferenceUseCase } from '@core/usecases/preference';
+import { PreferencesUseCase } from '@core/usecases/preferences';
 import { UiDirector } from '@presenters/interactor';
 
 import {
   initApplication,
-  willOpenPreference,
-  didOpenPreference,
+  willOpenPreferences,
+  didOpenPreferences,
   quitApplication,
 } from './slice';
 
 const uiDirector = diContainer.get(UiDirector);
-const preferenceUseCase = diContainer.get(PreferenceUseCase);
+const preferencesUseCase = diContainer.get(PreferencesUseCase);
 
 async function handleInitApplication(action: PayloadAction) {
-  const preference = await preferenceUseCase.getUserPreference();
+  const prefs = await preferencesUseCase.getUserPreferences();
+
+  // change ui preference state
 }
 
-function* handleOpenPreference(action: PayloadAction) {
-  uiDirector.openPreferenceWindow();
-  yield put(didOpenPreference());
+function* handleOpenPreferences(action: PayloadAction) {
+  uiDirector.openPreferencesWindow();
+  yield put(didOpenPreferences());
 }
 
 function handleQuitApplication(action: PayloadAction) {
@@ -33,7 +35,7 @@ function handleQuitApplication(action: PayloadAction) {
 function* sagaEntry() {
   // eslint-disable-next-line prettier/prettier
   yield takeLatest(initApplication.type, handleInitApplication);
-  yield takeLatest(willOpenPreference.type, handleOpenPreference);
+  yield takeLatest(willOpenPreferences.type, handleOpenPreferences);
   yield takeLatest(quitApplication.type, handleQuitApplication);
 }
 
