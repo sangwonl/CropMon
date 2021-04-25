@@ -6,22 +6,21 @@ import { render } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 
 import { RootState } from '@presenters/redux/store';
+import BasicPreferences from '@presenters/ui/preferences/BasicPreferences';
 
-import App from '@presenters/ui/preference/Preference';
-
-describe('App', () => {
+describe('BasicPreferences', () => {
   const mockStore = configureStore<RootState>();
 
   it('should render', () => {
     const store = mockStore({
-      ui: { preference: { show: false } },
+      ui: { preferences: { show: false } },
       capture: { curCaptureCtx: undefined },
     });
 
     expect(
       render(
         <Provider store={store}>
-          <App />
+          <BasicPreferences />
         </Provider>
       )
     ).toBeTruthy();

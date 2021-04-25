@@ -3,12 +3,12 @@
 
 import { injectable } from 'inversify';
 import { CaptureContext } from '@core/entities/capture';
-import { Preference } from '@core/entities';
+import { Preferences } from '@core/entities';
 
 @injectable()
 export class GlobalRegistry {
   private curCaptureContext: CaptureContext | undefined;
-  private userPreference: Preference | undefined;
+  private userPreferences: Preferences | undefined;
 
   setCaptureContext(ctx: CaptureContext) {
     this.curCaptureContext = ctx;
@@ -18,11 +18,11 @@ export class GlobalRegistry {
     return this.curCaptureContext;
   }
 
-  setUserPreference(pref: Preference) {
-    this.userPreference = pref;
+  setUserPreferences(pref: Preferences) {
+    this.userPreferences = pref;
   }
 
-  getUserPreference(): Preference | undefined {
-    return this.userPreference;
+  getUserPreferences(): Preferences | undefined {
+    return this.userPreferences;
   }
 }

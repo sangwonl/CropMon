@@ -1,2 +1,2 @@
 export * from './capture';
-export * from './preference';
+export * from './preferences';
