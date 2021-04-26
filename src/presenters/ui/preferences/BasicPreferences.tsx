@@ -1,17 +1,55 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+
+import {
+  Grid,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  InputLabel,
+} from '@material-ui/core';
 
 import { RootState } from '@presenters/redux/store';
+import { IPreferences } from '@presenters/redux/ui/types';
+import {
+  toggleOpenRecordHomeDir,
+  willChooseRecordHomeDir,
+} from '@presenters/redux/ui/slice';
 
 import './BasicPreferences.css';
 
 export default function BasicPreferences() {
-  // eslint-disable-next-line @typescript-eslint/no-shadow
-  const state = useSelector((state: RootState) => state);
+  const dispatch = useDispatch();
+
+  const prefsState: IPreferences = useSelector(
+    (state: RootState) => state.ui.preferences
+  );
 
   return (
-    <div>
-      <p>{JSON.stringify(state, null, 2)}</p>
-    </div>
+    <Grid>
+      <InputLabel>{prefsState.recordHomeDir}</InputLabel>
+      <Button
+        color="secondary"
+        variant="contained"
+        onClick={() => {
+          dispatch(willChooseRecordHomeDir());
+        }}
+      >
+        ...
+      </Button>
+      <FormControlLabel
+        control={
+          <Checkbox
+            name="open-record-home-when-completed"
+            checked={prefsState.shouldOpenRecordHomeDir}
+            onChange={() => {
+              dispatch(toggleOpenRecordHomeDir());
+            }}
+            color="primary"
+          />
+        }
+        label="Open the folder when recording complete"
+      />
+    </Grid>
   );
 }

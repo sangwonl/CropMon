@@ -9,6 +9,7 @@ import {
   configureCaptureParams,
   finishCapture,
 } from '@presenters/redux/capture/slice';
+import { willOpenPreferences } from '@presenters/redux/ui/slice';
 
 export const configureShortcuts = () => {
   interface ShortcutHandler {
@@ -34,6 +35,16 @@ export const configureShortcuts = () => {
     win32: [{ shortcut: 'Super+Shift+R', handler: handleCaptureShortcut }],
     darwin: [{ shortcut: 'Control+Shift+6', handler: handleCaptureShortcut }],
   };
+
+  // FIXME: it's just for dev convenient
+  if (process.env.NODE_ENV === 'development') {
+    platformShortcuts.win32.push({
+      shortcut: 'Ctrl+Alt+E',
+      handler: () => {
+        store.dispatch(willOpenPreferences());
+      },
+    });
+  }
 
   if (!Object.keys(platformShortcuts).includes(process.platform)) {
     throw new Error('Not supported platform.');
