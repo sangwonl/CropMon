@@ -4,7 +4,7 @@
 
 import 'reflect-metadata';
 
-import { app, BrowserWindow } from 'electron';
+import { app, dialog, BrowserWindow } from 'electron';
 import { injectable } from 'inversify';
 
 import { AppTray } from '@presenters/ui/tray';
@@ -25,5 +25,17 @@ export class UiDirector {
 
   openPreferencesWindow() {
     this.preferencesWindow.show();
+  }
+
+  closePreferencesWindow() {
+    this.preferencesWindow.hide();
+  }
+
+  async openDialogForRecordHomeDir(): Promise<string> {
+    const { filePaths } = await dialog.showOpenDialog(this.preferencesWindow, {
+      properties: ['openDirectory'],
+    });
+
+    return filePaths.length > 0 ? filePaths[0] : '';
   }
 }

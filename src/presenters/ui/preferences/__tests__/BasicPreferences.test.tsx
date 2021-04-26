@@ -13,7 +13,13 @@ describe('BasicPreferences', () => {
 
   it('should render', () => {
     const store = mockStore({
-      ui: { preferences: { show: false } },
+      ui: {
+        preferences: {
+          show: false,
+          recordHomeDir: '',
+          shouldOpenRecordHomeDir: true,
+        },
+      },
       capture: { curCaptureCtx: undefined },
     });
 

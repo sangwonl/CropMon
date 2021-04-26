@@ -23,8 +23,8 @@ export class PreferencesBuilder {
       resizable: false,
       minimizable: false,
       maximizable: false,
-      width: 400,
-      height: 640,
+      width: 640,
+      height: 320,
       icon: this.assetResolver('icon.png'),
       webPreferences: {
         nodeIntegration: true,
