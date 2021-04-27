@@ -13,7 +13,8 @@ import { RootState } from '@presenters/redux/store';
 import { IPreferences } from '@presenters/redux/ui/types';
 import {
   toggleOpenRecordHomeDir,
-  willChooseRecordHomeDir,
+  chooseRecordHomeDir,
+  closePreferences,
 } from '@presenters/redux/ui/slice';
 
 import './BasicPreferences.css';
@@ -22,7 +23,7 @@ export default function BasicPreferences() {
   const dispatch = useDispatch();
 
   const prefsState: IPreferences = useSelector(
-    (state: RootState) => state.ui.preferences
+    (state: RootState) => state.ui.preferencesWindow.preferences
   );
 
   return (
@@ -32,7 +33,7 @@ export default function BasicPreferences() {
         color="secondary"
         variant="contained"
         onClick={() => {
-          dispatch(willChooseRecordHomeDir());
+          dispatch(chooseRecordHomeDir());
         }}
       >
         ...
@@ -50,6 +51,15 @@ export default function BasicPreferences() {
         }
         label="Open the folder when recording complete"
       />
+      <Button
+        color="primary"
+        variant="contained"
+        onClick={() => {
+          dispatch(closePreferences(true));
+        }}
+      >
+        ...
+      </Button>
     </Grid>
   );
 }
