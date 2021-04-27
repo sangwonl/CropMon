@@ -15,7 +15,7 @@ import { app } from 'electron';
 
 import { diContainer } from '@di/container';
 import { UiDirector } from '@presenters/interactor';
-import { initApplication } from '@presenters/redux/ui/slice';
+import { loadPreferences } from '@presenters/redux/ui/slice';
 import store, { initializeSaga } from '@presenters/redux/store-main';
 import { PreferencesBuilder } from '@presenters/ui/preferences/builder';
 import { AppTrayBuilder } from '@presenters/ui/tray/builder';
@@ -45,7 +45,7 @@ const initializeApp = () => {
   // app.on('activate', () => {
   //   createMainWindow();
   // });
-  store.dispatch(initApplication());
+  store.dispatch(loadPreferences());
 };
 
 const initializeWindows = () => {

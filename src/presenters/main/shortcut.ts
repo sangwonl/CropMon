@@ -9,7 +9,7 @@ import {
   configureCaptureParams,
   finishCapture,
 } from '@presenters/redux/capture/slice';
-import { willOpenPreferences } from '@presenters/redux/ui/slice';
+import { openPreferences } from '@presenters/redux/ui/slice';
 
 export const configureShortcuts = () => {
   interface ShortcutHandler {
@@ -41,7 +41,7 @@ export const configureShortcuts = () => {
     platformShortcuts.win32.push({
       shortcut: 'Ctrl+Alt+E',
       handler: () => {
-        store.dispatch(willOpenPreferences());
+        store.dispatch(openPreferences());
       },
     });
   }
