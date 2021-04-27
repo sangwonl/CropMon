@@ -6,7 +6,7 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
-  InputLabel,
+  TextField,
 } from '@material-ui/core';
 
 import { RootState } from '@presenters/redux/store';
@@ -27,39 +27,87 @@ export default function BasicPreferences() {
   );
 
   return (
-    <Grid>
-      <InputLabel>{prefsState.recordHomeDir}</InputLabel>
-      <Button
-        color="secondary"
-        variant="contained"
-        onClick={() => {
-          dispatch(chooseRecordHomeDir());
+    <Grid
+      container
+      direction="column"
+      justify="flex-start"
+      alignItems="flex-start"
+      style={{ padding: 20 }}
+    >
+      <Grid container direction="row" justify="flex-start" alignItems="stretch">
+        <TextField
+          label="Record files to:"
+          variant="outlined"
+          value={prefsState.recordHomeDir}
+          InputProps={{
+            readOnly: true,
+          }}
+          style={{
+            flexGrow: 1,
+            marginRight: 10,
+          }}
+        />
+        <Button
+          variant="outlined"
+          onClick={() => {
+            dispatch(chooseRecordHomeDir());
+          }}
+        >
+          ...
+        </Button>
+      </Grid>
+      <Grid>
+        <FormControlLabel
+          control={
+            <Checkbox
+              name="open-record-home-when-completed"
+              checked={prefsState.shouldOpenRecordHomeDir}
+              onChange={() => {
+                dispatch(toggleOpenRecordHomeDir());
+              }}
+              color="primary"
+            />
+          }
+          label="Open the folder when recording complete"
+        />
+      </Grid>
+      <Grid
+        container
+        direction="row"
+        justify="flex-end"
+        alignItems="stretch"
+        style={{
+          marginTop: 30,
+          height: 44,
         }}
       >
-        ...
-      </Button>
-      <FormControlLabel
-        control={
-          <Checkbox
-            name="open-record-home-when-completed"
-            checked={prefsState.shouldOpenRecordHomeDir}
-            onChange={() => {
-              dispatch(toggleOpenRecordHomeDir());
-            }}
-            color="primary"
-          />
-        }
-        label="Open the folder when recording complete"
-      />
-      <Button
-        color="primary"
-        variant="contained"
-        onClick={() => {
-          dispatch(closePreferences(true));
-        }}
-      >
-        ...
-      </Button>
+        <Button
+          color="secondary"
+          variant="contained"
+          style={{
+            width: 80,
+            marginLeft: 10,
+          }}
+          onClick={() => {
+            dispatch(closePreferences(true));
+          }}
+        >
+          Save
+        </Button>
+        <Button
+          color="primary"
+          variant="contained"
+          style={{
+            width: 80,
+            marginLeft: 10,
+          }}
+          onClick={() => {
+            dispatch(closePreferences());
+          }}
+        >
+          Cancel
+        </Button>
+      </Grid>
     </Grid>
   );
 }

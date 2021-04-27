@@ -2,6 +2,7 @@
 /* eslint-disable max-classes-per-file */
 
 import { shell, BrowserWindow } from 'electron';
+import localShortcut from 'electron-localshortcut';
 
 import store from '@presenters/redux/store';
 import { closePreferences } from '@presenters/redux/ui/slice';
@@ -24,7 +25,7 @@ export class PreferencesBuilder {
       minimizable: false,
       maximizable: false,
       width: 640,
-      height: 320,
+      height: 250,
       icon: this.assetResolver('icon.png'),
       webPreferences: {
         nodeIntegration: true,
@@ -62,6 +63,10 @@ export class PreferencesBuilder {
     window.webContents.on('new-window', (event, url) => {
       event.preventDefault();
       shell.openExternal(url);
+    });
+
+    localShortcut.register(window, 'Escape', () => {
+      store.dispatch(closePreferences());
     });
 
     return window;
