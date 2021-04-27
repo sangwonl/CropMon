@@ -4,7 +4,7 @@
 import { shell, BrowserWindow } from 'electron';
 
 import store from '@presenters/redux/store';
-import { willClosePreferences } from '@presenters/redux/ui/slice';
+import { closePreferences } from '@presenters/redux/ui/slice';
 
 type AssetResolverFunc = (path: string) => string;
 
@@ -55,7 +55,7 @@ export class PreferencesBuilder {
 
     window.on('close', (event) => {
       event.preventDefault();
-      store.dispatch(willClosePreferences());
+      store.dispatch(closePreferences());
     });
 
     // Open urls in the user's browser

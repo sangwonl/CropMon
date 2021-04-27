@@ -1,13 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IPayloadChooseRecordHomeDir, IPreferences, IUiState } from './types';
+import {
+  IChooseRecordHomeDirPayload,
+  IClosePreferencesPayload,
+  IPreferences,
+  IUiState,
+} from './types';
 
 const initialState: IUiState = {
-  preferences: {
+  preferencesWindow: {
     show: false,
-    recordHomeDir: '',
-    shouldOpenRecordHomeDir: true,
+    preferences: {
+      recordHomeDir: '',
+      shouldOpenRecordHomeDir: true,
+    },
   },
 };
 
@@ -15,44 +22,48 @@ const slice = createSlice({
   name: 'ui',
   initialState,
   reducers: {
-    initApplication: (state) => {},
+    loadPreferences: (state) => {},
     didLoadPreferences: (state, action: PayloadAction<IPreferences>) => {
-      const { recordHomeDir, shouldOpenRecordHomeDir } = action.payload;
-      state.preferences.recordHomeDir = recordHomeDir;
-      state.preferences.shouldOpenRecordHomeDir = shouldOpenRecordHomeDir;
+      state.preferencesWindow.preferences = action.payload;
     },
-    willOpenPreferences: (state) => {},
+    openPreferences: (state) => {},
     didOpenPreferences: (state) => {
-      state.preferences.show = true;
+      state.preferencesWindow.show = true;
     },
-    willClosePreferences: (state) => {},
+    closePreferences: {
+      prepare: (shouldSave?: boolean) => ({
+        payload: { shouldSave: shouldSave || false },
+      }),
+      reducer: (state, action: PayloadAction<IClosePreferencesPayload>) => {},
+    },
     didClosePreferences: (state) => {
-      state.preferences.show = false;
+      state.preferencesWindow.show = false;
     },
-    willChooseRecordHomeDir: (state) => {},
+    chooseRecordHomeDir: (state) => {},
     didChooseRecordHomeDir: (
       state,
-      action: PayloadAction<IPayloadChooseRecordHomeDir>
+      action: PayloadAction<IChooseRecordHomeDirPayload>
     ) => {
-      state.preferences.recordHomeDir = action.payload.recordHomeDir;
+      state.preferencesWindow.preferences.recordHomeDir =
+        action.payload.recordHomeDir;
     },
     toggleOpenRecordHomeDir: (state) => {
-      const { shouldOpenRecordHomeDir } = state.preferences;
-      state.preferences.shouldOpenRecordHomeDir = !shouldOpenRecordHomeDir;
+      const { shouldOpenRecordHomeDir } = state.preferencesWindow.preferences;
+      state.preferencesWindow.preferences.shouldOpenRecordHomeDir = !shouldOpenRecordHomeDir;
     },
     quitApplication: (state) => {},
   },
 });
 
 export const {
-  initApplication,
+  loadPreferences,
   didLoadPreferences,
-  willOpenPreferences,
+  openPreferences,
   didOpenPreferences,
-  willClosePreferences,
+  closePreferences,
   didClosePreferences,
   toggleOpenRecordHomeDir,
-  willChooseRecordHomeDir,
+  chooseRecordHomeDir,
   didChooseRecordHomeDir,
   quitApplication,
 } = slice.actions;

@@ -1,15 +1,23 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
 export interface IPreferences {
-  show: boolean;
   recordHomeDir: string;
   shouldOpenRecordHomeDir: boolean;
 }
 
-export interface IUiState {
+export interface IPreferencesWindow {
+  show: boolean;
   preferences: IPreferences;
 }
 
-export interface IPayloadChooseRecordHomeDir {
+export interface IUiState {
+  preferencesWindow: IPreferencesWindow;
+}
+
+export interface IChooseRecordHomeDirPayload {
   recordHomeDir: string;
+}
+
+export interface IClosePreferencesPayload {
+  shouldSave: boolean;
 }
