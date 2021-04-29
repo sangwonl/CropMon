@@ -1,0 +1,14 @@
+body {
+  width: 640px;
+  height: 480px;
+  overflow: hidden;
+  margin: 0px;
+  background-color: transparent;
+}
+
+body div:first-child {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: transparent;
+}

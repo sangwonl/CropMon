@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ICaptureState, ICaptureContext } from './types';
 
@@ -9,20 +11,15 @@ const slice = createSlice({
   name: 'capture',
   initialState,
   reducers: {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    configureCaptureParams: (state) => {},
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    configuredCaptureParams: (state) => {},
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    configureCaptureParams: (_state) => {},
+    configuredCaptureParams: (_state) => {},
     preparedCaptureContext: (state, action: PayloadAction<ICaptureContext>) => {
       state.curCaptureCtx = action.payload;
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     startingCapture: (state, action: PayloadAction<ICaptureContext>) => {
       state.curCaptureCtx = action.payload;
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    finishCapture: (state) => {},
+    finishCapture: (_state) => {},
     finishedCapture: (state, action: PayloadAction<ICaptureContext>) => {
       state.curCaptureCtx = action.payload;
     },

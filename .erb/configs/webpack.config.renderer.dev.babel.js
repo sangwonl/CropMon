@@ -46,6 +46,11 @@ export default merge(baseConfig, {
       'core-js',
       'regenerator-runtime/runtime',
       require.resolve('../../src/presenters/ui/preferences/index.tsx'),
+    ],
+    'renderer.overlays': [
+      'core-js',
+      'regenerator-runtime/runtime',
+      require.resolve('../../src/presenters/ui/overlays/index.tsx'),
     ]
   },
 

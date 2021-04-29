@@ -4,7 +4,7 @@
 
 import 'reflect-metadata';
 
-import { app, dialog, BrowserWindow } from 'electron';
+import { dialog, BrowserWindow } from 'electron';
 import { injectable } from 'inversify';
 
 import { AppTray } from '@presenters/ui/tray';
@@ -13,14 +13,16 @@ import { AppTray } from '@presenters/ui/tray';
 export class UiDirector {
   private appTray!: AppTray;
   private preferencesWindow!: BrowserWindow;
+  private overlaysWindow!: BrowserWindow;
 
-  register(tray: AppTray, main: BrowserWindow) {
+  register(tray: AppTray, preferences: BrowserWindow, overlays: BrowserWindow) {
     this.appTray = tray;
-    this.preferencesWindow = main;
+    this.preferencesWindow = preferences;
+    this.overlaysWindow = overlays;
   }
 
   quitApplication() {
-    app.quit();
+    process.exit();
   }
 
   openPreferencesWindow() {

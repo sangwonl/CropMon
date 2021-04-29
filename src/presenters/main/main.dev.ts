@@ -17,8 +17,9 @@ import { diContainer } from '@di/container';
 import { UiDirector } from '@presenters/interactor';
 import { loadPreferences } from '@presenters/redux/ui/slice';
 import store, { initializeSaga } from '@presenters/redux/store-main';
-import { PreferencesBuilder } from '@presenters/ui/preferences/builder';
 import { AppTrayBuilder } from '@presenters/ui/tray/builder';
+import { PreferencesBuilder } from '@presenters/ui/preferences/builder';
+import { OverlaysBuilder } from '@presenters/ui/overlays/builder';
 
 import { AppUpdater } from './updater';
 import { initializeDevEnv } from './devenv';
@@ -45,13 +46,15 @@ const initializeApp = () => {
   // app.on('activate', () => {
   //   createMainWindow();
   // });
+
   store.dispatch(loadPreferences());
 };
 
 const initializeWindows = () => {
   uiDirector.register(
     new AppTrayBuilder(assetResolver).build(),
-    new PreferencesBuilder(assetResolver).build()
+    new PreferencesBuilder(assetResolver).build(),
+    new OverlaysBuilder(assetResolver).build()
   );
 };
 
