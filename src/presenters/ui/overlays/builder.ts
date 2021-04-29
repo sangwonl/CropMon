@@ -9,7 +9,7 @@ import { closePreferences } from '@presenters/redux/ui/slice';
 
 type AssetResolverFunc = (path: string) => string;
 
-export class PreferencesBuilder {
+export class OverlaysBuilder {
   assetResolver: AssetResolverFunc;
 
   constructor(assetResolver: AssetResolverFunc) {
@@ -19,27 +19,26 @@ export class PreferencesBuilder {
   // eslint-disable-next-line class-methods-use-this
   build(): BrowserWindow {
     const window = new BrowserWindow({
-      show: false,
-      frame: true,
+      show: true,
+      frame: false,
       resizable: false,
       minimizable: false,
       maximizable: false,
       width: 640,
-      height: 250,
-      icon: this.assetResolver('icon.png'),
+      height: 480,
+      transparent: true,
       webPreferences: {
         nodeIntegration: true,
       },
     });
 
-    window.removeMenu();
+    window.setAlwaysOnTop(true, 'floating');
 
     // It is a quick solution to access index.html
     // in the same way for both dev and prod.
     // dev: current - ui/main -> ../main -> current
     // prod: current - dist -> ../main -> main
-    // dev
-    window.loadURL(`file://${__dirname}/../preferences/index.html`);
+    window.loadURL(`file://${__dirname}/../overlays/index.html`);
 
     // @TODO: Use 'ready-to-show' event
     //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event

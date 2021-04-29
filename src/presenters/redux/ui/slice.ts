@@ -22,24 +22,24 @@ const slice = createSlice({
   name: 'ui',
   initialState,
   reducers: {
-    loadPreferences: (state) => {},
+    loadPreferences: (_state) => {},
     didLoadPreferences: (state, action: PayloadAction<IPreferences>) => {
       state.preferencesWindow.preferences = action.payload;
     },
-    openPreferences: (state) => {},
+    openPreferences: (_state) => {},
     didOpenPreferences: (state) => {
       state.preferencesWindow.show = true;
     },
     closePreferences: {
+      reducer: (_state, _action: PayloadAction<IClosePreferencesPayload>) => {},
       prepare: (shouldSave?: boolean) => ({
         payload: { shouldSave: shouldSave || false },
       }),
-      reducer: (state, action: PayloadAction<IClosePreferencesPayload>) => {},
     },
     didClosePreferences: (state) => {
       state.preferencesWindow.show = false;
     },
-    chooseRecordHomeDir: (state) => {},
+    chooseRecordHomeDir: (_state) => {},
     didChooseRecordHomeDir: (
       state,
       action: PayloadAction<IChooseRecordHomeDirPayload>
@@ -51,7 +51,7 @@ const slice = createSlice({
       const { shouldOpenRecordHomeDir } = state.preferencesWindow.preferences;
       state.preferencesWindow.preferences.shouldOpenRecordHomeDir = !shouldOpenRecordHomeDir;
     },
-    quitApplication: (state) => {},
+    quitApplication: (_state) => {},
   },
 });
 

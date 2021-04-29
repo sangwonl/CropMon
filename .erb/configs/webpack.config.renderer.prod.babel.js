@@ -28,10 +28,15 @@ export default merge(baseConfig, {
   target: 'electron-renderer',
 
   entry: {
-    'renderer.main': [
+    'renderer.preferences': [
       'core-js',
       'regenerator-runtime/runtime',
       path.join(__dirname, '../../src/presenters/ui/preferences/index.tsx'),
+    ],
+    'renderer.overlays': [
+      'core-js',
+      'regenerator-runtime/runtime',
+      path.join(__dirname, '../../src/presenters/ui/overlays/index.tsx'),
     ]
   },
 
@@ -152,7 +157,7 @@ export default merge(baseConfig, {
     }),
 
     new MiniCssExtractPlugin({
-      filename: 'style.css',
+      filename: '[name].style.css',
     }),
 
     new BundleAnalyzerPlugin({
