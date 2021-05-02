@@ -5,6 +5,7 @@ const TYPES = {
   FileManager: Symbol.for('FileManager'),
   ScreenRecorder: Symbol.for('ScreenRecorder'),
   PreferencesStore: Symbol.for('PreferencesStore'),
+  UiDirector: Symbol.for('UiDirector'),
 };
 
 export { TYPES };

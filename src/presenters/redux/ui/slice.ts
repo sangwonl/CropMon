@@ -4,7 +4,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   IChooseRecordHomeDirPayload,
   IClosePreferencesPayload,
+  IOverlaysWindows,
   IPreferences,
+  IScreenInfo,
   IUiState,
 } from './types';
 
@@ -16,6 +18,7 @@ const initialState: IUiState = {
       shouldOpenRecordHomeDir: true,
     },
   },
+  overlaysWindows: {},
 };
 
 const slice = createSlice({
@@ -51,6 +54,17 @@ const slice = createSlice({
       const { shouldOpenRecordHomeDir } = state.preferencesWindow.preferences;
       state.preferencesWindow.preferences.shouldOpenRecordHomeDir = !shouldOpenRecordHomeDir;
     },
+    enableCaptureSelection: (_state) => {},
+    didEnableCaptureSelection: (
+      state,
+      action: PayloadAction<Array<IScreenInfo>>
+    ) => {
+      const wins: IOverlaysWindows = {};
+      action.payload.forEach((screenInfo) => {
+        wins[screenInfo.id] = { show: true, screenInfo };
+      });
+      state.overlaysWindows = wins;
+    },
     quitApplication: (_state) => {},
   },
 });
@@ -65,6 +79,8 @@ export const {
   toggleOpenRecordHomeDir,
   chooseRecordHomeDir,
   didChooseRecordHomeDir,
+  enableCaptureSelection,
+  didEnableCaptureSelection,
   quitApplication,
 } = slice.actions;
 

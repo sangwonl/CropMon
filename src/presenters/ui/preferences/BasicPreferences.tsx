@@ -1,3 +1,5 @@
+/* eslint-disable import/prefer-default-export */
+
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -19,7 +21,7 @@ import {
 
 import './BasicPreferences.css';
 
-export default function BasicPreferences() {
+export const BasicPreferences = () => {
   const dispatch = useDispatch();
 
   const prefsState: IPreferences = useSelector(
@@ -110,4 +112,4 @@ export default function BasicPreferences() {
       </Grid>
     </Grid>
   );
-}
+};

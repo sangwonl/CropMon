@@ -11,6 +11,7 @@ import { PreferencesUseCase } from '@core/usecases/preferences';
 import { ScreenRecorderWindows } from '@infrastructures/components/recorder-win';
 import { PreferencesStoreImpl } from '@infrastructures/components/preferences';
 import { UiDirector } from '@presenters/interactor';
+import { UiDirectorWindows } from '@presenters/interactor/director-win';
 
 import { TYPES } from './types';
 
@@ -42,8 +43,8 @@ diContainer
   .inSingletonScope();
 
 diContainer
-  .bind<UiDirector>(UiDirector)
-  .toSelf()
+  .bind<UiDirector>(TYPES.UiDirector)
+  .to(UiDirectorWindows)
   .inSingletonScope();
 
 export { diContainer };

@@ -10,3 +10,5 @@ const RESOURCES_PATH = app.isPackaged
 export const assetResolver = (...paths: string[]): string => {
   return path.join(RESOURCES_PATH, ...paths);
 };
+
+export type AssetResolverFunc = (path: string) => string;
