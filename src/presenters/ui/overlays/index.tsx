@@ -4,12 +4,11 @@ import { Provider } from 'react-redux';
 
 import store from '@presenters/redux/store';
 
-import './Overlays.css';
-import AreaSelection from './AreaSelection';
+import { Cover } from './Cover';
 
 ReactDOM.render(
   <Provider store={store}>
-    <AreaSelection />
+    <Cover />
   </Provider>,
   document.getElementById('root')
 );

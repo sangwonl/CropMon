@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 import store from '@presenters/redux/store';
 
-import BasicPreferences from './BasicPreferences';
+import { BasicPreferences } from './BasicPreferences';
 
 ReactDOM.render(
   <Provider store={store}>

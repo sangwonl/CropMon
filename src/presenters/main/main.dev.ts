@@ -13,20 +13,18 @@ import 'regenerator-runtime/runtime';
 
 import { app } from 'electron';
 
+import { TYPES } from '@di/types';
 import { diContainer } from '@di/container';
 import { UiDirector } from '@presenters/interactor';
 import { loadPreferences } from '@presenters/redux/ui/slice';
 import store, { initializeSaga } from '@presenters/redux/store-main';
-import { AppTrayBuilder } from '@presenters/ui/tray/builder';
-import { PreferencesBuilder } from '@presenters/ui/preferences/builder';
-import { OverlaysBuilder } from '@presenters/ui/overlays/builder';
 
+import { assetResolver } from '../common/asset';
 import { AppUpdater } from './updater';
 import { initializeDevEnv } from './devenv';
-import { assetResolver } from './asset';
 import { configureShortcuts } from './shortcut';
 
-const uiDirector = diContainer.get(UiDirector);
+const uiDirector = diContainer.get<UiDirector>(TYPES.UiDirector);
 
 const initializeApp = () => {
   // Remove this if your app does not use auto updates
@@ -51,11 +49,7 @@ const initializeApp = () => {
 };
 
 const initializeWindows = () => {
-  uiDirector.register(
-    new AppTrayBuilder(assetResolver).build(),
-    new PreferencesBuilder(assetResolver).build(),
-    new OverlaysBuilder(assetResolver).build()
-  );
+  uiDirector.intialize(assetResolver);
 };
 
 const start = async () => {

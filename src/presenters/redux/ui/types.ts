@@ -10,8 +10,26 @@ export interface IPreferencesWindow {
   preferences: IPreferences;
 }
 
+export interface IScreenInfo {
+  id: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface IOverlaysWindow {
+  show: boolean;
+  screenInfo: IScreenInfo;
+}
+
+export interface IOverlaysWindows {
+  [screenId: number]: IOverlaysWindow;
+}
+
 export interface IUiState {
   preferencesWindow: IPreferencesWindow;
+  overlaysWindows: IOverlaysWindows;
 }
 
 export interface IChooseRecordHomeDirPayload {

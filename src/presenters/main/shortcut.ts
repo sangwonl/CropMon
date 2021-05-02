@@ -5,11 +5,11 @@ import { globalShortcut } from 'electron';
 import { CaptureStatus } from '@core/entities';
 import store, { RootState } from '@presenters/redux/store-main';
 
+import { finishCapture } from '@presenters/redux/capture/slice';
 import {
-  configureCaptureParams,
-  finishCapture,
-} from '@presenters/redux/capture/slice';
-import { openPreferences } from '@presenters/redux/ui/slice';
+  openPreferences,
+  enableCaptureSelection,
+} from '@presenters/redux/ui/slice';
 
 export const configureShortcuts = () => {
   interface ShortcutHandler {
@@ -27,7 +27,7 @@ export const configureShortcuts = () => {
     if (state.capture.curCaptureCtx?.status === CaptureStatus.IN_PROGRESS) {
       store.dispatch(finishCapture());
     } else {
-      store.dispatch(configureCaptureParams());
+      store.dispatch(enableCaptureSelection());
     }
   };
 

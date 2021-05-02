@@ -2,12 +2,8 @@
 /* eslint-disable max-classes-per-file */
 
 import { BrowserWindow } from 'electron';
-import localShortcut from 'electron-localshortcut';
 
-import store from '@presenters/redux/store';
-import { closePreferences } from '@presenters/redux/ui/slice';
-
-type AssetResolverFunc = (path: string) => string;
+import { AssetResolverFunc } from '@presenters/common/asset';
 
 export class OverlaysBuilder {
   assetResolver: AssetResolverFunc;
@@ -19,16 +15,17 @@ export class OverlaysBuilder {
   // eslint-disable-next-line class-methods-use-this
   build(): BrowserWindow {
     const window = new BrowserWindow({
-      show: true,
+      show: false,
       frame: false,
       resizable: false,
+      focusable: false,
+      skipTaskbar: true,
       minimizable: false,
       maximizable: false,
-      width: 640,
-      height: 480,
       transparent: true,
       webPreferences: {
         nodeIntegration: true,
+        enableRemoteModule: true,
       },
     });
 
@@ -53,15 +50,6 @@ export class OverlaysBuilder {
     //     window.focus();
     //   }
     // });
-
-    window.on('close', (event) => {
-      event.preventDefault();
-      store.dispatch(closePreferences());
-    });
-
-    localShortcut.register(window, 'Escape', () => {
-      store.dispatch(closePreferences());
-    });
 
     return window;
   }

@@ -4,10 +4,9 @@
 import { BrowserWindow } from 'electron';
 import localShortcut from 'electron-localshortcut';
 
-import store from '@presenters/redux/store';
+import { AssetResolverFunc } from '@presenters/common/asset';
 import { closePreferences } from '@presenters/redux/ui/slice';
-
-type AssetResolverFunc = (path: string) => string;
+import store from '@presenters/redux/store';
 
 export class PreferencesBuilder {
   assetResolver: AssetResolverFunc;

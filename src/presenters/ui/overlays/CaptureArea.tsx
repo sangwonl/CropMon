@@ -1,9 +1,11 @@
+/* eslint-disable import/prefer-default-export */
+
 import React from 'react';
 import { rgba } from 'polished';
 
-import './AreaSelection.css';
+import './CaptureArea.css';
 
-export default function AreaSelection() {
+export const CaptureArea = () => {
   return (
     <div
       style={{
@@ -16,4 +18,4 @@ export default function AreaSelection() {
       Hello
     </div>
   );
-}
+};
