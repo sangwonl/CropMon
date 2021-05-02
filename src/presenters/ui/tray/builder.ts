@@ -1,10 +1,9 @@
 /* eslint-disable import/prefer-default-export */
 
+import { AssetResolverFunc } from '@presenters/common/asset';
 import { isMac } from '@utils/process';
 
 import { AppTray } from '.';
-
-type AssetResolverFunc = (path: string) => string;
 
 export class AppTrayBuilder {
   assetResolver: AssetResolverFunc;

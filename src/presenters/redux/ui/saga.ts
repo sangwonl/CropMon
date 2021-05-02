@@ -3,10 +3,12 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
 
+import { TYPES } from '@di/types';
+import { diContainer } from '@di/container';
 import { Preferences } from '@core/entities';
+import { ScreenInfo } from '@core/entities/screen';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { UiDirector } from '@presenters/interactor';
-import { diContainer } from '@di/container';
 
 import {
   loadPreferences,
@@ -18,11 +20,13 @@ import {
   quitApplication,
   chooseRecordHomeDir,
   didChooseRecordHomeDir,
+  enableCaptureSelection,
+  didEnableCaptureSelection,
 } from './slice';
-import { IClosePreferencesPayload, IPreferences } from './types';
+import { IClosePreferencesPayload, IPreferences, IScreenInfo } from './types';
 import { RootState } from '../store';
 
-const uiDirector = diContainer.get(UiDirector);
+const uiDirector = diContainer.get<UiDirector>(TYPES.UiDirector);
 const preferencesUseCase = diContainer.get(PreferencesUseCase);
 
 function* handleLoadPreferences(_action: PayloadAction) {
@@ -79,6 +83,29 @@ function* handleChooseRecordHomeDir(_action: PayloadAction) {
   }
 }
 
+function* handleEnableCaptureSelection(_action: PayloadAction) {
+  const screenInfos: Array<ScreenInfo> = yield call([
+    uiDirector,
+    uiDirector.enableCaptureSelectionMode,
+  ]);
+
+  yield put(
+    didEnableCaptureSelection(
+      screenInfos.map(
+        (s): IScreenInfo => {
+          return {
+            id: s.id,
+            x: s.bounds.x,
+            y: s.bounds.y,
+            width: s.bounds.width,
+            height: s.bounds.height,
+          };
+        }
+      )
+    )
+  );
+}
+
 function handleQuitApplication(_action: PayloadAction) {
   uiDirector.quitApplication();
 }
@@ -89,6 +116,7 @@ function* sagaEntry() {
   yield takeLatest(openPreferences.type, handleOpenPreferences);
   yield takeLatest(closePreferences.type, handleClosePreferences);
   yield takeLatest(chooseRecordHomeDir.type, handleChooseRecordHomeDir);
+  yield takeLatest(enableCaptureSelection.type, handleEnableCaptureSelection);
   yield takeLatest(quitApplication.type, handleQuitApplication);
 }
 
