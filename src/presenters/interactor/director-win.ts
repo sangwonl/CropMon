@@ -31,26 +31,36 @@ class OverlaysWindowPool {
     this.windows = new Map<number, BrowserWindow>();
   }
 
-  setupWithScreenInfo(screenInfo: ScreenInfo) {
-    const { id: screenId, bounds } = screenInfo;
-    const w = this.getOrBuild(screenId);
-    setCustomData(w, 'screenId', screenId);
-    w.setPosition(bounds.x, bounds.y);
-    w.setBounds(bounds);
+  setupWithScreenInfo(screenInfos: Array<ScreenInfo>) {
+    screenInfos.forEach(({ id: screenId, bounds }) => {
+      const w = this.getOrBuild(screenId);
+      w.setPosition(bounds.x, bounds.y);
+      w.setBounds(bounds);
+    });
   }
 
   showAll() {
-    this.windows.forEach((w) => w.show());
+    this.windows.forEach((w) => {
+      const { width, height } = w.getBounds();
+      if (width > 0 && height > 0) {
+        w.show();
+      }
+    });
   }
 
   resetAll() {
-    this.windows.forEach((w) => w.hide());
+    this.windows.forEach((w) => {
+      w.setPosition(0, 0);
+      w.setBounds({ x: 0, y: 0, width: 0, height: 0 });
+      w.hide();
+    });
   }
 
   private getOrBuild(screenId: number): BrowserWindow {
     let window = this.windows.get(screenId);
     if (window === undefined) {
       window = this.builder.build();
+      setCustomData(window, 'screenId', screenId);
       this.windows.set(screenId, window);
     }
     return window;
@@ -69,6 +79,7 @@ export class UiDirectorWindows implements UiDirector {
     this.appTray = new AppTrayBuilder(this.assetResolver).build();
     this.preferencesWindow = new PreferencesBuilder(this.assetResolver).build();
     this.overlaysWindows = new OverlaysWindowPool(this.assetResolver);
+    this.overlaysWindows.setupWithScreenInfo(this.populateScreenInfos());
   }
 
   quitApplication() {
@@ -96,7 +107,7 @@ export class UiDirectorWindows implements UiDirector {
 
     const screenInfos = this.populateScreenInfos();
 
-    screenInfos.forEach((s) => this.overlaysWindows.setupWithScreenInfo(s));
+    this.overlaysWindows.setupWithScreenInfo(screenInfos);
 
     this.overlaysWindows.showAll();
 
