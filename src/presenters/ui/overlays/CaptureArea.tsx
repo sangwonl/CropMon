@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/prefer-default-export */
@@ -6,8 +7,10 @@ import React, { useState, MouseEvent, Dispatch, SetStateAction } from 'react';
 
 import styles from './CaptureArea.css';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface PropTypes {}
+interface PropTypes {
+  hidden: boolean;
+  onSelectionStart: () => void;
+}
 
 interface AreaSelectionCtx {
   started: boolean;
@@ -32,6 +35,7 @@ const initialSelCtx: AreaSelectionCtx = {
 };
 
 const handleMouseDown = (
+  onSelectionStart: () => void,
   selCtx: AreaSelectionCtx,
   setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
 ) => (e: MouseEvent<HTMLDivElement>) => {
@@ -44,6 +48,8 @@ const handleMouseDown = (
     curX: e.clientX,
     curY: e.clientY,
   });
+
+  onSelectionStart();
 };
 
 const handleMouseUp = (
@@ -93,9 +99,11 @@ const calcSelectionBounds = (selCtx: AreaSelectionCtx): any => {
 };
 
 export const CaptureArea = (props: PropTypes) => {
+  const { onSelectionStart } = props;
+
   const [selCtx, setSelCtx] = useState<AreaSelectionCtx>(initialSelCtx);
 
-  const mouseDownHandler = handleMouseDown(selCtx, setSelCtx);
+  const mouseDownHandler = handleMouseDown(onSelectionStart, selCtx, setSelCtx);
   const mouseUpHandler = handleMouseUp(selCtx, setSelCtx);
   const mouseMoveHandler = handleMouseMove(selCtx, setSelCtx);
 
@@ -105,7 +113,11 @@ export const CaptureArea = (props: PropTypes) => {
       onMouseUp={mouseUpHandler}
       onMouseMove={mouseMoveHandler}
     >
-      <div className={styles.area} style={calcSelectionBounds(selCtx)} />
+      <div
+        hidden={props.hidden}
+        className={styles.area}
+        style={calcSelectionBounds(selCtx)}
+      />
     </div>
   );
 };

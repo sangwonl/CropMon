@@ -7,6 +7,7 @@ import {
   IOverlaysWindows,
   IPreferences,
   IScreenInfo,
+  IStartCaptureAreaSelection,
   IUiState,
 } from './types';
 
@@ -19,6 +20,9 @@ const initialState: IUiState = {
     },
   },
   overlaysWindows: {},
+  captureArea: {
+    screenIdOnSelection: 0,
+  },
 };
 
 const slice = createSlice({
@@ -65,6 +69,12 @@ const slice = createSlice({
       });
       state.overlaysWindows = wins;
     },
+    startCaptureAreaSelection: (
+      state,
+      action: PayloadAction<IStartCaptureAreaSelection>
+    ) => {
+      state.captureArea.screenIdOnSelection = action.payload.screenId;
+    },
     quitApplication: (_state) => {},
   },
 });
@@ -81,6 +91,7 @@ export const {
   didChooseRecordHomeDir,
   enableCaptureSelection,
   didEnableCaptureSelection,
+  startCaptureAreaSelection,
   quitApplication,
 } = slice.actions;
 

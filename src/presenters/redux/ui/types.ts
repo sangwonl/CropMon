@@ -27,9 +27,14 @@ export interface IOverlaysWindows {
   [screenId: number]: IOverlaysWindow;
 }
 
+export interface ICaptureArea {
+  screenIdOnSelection: number;
+}
+
 export interface IUiState {
   preferencesWindow: IPreferencesWindow;
   overlaysWindows: IOverlaysWindows;
+  captureArea: ICaptureArea;
 }
 
 export interface IChooseRecordHomeDirPayload {
@@ -38,4 +43,8 @@ export interface IChooseRecordHomeDirPayload {
 
 export interface IClosePreferencesPayload {
   shouldSave: boolean;
+}
+
+export interface IStartCaptureAreaSelection {
+  screenId: number;
 }
