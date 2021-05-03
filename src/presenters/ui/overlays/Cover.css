@@ -10,3 +10,7 @@ body div:first-child {
   overflow: hidden;
   background-color: transparent;
 }
+
+.cursor {
+  cursor: crosshair;
+}
