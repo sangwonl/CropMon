@@ -95,10 +95,12 @@ function* handleEnableCaptureSelection(_action: PayloadAction) {
         (s): IScreenInfo => {
           return {
             id: s.id,
-            x: s.bounds.x,
-            y: s.bounds.y,
-            width: s.bounds.width,
-            height: s.bounds.height,
+            bounds: {
+              x: s.bounds.x,
+              y: s.bounds.y,
+              width: s.bounds.width,
+              height: s.bounds.height,
+            },
           };
         }
       )

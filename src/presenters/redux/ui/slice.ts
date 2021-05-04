@@ -4,6 +4,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   IChooseRecordHomeDirPayload,
   IClosePreferencesPayload,
+  IFinishCaptureAreaSelection,
   IOverlaysWindows,
   IPreferences,
   IScreenInfo,
@@ -22,6 +23,12 @@ const initialState: IUiState = {
   overlaysWindows: {},
   captureArea: {
     screenIdOnSelection: 0,
+    selectedBounds: {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+    },
   },
 };
 
@@ -74,6 +81,13 @@ const slice = createSlice({
       action: PayloadAction<IStartCaptureAreaSelection>
     ) => {
       state.captureArea.screenIdOnSelection = action.payload.screenId;
+      state.captureArea.selectedBounds = { x: 0, y: 0, width: 0, height: 0 };
+    },
+    finishCaptureAreaSelection: (
+      state,
+      action: PayloadAction<IFinishCaptureAreaSelection>
+    ) => {
+      state.captureArea.selectedBounds = action.payload.bounds;
     },
     quitApplication: (_state) => {},
   },
@@ -92,6 +106,7 @@ export const {
   enableCaptureSelection,
   didEnableCaptureSelection,
   startCaptureAreaSelection,
+  finishCaptureAreaSelection,
   quitApplication,
 } = slice.actions;
 
