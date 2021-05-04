@@ -8,10 +8,15 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from '@presenters/redux/store';
 import { ICaptureArea, IOverlaysWindows } from '@presenters/redux/ui/types';
-import { startCaptureAreaSelection } from '@presenters/redux/ui/slice';
+import {
+  startCaptureAreaSelection,
+  finishCaptureAreaSelection,
+} from '@presenters/redux/ui/slice';
 import { getCurWindowCustomData } from '@utils/custom';
 
+import { SelectedBounds } from './types';
 import { CaptureArea } from './CaptureArea';
+import { ControlPanel } from './ControlPanel';
 
 import styles from './Cover.css';
 
@@ -33,7 +38,7 @@ const adjustBodySize = (overlaysWindows: IOverlaysWindows) => {
   }
 
   const { screenInfo } = overlaysWindows[getScreenId()];
-  stretchBodySize(screenInfo.width, screenInfo.height);
+  stretchBodySize(screenInfo.bounds.width, screenInfo.bounds.height);
 };
 
 export const Cover = () => {
@@ -47,17 +52,32 @@ export const Cover = () => {
 
   const dispatch = useDispatch();
 
+  const selectionStartHandler = () => {
+    dispatch(startCaptureAreaSelection({ screenId: getScreenId() }));
+  };
+
+  const selectionFinishedHandler = (bounds: SelectedBounds) => {
+    dispatch(finishCaptureAreaSelection({ bounds }));
+  };
+
   useLayoutEffect(() => {
     adjustBodySize(overlaysWindows);
   }, [overlaysWindows]);
 
+  const isCoverActive = (): boolean => {
+    return captureArea.screenIdOnSelection === getScreenId();
+  };
+
   return (
-    <div className={styles.cursor}>
+    <div className={styles.cover}>
       <CaptureArea
-        hidden={captureArea.screenIdOnSelection !== getScreenId()}
-        onSelectionStart={() => {
-          dispatch(startCaptureAreaSelection({ screenId: getScreenId() }));
-        }}
+        active={isCoverActive()}
+        onSelectionStart={selectionStartHandler}
+        onSelectionFinished={selectionFinishedHandler}
+      />
+      <ControlPanel
+        active={isCoverActive()}
+        selectedBounds={captureArea.selectedBounds}
       />
     </div>
   );

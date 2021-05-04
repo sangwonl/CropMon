@@ -32,10 +32,21 @@ class OverlaysWindowPool {
   }
 
   setupWithScreenInfo(screenInfos: Array<ScreenInfo>) {
-    screenInfos.forEach(({ id: screenId, bounds }) => {
+    // WORKAROUND to fix non-clickable area at the nearest borders
+    const addSparePixels = (bounds: ScreenBounds): ScreenBounds => {
+      const SPARE_PIXELS = 5;
+      return {
+        x: bounds.x - SPARE_PIXELS,
+        y: bounds.y - SPARE_PIXELS,
+        width: bounds.width + SPARE_PIXELS * 2,
+        height: bounds.width + SPARE_PIXELS * 2,
+      };
+    };
+
+    screenInfos.forEach(({ id: screenId, bounds }, i) => {
       const w = this.getOrBuild(screenId);
       w.setPosition(bounds.x, bounds.y);
-      w.setBounds(bounds);
+      w.setBounds(addSparePixels(bounds));
     });
   }
 

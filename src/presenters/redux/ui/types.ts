@@ -10,12 +10,16 @@ export interface IPreferencesWindow {
   preferences: IPreferences;
 }
 
-export interface IScreenInfo {
-  id: number;
+export interface IScreenBounds {
   x: number;
   y: number;
   width: number;
   height: number;
+}
+
+export interface IScreenInfo {
+  id: number;
+  bounds: IScreenBounds;
 }
 
 export interface IOverlaysWindow {
@@ -29,6 +33,7 @@ export interface IOverlaysWindows {
 
 export interface ICaptureArea {
   screenIdOnSelection: number;
+  selectedBounds: IScreenBounds;
 }
 
 export interface IUiState {
@@ -47,4 +52,8 @@ export interface IClosePreferencesPayload {
 
 export interface IStartCaptureAreaSelection {
   screenId: number;
+}
+
+export interface IFinishCaptureAreaSelection {
+  bounds: IScreenBounds;
 }
