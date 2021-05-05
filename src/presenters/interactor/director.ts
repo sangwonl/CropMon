@@ -9,5 +9,6 @@ export interface UiDirector {
   openPreferencesWindow(): void;
   closePreferencesWindow(): void;
   openDialogForRecordHomeDir(): Promise<string>;
-  enableCaptureSelectionMode(): Array<ScreenInfo>;
+  enableCaptureSelection(): Array<ScreenInfo>;
+  disableCaptureSelection(): void;
 }
