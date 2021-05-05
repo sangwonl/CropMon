@@ -32,8 +32,8 @@ export interface IOverlaysWindows {
 }
 
 export interface ICaptureArea {
-  screenIdOnSelection: number;
-  selectedBounds: IScreenBounds;
+  screenIdOnSelection?: number;
+  selectedBounds?: IScreenBounds;
 }
 
 export interface IUiState {

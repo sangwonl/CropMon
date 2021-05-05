@@ -1,0 +1,23 @@
+/*
+ * @NOTE: Prepend a `~` to css file paths that are in your node_modules
+ *        See https://github.com/webpack-contrib/sass-loader#imports
+ */
+
+.wrapper {
+  background-color: transparent;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.itemBox {
+  height: 40px;
+  display: flex;
+  align-items: stretch;
+}
+
+.item {
+  display: inline-block;
+  background-color: green;
+}

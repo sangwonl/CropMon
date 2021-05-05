@@ -11,12 +11,13 @@ import { ICaptureArea, IOverlaysWindows } from '@presenters/redux/ui/types';
 import {
   startCaptureAreaSelection,
   finishCaptureAreaSelection,
+  cancelCaptureAreaSelection,
 } from '@presenters/redux/ui/slice';
 import { getCurWindowCustomData } from '@utils/custom';
 
 import { SelectedBounds } from './types';
 import { CaptureArea } from './CaptureArea';
-import { ControlPanel } from './ControlPanel';
+import { ControlBox } from './ControlBox';
 
 import styles from './Cover.css';
 
@@ -60,6 +61,10 @@ export const Cover = () => {
     dispatch(finishCaptureAreaSelection({ bounds }));
   };
 
+  const selectionCanceledHandler = () => {
+    dispatch(cancelCaptureAreaSelection());
+  };
+
   useLayoutEffect(() => {
     adjustBodySize(overlaysWindows);
   }, [overlaysWindows]);
@@ -73,9 +78,10 @@ export const Cover = () => {
       <CaptureArea
         active={isCoverActive()}
         onSelectionStart={selectionStartHandler}
-        onSelectionFinished={selectionFinishedHandler}
+        onSelectionFinish={selectionFinishedHandler}
+        onSelectionCancel={selectionCanceledHandler}
       />
-      <ControlPanel
+      <ControlBox
         active={isCoverActive()}
         selectedBounds={captureArea.selectedBounds}
       />
