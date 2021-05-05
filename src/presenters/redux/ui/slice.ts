@@ -22,13 +22,8 @@ const initialState: IUiState = {
   },
   overlaysWindows: {},
   captureArea: {
-    screenIdOnSelection: 0,
-    selectedBounds: {
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0,
-    },
+    screenIdOnSelection: undefined,
+    selectedBounds: undefined,
   },
 };
 
@@ -65,29 +60,42 @@ const slice = createSlice({
       const { shouldOpenRecordHomeDir } = state.preferencesWindow.preferences;
       state.preferencesWindow.preferences.shouldOpenRecordHomeDir = !shouldOpenRecordHomeDir;
     },
-    enableCaptureSelection: (_state) => {},
-    didEnableCaptureSelection: (
+    enableCaptureAreaSelection: (state) => {
+      state.captureArea.screenIdOnSelection = undefined;
+      state.captureArea.selectedBounds = undefined;
+    },
+    didEnableCaptureAreaSelection: (
       state,
       action: PayloadAction<Array<IScreenInfo>>
     ) => {
-      const wins: IOverlaysWindows = {};
       action.payload.forEach((screenInfo) => {
-        wins[screenInfo.id] = { show: true, screenInfo };
+        state.overlaysWindows[screenInfo.id] = { show: true, screenInfo };
       });
-      state.overlaysWindows = wins;
     },
+    disableCaptureAreaSelection: (state) => {
+      Object.keys(state.overlaysWindows).forEach((k) => {
+        // https://stackoverflow.com/questions/14667713/how-to-convert-a-string-to-number-in-typescript
+        const screenId: number = +k;
+        state.overlaysWindows[screenId].show = false;
+      });
+    },
+    didDisableCaptureAreaSelection: (_state) => {},
     startCaptureAreaSelection: (
       state,
       action: PayloadAction<IStartCaptureAreaSelection>
     ) => {
       state.captureArea.screenIdOnSelection = action.payload.screenId;
-      state.captureArea.selectedBounds = { x: 0, y: 0, width: 0, height: 0 };
+      state.captureArea.selectedBounds = undefined;
     },
     finishCaptureAreaSelection: (
       state,
       action: PayloadAction<IFinishCaptureAreaSelection>
     ) => {
       state.captureArea.selectedBounds = action.payload.bounds;
+    },
+    cancelCaptureAreaSelection: (state) => {
+      state.captureArea.screenIdOnSelection = undefined;
+      state.captureArea.selectedBounds = undefined;
     },
     quitApplication: (_state) => {},
   },
@@ -103,10 +111,13 @@ export const {
   toggleOpenRecordHomeDir,
   chooseRecordHomeDir,
   didChooseRecordHomeDir,
-  enableCaptureSelection,
-  didEnableCaptureSelection,
+  enableCaptureAreaSelection,
+  didEnableCaptureAreaSelection,
+  disableCaptureAreaSelection,
+  didDisableCaptureAreaSelection,
   startCaptureAreaSelection,
   finishCaptureAreaSelection,
+  cancelCaptureAreaSelection,
   quitApplication,
 } = slice.actions;
 

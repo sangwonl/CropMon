@@ -20,8 +20,11 @@ import {
   quitApplication,
   chooseRecordHomeDir,
   didChooseRecordHomeDir,
-  enableCaptureSelection,
-  didEnableCaptureSelection,
+  enableCaptureAreaSelection,
+  didEnableCaptureAreaSelection,
+  disableCaptureAreaSelection,
+  didDisableCaptureAreaSelection,
+  cancelCaptureAreaSelection,
 } from './slice';
 import { IClosePreferencesPayload, IPreferences, IScreenInfo } from './types';
 import { RootState } from '../store';
@@ -83,14 +86,11 @@ function* handleChooseRecordHomeDir(_action: PayloadAction) {
   }
 }
 
-function* handleEnableCaptureSelection(_action: PayloadAction) {
-  const screenInfos: Array<ScreenInfo> = yield call([
-    uiDirector,
-    uiDirector.enableCaptureSelectionMode,
-  ]);
+function* handleEnableCaptureAreaSelection(_action: PayloadAction) {
+  const screenInfos: Array<ScreenInfo> = uiDirector.enableCaptureSelection();
 
   yield put(
-    didEnableCaptureSelection(
+    didEnableCaptureAreaSelection(
       screenInfos.map(
         (s): IScreenInfo => {
           return {
@@ -108,6 +108,16 @@ function* handleEnableCaptureSelection(_action: PayloadAction) {
   );
 }
 
+function* handleDisableCaptureAreaSelection(_action: PayloadAction) {
+  uiDirector.disableCaptureSelection();
+
+  yield put(didDisableCaptureAreaSelection());
+}
+
+function* handleCancelCaptureAreaSelection(_action: PayloadAction) {
+  yield put(disableCaptureAreaSelection());
+}
+
 function handleQuitApplication(_action: PayloadAction) {
   uiDirector.quitApplication();
 }
@@ -118,7 +128,18 @@ function* sagaEntry() {
   yield takeLatest(openPreferences.type, handleOpenPreferences);
   yield takeLatest(closePreferences.type, handleClosePreferences);
   yield takeLatest(chooseRecordHomeDir.type, handleChooseRecordHomeDir);
-  yield takeLatest(enableCaptureSelection.type, handleEnableCaptureSelection);
+  yield takeLatest(
+    enableCaptureAreaSelection.type,
+    handleEnableCaptureAreaSelection
+  );
+  yield takeLatest(
+    disableCaptureAreaSelection.type,
+    handleDisableCaptureAreaSelection
+  );
+  yield takeLatest(
+    cancelCaptureAreaSelection.type,
+    handleCancelCaptureAreaSelection
+  );
   yield takeLatest(quitApplication.type, handleQuitApplication);
 }
 

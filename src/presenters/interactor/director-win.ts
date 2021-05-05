@@ -47,6 +47,7 @@ class OverlaysWindowPool {
       const w = this.getOrBuild(screenId);
       w.setPosition(bounds.x, bounds.y);
       w.setBounds(addSparePixels(bounds));
+      // w.setIgnoreMouseEvents(true);
     });
   }
 
@@ -61,9 +62,9 @@ class OverlaysWindowPool {
 
   resetAll() {
     this.windows.forEach((w) => {
-      w.setPosition(0, 0);
-      w.setBounds({ x: 0, y: 0, width: 0, height: 0 });
       w.hide();
+      // w.setPosition(0, 0);
+      // w.setBounds({ x: 0, y: 0, width: 0, height: 0 });
     });
   }
 
@@ -113,9 +114,7 @@ export class UiDirectorWindows implements UiDirector {
     return filePaths.length > 0 ? filePaths[0] : '';
   }
 
-  enableCaptureSelectionMode(): Array<ScreenInfo> {
-    this.overlaysWindows.resetAll();
-
+  enableCaptureSelection(): Array<ScreenInfo> {
     const screenInfos = this.populateScreenInfos();
 
     this.overlaysWindows.setupWithScreenInfo(screenInfos);
@@ -123,6 +122,10 @@ export class UiDirectorWindows implements UiDirector {
     this.overlaysWindows.showAll();
 
     return screenInfos;
+  }
+
+  disableCaptureSelection(): void {
+    this.overlaysWindows.resetAll();
   }
 
   private populateScreenInfos(): Array<ScreenInfo> {
