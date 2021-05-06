@@ -1,15 +1,14 @@
 import { applyMiddleware } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
 
-import { composeWithStateSync } from 'electron-redux';
 import createSagaMiddleware from 'redux-saga';
+import { composeWithStateSync } from 'electron-redux';
 
 import uiReducer from './ui/slice';
 import captureReducer from './capture/slice';
 
 const sagaMiddleware = createSagaMiddleware();
-const middlewares = applyMiddleware(sagaMiddleware);
-const composedEnhancer = composeWithStateSync(...[middlewares]);
+const composedEnhancer = composeWithStateSync(applyMiddleware(sagaMiddleware));
 
 const store = configureStore({
   reducer: {
