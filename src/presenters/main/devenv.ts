@@ -4,7 +4,7 @@
 const isDebugMode = () =>
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
-const initializeDevTools = async () => {
+const installDevTools = async () => {
   if (process.env.NODE_ENV === 'production') {
     const sourceMapSupport = require('source-map-support');
     sourceMapSupport.install();
@@ -18,7 +18,7 @@ const initializeDevTools = async () => {
 
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS'];
+  const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
 
   // eslint-disable-next-line consistent-return
   return installer
@@ -30,5 +30,5 @@ const initializeDevTools = async () => {
 };
 
 export const initializeDevEnv = async () => {
-  await initializeDevTools();
+  await installDevTools();
 };

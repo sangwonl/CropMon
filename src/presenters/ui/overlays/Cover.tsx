@@ -3,7 +3,7 @@
 /* eslint-disable react/no-unused-prop-types */
 /* eslint-disable import/prefer-default-export */
 
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from '@presenters/redux/store';
@@ -43,6 +43,8 @@ const adjustBodySize = (overlaysWindows: IOverlaysWindows) => {
 };
 
 export const Cover = () => {
+  const dispatch = useDispatch();
+
   const overlaysWindows: IOverlaysWindows = useSelector(
     (state: RootState) => state.ui.overlaysWindows
   );
@@ -51,17 +53,17 @@ export const Cover = () => {
     (state: RootState) => state.ui.captureArea
   );
 
-  const dispatch = useDispatch();
+  const [coverActive, setCoverActive] = useState<boolean>(false);
 
   const selectionStartHandler = () => {
     dispatch(startCaptureAreaSelection({ screenId: getScreenId() }));
   };
 
-  const selectionFinishedHandler = (bounds: SelectedBounds) => {
+  const selectionFinishHandler = (bounds: SelectedBounds) => {
     dispatch(finishCaptureAreaSelection({ bounds }));
   };
 
-  const selectionCanceledHandler = () => {
+  const selectionCancelHandler = () => {
     dispatch(cancelCaptureAreaSelection());
   };
 
@@ -69,20 +71,21 @@ export const Cover = () => {
     adjustBodySize(overlaysWindows);
   }, [overlaysWindows]);
 
-  const isCoverActive = (): boolean => {
-    return captureArea.screenIdOnSelection === getScreenId();
-  };
+  useLayoutEffect(() => {
+    setCoverActive(captureArea.screenIdOnSelection === getScreenId());
+  }, [captureArea]);
 
   return (
     <div className={styles.cover}>
       <CaptureArea
-        active={isCoverActive()}
+        active={coverActive}
+        selectedBounds={captureArea.selectedBounds}
         onSelectionStart={selectionStartHandler}
-        onSelectionFinish={selectionFinishedHandler}
-        onSelectionCancel={selectionCanceledHandler}
+        onSelectionFinish={selectionFinishHandler}
+        onSelectionCancel={selectionCancelHandler}
       />
       <ControlBox
-        active={isCoverActive()}
+        active={coverActive}
         selectedBounds={captureArea.selectedBounds}
       />
     </div>
