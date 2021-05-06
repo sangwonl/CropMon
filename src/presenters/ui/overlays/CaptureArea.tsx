@@ -1,12 +1,21 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/prefer-default-export */
 
-import React, { useState, MouseEvent, Dispatch, SetStateAction } from 'react';
+import React, {
+  useState,
+  MouseEvent,
+  Dispatch,
+  SetStateAction,
+  FC,
+  useEffect,
+} from 'react';
+import classNames from 'classnames';
 import { rgba } from 'polished';
 
-import { isEmptySize, isCapturableSize } from '@utils/bounds';
+import { isEmptyBounds, isCapturableBounds, emptyBounds } from '@utils/bounds';
 
 import { SelectedBounds } from './types';
 
@@ -14,6 +23,7 @@ import styles from './CaptureArea.css';
 
 interface PropTypes {
   active: boolean;
+  selectedBounds?: SelectedBounds;
   onSelectionStart: () => void;
   onSelectionFinish: (bounds: SelectedBounds) => void;
   onSelectionCancel: () => void;
@@ -43,7 +53,7 @@ const initialSelCtx: AreaSelectionCtx = {
 
 const calcSelectedBounds = (selCtx: AreaSelectionCtx): SelectedBounds => {
   if (!selCtx.started) {
-    return { x: 0, y: 0, width: 0, height: 0 };
+    return emptyBounds();
   }
 
   const endX = selCtx.selected ? selCtx.endX : selCtx.curX;
@@ -59,7 +69,7 @@ const calcSelectedBounds = (selCtx: AreaSelectionCtx): SelectedBounds => {
 const getSelectedAreaStyles = (selCtx: AreaSelectionCtx): any => {
   const bounds = calcSelectedBounds(selCtx);
 
-  if (isEmptySize(bounds)) {
+  if (isEmptyBounds(bounds)) {
     return { display: 'none' };
   }
 
@@ -70,11 +80,18 @@ const getSelectedAreaStyles = (selCtx: AreaSelectionCtx): any => {
     height: bounds.height + 1,
   };
 
-  if (!isCapturableSize(bounds)) {
+  if (!isCapturableBounds(bounds)) {
     styles = {
       ...styles,
       backgroundColor: rgba(255, 10, 10, 0.1),
       boxShadow: 'inset 0 0 3px red',
+    };
+  }
+
+  if (selCtx.selected) {
+    styles = {
+      ...styles,
+      backgroundColor: rgba(255, 255, 255, 0.01),
     };
   }
 
@@ -83,13 +100,19 @@ const getSelectedAreaStyles = (selCtx: AreaSelectionCtx): any => {
 
 const handleMouseDown = (
   onSelectionStart: () => void,
+  onSelectionCancel: () => void,
   selCtx: AreaSelectionCtx,
   setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
 ) => (e: MouseEvent<HTMLDivElement>) => {
+  if (selCtx.selected) {
+    setSelCtx(initialSelCtx);
+    onSelectionCancel();
+    return;
+  }
+
   setSelCtx({
     ...selCtx,
     started: true,
-    selected: false,
     startX: e.clientX,
     startY: e.clientY,
     curX: e.clientX,
@@ -100,8 +123,8 @@ const handleMouseDown = (
 };
 
 const handleMouseUp = (
-  onSelectionFinished: (bounds: SelectedBounds) => void,
-  onSelectionCanceled: () => void,
+  onSelectionCancel: () => void,
+  onSelectionFinish: (bounds: SelectedBounds) => void,
   selCtx: AreaSelectionCtx,
   setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
 ) => (e: MouseEvent<HTMLDivElement>) => {
@@ -114,17 +137,15 @@ const handleMouseUp = (
   };
 
   const bounds = calcSelectedBounds(updatedSelCtx);
-  if (!isCapturableSize(bounds)) {
+  if (selCtx.started && !isCapturableBounds(bounds)) {
     setSelCtx(initialSelCtx);
-    setTimeout(() => {
-      onSelectionCanceled();
-    }, 0);
+    onSelectionCancel();
     return;
   }
 
   updatedSelCtx.selected = true;
   setSelCtx(updatedSelCtx);
-  onSelectionFinished(bounds);
+  onSelectionFinish(bounds);
 };
 
 const handleMouseMove = (
@@ -138,9 +159,10 @@ const handleMouseMove = (
   });
 };
 
-export const CaptureArea = (props: PropTypes) => {
+export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
   const {
     active,
+    selectedBounds,
     onSelectionStart: onStart,
     onSelectionFinish: onFinish,
     onSelectionCancel: onCancel,
@@ -148,13 +170,28 @@ export const CaptureArea = (props: PropTypes) => {
 
   const [selCtx, setSelCtx] = useState<AreaSelectionCtx>(initialSelCtx);
 
-  const mouseDownHandler = handleMouseDown(onStart, selCtx, setSelCtx);
-  const mouseUpHandler = handleMouseUp(onFinish, onCancel, selCtx, setSelCtx);
+  const mouseDownHandler = handleMouseDown(
+    onStart,
+    onCancel,
+    selCtx,
+    setSelCtx
+  );
+  const mouseUpHandler = handleMouseUp(onCancel, onFinish, selCtx, setSelCtx);
   const mouseMoveHandler = handleMouseMove(selCtx, setSelCtx);
 
+  useEffect(() => {
+    setSelCtx({ ...selCtx, selected: selectedBounds !== undefined });
+  }, [selectedBounds]);
+
+  const wrapperClasses = classNames({
+    [styles.wrapper]: true,
+    [styles.crosshair]: !selCtx.selected,
+  });
+
   return (
+    // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
     <div
-      className={styles.wrapper}
+      className={wrapperClasses}
       onMouseDown={mouseDownHandler}
       onMouseUp={mouseUpHandler}
       onMouseMove={mouseMoveHandler}
@@ -164,4 +201,8 @@ export const CaptureArea = (props: PropTypes) => {
       )}
     </div>
   );
+};
+
+CaptureArea.defaultProps = {
+  selectedBounds: undefined,
 };

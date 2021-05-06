@@ -26,45 +26,36 @@ class OverlaysWindowPool {
   private builder!: OverlaysBuilder;
   private windows!: Map<number, BrowserWindow>;
 
-  constructor(assetResolver: AssetResolverFunc) {
+  constructor(
+    assetResolver: AssetResolverFunc,
+    screenInfos: Array<ScreenInfo>
+  ) {
     this.builder = new OverlaysBuilder(assetResolver);
     this.windows = new Map<number, BrowserWindow>();
+
+    // pre-create overlays windows for pool
+    screenInfos.forEach(({ id: screenId }) => {
+      this.getOrBuild(screenId);
+    });
   }
 
-  setupWithScreenInfo(screenInfos: Array<ScreenInfo>) {
-    // WORKAROUND to fix non-clickable area at the nearest borders
-    const addSparePixels = (bounds: ScreenBounds): ScreenBounds => {
-      const SPARE_PIXELS = 5;
-      return {
-        x: bounds.x - SPARE_PIXELS,
-        y: bounds.y - SPARE_PIXELS,
-        width: bounds.width + SPARE_PIXELS * 2,
-        height: bounds.width + SPARE_PIXELS * 2,
-      };
-    };
-
-    screenInfos.forEach(({ id: screenId, bounds }, i) => {
+  showAll(screenInfos: Array<ScreenInfo>) {
+    screenInfos.forEach(({ id: screenId, bounds }) => {
+      const sparedBounds = this.addSparePixels(bounds);
       const w = this.getOrBuild(screenId);
-      w.setPosition(bounds.x, bounds.y);
-      w.setBounds(addSparePixels(bounds));
-      // w.setIgnoreMouseEvents(true);
+      w.setIgnoreMouseEvents(false);
+      w.setPosition(sparedBounds.x, sparedBounds.y);
+      w.setBounds(sparedBounds);
+      w.show();
     });
   }
 
-  showAll() {
+  hideAll() {
     this.windows.forEach((w) => {
-      const { width, height } = w.getBounds();
-      if (width > 0 && height > 0) {
-        w.show();
-      }
-    });
-  }
-
-  resetAll() {
-    this.windows.forEach((w) => {
-      w.hide();
-      // w.setPosition(0, 0);
-      // w.setBounds({ x: 0, y: 0, width: 0, height: 0 });
+      w.setIgnoreMouseEvents(true);
+      setTimeout(() => {
+        w.hide();
+      }, 100);
     });
   }
 
@@ -76,6 +67,18 @@ class OverlaysWindowPool {
       this.windows.set(screenId, window);
     }
     return window;
+  }
+
+  // WORKAROUND to fix non-clickable area at the nearest borders
+  // Same issue here: https://github.com/electron/electron/issues/21929
+  private addSparePixels(bounds: ScreenBounds): ScreenBounds {
+    const SPARE_PIXELS = 5;
+    return {
+      x: bounds.x - SPARE_PIXELS,
+      y: bounds.y - SPARE_PIXELS,
+      width: bounds.width + SPARE_PIXELS * 2,
+      height: bounds.height + SPARE_PIXELS * 2,
+    };
   }
 }
 
@@ -90,8 +93,10 @@ export class UiDirectorWindows implements UiDirector {
     this.assetResolver = assetResolver;
     this.appTray = new AppTrayBuilder(this.assetResolver).build();
     this.preferencesWindow = new PreferencesBuilder(this.assetResolver).build();
-    this.overlaysWindows = new OverlaysWindowPool(this.assetResolver);
-    this.overlaysWindows.setupWithScreenInfo(this.populateScreenInfos());
+    this.overlaysWindows = new OverlaysWindowPool(
+      this.assetResolver,
+      this.populateScreenInfos()
+    );
   }
 
   quitApplication() {
@@ -117,15 +122,13 @@ export class UiDirectorWindows implements UiDirector {
   enableCaptureSelection(): Array<ScreenInfo> {
     const screenInfos = this.populateScreenInfos();
 
-    this.overlaysWindows.setupWithScreenInfo(screenInfos);
-
-    this.overlaysWindows.showAll();
+    this.overlaysWindows.showAll(screenInfos);
 
     return screenInfos;
   }
 
   disableCaptureSelection(): void {
-    this.overlaysWindows.resetAll();
+    this.overlaysWindows.hideAll();
   }
 
   private populateScreenInfos(): Array<ScreenInfo> {

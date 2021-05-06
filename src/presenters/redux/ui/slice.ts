@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
 import {
   IChooseRecordHomeDirPayload,
   IClosePreferencesPayload,
   IFinishCaptureAreaSelection,
-  IOverlaysWindows,
   IPreferences,
   IScreenInfo,
   IStartCaptureAreaSelection,
@@ -73,13 +73,16 @@ const slice = createSlice({
       });
     },
     disableCaptureAreaSelection: (state) => {
+      state.captureArea.screenIdOnSelection = undefined;
+      state.captureArea.selectedBounds = undefined;
+    },
+    didDisableCaptureAreaSelection: (state) => {
       Object.keys(state.overlaysWindows).forEach((k) => {
         // https://stackoverflow.com/questions/14667713/how-to-convert-a-string-to-number-in-typescript
         const screenId: number = +k;
         state.overlaysWindows[screenId].show = false;
       });
     },
-    didDisableCaptureAreaSelection: (_state) => {},
     startCaptureAreaSelection: (
       state,
       action: PayloadAction<IStartCaptureAreaSelection>
@@ -93,10 +96,7 @@ const slice = createSlice({
     ) => {
       state.captureArea.selectedBounds = action.payload.bounds;
     },
-    cancelCaptureAreaSelection: (state) => {
-      state.captureArea.screenIdOnSelection = undefined;
-      state.captureArea.selectedBounds = undefined;
-    },
+    cancelCaptureAreaSelection: (_state) => {},
     quitApplication: (_state) => {},
   },
 });

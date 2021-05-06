@@ -47,7 +47,7 @@ export class ScreenRecorderWindows implements ScreenRecorder {
     this.lastFfmpeg = ffmpeg;
   }
 
-  async finish(ctx: CaptureContext): Promise<void> {
+  async finish(_ctx: CaptureContext): Promise<void> {
     assert(this.lastFfmpeg !== undefined);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
