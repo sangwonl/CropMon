@@ -17,7 +17,7 @@ import classNames from 'classnames';
 import { isEmptyBounds, isCapturableBounds, emptyBounds } from '@utils/bounds';
 
 import { SelectedBounds } from './types';
-
+import { CaptureAreaHint } from './CaptureAreaHint';
 import styles from './CaptureArea.css';
 
 interface PropTypes {
@@ -60,14 +60,15 @@ const calcSelectedBounds = (selCtx: AreaSelectionCtx): SelectedBounds => {
   return {
     x: Math.min(selCtx.startX, endX),
     y: Math.min(selCtx.startY, endY),
-    width: Math.abs(endX - selCtx.startX),
-    height: Math.abs(endY - selCtx.startY),
+    width: Math.abs(endX - selCtx.startX) + 1,
+    height: Math.abs(endY - selCtx.startY) + 1,
   };
 };
 
-const getAreaClasses = (selCtx: AreaSelectionCtx): string => {
-  const bounds = calcSelectedBounds(selCtx);
-
+const getAreaClasses = (
+  bounds: SelectedBounds,
+  selCtx: AreaSelectionCtx
+): string => {
   if (isEmptyBounds(bounds)) {
     return styles.areaHidden;
   }
@@ -83,14 +84,12 @@ const getAreaClasses = (selCtx: AreaSelectionCtx): string => {
   return styles.area;
 };
 
-const getAreaLayout = (selCtx: AreaSelectionCtx): any => {
-  const bounds = calcSelectedBounds(selCtx);
-
+const getAreaLayout = (bounds: SelectedBounds): any => {
   return {
     left: bounds.x,
     top: bounds.y,
-    width: bounds.width + 1,
-    height: bounds.height + 1,
+    width: bounds.width,
+    height: bounds.height,
   };
 };
 
@@ -166,18 +165,14 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
 
   const [selCtx, setSelCtx] = useState<AreaSelectionCtx>(initialSelCtx);
 
-  const mouseDownHandler = handleMouseDown(
-    onStart,
-    onCancel,
-    selCtx,
-    setSelCtx
-  );
-  const mouseUpHandler = handleMouseUp(onCancel, onFinish, selCtx, setSelCtx);
-  const mouseMoveHandler = handleMouseMove(selCtx, setSelCtx);
-
   useEffect(() => {
     setSelCtx({ ...selCtx, selected: selectedBounds !== undefined });
   }, [selectedBounds]);
+
+  const onMouseDown = handleMouseDown(onStart, onCancel, selCtx, setSelCtx);
+  const onMouseUp = handleMouseUp(onCancel, onFinish, selCtx, setSelCtx);
+  const onMouseMove = handleMouseMove(selCtx, setSelCtx);
+  const calcBounds = calcSelectedBounds(selCtx);
 
   return (
     // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
@@ -186,12 +181,18 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
         [styles.wrapper]: true,
         [styles.crosshair]: !selCtx.selected,
       })}
-      onMouseDown={mouseDownHandler}
-      onMouseUp={mouseUpHandler}
-      onMouseMove={mouseMoveHandler}
+      onMouseDown={onMouseDown}
+      onMouseUp={onMouseUp}
+      onMouseMove={onMouseMove}
     >
       {active && (
-        <div className={getAreaClasses(selCtx)} style={getAreaLayout(selCtx)} />
+        <>
+          <div
+            className={getAreaClasses(calcBounds, selCtx)}
+            style={getAreaLayout(calcBounds)}
+          />
+          <CaptureAreaHint selectedBounds={calcBounds} />
+        </>
       )}
     </div>
   );
