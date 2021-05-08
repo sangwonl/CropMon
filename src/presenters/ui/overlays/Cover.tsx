@@ -55,18 +55,6 @@ export const Cover = () => {
 
   const [coverActive, setCoverActive] = useState<boolean>(false);
 
-  const selectionStartHandler = () => {
-    dispatch(startCaptureAreaSelection({ screenId: getScreenId() }));
-  };
-
-  const selectionFinishHandler = (bounds: SelectedBounds) => {
-    dispatch(finishCaptureAreaSelection({ bounds }));
-  };
-
-  const selectionCancelHandler = () => {
-    dispatch(cancelCaptureAreaSelection());
-  };
-
   useLayoutEffect(() => {
     adjustBodySize(overlaysWindows);
   }, [overlaysWindows]);
@@ -75,18 +63,34 @@ export const Cover = () => {
     setCoverActive(captureArea.screenIdOnSelection === getScreenId());
   }, [captureArea]);
 
+  const onSelectionStart = () => {
+    dispatch(startCaptureAreaSelection({ screenId: getScreenId() }));
+  };
+
+  const onSelectionFinish = (bounds: SelectedBounds) => {
+    dispatch(finishCaptureAreaSelection({ bounds }));
+  };
+
+  const onSelectionCancel = () => {
+    dispatch(cancelCaptureAreaSelection());
+  };
+
+  const onRecordStart = () => {};
+
   return (
     <div className={styles.cover}>
       <CaptureArea
         active={coverActive}
         selectedBounds={captureArea.selectedBounds}
-        onSelectionStart={selectionStartHandler}
-        onSelectionFinish={selectionFinishHandler}
-        onSelectionCancel={selectionCancelHandler}
+        onSelectionStart={onSelectionStart}
+        onSelectionFinish={onSelectionFinish}
+        onSelectionCancel={onSelectionCancel}
       />
       <ControlBox
         active={coverActive}
         selectedBounds={captureArea.selectedBounds}
+        onRecordStart={onRecordStart}
+        onClose={onSelectionCancel}
       />
     </div>
   );

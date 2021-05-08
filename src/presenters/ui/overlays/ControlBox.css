@@ -25,6 +25,7 @@
   font-size: 13px;
   font-weight: 600;
   font-family: 'Poppins', 'Helvetica', sans-serif;
+  user-select: none;
 }
 
 .itemRecord {

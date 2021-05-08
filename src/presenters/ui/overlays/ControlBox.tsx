@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -7,12 +8,13 @@ import React, { FC } from 'react';
 import classNames from 'classnames';
 
 import { SelectedBounds } from './types';
-
 import styles from './ControlBox.css';
 
 interface PropTypes {
   active: boolean;
   selectedBounds?: SelectedBounds;
+  onRecordStart: () => void;
+  onClose: () => void;
 }
 
 const getWrapperLayout = (bounds: SelectedBounds): any => {
@@ -25,7 +27,7 @@ const getWrapperLayout = (bounds: SelectedBounds): any => {
 };
 
 export const ControlBox: FC<PropTypes> = (props: PropTypes) => {
-  const { active, selectedBounds: bounds } = props;
+  const { active, selectedBounds: bounds, onRecordStart, onClose } = props;
 
   const recordBtnClasses = classNames(styles.item, styles.itemRecord);
   const closeBtnClasses = classNames(styles.item, styles.itemClose);
@@ -33,8 +35,12 @@ export const ControlBox: FC<PropTypes> = (props: PropTypes) => {
   return active && bounds ? (
     <div className={styles.wrapper} style={getWrapperLayout(bounds)}>
       <div className={styles.itemBox}>
-        <div className={recordBtnClasses}>RECORD</div>
-        <div className={closeBtnClasses}>CLOSE</div>
+        <div className={recordBtnClasses} onClick={onRecordStart}>
+          RECORD
+        </div>
+        <div className={closeBtnClasses} onClick={onClose}>
+          CLOSE
+        </div>
       </div>
     </div>
   ) : null;
