@@ -12,12 +12,37 @@
 }
 
 .itemBox {
-  height: 40px;
   display: flex;
-  align-items: stretch;
+  direction: row;
 }
 
 .item {
-  display: inline-block;
-  background-color: green;
+  width: 90px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Poppins', 'Helvetica', sans-serif;
+}
+
+.itemRecord {
+  background-color: #dd4c4ccb;
+  color: rgb(218, 218, 218);
+}
+
+.itemClose {
+  background-color: #9c9c9ce3;
+  color: rgb(224, 224, 224);
+}
+
+.itemRecord:hover {
+  background-color: #e03c3cf8;
+  color: white;
+}
+
+.itemClose:hover {
+  background-color: #585858f5;
+  color: white;
 }
