@@ -13,7 +13,6 @@ import React, {
   useEffect,
 } from 'react';
 import classNames from 'classnames';
-import { rgba } from 'polished';
 
 import { isEmptyBounds, isCapturableBounds, emptyBounds } from '@utils/bounds';
 
@@ -66,36 +65,33 @@ const calcSelectedBounds = (selCtx: AreaSelectionCtx): SelectedBounds => {
   };
 };
 
-const getSelectedAreaStyles = (selCtx: AreaSelectionCtx): any => {
+const getAreaClasses = (selCtx: AreaSelectionCtx): string => {
   const bounds = calcSelectedBounds(selCtx);
 
   if (isEmptyBounds(bounds)) {
-    return { display: 'none' };
+    return styles.areaHidden;
   }
 
-  let styles: any = {
+  if (!isCapturableBounds(bounds)) {
+    return classNames(styles.area, styles.areaUncapturable);
+  }
+
+  if (selCtx.selected) {
+    return classNames(styles.area, styles.areaSelected);
+  }
+
+  return styles.area;
+};
+
+const getAreaLayout = (selCtx: AreaSelectionCtx): any => {
+  const bounds = calcSelectedBounds(selCtx);
+
+  return {
     left: bounds.x,
     top: bounds.y,
     width: bounds.width + 1,
     height: bounds.height + 1,
   };
-
-  if (!isCapturableBounds(bounds)) {
-    styles = {
-      ...styles,
-      backgroundColor: rgba(255, 10, 10, 0.1),
-      boxShadow: 'inset 0 0 3px red',
-    };
-  }
-
-  if (selCtx.selected) {
-    styles = {
-      ...styles,
-      backgroundColor: rgba(255, 255, 255, 0.01),
-    };
-  }
-
-  return styles;
 };
 
 const handleMouseDown = (
@@ -183,21 +179,19 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     setSelCtx({ ...selCtx, selected: selectedBounds !== undefined });
   }, [selectedBounds]);
 
-  const wrapperClasses = classNames({
-    [styles.wrapper]: true,
-    [styles.crosshair]: !selCtx.selected,
-  });
-
   return (
     // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
     <div
-      className={wrapperClasses}
+      className={classNames({
+        [styles.wrapper]: true,
+        [styles.crosshair]: !selCtx.selected,
+      })}
       onMouseDown={mouseDownHandler}
       onMouseUp={mouseUpHandler}
       onMouseMove={mouseMoveHandler}
     >
       {active && (
-        <div className={styles.area} style={getSelectedAreaStyles(selCtx)} />
+        <div className={getAreaClasses(selCtx)} style={getAreaLayout(selCtx)} />
       )}
     </div>
   );

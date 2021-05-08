@@ -4,6 +4,7 @@
 /* eslint-disable import/prefer-default-export */
 
 import React, { FC } from 'react';
+import classNames from 'classnames';
 
 import { SelectedBounds } from './types';
 
@@ -26,12 +27,14 @@ const getWrapperLayoutStyles = (bounds: SelectedBounds): any => {
 export const ControlBox: FC<PropTypes> = (props: PropTypes) => {
   const { active, selectedBounds: bounds } = props;
 
+  const recordBtnClasses = classNames(styles.item, styles.itemRecord);
+  const closeBtnClasses = classNames(styles.item, styles.itemClose);
+
   return active && bounds ? (
     <div className={styles.wrapper} style={getWrapperLayoutStyles(bounds)}>
       <div className={styles.itemBox}>
-        <div className={styles.item}>Record</div>
-        <div className={styles.item}>Close</div>
-        <div className={styles.item}>Close</div>
+        <div className={recordBtnClasses}>RECORD</div>
+        <div className={closeBtnClasses}>CLOSE</div>
       </div>
     </div>
   ) : null;
