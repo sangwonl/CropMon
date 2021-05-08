@@ -4,14 +4,12 @@
 /* eslint-disable import/prefer-default-export */
 
 import React, { FC } from 'react';
-import classNames from 'classnames';
 
 import { SelectedBounds } from './types';
 
-import styles from './ControlBox.css';
+import styles from './CaptureAreaHint.css';
 
 interface PropTypes {
-  active: boolean;
   selectedBounds?: SelectedBounds;
 }
 
@@ -19,27 +17,21 @@ const getWrapperLayout = (bounds: SelectedBounds): any => {
   return {
     left: bounds.x,
     top: bounds.y,
-    width: bounds.width,
-    height: bounds.height,
   };
 };
 
-export const ControlBox: FC<PropTypes> = (props: PropTypes) => {
-  const { active, selectedBounds: bounds } = props;
+export const CaptureAreaHint: FC<PropTypes> = (props: PropTypes) => {
+  const { selectedBounds: bounds } = props;
 
-  const recordBtnClasses = classNames(styles.item, styles.itemRecord);
-  const closeBtnClasses = classNames(styles.item, styles.itemClose);
-
-  return active && bounds ? (
+  return bounds && bounds.width > 100 && bounds.height > 60 ? (
     <div className={styles.wrapper} style={getWrapperLayout(bounds)}>
-      <div className={styles.itemBox}>
-        <div className={recordBtnClasses}>RECORD</div>
-        <div className={closeBtnClasses}>CLOSE</div>
+      <div className={styles.hintResolution}>
+        {`${bounds.width} x ${bounds.height}`}
       </div>
     </div>
   ) : null;
 };
 
-ControlBox.defaultProps = {
+CaptureAreaHint.defaultProps = {
   selectedBounds: undefined,
 };

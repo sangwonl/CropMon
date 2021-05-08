@@ -1,0 +1,20 @@
+/*
+ * @NOTE: Prepend a `~` to css file paths that are in your node_modules
+ *        See https://github.com/webpack-contrib/sass-loader#imports
+ */
+
+.wrapper {
+  background-color: transparent;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hintResolution {
+  padding: 4px 8px;
+  background-color: rgba(50, 50, 50, 0.2);
+  color: black;
+  font-family: 'Poppins', 'Helvetica', sans-serif;
+  font-size: 14px;
+}
