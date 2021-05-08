@@ -13,8 +13,8 @@
 
 .hintResolution {
   padding: 4px 8px;
-  background-color: rgba(50, 50, 50, 0.2);
-  color: black;
+  background-color: rgba(40, 40, 40, 0.3);
+  color: #ededed;
   font-family: 'Poppins', 'Helvetica', sans-serif;
   font-size: 14px;
 }
