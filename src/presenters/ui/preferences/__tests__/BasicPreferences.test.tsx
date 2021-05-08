@@ -6,7 +6,7 @@ import { render } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 
 import { RootState } from '@presenters/redux/store';
-import BasicPreferences from '@presenters/ui/preferences/BasicPreferences';
+import { BasicPreferences } from '@presenters/ui/preferences/BasicPreferences';
 
 describe('BasicPreferences', () => {
   const mockStore = configureStore<RootState>();
@@ -20,6 +20,11 @@ describe('BasicPreferences', () => {
             recordHomeDir: '',
             shouldOpenRecordHomeDir: true,
           },
+        },
+        overlaysWindows: {},
+        captureArea: {
+          screenIdOnSelection: undefined,
+          selectedBounds: undefined,
         },
       },
       capture: { curCaptureCtx: undefined },
