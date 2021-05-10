@@ -62,14 +62,14 @@ const slice = createSlice({
       const { preferences } = state.preferencesWindow;
       state.preferencesWindow.preferences.openRecordHomeDirWhenRecordCompleted = !preferences.openRecordHomeDirWhenRecordCompleted;
     },
-    enableAreaSelection: (state) => {
-      state.captureArea.screenIdOnSelection = undefined;
-      state.captureArea.selectedBounds = undefined;
-    },
+    enableAreaSelection: (state) => {},
     didEnableAreaSelection: (
       state,
       action: PayloadAction<Array<IScreenInfo>>
     ) => {
+      state.captureArea.screenIdOnSelection = undefined;
+      state.captureArea.selectedBounds = undefined;
+
       action.payload.forEach((screenInfo) => {
         state.overlaysWindows[screenInfo.id] = { show: true, screenInfo };
       });
@@ -84,12 +84,12 @@ const slice = createSlice({
     ) => {
       state.captureArea.selectedBounds = action.payload.bounds;
     },
-    disableAreaSelection: (state) => {
+    disableAreaSelection: (_state) => {},
+    didDisableAreaSelection: (state) => {
       state.captureArea.screenIdOnSelection = undefined;
       state.captureArea.selectedBounds = undefined;
       state.captureArea.isRecording = false;
-    },
-    didDisableAreaSelection: (state) => {
+
       Object.keys(state.overlaysWindows).forEach((k) => {
         // https://stackoverflow.com/questions/14667713/how-to-convert-a-string-to-number-in-typescript
         const screenId: number = +k;

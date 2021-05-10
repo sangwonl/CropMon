@@ -2,6 +2,7 @@
 
 import 'reflect-metadata';
 
+import path from 'path';
 import assert from 'assert';
 import dayjs from 'dayjs';
 import { inject, injectable } from 'inversify';
@@ -66,6 +67,6 @@ export class CaptureUseCase {
     const userPrefs = this.globalRegistry.getUserPreferences();
     const fileName = dayjs().format('YYYYMMDDHHmmss');
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return `${userPrefs!.recordHomeDir}/${fileName}.mp4`;
+    return path.join(userPrefs!.recordHomeDir!, `${fileName}.mp4`);
   }
 }

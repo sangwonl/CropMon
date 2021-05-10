@@ -8,7 +8,8 @@ export interface UiDirector {
   quitApplication(): void;
   openPreferencesWindow(): void;
   closePreferencesWindow(): void;
-  openDialogForRecordHomeDir(): Promise<string>;
+  openDialogForRecordHomeDir(path?: string): Promise<string>;
   enableCaptureSelection(): Array<IScreenInfo>;
   disableCaptureSelection(): void;
+  showItemInFolder(path: string): void;
 }
