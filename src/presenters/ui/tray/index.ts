@@ -6,7 +6,7 @@
 
 import { Tray, nativeImage, Menu } from 'electron';
 
-import { CaptureStatus } from '@core/entities';
+import { CaptureStatus } from '@core/entities/capture';
 import store, { RootState } from '@presenters/redux/store';
 import {
   enableCaptureAreaSelection,

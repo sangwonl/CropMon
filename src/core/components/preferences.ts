@@ -1,9 +1,9 @@
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
-import { Preferences } from '@core/entities';
+import { IPreferences } from '@core/entities/preferences';
 
-export interface PreferencesStore {
-  loadPreferences(): Promise<Preferences>;
-  savePreferences(preferences: Preferences): Promise<void>;
+export interface IPreferencesStore {
+  loadPreferences(): Promise<IPreferences>;
+  savePreferences(preferences: IPreferences): Promise<void>;
 }

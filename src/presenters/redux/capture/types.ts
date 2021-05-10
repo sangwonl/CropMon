@@ -1,17 +1,11 @@
-import { IScreenBounds } from '../common/types';
-
-export interface ICaptureContext {
-  screenId: number;
-  bounds?: IScreenBounds;
-  status: number;
-  createdAt: number;
-}
+import { ICaptureContext } from '@core/entities/capture';
+import { IBounds } from '@core/entities/screen';
 
 export interface ICaptureState {
-  curCaptureCtx: ICaptureContext | undefined;
+  curCaptureCtx?: ICaptureContext;
 }
 
 export interface IStartCapturePayload {
   screenId: number;
-  bounds?: IScreenBounds;
+  bounds?: IBounds;
 }

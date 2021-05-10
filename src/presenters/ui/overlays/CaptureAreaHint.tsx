@@ -3,12 +3,12 @@
 
 import React, { FC } from 'react';
 
-import { IScreenBounds } from '@presenters/redux/common/types';
+import { IBounds } from '@core/entities/screen';
 
 import styles from './CaptureAreaHint.css';
 
 interface PropTypes {
-  selectedBounds: IScreenBounds;
+  selectedBounds: IBounds;
 }
 
 export const CaptureAreaHint: FC<PropTypes> = (props: PropTypes) => {

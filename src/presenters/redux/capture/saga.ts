@@ -3,12 +3,12 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { put, takeLatest } from 'redux-saga/effects';
 
-import { ScreenBounds } from '@core/entities/screen';
-import { CaptureContext, CaptureMode } from '@core/entities/capture';
+import { CaptureMode } from '@core/entities/capture';
 import { CaptureUseCase } from '@core/usecases/capture';
 import { diContainer } from '@di/container';
 
-import { ICaptureContext, IStartCapturePayload } from './types';
+import { IStartCapturePayload } from './types';
+
 import {
   startCapture,
   didStartCapture,
@@ -18,28 +18,18 @@ import {
 
 const captureUseCase = diContainer.get(CaptureUseCase);
 
-const captureCtxMapper = (ctx: CaptureContext): ICaptureContext => {
-  return {
-    screenId: ctx.target.screenId,
-    bounds: ctx.target.bounds,
-    status: ctx.status,
-    createdAt: Math.floor(ctx.createdAt.getTime() / 1000),
-  };
-};
-
 function* handleStartCapture(action: PayloadAction<IStartCapturePayload>) {
-  const { bounds } = action.payload;
   const newContext = captureUseCase.startCapture({
     mode: CaptureMode.AREA,
     screenId: action.payload.screenId,
-    bounds: bounds ? ScreenBounds.fromBounds(bounds) : undefined,
+    bounds: action.payload.bounds,
   });
-  yield put(didStartCapture(captureCtxMapper(newContext)));
+  yield put(didStartCapture(newContext));
 }
 
 function* handleFinishCapture(_action: PayloadAction) {
   const updatedContext = captureUseCase.finishCapture();
-  yield put(didFinishCapture(captureCtxMapper(updatedContext)));
+  yield put(didFinishCapture(updatedContext));
 }
 
 function* sagaEntry() {

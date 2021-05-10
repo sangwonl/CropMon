@@ -5,7 +5,7 @@ import 'reflect-metadata';
 
 import { Container } from 'inversify';
 
-import { GlobalRegistry, ScreenRecorder, PreferencesStore } from '@core/components';
+import { IGlobalRegistry, IScreenRecorder, IPreferencesStore } from '@core/components';
 import { CaptureUseCase } from '@core/usecases/capture';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { ScreenRecorderWindows } from '@infrastructures/components/recorder-win';
@@ -18,17 +18,17 @@ import { TYPES } from './types';
 const diContainer = new Container();
 
 diContainer
-  .bind<GlobalRegistry>(GlobalRegistry)
+  .bind<IGlobalRegistry>(IGlobalRegistry)
   .toSelf()
   .inSingletonScope();
 
 diContainer
-  .bind<ScreenRecorder>(TYPES.ScreenRecorder)
+  .bind<IScreenRecorder>(TYPES.ScreenRecorder)
   .to(ScreenRecorderWindows)
   .inSingletonScope();
 
 diContainer
-  .bind<PreferencesStore>(TYPES.PreferencesStore)
+  .bind<IPreferencesStore>(TYPES.PreferencesStore)
   .to(PreferencesStoreImpl)
   .inSingletonScope();
 

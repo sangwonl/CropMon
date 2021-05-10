@@ -6,8 +6,8 @@ import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
 
 import { TYPES } from '@di/types';
 import { diContainer } from '@di/container';
-import { Preferences } from '@core/entities';
-import { ScreenInfo } from '@core/entities/screen';
+import { IPreferences } from '@core/entities/preferences';
+import { IScreenInfo } from '@core/entities/screen';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { UiDirector } from '@presenters/interactor';
 
@@ -27,15 +27,14 @@ import {
   didDisableCaptureAreaSelection,
   cancelCaptureAreaSelection,
 } from './slice';
-import { IScreenInfo } from '../common/types';
-import { IClosePreferencesPayload, IPreferences } from './types';
+import { IClosePreferencesPayload } from './types';
 import { RootState } from '../store';
 
 const uiDirector = diContainer.get<UiDirector>(TYPES.UiDirector);
 const preferencesUseCase = diContainer.get(PreferencesUseCase);
 
 function* handleLoadPreferences(_action: PayloadAction) {
-  const prefs: Preferences = yield call([
+  const prefs: IPreferences = yield call([
     preferencesUseCase,
     preferencesUseCase.getUserPreferences,
   ]);
@@ -43,7 +42,8 @@ function* handleLoadPreferences(_action: PayloadAction) {
   yield put(
     didLoadPreferences({
       recordHomeDir: prefs.recordHomeDir || '',
-      shouldOpenRecordHomeDir: prefs.openRecordHomeDirWhenRecordCompleted,
+      openRecordHomeDirWhenRecordCompleted:
+        prefs.openRecordHomeDirWhenRecordCompleted,
     })
   );
 }
@@ -62,10 +62,11 @@ function* handleClosePreferences(
       (state: RootState) => state.ui.preferencesWindow.preferences
     );
 
-    const prefs = new Preferences();
-    prefs.recordHomeDir = uiPrefs.recordHomeDir;
-    prefs.openRecordHomeDirWhenRecordCompleted =
-      uiPrefs.shouldOpenRecordHomeDir;
+    const prefs: IPreferences = {
+      recordHomeDir: uiPrefs.recordHomeDir,
+      openRecordHomeDirWhenRecordCompleted:
+        uiPrefs.openRecordHomeDirWhenRecordCompleted,
+    };
 
     yield call(
       [preferencesUseCase, preferencesUseCase.updateUserPreference],
@@ -89,7 +90,7 @@ function* handleChooseRecordHomeDir(_action: PayloadAction) {
 }
 
 function* handleEnableCaptureAreaSelection(_action: PayloadAction) {
-  const screenInfos: Array<ScreenInfo> = uiDirector.enableCaptureSelection();
+  const screenInfos: Array<IScreenInfo> = uiDirector.enableCaptureSelection();
 
   yield put(
     didEnableCaptureAreaSelection(

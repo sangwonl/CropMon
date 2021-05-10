@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-
-import { IScreenBounds, IScreenInfo } from '../common/types';
-
-export interface IPreferences {
-  recordHomeDir: string;
-  shouldOpenRecordHomeDir: boolean;
-}
+import { IPreferences } from '@core/entities/preferences';
+import { IBounds, IScreenInfo } from '@core/entities/screen';
 
 export interface IPreferencesWindow {
   show: boolean;
@@ -23,7 +18,7 @@ export interface IOverlaysWindows {
 
 export interface ICaptureArea {
   screenIdOnSelection?: number;
-  selectedBounds?: IScreenBounds;
+  selectedBounds?: IBounds;
 }
 
 export interface IUiState {
@@ -45,5 +40,5 @@ export interface IStartCaptureAreaSelection {
 }
 
 export interface IFinishCaptureAreaSelection {
-  bounds: IScreenBounds;
+  bounds: IBounds;
 }
