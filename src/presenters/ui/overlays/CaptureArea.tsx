@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/prefer-default-export */
@@ -14,18 +13,25 @@ import React, {
 } from 'react';
 import classNames from 'classnames';
 
-import { isEmptyBounds, isCapturableBounds, emptyBounds } from '@utils/bounds';
+import { IScreenBounds } from '@presenters/redux/common/types';
+import {
+  SPARE_PIXELS,
+  isEmptyBounds,
+  isCapturableBounds,
+  emptyBounds,
+} from '@utils/bounds';
 
-import { SelectedBounds } from './types';
 import { CaptureAreaHint } from './CaptureAreaHint';
 import styles from './CaptureArea.css';
+import { ControlBox } from './ControlBox';
 
 interface PropTypes {
   active: boolean;
-  selectedBounds?: SelectedBounds;
+  selectedBounds?: IScreenBounds;
   onSelectionStart: () => void;
-  onSelectionFinish: (bounds: SelectedBounds) => void;
   onSelectionCancel: () => void;
+  onSelectionFinish: (bounds: IScreenBounds) => void;
+  onRecordStart: () => void;
 }
 
 interface AreaSelectionCtx {
@@ -50,7 +56,7 @@ const initialSelCtx: AreaSelectionCtx = {
   curY: 0,
 };
 
-const calcSelectedBounds = (selCtx: AreaSelectionCtx): SelectedBounds => {
+const calcSelectedBounds = (selCtx: AreaSelectionCtx): IScreenBounds => {
   if (!selCtx.started) {
     return emptyBounds();
   }
@@ -58,15 +64,15 @@ const calcSelectedBounds = (selCtx: AreaSelectionCtx): SelectedBounds => {
   const endX = selCtx.selected ? selCtx.endX : selCtx.curX;
   const endY = selCtx.selected ? selCtx.endY : selCtx.curY;
   return {
-    x: Math.min(selCtx.startX, endX),
-    y: Math.min(selCtx.startY, endY),
+    x: Math.min(selCtx.startX, endX) - SPARE_PIXELS,
+    y: Math.min(selCtx.startY, endY) - SPARE_PIXELS,
     width: Math.abs(endX - selCtx.startX) + 1,
     height: Math.abs(endY - selCtx.startY) + 1,
   };
 };
 
 const getAreaClasses = (
-  bounds: SelectedBounds,
+  bounds: IScreenBounds,
   selCtx: AreaSelectionCtx
 ): string => {
   if (isEmptyBounds(bounds)) {
@@ -84,10 +90,10 @@ const getAreaClasses = (
   return styles.area;
 };
 
-const getAreaLayout = (bounds: SelectedBounds): any => {
+const getAreaLayout = (bounds: IScreenBounds): any => {
   return {
-    left: bounds.x,
-    top: bounds.y,
+    left: bounds.x + SPARE_PIXELS,
+    top: bounds.y + SPARE_PIXELS,
     width: bounds.width,
     height: bounds.height,
   };
@@ -119,7 +125,7 @@ const handleMouseDown = (
 
 const handleMouseUp = (
   onSelectionCancel: () => void,
-  onSelectionFinish: (bounds: SelectedBounds) => void,
+  onSelectionFinish: (bounds: IScreenBounds) => void,
   selCtx: AreaSelectionCtx,
   setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
 ) => (e: MouseEvent<HTMLDivElement>) => {
@@ -161,6 +167,7 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     onSelectionStart: onStart,
     onSelectionFinish: onFinish,
     onSelectionCancel: onCancel,
+    onRecordStart: onRecord,
   } = props;
 
   const [selCtx, setSelCtx] = useState<AreaSelectionCtx>(initialSelCtx);
@@ -186,13 +193,17 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
       onMouseMove={onMouseMove}
     >
       {active && (
-        <>
-          <div
-            className={getAreaClasses(calcBounds, selCtx)}
-            style={getAreaLayout(calcBounds)}
-          />
-          <CaptureAreaHint selectedBounds={calcBounds} />
-        </>
+        <div
+          className={getAreaClasses(calcBounds, selCtx)}
+          style={getAreaLayout(calcBounds)}
+        >
+          {calcBounds.width > 100 && calcBounds.height > 60 && (
+            <CaptureAreaHint selectedBounds={calcBounds} />
+          )}
+          {selectedBounds && (
+            <ControlBox onRecord={onRecord} onClose={onCancel} />
+          )}
+        </div>
       )}
     </div>
   );

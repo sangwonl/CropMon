@@ -16,26 +16,18 @@ export class CaptureUseCase {
     @inject(TYPES.ScreenRecorder) private screenRecorder: ScreenRecorder
   ) {}
 
-  public prepareCapture(option: CaptureOption): CaptureContext | never {
-    const newCtx = new CaptureContext(option);
-
-    this.globalRegistry.setCaptureContext(newCtx);
-
-    return newCtx;
-  }
-
-  public startCapture(): CaptureContext | never {
-    const curCtx = this.globalRegistry.getCaptureContext();
-    assert(curCtx !== undefined);
+  public startCapture(option: CaptureOption): CaptureContext | never {
+    const ctx = new CaptureContext(option);
+    this.globalRegistry.setCaptureContext(ctx);
 
     try {
-      this.screenRecorder.record(curCtx);
-      curCtx.status = CaptureStatus.IN_PROGRESS;
+      this.screenRecorder.record(ctx);
+      ctx.status = CaptureStatus.IN_PROGRESS;
     } catch (e) {
-      curCtx.status = CaptureStatus.ERROR;
+      ctx.status = CaptureStatus.ERROR;
     }
 
-    return curCtx;
+    return ctx;
   }
 
   public pauseCapture() {

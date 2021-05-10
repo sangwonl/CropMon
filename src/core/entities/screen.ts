@@ -2,6 +2,13 @@
 /* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable import/prefer-default-export */
 
+interface IBounds {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export class ScreenBounds {
   x: number;
   y: number;
@@ -13,6 +20,19 @@ export class ScreenBounds {
     this.y = y;
     this.width = w;
     this.height = h;
+  }
+
+  static fromBounds(bounds: IBounds): ScreenBounds {
+    return new ScreenBounds(bounds.x, bounds.y, bounds.width, bounds.height);
+  }
+
+  scaleBy(scaleFactor: number): ScreenBounds {
+    return new ScreenBounds(
+      this.x * scaleFactor,
+      this.y * scaleFactor,
+      this.width * scaleFactor,
+      this.height * scaleFactor
+    );
   }
 }
 

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ICaptureState, ICaptureContext } from './types';
+import { ICaptureState, ICaptureContext, IStartCapturePayload } from './types';
 
 const initialState: ICaptureState = {
   curCaptureCtx: undefined,
@@ -11,28 +11,22 @@ const slice = createSlice({
   name: 'capture',
   initialState,
   reducers: {
-    configureCaptureParams: (_state) => {},
-    configuredCaptureParams: (_state) => {},
-    preparedCaptureContext: (state, action: PayloadAction<ICaptureContext>) => {
-      state.curCaptureCtx = action.payload;
-    },
-    startingCapture: (state, action: PayloadAction<ICaptureContext>) => {
+    startCapture: (_state, _action: PayloadAction<IStartCapturePayload>) => {},
+    didStartCapture: (state, action: PayloadAction<ICaptureContext>) => {
       state.curCaptureCtx = action.payload;
     },
     finishCapture: (_state) => {},
-    finishedCapture: (state, action: PayloadAction<ICaptureContext>) => {
+    didFinishCapture: (state, action: PayloadAction<ICaptureContext>) => {
       state.curCaptureCtx = action.payload;
     },
   },
 });
 
 export const {
-  configureCaptureParams,
-  configuredCaptureParams,
-  preparedCaptureContext,
-  startingCapture,
+  startCapture,
+  didStartCapture,
   finishCapture,
-  finishedCapture,
+  didFinishCapture,
 } = slice.actions;
 
 export default slice.reducer;

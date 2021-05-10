@@ -4,20 +4,14 @@
 
 import assert from 'assert';
 
-import { screen } from 'electron';
+import { Display, screen } from 'electron';
 import { ChildProcess } from 'child_process';
 import Ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
 import { injectable } from 'inversify';
 
-import { ScreenRecorder } from '@core/components';
 import { CaptureContext } from '@core/entities/capture';
-
-interface ScreenBounds {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
+import { ScreenBounds } from '@core/entities/screen';
+import { ScreenRecorder } from '@core/components';
 
 @injectable()
 export class ScreenRecorderWindows implements ScreenRecorder {
@@ -25,10 +19,17 @@ export class ScreenRecorderWindows implements ScreenRecorder {
 
   // eslint-disable-next-line class-methods-use-this
   async record(ctx: CaptureContext): Promise<void> {
-    const { screenIndex } = ctx.target;
+    const { screenId, bounds: targetBounds } = ctx.target;
 
-    const screenBounds = this.calcAllScreenBounds();
-    const { x, y, width, height } = screenBounds[screenIndex];
+    const targetDisplay = this.getDisplay(screenId);
+    if (targetDisplay === undefined || targetBounds === undefined) {
+      return;
+    }
+
+    const { x, y, width, height } = this.adjustBoundsOnDisplay(
+      targetDisplay,
+      targetBounds
+    );
 
     const ffmpeg = Ffmpeg()
       .input('desktop')
@@ -55,26 +56,63 @@ export class ScreenRecorderWindows implements ScreenRecorder {
     proc?.stdin?.write('q');
   }
 
-  private calcAllScreenBounds(): Array<ScreenBounds> {
-    const displays = screen.getAllDisplays();
-    const primaryScaleFactor = displays[0].scaleFactor;
+  private getDisplay(screenId: number): Display | undefined {
+    return screen.getAllDisplays().find((d) => d.id === screenId);
+  }
 
-    return displays.map((d) => {
-      const { x, y, width, height } = d.bounds;
-      let scaledX = x * primaryScaleFactor;
-      if (scaledX < 0) {
-        scaledX += width;
-      }
-      let scaledY = y * primaryScaleFactor;
-      if (scaledY < 0) {
-        scaledY += height;
-      }
-      return {
-        x: scaledX,
-        y: scaledY,
-        width: width * d.scaleFactor,
-        height: height * d.scaleFactor,
-      };
-    });
+  private adjustBoundsOnDisplay(
+    targetDisp: Display,
+    bounds: ScreenBounds
+  ): ScreenBounds {
+    const scaledBounds = this.calcScaledScreenBounds(targetDisp);
+    return new ScreenBounds(
+      scaledBounds.x + bounds.x * targetDisp.scaleFactor,
+      scaledBounds.y + bounds.y * targetDisp.scaleFactor,
+      bounds.width * targetDisp.scaleFactor,
+      bounds.height * targetDisp.scaleFactor
+    );
+  }
+
+  private calcScaledScreenBounds(targetDisp: Display): ScreenBounds {
+    const primaryDisp = screen.getPrimaryDisplay();
+    const unScaledTargetDispBounds = new ScreenBounds(
+      targetDisp.bounds.x,
+      targetDisp.bounds.y,
+      targetDisp.bounds.width,
+      targetDisp.bounds.height
+    );
+
+    if (targetDisp === primaryDisp) {
+      return unScaledTargetDispBounds.scaleBy(targetDisp.scaleFactor);
+    }
+
+    const { x, y, width, height } = unScaledTargetDispBounds;
+    let scaledBoundsX = x;
+    let scaledBoundsY = y;
+
+    if (x >= 0) {
+      scaledBoundsX = x * primaryDisp.scaleFactor;
+    } else {
+      const unscaledJoint = width + x;
+      scaledBoundsX =
+        unscaledJoint * primaryDisp.scaleFactor -
+        width * targetDisp.scaleFactor;
+    }
+
+    if (y >= 0) {
+      scaledBoundsY = y * primaryDisp.scaleFactor;
+    } else {
+      const unscaledJoint = height + y;
+      scaledBoundsY =
+        unscaledJoint * primaryDisp.scaleFactor -
+        height * targetDisp.scaleFactor;
+    }
+
+    return new ScreenBounds(
+      scaledBoundsX,
+      scaledBoundsY,
+      width * targetDisp.scaleFactor,
+      height * targetDisp.scaleFactor
+    );
   }
 }

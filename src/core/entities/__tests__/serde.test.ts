@@ -8,7 +8,7 @@ describe('Entities', () => {
   it('should still expose private fields when serialization', () => {
     const option: CaptureOption = {
       mode: CaptureMode.FULLSCREEN,
-      screenIndex: 0,
+      screenId: 0,
     };
 
     // because nothing is private in js which typescript is transpiled to.
