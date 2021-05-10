@@ -12,7 +12,7 @@ import 'reflect-metadata';
 import { dialog, BrowserWindow, screen } from 'electron';
 import { injectable } from 'inversify';
 
-import { ScreenBounds, ScreenInfo } from '@core/entities/screen';
+import { IBounds, IScreenInfo } from '@core/entities/screen';
 import { AssetResolverFunc } from '@presenters/common/asset';
 import { AppTray } from '@presenters/ui/tray';
 import { OverlaysBuilder } from '@presenters/ui/overlays/builder';
@@ -29,7 +29,7 @@ class OverlaysWindowPool {
 
   constructor(
     assetResolver: AssetResolverFunc,
-    screenInfos: Array<ScreenInfo>
+    screenInfos: Array<IScreenInfo>
   ) {
     this.builder = new OverlaysBuilder(assetResolver);
     this.windows = new Map<number, BrowserWindow>();
@@ -40,7 +40,7 @@ class OverlaysWindowPool {
     });
   }
 
-  showAll(screenInfos: Array<ScreenInfo>) {
+  showAll(screenInfos: Array<IScreenInfo>) {
     screenInfos.forEach(({ id: screenId, bounds }) => {
       const sparedBounds = this.addSparePixels(bounds);
       const w = this.getOrBuild(screenId);
@@ -72,14 +72,14 @@ class OverlaysWindowPool {
 
   // WORKAROUND to fix non-clickable area at the nearest borders
   // Same issue here: https://github.com/electron/electron/issues/21929
-  private addSparePixels(bounds: ScreenBounds): ScreenBounds {
-    return new ScreenBounds(
-      bounds.x - SPARE_PIXELS,
-      bounds.y - SPARE_PIXELS,
-      // (bounds.width + SPARE_PIXELS * 2) / 2,
-      bounds.width + SPARE_PIXELS * 2,
-      bounds.height + SPARE_PIXELS * 2
-    );
+  private addSparePixels(bounds: IBounds): IBounds {
+    return {
+      x: bounds.x - SPARE_PIXELS,
+      y: bounds.y - SPARE_PIXELS,
+      // width: (bounds.width + SPARE_PIXELS * 2) / 2,
+      width: bounds.width + SPARE_PIXELS * 2,
+      height: bounds.height + SPARE_PIXELS * 2,
+    };
   }
 }
 
@@ -120,7 +120,7 @@ export class UiDirectorWindows implements UiDirector {
     return filePaths.length > 0 ? filePaths[0] : '';
   }
 
-  enableCaptureSelection(): Array<ScreenInfo> {
+  enableCaptureSelection(): Array<IScreenInfo> {
     const screenInfos = this.populateScreenInfos();
 
     this.overlaysWindows.showAll(screenInfos);
@@ -132,10 +132,9 @@ export class UiDirectorWindows implements UiDirector {
     this.overlaysWindows.hideAll();
   }
 
-  private populateScreenInfos(): Array<ScreenInfo> {
+  private populateScreenInfos(): Array<IScreenInfo> {
     return screen.getAllDisplays().map((d) => {
-      const { x, y, width, height } = d.bounds;
-      return new ScreenInfo(d.id, new ScreenBounds(x, y, width, height));
+      return { id: d.id, bounds: d.bounds };
     });
   }
 }

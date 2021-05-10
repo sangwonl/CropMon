@@ -2,22 +2,26 @@ import 'reflect-metadata';
 
 import { mock, instance, verify, when } from 'ts-mockito';
 
-import { CaptureMode, CaptureStatus, CaptureContext } from '@core/entities';
-import { GlobalRegistry, ScreenRecorder } from '@core/components';
+import {
+  CaptureMode,
+  CaptureStatus,
+  createCaptureContext,
+} from '@core/entities/capture';
+import { IGlobalRegistry, IScreenRecorder } from '@core/components';
 import { CaptureUseCase } from '@core/usecases/capture';
 
 describe('CaptureUseCase', () => {
-  let mockedGlobalRegistry: GlobalRegistry;
-  let mockRegistry: GlobalRegistry;
+  let mockedGlobalRegistry: IGlobalRegistry;
+  let mockRegistry: IGlobalRegistry;
 
-  let mockedScreenRecorder: ScreenRecorder;
-  let mockRecorder: ScreenRecorder;
+  let mockedScreenRecorder: IScreenRecorder;
+  let mockRecorder: IScreenRecorder;
 
   let useCase: CaptureUseCase;
 
   beforeEach(() => {
-    mockedGlobalRegistry = mock(GlobalRegistry);
-    mockedScreenRecorder = mock<ScreenRecorder>();
+    mockedGlobalRegistry = mock(IGlobalRegistry);
+    mockedScreenRecorder = mock<IScreenRecorder>();
 
     mockRegistry = instance(mockedGlobalRegistry);
     mockRecorder = instance(mockedScreenRecorder);
@@ -46,7 +50,7 @@ describe('CaptureUseCase', () => {
       expect(newCtx.status).toEqual(CaptureStatus.IN_PROGRESS);
       verify(mockedGlobalRegistry.setCaptureContext(newCtx)).once();
 
-      const capCtx = new CaptureContext({
+      const capCtx = createCaptureContext({
         mode: CaptureMode.FULLSCREEN,
         screenId: 0,
       });

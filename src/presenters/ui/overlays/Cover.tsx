@@ -6,8 +6,8 @@
 import React, { useLayoutEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { IBounds } from '@core/entities/screen';
 import { RootState } from '@presenters/redux/store';
-import { IScreenBounds } from '@presenters/redux/common/types';
 import { ICaptureArea, IOverlaysWindows } from '@presenters/redux/ui/types';
 import {
   startCaptureAreaSelection,
@@ -67,7 +67,7 @@ export const Cover = () => {
     dispatch(startCaptureAreaSelection({ screenId: getScreenId() }));
   };
 
-  const onSelectionFinish = (bounds: IScreenBounds) => {
+  const onSelectionFinish = (bounds: IBounds) => {
     dispatch(finishCaptureAreaSelection({ bounds }));
   };
 

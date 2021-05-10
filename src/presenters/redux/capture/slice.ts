@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
+import { ICaptureContext } from '@core/entities/capture';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ICaptureState, ICaptureContext, IStartCapturePayload } from './types';
+import { ICaptureState, IStartCapturePayload } from './types';
 
 const initialState: ICaptureState = {
   curCaptureCtx: undefined,

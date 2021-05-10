@@ -1,8 +1,7 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable @typescript-eslint/lines-between-class-members */
 
-import assert from 'assert';
-import { ScreenBounds } from './screen';
+import { IBounds } from './screen';
 
 export enum CaptureMode {
   AREA = 1,
@@ -17,36 +16,31 @@ export enum CaptureStatus {
   ERROR,
 }
 
-class CaptureTarget {
+export interface ICaptureTarget {
   mode: CaptureMode;
   screenId: number;
-  bounds?: ScreenBounds;
-
-  constructor(mode: CaptureMode, screenId: number, bounds?: ScreenBounds) {
-    this.mode = mode;
-    this.screenId = screenId;
-    this.bounds = bounds;
-  }
+  bounds?: IBounds;
 }
 
-export interface CaptureOption {
+export interface ICaptureOption {
   mode: CaptureMode;
   screenId: number;
-  bounds?: ScreenBounds;
+  bounds?: IBounds;
 }
 
-export class CaptureContext {
-  target: CaptureTarget;
+export interface ICaptureContext {
+  target: ICaptureTarget;
   status: CaptureStatus;
-  createdAt: Date;
-
-  constructor(option: CaptureOption) {
-    this.target = new CaptureTarget(
-      option.mode,
-      option.screenId,
-      option.bounds
-    );
-    this.status = CaptureStatus.PREPARED;
-    this.createdAt = new Date();
-  }
+  createdAt: number;
 }
+
+export const createCaptureContext = (
+  option: ICaptureOption
+): ICaptureContext => {
+  const { mode, screenId, bounds } = option;
+  return {
+    target: { mode, screenId, bounds },
+    status: CaptureStatus.PREPARED,
+    createdAt: Math.floor(new Date().getTime() / 1000),
+  };
+};

@@ -7,20 +7,20 @@ import { injectable } from 'inversify';
 import { app } from 'electron';
 import Store from 'electron-store';
 
-import { Preferences } from '@core/entities';
-import { PreferencesStore } from '@core/components';
+import { IPreferences } from '@core/entities/preferences';
+import { IPreferencesStore } from '@core/components';
 
 const CUR_VERSION = '0.0.1';
 
 @injectable()
-export class PreferencesStoreImpl implements PreferencesStore {
+export class PreferencesStoreImpl implements IPreferencesStore {
   store: Store = new Store({
     name: 'config',
     fileExtension: 'json',
     accessPropertiesByDotNotation: false,
   });
 
-  async loadPreferences(): Promise<Preferences> {
+  async loadPreferences(): Promise<IPreferences> {
     const version = this.store.get('version');
     if (version !== undefined) {
       return this.mapStoreToPreferences();
@@ -32,23 +32,23 @@ export class PreferencesStoreImpl implements PreferencesStore {
     return newPrefs;
   }
 
-  async savePreferences(pref: Preferences): Promise<void> {
+  async savePreferences(prefs: IPreferences): Promise<void> {
     this.store.set('version', CUR_VERSION);
-    this.store.set('openRecordHomeDirWhenRecordCompleted', pref.openRecordHomeDirWhenRecordCompleted);
-    this.store.set('recordHomeDir', pref.recordHomeDir);
+    this.store.set('openRecordHomeDirWhenRecordCompleted', prefs.openRecordHomeDirWhenRecordCompleted);
+    this.store.set('recordHomeDir', prefs.recordHomeDir);
   }
 
-  private initialPreferences(): Preferences {
-    const prefs = new Preferences();
-    prefs.openRecordHomeDirWhenRecordCompleted = true;
-    prefs.recordHomeDir = app.getPath('videos');
-    return prefs;
+  private initialPreferences(): IPreferences {
+    return {
+      openRecordHomeDirWhenRecordCompleted: true,
+      recordHomeDir: app.getPath('videos'),
+    };
   }
 
-  private mapStoreToPreferences(): Preferences {
-    const prefs = new Preferences();
-    prefs.openRecordHomeDirWhenRecordCompleted = this.store.get('openRecordHomeDirWhenRecordCompleted') as boolean;
-    prefs.recordHomeDir = this.store.get('recordHomeDir') as string;
-    return prefs;
+  private mapStoreToPreferences(): IPreferences {
+    return {
+      openRecordHomeDirWhenRecordCompleted: this.store.get('openRecordHomeDirWhenRecordCompleted') as boolean,
+      recordHomeDir: this.store.get('recordHomeDir') as string,
+    };
   }
 }

@@ -6,18 +6,23 @@ import assert from 'assert';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '@di/types';
 
-import { CaptureStatus, CaptureContext, CaptureOption } from '@core/entities';
-import { GlobalRegistry, ScreenRecorder } from '@core/components';
+import {
+  CaptureStatus,
+  ICaptureContext,
+  ICaptureOption,
+  createCaptureContext,
+} from '@core/entities/capture';
+import { IGlobalRegistry, IScreenRecorder } from '@core/components';
 
 @injectable()
 export class CaptureUseCase {
   public constructor(
-    private globalRegistry: GlobalRegistry,
-    @inject(TYPES.ScreenRecorder) private screenRecorder: ScreenRecorder
+    private globalRegistry: IGlobalRegistry,
+    @inject(TYPES.ScreenRecorder) private screenRecorder: IScreenRecorder
   ) {}
 
-  public startCapture(option: CaptureOption): CaptureContext | never {
-    const ctx = new CaptureContext(option);
+  public startCapture(option: ICaptureOption): ICaptureContext | never {
+    const ctx = createCaptureContext(option);
     this.globalRegistry.setCaptureContext(ctx);
 
     try {
@@ -40,17 +45,18 @@ export class CaptureUseCase {
     console.log(this.screenRecorder);
   }
 
-  public finishCapture(): CaptureContext | never {
+  public finishCapture(): ICaptureContext | never {
     const curCtx = this.globalRegistry.getCaptureContext();
     assert(curCtx !== undefined);
 
+    let newStatus = curCtx.status;
     try {
       this.screenRecorder.finish(curCtx);
-      curCtx.status = CaptureStatus.FINISHED;
+      newStatus = CaptureStatus.FINISHED;
     } catch (e) {
-      curCtx.status = CaptureStatus.ERROR;
+      newStatus = CaptureStatus.ERROR;
     }
 
-    return curCtx;
+    return { ...curCtx, status: newStatus };
   }
 }
