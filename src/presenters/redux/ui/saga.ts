@@ -27,7 +27,8 @@ import {
   didDisableCaptureAreaSelection,
   cancelCaptureAreaSelection,
 } from './slice';
-import { IClosePreferencesPayload, IPreferences, IScreenInfo } from './types';
+import { IScreenInfo } from '../common/types';
+import { IClosePreferencesPayload, IPreferences } from './types';
 import { RootState } from '../store';
 
 const uiDirector = diContainer.get<UiDirector>(TYPES.UiDirector);

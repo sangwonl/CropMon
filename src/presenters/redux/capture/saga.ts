@@ -3,53 +3,47 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { put, takeLatest } from 'redux-saga/effects';
 
-import { diContainer } from '@di/container';
-import { CaptureUseCase } from '@core/usecases/capture';
+import { ScreenBounds } from '@core/entities/screen';
 import { CaptureContext, CaptureMode } from '@core/entities/capture';
+import { CaptureUseCase } from '@core/usecases/capture';
+import { diContainer } from '@di/container';
 
-import { ICaptureContext } from './types';
+import { ICaptureContext, IStartCapturePayload } from './types';
 import {
-  configureCaptureParams,
-  configuredCaptureParams,
-  preparedCaptureContext,
-  startingCapture,
+  startCapture,
+  didStartCapture,
   finishCapture,
-  finishedCapture,
+  didFinishCapture,
 } from './slice';
 
 const captureUseCase = diContainer.get(CaptureUseCase);
 
 const captureCtxMapper = (ctx: CaptureContext): ICaptureContext => {
   return {
+    screenId: ctx.target.screenId,
+    bounds: ctx.target.bounds,
     status: ctx.status,
     createdAt: Math.floor(ctx.createdAt.getTime() / 1000),
   };
 };
 
-function* handleConfiguringCaptureParams(action: PayloadAction) {
-  yield put(configuredCaptureParams());
-}
-
-function* handleConfiguredCaptureParams(action: PayloadAction) {
-  const captureContext = captureUseCase.prepareCapture({
-    mode: CaptureMode.FULLSCREEN,
-    screenIndex: 0,
+function* handleStartCapture(action: PayloadAction<IStartCapturePayload>) {
+  const { bounds } = action.payload;
+  const newContext = captureUseCase.startCapture({
+    mode: CaptureMode.AREA,
+    screenId: action.payload.screenId,
+    bounds: bounds ? ScreenBounds.fromBounds(bounds) : undefined,
   });
-  yield put(preparedCaptureContext(captureCtxMapper(captureContext)));
-
-  const updatedContext = captureUseCase.startCapture();
-  yield put(startingCapture(captureCtxMapper(updatedContext)));
+  yield put(didStartCapture(captureCtxMapper(newContext)));
 }
 
-function* handleFinishCapture(action: PayloadAction) {
+function* handleFinishCapture(_action: PayloadAction) {
   const updatedContext = captureUseCase.finishCapture();
-  yield put(finishedCapture(captureCtxMapper(updatedContext)));
+  yield put(didFinishCapture(captureCtxMapper(updatedContext)));
 }
 
 function* sagaEntry() {
-  // eslint-disable-next-line prettier/prettier
-  yield takeLatest(configureCaptureParams.type, handleConfiguringCaptureParams);
-  yield takeLatest(configuredCaptureParams.type, handleConfiguredCaptureParams);
+  yield takeLatest(startCapture.type, handleStartCapture);
   yield takeLatest(finishCapture.type, handleFinishCapture);
 }
 

@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
+import { IScreenBounds, IScreenInfo } from '../common/types';
+
 export interface IPreferences {
   recordHomeDir: string;
   shouldOpenRecordHomeDir: boolean;
@@ -8,18 +10,6 @@ export interface IPreferences {
 export interface IPreferencesWindow {
   show: boolean;
   preferences: IPreferences;
-}
-
-export interface IScreenBounds {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
-export interface IScreenInfo {
-  id: number;
-  bounds: IScreenBounds;
 }
 
 export interface IOverlaysWindow {
