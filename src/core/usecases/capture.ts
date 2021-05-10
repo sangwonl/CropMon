@@ -3,9 +3,10 @@
 import 'reflect-metadata';
 
 import assert from 'assert';
+import dayjs from 'dayjs';
 import { inject, injectable } from 'inversify';
-import { TYPES } from '@di/types';
 
+import { TYPES } from '@di/types';
 import {
   CaptureStatus,
   ICaptureContext,
@@ -23,6 +24,7 @@ export class CaptureUseCase {
 
   public startCapture(option: ICaptureOption): ICaptureContext | never {
     const ctx = createCaptureContext(option);
+    ctx.outputPath = this.getOutputPath();
     this.globalRegistry.setCaptureContext(ctx);
 
     try {
@@ -58,5 +60,12 @@ export class CaptureUseCase {
     }
 
     return { ...curCtx, status: newStatus };
+  }
+
+  private getOutputPath(): string {
+    const userPrefs = this.globalRegistry.getUserPreferences();
+    const fileName = dayjs().format('YYYYMMDDHHmmss');
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return `${userPrefs!.recordHomeDir}/${fileName}.mp4`;
   }
 }
