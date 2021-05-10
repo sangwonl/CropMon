@@ -9,7 +9,7 @@
 
 import 'reflect-metadata';
 
-import { dialog, BrowserWindow, screen } from 'electron';
+import { app, shell, dialog, BrowserWindow, screen } from 'electron';
 import { injectable } from 'inversify';
 
 import { IBounds, IScreenInfo } from '@core/entities/screen';
@@ -112,8 +112,9 @@ export class UiDirectorWindows implements UiDirector {
     this.preferencesWindow.hide();
   }
 
-  async openDialogForRecordHomeDir(): Promise<string> {
+  async openDialogForRecordHomeDir(path?: string): Promise<string> {
     const { filePaths } = await dialog.showOpenDialog(this.preferencesWindow, {
+      defaultPath: path ?? app.getPath('videos'),
       properties: ['openDirectory'],
     });
 
@@ -130,6 +131,10 @@ export class UiDirectorWindows implements UiDirector {
 
   disableCaptureSelection(): void {
     this.overlaysWindows.hideAll();
+  }
+
+  showItemInFolder(path: string): void {
+    shell.showItemInFolder(path);
   }
 
   private populateScreenInfos(): Array<IScreenInfo> {

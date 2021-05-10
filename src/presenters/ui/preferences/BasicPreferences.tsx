@@ -11,8 +11,8 @@ import {
   TextField,
 } from '@material-ui/core';
 
+import { IPreferences } from '@core/entities/preferences';
 import { RootState } from '@presenters/redux/store';
-import { IPreferences } from '@presenters/redux/ui/types';
 import {
   toggleOpenRecordHomeDir,
   chooseRecordHomeDir,
@@ -63,7 +63,7 @@ export const BasicPreferences = () => {
           control={
             <Checkbox
               name="open-record-home-when-completed"
-              checked={prefsState.shouldOpenRecordHomeDir}
+              checked={prefsState.openRecordHomeDirWhenRecordCompleted}
               onChange={() => {
                 dispatch(toggleOpenRecordHomeDir());
               }}
