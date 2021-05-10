@@ -8,7 +8,7 @@ import store, { RootState } from '@presenters/redux/store-main';
 import { finishCapture } from '@presenters/redux/capture/slice';
 import {
   openPreferences,
-  enableCaptureAreaSelection,
+  enableAreaSelection,
 } from '@presenters/redux/ui/slice';
 
 export const configureShortcuts = () => {
@@ -27,7 +27,7 @@ export const configureShortcuts = () => {
     if (state.capture.curCaptureCtx?.status === CaptureStatus.IN_PROGRESS) {
       store.dispatch(finishCapture());
     } else {
-      store.dispatch(enableCaptureAreaSelection());
+      store.dispatch(enableAreaSelection());
     }
   };
 

@@ -9,7 +9,7 @@ import { Tray, nativeImage, Menu } from 'electron';
 import { CaptureStatus } from '@core/entities/capture';
 import store, { RootState } from '@presenters/redux/store';
 import {
-  enableCaptureAreaSelection,
+  enableAreaSelection,
   openPreferences,
   quitApplication,
 } from '@presenters/redux/ui/slice';
@@ -43,7 +43,7 @@ export abstract class AppTray {
   }
 
   protected onStartRecording() {
-    store.dispatch(enableCaptureAreaSelection());
+    store.dispatch(enableAreaSelection());
   }
 
   protected onStopRecording() {

@@ -10,7 +10,7 @@ import { CaptureUseCase } from '@core/usecases/capture';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { ScreenRecorderWindows } from '@infrastructures/components/recorder-win';
 import { PreferencesStoreImpl } from '@infrastructures/components/preferences';
-import { UiDirector } from '@presenters/interactor';
+import { UiDirector } from '@presenters/interactor/director';
 import { UiDirectorWindows } from '@presenters/interactor/director-win';
 
 import { TYPES } from './types';

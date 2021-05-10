@@ -8,8 +8,8 @@ import { IPreferences } from '@core/entities/preferences';
 import {
   IChooseRecordHomeDirPayload,
   IClosePreferencesPayload,
-  IFinishCaptureAreaSelection,
-  IStartCaptureAreaSelection,
+  IFinishAreaSelection,
+  IStartAreaSelection,
   IUiState,
 } from './types';
 
@@ -25,6 +25,7 @@ const initialState: IUiState = {
   captureArea: {
     screenIdOnSelection: undefined,
     selectedBounds: undefined,
+    isRecording: false,
   },
 };
 
@@ -61,11 +62,11 @@ const slice = createSlice({
       const { preferences } = state.preferencesWindow;
       state.preferencesWindow.preferences.openRecordHomeDirWhenRecordCompleted = !preferences.openRecordHomeDirWhenRecordCompleted;
     },
-    enableCaptureAreaSelection: (state) => {
+    enableAreaSelection: (state) => {
       state.captureArea.screenIdOnSelection = undefined;
       state.captureArea.selectedBounds = undefined;
     },
-    didEnableCaptureAreaSelection: (
+    didEnableAreaSelection: (
       state,
       action: PayloadAction<Array<IScreenInfo>>
     ) => {
@@ -73,31 +74,31 @@ const slice = createSlice({
         state.overlaysWindows[screenInfo.id] = { show: true, screenInfo };
       });
     },
-    disableCaptureAreaSelection: (state) => {
-      state.captureArea.screenIdOnSelection = undefined;
+    startAreaSelection: (state, action: PayloadAction<IStartAreaSelection>) => {
+      state.captureArea.screenIdOnSelection = action.payload.screenId;
       state.captureArea.selectedBounds = undefined;
     },
-    didDisableCaptureAreaSelection: (state) => {
+    finishAreaSelection: (
+      state,
+      action: PayloadAction<IFinishAreaSelection>
+    ) => {
+      state.captureArea.selectedBounds = action.payload.bounds;
+    },
+    disableAreaSelection: (state) => {
+      state.captureArea.screenIdOnSelection = undefined;
+      state.captureArea.selectedBounds = undefined;
+      state.captureArea.isRecording = false;
+    },
+    didDisableAreaSelection: (state) => {
       Object.keys(state.overlaysWindows).forEach((k) => {
         // https://stackoverflow.com/questions/14667713/how-to-convert-a-string-to-number-in-typescript
         const screenId: number = +k;
         state.overlaysWindows[screenId].show = false;
       });
     },
-    startCaptureAreaSelection: (
-      state,
-      action: PayloadAction<IStartCaptureAreaSelection>
-    ) => {
-      state.captureArea.screenIdOnSelection = action.payload.screenId;
-      state.captureArea.selectedBounds = undefined;
+    enableRecording: (state) => {
+      state.captureArea.isRecording = true;
     },
-    finishCaptureAreaSelection: (
-      state,
-      action: PayloadAction<IFinishCaptureAreaSelection>
-    ) => {
-      state.captureArea.selectedBounds = action.payload.bounds;
-    },
-    cancelCaptureAreaSelection: (_state) => {},
     quitApplication: (_state) => {},
   },
 });
@@ -112,13 +113,13 @@ export const {
   toggleOpenRecordHomeDir,
   chooseRecordHomeDir,
   didChooseRecordHomeDir,
-  enableCaptureAreaSelection,
-  didEnableCaptureAreaSelection,
-  disableCaptureAreaSelection,
-  didDisableCaptureAreaSelection,
-  startCaptureAreaSelection,
-  finishCaptureAreaSelection,
-  cancelCaptureAreaSelection,
+  enableAreaSelection,
+  didEnableAreaSelection,
+  startAreaSelection,
+  finishAreaSelection,
+  disableAreaSelection,
+  didDisableAreaSelection,
+  enableRecording,
   quitApplication,
 } = slice.actions;
 
