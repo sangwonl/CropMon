@@ -27,6 +27,7 @@ import { ControlBox } from './ControlBox';
 
 interface PropTypes {
   active: boolean;
+  isRecording: boolean;
   selectedBounds?: IBounds;
   onSelectionStart: () => void;
   onSelectionCancel: () => void;
@@ -37,6 +38,7 @@ interface PropTypes {
 interface AreaSelectionCtx {
   started: boolean;
   selected: boolean;
+  recording: boolean;
   startX: number;
   startY: number;
   endX: number;
@@ -48,6 +50,7 @@ interface AreaSelectionCtx {
 const initialSelCtx: AreaSelectionCtx = {
   started: false,
   selected: false,
+  recording: false,
   startX: 0,
   startY: 0,
   endX: 0,
@@ -71,7 +74,11 @@ const calcSelectedBounds = (selCtx: AreaSelectionCtx): IBounds => {
   };
 };
 
-const getAreaClasses = (bounds: IBounds, selCtx: AreaSelectionCtx): string => {
+const getAreaClasses = (
+  isRecording: boolean,
+  bounds: IBounds,
+  selCtx: AreaSelectionCtx
+): string => {
   if (isEmptyBounds(bounds)) {
     return styles.areaHidden;
   }
@@ -80,11 +87,15 @@ const getAreaClasses = (bounds: IBounds, selCtx: AreaSelectionCtx): string => {
     return classNames(styles.area, styles.areaUncapturable);
   }
 
+  if (isRecording) {
+    return classNames(styles.area, styles.areaRecording);
+  }
+
   if (selCtx.selected) {
     return classNames(styles.area, styles.areaSelected);
   }
 
-  return styles.area;
+  return classNames(styles.area, styles.areaSelecting);
 };
 
 const getAreaLayout = (bounds: IBounds): any => {
@@ -102,6 +113,10 @@ const handleMouseDown = (
   selCtx: AreaSelectionCtx,
   setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
 ) => (e: MouseEvent<HTMLDivElement>) => {
+  if (selCtx.recording) {
+    return;
+  }
+
   if (selCtx.selected) {
     setSelCtx(initialSelCtx);
     onSelectionCancel();
@@ -126,6 +141,10 @@ const handleMouseUp = (
   selCtx: AreaSelectionCtx,
   setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
 ) => (e: MouseEvent<HTMLDivElement>) => {
+  if (selCtx.recording) {
+    return;
+  }
+
   const updatedSelCtx = {
     ...selCtx,
     endX: e.clientX,
@@ -150,6 +169,10 @@ const handleMouseMove = (
   selCtx: AreaSelectionCtx,
   setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
 ) => (e: MouseEvent<HTMLDivElement>) => {
+  if (selCtx.recording || !selCtx.started) {
+    return;
+  }
+
   setSelCtx({
     ...selCtx,
     curX: e.clientX,
@@ -160,6 +183,7 @@ const handleMouseMove = (
 export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
   const {
     active,
+    isRecording,
     selectedBounds,
     onSelectionStart: onStart,
     onSelectionFinish: onFinish,
@@ -170,8 +194,12 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
   const [selCtx, setSelCtx] = useState<AreaSelectionCtx>(initialSelCtx);
 
   useEffect(() => {
-    setSelCtx({ ...selCtx, selected: selectedBounds !== undefined });
-  }, [selectedBounds]);
+    setSelCtx({
+      ...selCtx,
+      recording: isRecording,
+      selected: selectedBounds !== undefined,
+    });
+  }, [isRecording, selectedBounds]);
 
   const onMouseDown = handleMouseDown(onStart, onCancel, selCtx, setSelCtx);
   const onMouseUp = handleMouseUp(onCancel, onFinish, selCtx, setSelCtx);
@@ -191,13 +219,13 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     >
       {active && (
         <div
-          className={getAreaClasses(calcBounds, selCtx)}
+          className={getAreaClasses(isRecording, calcBounds, selCtx)}
           style={getAreaLayout(calcBounds)}
         >
-          {calcBounds.width > 100 && calcBounds.height > 60 && (
+          {!isRecording && calcBounds.width > 100 && calcBounds.height > 60 && (
             <CaptureAreaHint selectedBounds={calcBounds} />
           )}
-          {selectedBounds && (
+          {!isRecording && selectedBounds && (
             <ControlBox onRecord={onRecord} onClose={onCancel} />
           )}
         </div>

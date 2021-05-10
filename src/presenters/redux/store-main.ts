@@ -3,8 +3,8 @@
 
 import store, { RootState, sagaMiddleware } from './store';
 
-import uiSaga from './ui/saga';
-import captureSaga from './capture/saga';
+import uiSaga from './sagas/ui';
+import captureSaga from './sagas/capture';
 
 export const initializeSaga = () => {
   sagaMiddleware.run(uiSaga);

@@ -15,12 +15,15 @@
 
 .area {
   position: absolute;
-  background-color: rgba(250, 250, 250, 0.2);
-  box-shadow: inset 0 0 3px gray;
 }
 
 .areaHidden {
   display: none;
+}
+
+.areaSelecting {
+  background-color: rgba(250, 250, 250, 0.2);
+  box-shadow: inset 0 0 3px gray;
 }
 
 .areaUncapturable {
@@ -31,4 +34,23 @@
 .areaSelected {
   background-color: rgba(255, 255, 255, 0.05);
   box-shadow: inset 0 0 2px #232323;
+}
+
+.areaRecording {
+  background-color: transparent;
+  animation: recordingBorder 2s infinite;
+}
+
+@keyframes recordingBorder {
+  0% {
+    outline: 4px solid rgba(255, 0, 0, 0.2);
+  }
+
+  50% {
+    outline: 4px solid rgba(255, 0, 0, 0.8);
+  }
+
+  100% {
+    outline: 4px solid rgba(255, 0, 0, 0.2);
+  }
 }

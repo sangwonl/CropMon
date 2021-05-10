@@ -10,9 +10,10 @@ import { IBounds } from '@core/entities/screen';
 import { RootState } from '@presenters/redux/store';
 import { ICaptureArea, IOverlaysWindows } from '@presenters/redux/ui/types';
 import {
-  startCaptureAreaSelection,
-  finishCaptureAreaSelection,
-  cancelCaptureAreaSelection,
+  startAreaSelection,
+  finishAreaSelection,
+  disableAreaSelection,
+  enableRecording,
 } from '@presenters/redux/ui/slice';
 import { startCapture } from '@presenters/redux/capture/slice';
 import { getCurWindowCustomData } from '@utils/custom';
@@ -64,20 +65,19 @@ export const Cover = () => {
   }, [captureArea]);
 
   const onSelectionStart = () => {
-    dispatch(startCaptureAreaSelection({ screenId: getScreenId() }));
+    dispatch(startAreaSelection({ screenId: getScreenId() }));
   };
 
   const onSelectionFinish = (bounds: IBounds) => {
-    dispatch(finishCaptureAreaSelection({ bounds }));
+    dispatch(finishAreaSelection({ bounds }));
   };
 
   const onSelectionCancel = () => {
-    dispatch(cancelCaptureAreaSelection());
+    dispatch(disableAreaSelection());
   };
 
   const onRecordStart = () => {
-    // FIXME: we need to move to capturing state
-    dispatch(cancelCaptureAreaSelection());
+    dispatch(enableRecording());
 
     dispatch(
       startCapture({
@@ -92,6 +92,7 @@ export const Cover = () => {
     <div className={styles.cover}>
       <CaptureArea
         active={coverActive}
+        isRecording={captureArea.isRecording}
         selectedBounds={captureArea.selectedBounds}
         onSelectionStart={onSelectionStart}
         onSelectionCancel={onSelectionCancel}
