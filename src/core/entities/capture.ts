@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/lines-between-class-members */
 
 import assert from 'assert';
+import { ScreenBounds } from './screen';
 
 export enum CaptureMode {
   AREA = 1,
@@ -18,17 +19,20 @@ export enum CaptureStatus {
 
 class CaptureTarget {
   mode: CaptureMode;
-  screenIndex: number;
+  screenId: number;
+  bounds?: ScreenBounds;
 
-  constructor(mode: CaptureMode, screenIdx: number) {
+  constructor(mode: CaptureMode, screenId: number, bounds?: ScreenBounds) {
     this.mode = mode;
-    this.screenIndex = screenIdx;
+    this.screenId = screenId;
+    this.bounds = bounds;
   }
 }
 
 export interface CaptureOption {
   mode: CaptureMode;
-  screenIndex: number;
+  screenId: number;
+  bounds?: ScreenBounds;
 }
 
 export class CaptureContext {
@@ -37,8 +41,11 @@ export class CaptureContext {
   createdAt: Date;
 
   constructor(option: CaptureOption) {
-    assert(option.mode === CaptureMode.FULLSCREEN);
-    this.target = new CaptureTarget(option.mode, option.screenIndex);
+    this.target = new CaptureTarget(
+      option.mode,
+      option.screenId,
+      option.bounds
+    );
     this.status = CaptureStatus.PREPARED;
     this.createdAt = new Date();
   }

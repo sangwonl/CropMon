@@ -7,17 +7,17 @@ import React, { useLayoutEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState } from '@presenters/redux/store';
+import { IScreenBounds } from '@presenters/redux/common/types';
 import { ICaptureArea, IOverlaysWindows } from '@presenters/redux/ui/types';
 import {
   startCaptureAreaSelection,
   finishCaptureAreaSelection,
   cancelCaptureAreaSelection,
 } from '@presenters/redux/ui/slice';
+import { startCapture } from '@presenters/redux/capture/slice';
 import { getCurWindowCustomData } from '@utils/custom';
 
-import { SelectedBounds } from './types';
 import { CaptureArea } from './CaptureArea';
-import { ControlBox } from './ControlBox';
 
 import styles from './Cover.css';
 
@@ -67,7 +67,7 @@ export const Cover = () => {
     dispatch(startCaptureAreaSelection({ screenId: getScreenId() }));
   };
 
-  const onSelectionFinish = (bounds: SelectedBounds) => {
+  const onSelectionFinish = (bounds: IScreenBounds) => {
     dispatch(finishCaptureAreaSelection({ bounds }));
   };
 
@@ -75,7 +75,18 @@ export const Cover = () => {
     dispatch(cancelCaptureAreaSelection());
   };
 
-  const onRecordStart = () => {};
+  const onRecordStart = () => {
+    // FIXME: we need to move to capturing state
+    dispatch(cancelCaptureAreaSelection());
+
+    dispatch(
+      startCapture({
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        screenId: captureArea.screenIdOnSelection!,
+        bounds: captureArea.selectedBounds,
+      })
+    );
+  };
 
   return (
     <div className={styles.cover}>
@@ -83,14 +94,9 @@ export const Cover = () => {
         active={coverActive}
         selectedBounds={captureArea.selectedBounds}
         onSelectionStart={onSelectionStart}
-        onSelectionFinish={onSelectionFinish}
         onSelectionCancel={onSelectionCancel}
-      />
-      <ControlBox
-        active={coverActive}
-        selectedBounds={captureArea.selectedBounds}
+        onSelectionFinish={onSelectionFinish}
         onRecordStart={onRecordStart}
-        onClose={onSelectionCancel}
       />
     </div>
   );

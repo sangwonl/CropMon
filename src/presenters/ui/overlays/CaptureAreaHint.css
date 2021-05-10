@@ -7,8 +7,8 @@
   background-color: transparent;
   position: absolute;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
 }
 
 .hintResolution {
@@ -17,4 +17,5 @@
   color: #ededed;
   font-family: 'Poppins', 'Helvetica', sans-serif;
   font-size: 14px;
+  user-select: none;
 }

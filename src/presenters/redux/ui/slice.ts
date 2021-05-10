@@ -2,12 +2,12 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { IScreenInfo } from '../common/types';
 import {
   IChooseRecordHomeDirPayload,
   IClosePreferencesPayload,
   IFinishCaptureAreaSelection,
   IPreferences,
-  IScreenInfo,
   IStartCaptureAreaSelection,
   IUiState,
 } from './types';

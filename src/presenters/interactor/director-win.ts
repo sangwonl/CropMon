@@ -19,6 +19,7 @@ import { OverlaysBuilder } from '@presenters/ui/overlays/builder';
 import { PreferencesBuilder } from '@presenters/ui/preferences/builder';
 import { AppTrayBuilder } from '@presenters/ui/tray/builder';
 import { setCustomData } from '@utils/custom';
+import { SPARE_PIXELS } from '@utils/bounds';
 
 import { UiDirector } from './director';
 
@@ -72,13 +73,13 @@ class OverlaysWindowPool {
   // WORKAROUND to fix non-clickable area at the nearest borders
   // Same issue here: https://github.com/electron/electron/issues/21929
   private addSparePixels(bounds: ScreenBounds): ScreenBounds {
-    const SPARE_PIXELS = 5;
-    return {
-      x: bounds.x - SPARE_PIXELS,
-      y: bounds.y - SPARE_PIXELS,
-      width: bounds.width + SPARE_PIXELS * 2,
-      height: bounds.height + SPARE_PIXELS * 2,
-    };
+    return new ScreenBounds(
+      bounds.x - SPARE_PIXELS,
+      bounds.y - SPARE_PIXELS,
+      // (bounds.width + SPARE_PIXELS * 2) / 2,
+      bounds.width + SPARE_PIXELS * 2,
+      bounds.height + SPARE_PIXELS * 2
+    );
   }
 }
 
