@@ -8,9 +8,10 @@ import { TYPES } from '@di/types';
 import { diContainer } from '@di/container';
 import { IPreferences } from '@core/entities/preferences';
 import { IScreenInfo } from '@core/entities/screen';
+import { ICaptureContext } from '@core/entities/capture';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { UiDirector } from '@presenters/interactor/director';
-
+import { RootState } from '@presenters/redux/store';
 import {
   loadPreferences,
   didLoadPreferences,
@@ -26,8 +27,10 @@ import {
   disableAreaSelection,
   didDisableAreaSelection,
 } from '@presenters/redux/ui/slice';
-import { IClosePreferencesPayload } from '@presenters/redux/ui/types';
-import { RootState } from '../store';
+import {
+  ICaptureArea,
+  IClosePreferencesPayload,
+} from '@presenters/redux/ui/types';
 
 const uiDirector = diContainer.get<UiDirector>(TYPES.UiDirector);
 const preferencesUseCase = diContainer.get(PreferencesUseCase);
@@ -49,7 +52,9 @@ function* handleLoadPreferences(_action: PayloadAction) {
 
 function* handleOpenPreferences(_action: PayloadAction) {
   yield put(loadPreferences());
+
   uiDirector.openPreferencesWindow();
+
   yield put(didOpenPreferences());
 }
 
@@ -71,17 +76,24 @@ function* handleClosePreferences(
       [preferencesUseCase, preferencesUseCase.updateUserPreference],
       prefs
     );
+
+    yield put(loadPreferences());
   }
 
   uiDirector.closePreferencesWindow();
+
   yield put(didClosePreferences());
 }
 
 function* handleChooseRecordHomeDir(_action: PayloadAction) {
-  const dir: string = yield call([
-    uiDirector,
-    uiDirector.openDialogForRecordHomeDir,
-  ]);
+  const uiPrefs: IPreferences = yield select(
+    (state: RootState) => state.ui.preferencesWindow.preferences
+  );
+
+  const dir: string = yield call(
+    [uiDirector, uiDirector.openDialogForRecordHomeDir],
+    uiPrefs.recordHomeDir
+  );
 
   if (dir.length > 0) {
     yield put(didChooseRecordHomeDir({ recordHomeDir: dir }));
@@ -93,24 +105,32 @@ function* handleEnableAreaSelection(_action: PayloadAction) {
 
   yield put(
     didEnableAreaSelection(
-      screenInfos.map(
-        (s): IScreenInfo => {
-          return {
-            id: s.id,
-            bounds: {
-              x: s.bounds.x,
-              y: s.bounds.y,
-              width: s.bounds.width,
-              height: s.bounds.height,
-            },
-          };
-        }
-      )
+      screenInfos.map((s): IScreenInfo => ({ id: s.id, bounds: s.bounds }))
     )
   );
 }
 
 function* handleDisableAreaSelection(_action: PayloadAction) {
+  const uiPrefs: IPreferences = yield select(
+    (state: RootState) => state.ui.preferencesWindow.preferences
+  );
+
+  const captureArea: ICaptureArea = yield select(
+    (state: RootState) => state.ui.captureArea
+  );
+
+  const captureCtx: ICaptureContext = yield select(
+    (state: RootState) => state.capture.curCaptureCtx
+  );
+
+  if (
+    captureArea.isRecording &&
+    uiPrefs.openRecordHomeDirWhenRecordCompleted &&
+    captureCtx.outputPath
+  ) {
+    uiDirector.showItemInFolder(captureCtx.outputPath);
+  }
+
   uiDirector.disableCaptureSelection();
 
   yield put(didDisableAreaSelection());

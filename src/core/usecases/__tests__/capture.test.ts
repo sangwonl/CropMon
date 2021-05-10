@@ -44,7 +44,7 @@ describe('CaptureUseCase', () => {
         screenId: 0,
       });
       expect(newCtx.status).toEqual(CaptureStatus.IN_PROGRESS);
-      expect(newCtx.outputPath).toContain(mockPrefs.recordHomeDir);
+      expect(newCtx.outputPath).toContain('recordhome');
 
       verify(mockedGlobalRegistry.getUserPreferences()).once();
       verify(mockedGlobalRegistry.setCaptureContext(newCtx)).once();
@@ -59,7 +59,7 @@ describe('CaptureUseCase', () => {
         screenId: 0,
       });
       expect(newCtx.status).toEqual(CaptureStatus.IN_PROGRESS);
-      expect(newCtx.outputPath).toContain(mockPrefs.recordHomeDir);
+      expect(newCtx.outputPath).toContain('recordhome');
 
       verify(mockedGlobalRegistry.getUserPreferences()).once();
       verify(mockedGlobalRegistry.setCaptureContext(newCtx)).once();
