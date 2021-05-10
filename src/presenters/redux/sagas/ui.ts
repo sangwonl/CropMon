@@ -9,7 +9,7 @@ import { diContainer } from '@di/container';
 import { IPreferences } from '@core/entities/preferences';
 import { IScreenInfo } from '@core/entities/screen';
 import { PreferencesUseCase } from '@core/usecases/preferences';
-import { UiDirector } from '@presenters/interactor';
+import { UiDirector } from '@presenters/interactor/director';
 
 import {
   loadPreferences,
@@ -21,13 +21,12 @@ import {
   quitApplication,
   chooseRecordHomeDir,
   didChooseRecordHomeDir,
-  enableCaptureAreaSelection,
-  didEnableCaptureAreaSelection,
-  disableCaptureAreaSelection,
-  didDisableCaptureAreaSelection,
-  cancelCaptureAreaSelection,
-} from './slice';
-import { IClosePreferencesPayload } from './types';
+  enableAreaSelection,
+  didEnableAreaSelection,
+  disableAreaSelection,
+  didDisableAreaSelection,
+} from '@presenters/redux/ui/slice';
+import { IClosePreferencesPayload } from '@presenters/redux/ui/types';
 import { RootState } from '../store';
 
 const uiDirector = diContainer.get<UiDirector>(TYPES.UiDirector);
@@ -89,11 +88,11 @@ function* handleChooseRecordHomeDir(_action: PayloadAction) {
   }
 }
 
-function* handleEnableCaptureAreaSelection(_action: PayloadAction) {
+function* handleEnableAreaSelection(_action: PayloadAction) {
   const screenInfos: Array<IScreenInfo> = uiDirector.enableCaptureSelection();
 
   yield put(
-    didEnableCaptureAreaSelection(
+    didEnableAreaSelection(
       screenInfos.map(
         (s): IScreenInfo => {
           return {
@@ -111,14 +110,10 @@ function* handleEnableCaptureAreaSelection(_action: PayloadAction) {
   );
 }
 
-function* handleDisableCaptureAreaSelection(_action: PayloadAction) {
+function* handleDisableAreaSelection(_action: PayloadAction) {
   uiDirector.disableCaptureSelection();
 
-  yield put(didDisableCaptureAreaSelection());
-}
-
-function* handleCancelCaptureAreaSelection(_action: PayloadAction) {
-  yield put(disableCaptureAreaSelection());
+  yield put(didDisableAreaSelection());
 }
 
 function handleQuitApplication(_action: PayloadAction) {
@@ -126,23 +121,12 @@ function handleQuitApplication(_action: PayloadAction) {
 }
 
 function* sagaEntry() {
-  // eslint-disable-next-line prettier/prettier
   yield takeLeading(loadPreferences.type, handleLoadPreferences);
   yield takeLatest(openPreferences.type, handleOpenPreferences);
   yield takeLatest(closePreferences.type, handleClosePreferences);
   yield takeLatest(chooseRecordHomeDir.type, handleChooseRecordHomeDir);
-  yield takeLatest(
-    enableCaptureAreaSelection.type,
-    handleEnableCaptureAreaSelection
-  );
-  yield takeLatest(
-    disableCaptureAreaSelection.type,
-    handleDisableCaptureAreaSelection
-  );
-  yield takeLatest(
-    cancelCaptureAreaSelection.type,
-    handleCancelCaptureAreaSelection
-  );
+  yield takeLatest(enableAreaSelection.type, handleEnableAreaSelection);
+  yield takeLatest(disableAreaSelection.type, handleDisableAreaSelection);
   yield takeLatest(quitApplication.type, handleQuitApplication);
 }
 

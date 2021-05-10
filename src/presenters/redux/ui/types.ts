@@ -19,6 +19,7 @@ export interface IOverlaysWindows {
 export interface ICaptureArea {
   screenIdOnSelection?: number;
   selectedBounds?: IBounds;
+  isRecording: boolean;
 }
 
 export interface IUiState {
@@ -35,10 +36,10 @@ export interface IClosePreferencesPayload {
   shouldSave: boolean;
 }
 
-export interface IStartCaptureAreaSelection {
+export interface IStartAreaSelection {
   screenId: number;
 }
 
-export interface IFinishCaptureAreaSelection {
+export interface IFinishAreaSelection {
   bounds: IBounds;
 }
