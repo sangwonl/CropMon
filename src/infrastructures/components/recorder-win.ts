@@ -43,7 +43,8 @@ export class ScreenRecorderWindows implements IScreenRecorder {
       .videoCodec('libx264')
       .withVideoFilter('pad=ceil(iw/2)*2:ceil(ih/2)*2')
       .withOptions(['-pix_fmt yuv420p'])
-      .save('output.mp4');
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      .save(ctx.outputPath!);
 
     this.lastFfmpeg = ffmpeg;
   }

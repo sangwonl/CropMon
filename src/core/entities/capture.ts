@@ -1,6 +1,8 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable @typescript-eslint/lines-between-class-members */
 
+import dayjs from 'dayjs';
+
 import { IBounds } from './screen';
 
 export enum CaptureMode {
@@ -32,6 +34,7 @@ export interface ICaptureContext {
   target: ICaptureTarget;
   status: CaptureStatus;
   createdAt: number;
+  outputPath?: string;
 }
 
 export const createCaptureContext = (
@@ -41,6 +44,6 @@ export const createCaptureContext = (
   return {
     target: { mode, screenId, bounds },
     status: CaptureStatus.PREPARED,
-    createdAt: Math.floor(new Date().getTime() / 1000),
+    createdAt: dayjs().second(),
   };
 };
