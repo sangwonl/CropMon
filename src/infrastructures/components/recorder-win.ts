@@ -9,16 +9,16 @@ import { ChildProcess } from 'child_process';
 import Ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
 import { injectable } from 'inversify';
 
-import { CaptureContext } from '@core/entities/capture';
-import { ScreenBounds } from '@core/entities/screen';
-import { ScreenRecorder } from '@core/components';
+import { ICaptureContext } from '@core/entities/capture';
+import { IBounds } from '@core/entities/screen';
+import { IScreenRecorder } from '@core/components';
 
 @injectable()
-export class ScreenRecorderWindows implements ScreenRecorder {
+export class ScreenRecorderWindows implements IScreenRecorder {
   lastFfmpeg!: FfmpegCommand;
 
   // eslint-disable-next-line class-methods-use-this
-  async record(ctx: CaptureContext): Promise<void> {
+  async record(ctx: ICaptureContext): Promise<void> {
     const { screenId, bounds: targetBounds } = ctx.target;
 
     const targetDisplay = this.getDisplay(screenId);
@@ -48,7 +48,7 @@ export class ScreenRecorderWindows implements ScreenRecorder {
     this.lastFfmpeg = ffmpeg;
   }
 
-  async finish(_ctx: CaptureContext): Promise<void> {
+  async finish(_ctx: ICaptureContext): Promise<void> {
     assert(this.lastFfmpeg !== undefined);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -60,59 +60,44 @@ export class ScreenRecorderWindows implements ScreenRecorder {
     return screen.getAllDisplays().find((d) => d.id === screenId);
   }
 
-  private adjustBoundsOnDisplay(
-    targetDisp: Display,
-    bounds: ScreenBounds
-  ): ScreenBounds {
+  private adjustBoundsOnDisplay(targetDisp: Display, bounds: IBounds): IBounds {
     const scaledBounds = this.calcScaledScreenBounds(targetDisp);
-    return new ScreenBounds(
-      scaledBounds.x + bounds.x * targetDisp.scaleFactor,
-      scaledBounds.y + bounds.y * targetDisp.scaleFactor,
-      bounds.width * targetDisp.scaleFactor,
-      bounds.height * targetDisp.scaleFactor
-    );
+    return {
+      x: scaledBounds.x + bounds.x * targetDisp.scaleFactor,
+      y: scaledBounds.y + bounds.y * targetDisp.scaleFactor,
+      width: bounds.width * targetDisp.scaleFactor,
+      height: bounds.height * targetDisp.scaleFactor,
+    };
   }
 
-  private calcScaledScreenBounds(targetDisp: Display): ScreenBounds {
+  private calcScaledScreenBounds(targetDisp: Display): IBounds {
     const primaryDisp = screen.getPrimaryDisplay();
-    const unScaledTargetDispBounds = new ScreenBounds(
-      targetDisp.bounds.x,
-      targetDisp.bounds.y,
-      targetDisp.bounds.width,
-      targetDisp.bounds.height
-    );
-
     if (targetDisp === primaryDisp) {
-      return unScaledTargetDispBounds.scaleBy(targetDisp.scaleFactor);
+      return {
+        x: targetDisp.bounds.x * targetDisp.scaleFactor,
+        y: targetDisp.bounds.y * targetDisp.scaleFactor,
+        width: targetDisp.bounds.width * targetDisp.scaleFactor,
+        height: targetDisp.bounds.height * targetDisp.scaleFactor,
+      };
     }
 
-    const { x, y, width, height } = unScaledTargetDispBounds;
-    let scaledBoundsX = x;
-    let scaledBoundsY = y;
+    const scaled = (p: number, s: number) => {
+      if (p >= 0) {
+        return p * primaryDisp.scaleFactor;
+      }
 
-    if (x >= 0) {
-      scaledBoundsX = x * primaryDisp.scaleFactor;
-    } else {
-      const unscaledJoint = width + x;
-      scaledBoundsX =
-        unscaledJoint * primaryDisp.scaleFactor -
-        width * targetDisp.scaleFactor;
-    }
+      const unscaledJoint = s + p;
+      return (
+        unscaledJoint * primaryDisp.scaleFactor - s * targetDisp.scaleFactor
+      );
+    };
 
-    if (y >= 0) {
-      scaledBoundsY = y * primaryDisp.scaleFactor;
-    } else {
-      const unscaledJoint = height + y;
-      scaledBoundsY =
-        unscaledJoint * primaryDisp.scaleFactor -
-        height * targetDisp.scaleFactor;
-    }
-
-    return new ScreenBounds(
-      scaledBoundsX,
-      scaledBoundsY,
-      width * targetDisp.scaleFactor,
-      height * targetDisp.scaleFactor
-    );
+    const { x, y, width, height } = targetDisp.bounds;
+    return {
+      x: scaled(x, width),
+      y: scaled(y, height),
+      width: width * targetDisp.scaleFactor,
+      height: height * targetDisp.scaleFactor,
+    };
   }
 }

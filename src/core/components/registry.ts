@@ -2,27 +2,27 @@
 /* eslint-disable import/prefer-default-export */
 
 import { injectable } from 'inversify';
-import { CaptureContext } from '@core/entities/capture';
-import { Preferences } from '@core/entities';
+import { ICaptureContext } from '@core/entities/capture';
+import { IPreferences } from '@core/entities/preferences';
 
 @injectable()
-export class GlobalRegistry {
-  private curCaptureContext: CaptureContext | undefined;
-  private userPreferences: Preferences | undefined;
+export class IGlobalRegistry {
+  private curCaptureContext: ICaptureContext | undefined;
+  private userPreferences: IPreferences | undefined;
 
-  setCaptureContext(ctx: CaptureContext) {
+  setCaptureContext(ctx: ICaptureContext) {
     this.curCaptureContext = ctx;
   }
 
-  getCaptureContext(): CaptureContext | undefined {
+  getCaptureContext(): ICaptureContext | undefined {
     return this.curCaptureContext;
   }
 
-  setUserPreferences(pref: Preferences) {
+  setUserPreferences(pref: IPreferences) {
     this.userPreferences = pref;
   }
 
-  getUserPreferences(): Preferences | undefined {
+  getUserPreferences(): IPreferences | undefined {
     return this.userPreferences;
   }
 }

@@ -13,7 +13,7 @@ import React, {
 } from 'react';
 import classNames from 'classnames';
 
-import { IScreenBounds } from '@presenters/redux/common/types';
+import { IBounds } from '@core/entities/screen';
 import {
   SPARE_PIXELS,
   isEmptyBounds,
@@ -27,10 +27,10 @@ import { ControlBox } from './ControlBox';
 
 interface PropTypes {
   active: boolean;
-  selectedBounds?: IScreenBounds;
+  selectedBounds?: IBounds;
   onSelectionStart: () => void;
   onSelectionCancel: () => void;
-  onSelectionFinish: (bounds: IScreenBounds) => void;
+  onSelectionFinish: (bounds: IBounds) => void;
   onRecordStart: () => void;
 }
 
@@ -56,7 +56,7 @@ const initialSelCtx: AreaSelectionCtx = {
   curY: 0,
 };
 
-const calcSelectedBounds = (selCtx: AreaSelectionCtx): IScreenBounds => {
+const calcSelectedBounds = (selCtx: AreaSelectionCtx): IBounds => {
   if (!selCtx.started) {
     return emptyBounds();
   }
@@ -71,10 +71,7 @@ const calcSelectedBounds = (selCtx: AreaSelectionCtx): IScreenBounds => {
   };
 };
 
-const getAreaClasses = (
-  bounds: IScreenBounds,
-  selCtx: AreaSelectionCtx
-): string => {
+const getAreaClasses = (bounds: IBounds, selCtx: AreaSelectionCtx): string => {
   if (isEmptyBounds(bounds)) {
     return styles.areaHidden;
   }
@@ -90,7 +87,7 @@ const getAreaClasses = (
   return styles.area;
 };
 
-const getAreaLayout = (bounds: IScreenBounds): any => {
+const getAreaLayout = (bounds: IBounds): any => {
   return {
     left: bounds.x + SPARE_PIXELS,
     top: bounds.y + SPARE_PIXELS,
@@ -125,7 +122,7 @@ const handleMouseDown = (
 
 const handleMouseUp = (
   onSelectionCancel: () => void,
-  onSelectionFinish: (bounds: IScreenBounds) => void,
+  onSelectionFinish: (bounds: IBounds) => void,
   selCtx: AreaSelectionCtx,
   setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
 ) => (e: MouseEvent<HTMLDivElement>) => {

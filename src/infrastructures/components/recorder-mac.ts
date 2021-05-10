@@ -4,17 +4,17 @@
 
 import { injectable } from 'inversify';
 
-import { ScreenRecorder } from '@core/components';
-import { CaptureContext } from '@core/entities/capture';
+import { IScreenRecorder } from '@core/components';
+import { ICaptureContext } from '@core/entities/capture';
 
 @injectable()
-export class ScreenRecorderMac implements ScreenRecorder {
-  async record(ctx: CaptureContext): Promise<void> {
+export class ScreenRecorderMac implements IScreenRecorder {
+  async record(ctx: ICaptureContext): Promise<void> {
     // eslint-disable-next-line prefer-promise-reject-errors
     return Promise.reject(undefined);
   }
 
-  async finish(ctx: CaptureContext): Promise<void> {
+  async finish(ctx: ICaptureContext): Promise<void> {
     // eslint-disable-next-line prefer-promise-reject-errors
     return Promise.reject(undefined);
   }

@@ -2,12 +2,13 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { IScreenInfo } from '../common/types';
+import { IScreenInfo } from '@core/entities/screen';
+import { IPreferences } from '@core/entities/preferences';
+
 import {
   IChooseRecordHomeDirPayload,
   IClosePreferencesPayload,
   IFinishCaptureAreaSelection,
-  IPreferences,
   IStartCaptureAreaSelection,
   IUiState,
 } from './types';
@@ -17,7 +18,7 @@ const initialState: IUiState = {
     show: false,
     preferences: {
       recordHomeDir: '',
-      shouldOpenRecordHomeDir: true,
+      openRecordHomeDirWhenRecordCompleted: true,
     },
   },
   overlaysWindows: {},
@@ -57,8 +58,8 @@ const slice = createSlice({
         action.payload.recordHomeDir;
     },
     toggleOpenRecordHomeDir: (state) => {
-      const { shouldOpenRecordHomeDir } = state.preferencesWindow.preferences;
-      state.preferencesWindow.preferences.shouldOpenRecordHomeDir = !shouldOpenRecordHomeDir;
+      const { preferences } = state.preferencesWindow;
+      state.preferencesWindow.preferences.openRecordHomeDirWhenRecordCompleted = !preferences.openRecordHomeDirWhenRecordCompleted;
     },
     enableCaptureAreaSelection: (state) => {
       state.captureArea.screenIdOnSelection = undefined;

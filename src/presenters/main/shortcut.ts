@@ -2,7 +2,7 @@
 
 import { globalShortcut } from 'electron';
 
-import { CaptureStatus } from '@core/entities';
+import { CaptureStatus } from '@core/entities/capture';
 import store, { RootState } from '@presenters/redux/store-main';
 
 import { finishCapture } from '@presenters/redux/capture/slice';

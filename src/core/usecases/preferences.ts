@@ -6,32 +6,34 @@ import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '@di/types';
 
-import { Preferences } from '@core/entities';
-import { GlobalRegistry, PreferencesStore } from '@core/components';
+import { IPreferences } from '@core/entities/preferences';
+import { IGlobalRegistry, IPreferencesStore } from '@core/components';
 
 @injectable()
 export class PreferencesUseCase {
   public constructor(
-    private globalRegistry: GlobalRegistry,
-    @inject(TYPES.PreferencesStore) private preferencesStore: PreferencesStore
+    private globalRegistry: IGlobalRegistry,
+    @inject(TYPES.PreferencesStore) private preferencesStore: IPreferencesStore
   ) {}
 
-  public async getUserPreferences(): Promise<Preferences> | never {
-    const curUserPref = this.globalRegistry.getUserPreferences();
-    if (curUserPref !== undefined) {
-      return curUserPref;
+  public async getUserPreferences(): Promise<IPreferences> | never {
+    const curUserPrefs = this.globalRegistry.getUserPreferences();
+    if (curUserPrefs !== undefined) {
+      return curUserPrefs;
     }
 
     // load pref from persistent storage
     // it returns new default one if no pref info in storage
-    const loadedPreference = await this.preferencesStore.loadPreferences();
-    this.globalRegistry.setUserPreferences(loadedPreference);
+    const loadedPrefs = await this.preferencesStore.loadPreferences();
+    this.globalRegistry.setUserPreferences(loadedPrefs);
 
-    return loadedPreference;
+    return loadedPrefs;
   }
 
-  public async updateUserPreference(pref: Preferences): Promise<void> | never {
-    await this.preferencesStore.savePreferences(pref);
-    this.globalRegistry.setUserPreferences(pref);
+  public async updateUserPreference(
+    prefs: IPreferences
+  ): Promise<void> | never {
+    await this.preferencesStore.savePreferences(prefs);
+    this.globalRegistry.setUserPreferences(prefs);
   }
 }

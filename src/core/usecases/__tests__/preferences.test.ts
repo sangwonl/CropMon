@@ -4,22 +4,22 @@ import 'reflect-metadata';
 
 import { mock, instance, verify, when, anything, capture } from 'ts-mockito';
 
-import { Preferences } from '@core/entities';
-import { GlobalRegistry, PreferencesStore } from '@core/components';
+import { IPreferences } from '@core/entities/preferences';
+import { IGlobalRegistry, IPreferencesStore } from '@core/components';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 
 describe('PreferenceUseCase', () => {
-  let mockedGlobalRegistry: GlobalRegistry;
-  let mockRegistry: GlobalRegistry;
+  let mockedGlobalRegistry: IGlobalRegistry;
+  let mockRegistry: IGlobalRegistry;
 
-  let mockedPreferencesStore: PreferencesStore;
-  let mockPrefsStore: PreferencesStore;
+  let mockedPreferencesStore: IPreferencesStore;
+  let mockPrefsStore: IPreferencesStore;
 
   let useCase: PreferencesUseCase;
 
   beforeEach(() => {
-    mockedGlobalRegistry = mock(GlobalRegistry);
-    mockedPreferencesStore = mock<PreferencesStore>();
+    mockedGlobalRegistry = mock(IGlobalRegistry);
+    mockedPreferencesStore = mock<IPreferencesStore>();
 
     mockRegistry = instance(mockedGlobalRegistry);
     mockPrefsStore = instance(mockedPreferencesStore);
@@ -29,9 +29,10 @@ describe('PreferenceUseCase', () => {
 
   describe('getUserPreferences', () => {
     it('should return preferences if it exists in registry', async () => {
-      const mockPrefs = new Preferences();
-      mockPrefs.openRecordHomeDirWhenRecordCompleted = true;
-      mockPrefs.recordHomeDir = '/temp/records';
+      const mockPrefs: IPreferences = {
+        openRecordHomeDirWhenRecordCompleted: true,
+        recordHomeDir: '/temp/records',
+      };
 
       when(mockedGlobalRegistry.getUserPreferences()).thenReturn(mockPrefs);
 
@@ -43,9 +44,10 @@ describe('PreferenceUseCase', () => {
     });
 
     it('should try to load preferences from persistent app data', async () => {
-      const mockPrefs = new Preferences();
-      mockPrefs.openRecordHomeDirWhenRecordCompleted = true;
-      mockPrefs.recordHomeDir = '/temp/records';
+      const mockPrefs: IPreferences = {
+        openRecordHomeDirWhenRecordCompleted: true,
+        recordHomeDir: '/temp/records',
+      };
 
       when(mockedGlobalRegistry.getUserPreferences()).thenReturn(undefined);
       when(mockedPreferencesStore.loadPreferences()).thenReturn(
@@ -74,9 +76,10 @@ describe('PreferenceUseCase', () => {
 
   describe('updateUserPreferences', () => {
     it('should save user preferences to persistent app data', async () => {
-      const mockPrefs = new Preferences();
-      mockPrefs.openRecordHomeDirWhenRecordCompleted = true;
-      mockPrefs.recordHomeDir = '/temp/records';
+      const mockPrefs: IPreferences = {
+        openRecordHomeDirWhenRecordCompleted: true,
+        recordHomeDir: '/temp/records',
+      };
 
       await useCase.updateUserPreference(mockPrefs);
 
