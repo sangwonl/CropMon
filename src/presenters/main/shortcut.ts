@@ -33,7 +33,7 @@ export const configureShortcuts = () => {
 
   const platformShortcuts: PlatformShortcuts = {
     win32: [{ shortcut: 'Super+Shift+R', handler: handleCaptureShortcut }],
-    darwin: [{ shortcut: 'Control+Shift+6', handler: handleCaptureShortcut }],
+    darwin: [{ shortcut: 'Super+Shift+7', handler: handleCaptureShortcut }],
   };
 
   // FIXME: it's just for dev convenient
