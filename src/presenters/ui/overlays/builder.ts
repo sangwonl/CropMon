@@ -21,7 +21,8 @@ export class OverlaysBuilder {
       resizable: false,
       skipTaskbar: true,
       transparent: true,
-      enableLargerThanScreen: true, // for MacOS
+      titleBarStyle: 'customButtonsOnHover', // for MacOS, with frame: false
+      enableLargerThanScreen: true, // for MacOS, margin 5px workaround
       webPreferences: {
         nodeIntegration: true,
         enableRemoteModule: true,
