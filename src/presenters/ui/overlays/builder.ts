@@ -19,7 +19,6 @@ export class OverlaysBuilder {
       show: false,
       frame: false,
       resizable: false,
-      focusable: false,
       skipTaskbar: true,
       transparent: true,
       enableLargerThanScreen: true, // for MacOS
