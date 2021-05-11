@@ -211,6 +211,7 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     <div
       className={classNames({
         [styles.wrapper]: true,
+        [styles.wrapperSelecting]: selCtx.started && !selCtx.selected,
         [styles.crosshair]: !selCtx.selected,
       })}
       onMouseDown={onMouseDown}
