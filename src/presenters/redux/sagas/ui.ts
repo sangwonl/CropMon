@@ -26,6 +26,7 @@ import {
   didEnableAreaSelection,
   disableAreaSelection,
   didDisableAreaSelection,
+  enableRecording,
 } from '@presenters/redux/ui/slice';
 import {
   ICaptureArea,
@@ -136,6 +137,10 @@ function* handleDisableAreaSelection(_action: PayloadAction) {
   yield put(didDisableAreaSelection());
 }
 
+function* handleEnableRecording(_action: PayloadAction) {
+  uiDirector.enableRecordingMode();
+}
+
 function handleQuitApplication(_action: PayloadAction) {
   uiDirector.quitApplication();
 }
@@ -147,6 +152,7 @@ function* sagaEntry() {
   yield takeLatest(chooseRecordHomeDir.type, handleChooseRecordHomeDir);
   yield takeLatest(enableAreaSelection.type, handleEnableAreaSelection);
   yield takeLatest(disableAreaSelection.type, handleDisableAreaSelection);
+  yield takeLatest(enableRecording.type, handleEnableRecording);
   yield takeLatest(quitApplication.type, handleQuitApplication);
 }
 

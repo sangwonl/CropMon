@@ -48,6 +48,13 @@ https://ffmpeg.org/ffmpeg-devices.html#avfoundation
 
 ```bash
 ffmpeg -f avfoundation -list_devices true -i ""
+...
+[AVFoundation indev @ 0x7f864ec303c0] AVFoundation video devices:
+[AVFoundation indev @ 0x7f864ec303c0] [0] FaceTime HD Camera (Built-in)
+[AVFoundation indev @ 0x7f864ec303c0] [1] Capture screen 0
+[AVFoundation indev @ 0x7f864ec303c0] [2] Capture screen 1
+[AVFoundation indev @ 0x7f864ec303c0] AVFoundation audio devices:
+[AVFoundation indev @ 0x7f864ec303c0] [0] MacBook Pro Microphone
 ```
 
 ### Fullscreen

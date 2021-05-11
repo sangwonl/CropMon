@@ -9,9 +9,10 @@ import { IGlobalRegistry, IScreenRecorder, IPreferencesStore } from '@core/compo
 import { CaptureUseCase } from '@core/usecases/capture';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { ScreenRecorderWindows } from '@infrastructures/components/recorder-win';
+import { ScreenRecorderMac } from '@infrastructures/components/recorder-mac';
 import { PreferencesStoreImpl } from '@infrastructures/components/preferences';
 import { UiDirector } from '@presenters/interactor/director';
-import { UiDirectorWindows } from '@presenters/interactor/director-win';
+import { isMac } from '@utils/process';
 
 import { TYPES } from './types';
 
@@ -24,7 +25,7 @@ diContainer
 
 diContainer
   .bind<IScreenRecorder>(TYPES.ScreenRecorder)
-  .to(ScreenRecorderWindows)
+  .to(isMac() ? ScreenRecorderMac : ScreenRecorderWindows)
   .inSingletonScope();
 
 diContainer
@@ -44,7 +45,7 @@ diContainer
 
 diContainer
   .bind<UiDirector>(TYPES.UiDirector)
-  .to(UiDirectorWindows)
+  .to(UiDirector)
   .inSingletonScope();
 
 export { diContainer };
