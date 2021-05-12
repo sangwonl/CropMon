@@ -49,7 +49,25 @@ export default merge(baseConfig, {
   module: {
     rules: [
       {
-        test: /.s?css$/,
+        test: /\.global\.(c|sc|sa)ss$/,
+        use: [
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+          {
+            loader: 'sass-loader',
+          },
+        ],
+      },
+      // SASS support - compile all other .scss files and pipe it to style.css
+      {
+        test: /^((?!\.global).)*\.(c|sc|sa)ss$/,
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
@@ -58,8 +76,24 @@ export default merge(baseConfig, {
               publicPath: './',
             },
           },
-          'css-loader',
-          'sass-loader'
+          // Shouldn't use style-loader with mini-css-extract-plugin
+          // https://github.com/webpack-contrib/mini-css-extract-plugin/issues/173#issuecomment-398144318
+          // {
+          //   loader: 'style-loader',
+          // },
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {
+                localIdentName: '[name]__[local]__[hash:base64:5]',
+              },
+              sourceMap: true,
+              importLoaders: 1,
+            },
+          },
+          {
+            loader: 'sass-loader',
+          },
         ],
       },
       // WOFF Font

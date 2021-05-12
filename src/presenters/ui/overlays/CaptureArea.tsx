@@ -22,8 +22,8 @@ import {
 } from '@utils/bounds';
 
 import { CaptureAreaHint } from './CaptureAreaHint';
-import styles from './CaptureArea.css';
 import { ControlBox } from './ControlBox';
+import styles from './CaptureArea.css';
 
 interface PropTypes {
   active: boolean;
