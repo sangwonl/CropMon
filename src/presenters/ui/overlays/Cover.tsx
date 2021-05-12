@@ -19,7 +19,6 @@ import { startCapture } from '@presenters/redux/capture/slice';
 import { getCurWindowCustomData } from '@utils/custom';
 
 import { CaptureArea } from './CaptureArea';
-
 import styles from './Cover.css';
 
 const getScreenId = () => {

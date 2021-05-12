@@ -5,6 +5,7 @@ import { BrowserWindow } from 'electron';
 
 import { AssetResolverFunc } from '@presenters/common/asset';
 import { emptyBounds } from '@utils/bounds';
+import { isMac } from '@utils/process';
 
 export class OverlaysBuilder {
   assetResolver: AssetResolverFunc;
@@ -19,6 +20,7 @@ export class OverlaysBuilder {
       show: false,
       frame: false,
       resizable: false,
+      focusable: isMac(),
       skipTaskbar: true,
       transparent: true,
       titleBarStyle: 'customButtonsOnHover', // for MacOS, with frame: false
@@ -31,7 +33,7 @@ export class OverlaysBuilder {
 
     window.setBounds(emptyBounds());
     window.setVisibleOnAllWorkspaces(true);
-    window.setAlwaysOnTop(true, 'main-menu', 1); // for MacOS
+    window.setAlwaysOnTop(true, 'main-menu', 1);
 
     // It is a quick solution to access index.html
     // in the same way for both dev and prod.
