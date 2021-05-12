@@ -19,7 +19,7 @@ import {
   closePreferences,
 } from '@presenters/redux/ui/slice';
 
-import './BasicPreferences.css';
+import styles from './BasicPreferences.css';
 
 export const BasicPreferences = () => {
   const dispatch = useDispatch();
@@ -29,25 +29,14 @@ export const BasicPreferences = () => {
   );
 
   return (
-    <Grid
-      container
-      direction="column"
-      justify="flex-start"
-      alignItems="flex-start"
-      style={{ padding: 20 }}
-    >
-      <Grid container direction="row" justify="flex-start" alignItems="stretch">
+    <Grid container className={styles.mainContainer}>
+      <Grid container className={styles.itemRow}>
         <TextField
+          className={styles.itemRecordHome}
           label="Record files to:"
           variant="outlined"
           value={prefsState.recordHomeDir}
-          InputProps={{
-            readOnly: true,
-          }}
-          style={{
-            flexGrow: 1,
-            marginRight: 10,
-          }}
+          InputProps={{ readOnly: true }}
         />
         <Button
           variant="outlined"
@@ -73,23 +62,11 @@ export const BasicPreferences = () => {
           label="Open the folder when recording complete"
         />
       </Grid>
-      <Grid
-        container
-        direction="row"
-        justify="flex-end"
-        alignItems="stretch"
-        style={{
-          marginTop: 30,
-          height: 44,
-        }}
-      >
+      <Grid container className={styles.buttonRow}>
         <Button
+          className={styles.button}
           color="secondary"
           variant="contained"
-          style={{
-            width: 80,
-            marginLeft: 10,
-          }}
           onClick={() => {
             dispatch(closePreferences(true));
           }}
@@ -97,12 +74,9 @@ export const BasicPreferences = () => {
           Save
         </Button>
         <Button
-          color="primary"
+          className={styles.button}
+          color="default"
           variant="contained"
-          style={{
-            width: 80,
-            marginLeft: 10,
-          }}
           onClick={() => {
             dispatch(closePreferences());
           }}

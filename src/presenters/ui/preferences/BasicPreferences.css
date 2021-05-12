@@ -5,3 +5,35 @@
 body {
   overflow: hidden;
 }
+
+.mainContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+.itemRow {
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.itemRecordHome {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.buttonRow {
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: stretch;
+  margin-top: 25px;
+  height: 40px;
+}
+
+.button {
+  width: 80px;
+  margin-left: 10px;
+}
