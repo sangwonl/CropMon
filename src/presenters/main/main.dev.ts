@@ -15,7 +15,7 @@ import { app } from 'electron';
 
 import { TYPES } from '@di/types';
 import { diContainer } from '@di/container';
-import { UiDirector } from '@presenters/interactor';
+import { UiDirector } from '@presenters/interactor/director';
 import { loadPreferences } from '@presenters/redux/ui/slice';
 import store, { initializeSaga } from '@presenters/redux/store-main';
 
