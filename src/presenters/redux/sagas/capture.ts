@@ -1,9 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { PayloadAction } from '@reduxjs/toolkit';
-import { put, takeLatest } from 'redux-saga/effects';
+import { call, put, takeLatest } from 'redux-saga/effects';
 
-import { CaptureMode } from '@core/entities/capture';
+import {
+  CaptureMode,
+  CaptureStatus,
+  ICaptureContext,
+} from '@core/entities/capture';
 import { CaptureUseCase } from '@core/usecases/capture';
 import { diContainer } from '@di/container';
 import { IStartCapturePayload } from '@presenters/redux/capture/types';
@@ -15,17 +19,30 @@ import {
   didFinishCapture,
 } from '@presenters/redux/capture/slice';
 
-import { disableAreaSelection } from '@presenters/redux/ui/slice';
+import {
+  disableAreaSelection,
+  enableRecording,
+} from '@presenters/redux/ui/slice';
 
 const captureUseCase = diContainer.get(CaptureUseCase);
 
 function* handleStartCapture(action: PayloadAction<IStartCapturePayload>) {
-  const newContext = captureUseCase.startCapture({
+  const captureOpt = {
     mode: CaptureMode.AREA,
     screenId: action.payload.screenId,
     bounds: action.payload.bounds,
-  });
-  yield put(didStartCapture(newContext));
+  };
+  const newContext: ICaptureContext = yield call(
+    [captureUseCase, captureUseCase.startCapture],
+    captureOpt
+  );
+
+  if (newContext.status === CaptureStatus.IN_PROGRESS) {
+    yield put(enableRecording());
+    yield put(didStartCapture(newContext));
+  } else {
+    yield put(disableAreaSelection());
+  }
 }
 
 function* handleFinishCapture(_action: PayloadAction) {

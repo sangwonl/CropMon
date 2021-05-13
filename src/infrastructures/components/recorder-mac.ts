@@ -5,6 +5,7 @@
 import assert from 'assert';
 
 import { Display, screen } from 'electron';
+import log from 'electron-log';
 import { ChildProcess } from 'child_process';
 import Ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
 import { injectable } from 'inversify';
@@ -23,7 +24,7 @@ export class ScreenRecorderMac implements IScreenRecorder {
 
     const targetDisplay = this.getDisplay(screenId);
     if (targetDisplay === undefined || targetBounds === undefined) {
-      return;
+      return Promise.reject();
     }
 
     const screenIdx = this.getScreenIdx(targetDisplay);
@@ -32,17 +33,26 @@ export class ScreenRecorderMac implements IScreenRecorder {
       targetDisplay
     );
 
-    const ffmpeg = Ffmpeg()
-      .input(`${screenIdx}:none`)
-      .inputFormat('avfoundation')
-      .inputOptions(['-r 30', `-capture_cursor 1`])
-      .videoCodec('libx264')
-      .withVideoFilter(`crop=${width}:${height}:${x}:${y}`)
-      .withOptions(['-pix_fmt yuv420p'])
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      .save(ctx.outputPath!);
-
-    this.lastFfmpeg = ffmpeg;
+    return new Promise((resolve, reject) => {
+      const ffmpeg = Ffmpeg()
+        .input(`${screenIdx}:none`)
+        .inputFormat('avfoundation')
+        .inputOptions(['-r 30', `-capture_cursor 1`])
+        .videoCodec('libx264')
+        .withVideoFilter(`crop=${width}:${height}:${x}:${y}`)
+        .withOptions(['-pix_fmt yuv420p'])
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        .save(ctx.outputPath!)
+        .on('start', (cmd) => {
+          log.info(cmd);
+          this.lastFfmpeg = ffmpeg;
+          resolve();
+        })
+        .on('error', (_error, _stdout, stderr) => {
+          log.error(stderr);
+          reject();
+        });
+    });
   }
 
   async finish(_ctx: ICaptureContext): Promise<void> {

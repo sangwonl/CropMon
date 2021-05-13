@@ -13,7 +13,6 @@ import {
   startAreaSelection,
   finishAreaSelection,
   disableAreaSelection,
-  enableRecording,
 } from '@presenters/redux/ui/slice';
 import { startCapture } from '@presenters/redux/capture/slice';
 import { getCurWindowCustomData } from '@utils/custom';
@@ -76,8 +75,6 @@ export const Cover = () => {
   };
 
   const onRecordStart = () => {
-    dispatch(enableRecording());
-
     dispatch(
       startCapture({
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
