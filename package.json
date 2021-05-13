@@ -1,7 +1,7 @@
 {
-  "name": "scaple",
-  "productName": "Scaple",
-  "version": "0.0.1",
+  "name": "kropsaurus",
+  "productName": "Kropsaurus",
+  "version": "0.1.0",
   "description": "Simple Screen Recorder",
   "scripts": {
     "build": "concurrently \"yarn build:main\" \"yarn build:renderer\"",
@@ -31,8 +31,8 @@
     ]
   },
   "build": {
-    "productName": "Scaple",
-    "appId": "com.pineple.Scaple",
+    "productName": "Kropsaurus",
+    "appId": "com.pineple.Kropsaurus",
     "files": [
       "dist/",
       "node_modules/",
@@ -99,12 +99,12 @@
     "publish": {
       "provider": "github",
       "owner": "sangwonl",
-      "repo": "scaple"
+      "repo": "kropsaurus"
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sangwonl/scaple.git"
+    "url": "git+https://github.com/sangwonl/kropsaurus.git"
   },
   "author": {
     "name": "Pineple",
@@ -120,13 +120,15 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sangwonl/scaple/issues"
+    "url": "https://github.com/sangwonl/kropsaurus/issues"
   },
   "keywords": [
-    "scaple",
-    "recorder"
+    "crop",
+    "screen",
+    "recorder",
+    "capture"
   ],
-  "homepage": "https://github.com/sangwonl/scaple",
+  "homepage": "https://github.com/sangwonl/kropsaurus",
   "jest": {
     "testURL": "http://localhost/",
     "moduleNameMapper": {
