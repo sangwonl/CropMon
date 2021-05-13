@@ -4,7 +4,7 @@
   background-color: transparent;
 }
 
-.wrapperSelecting {
+.wrapperHack {
   /* Hack: transparent bgcolor makes illusion on MacOS */
   background-color: rgba(255, 255, 255, 0.01);
 }
