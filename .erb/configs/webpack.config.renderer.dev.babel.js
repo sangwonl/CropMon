@@ -107,7 +107,6 @@ export default merge(baseConfig, {
             loader: 'css-loader',
             options: {
               modules: {
-                namedExport: true,
                 localIdentName: '[name]__[local]__[hash:base64:5]',
               },
               sourceMap: true,
