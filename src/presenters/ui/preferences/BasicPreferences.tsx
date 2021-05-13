@@ -47,16 +47,16 @@ export const BasicPreferences = () => {
           ...
         </Button>
       </Grid>
-      <Grid>
+      <Grid container className={styles.itemOpenRecordHome}>
         <FormControlLabel
           control={
             <Checkbox
+              color="primary"
               name="open-record-home-when-completed"
               checked={prefsState.openRecordHomeDirWhenRecordCompleted}
               onChange={() => {
                 dispatch(toggleOpenRecordHomeDir());
               }}
-              color="primary"
             />
           }
           label="Open the folder when recording complete"
@@ -81,7 +81,7 @@ export const BasicPreferences = () => {
             dispatch(closePreferences());
           }}
         >
-          Cancel
+          Close
         </Button>
       </Grid>
     </Grid>
