@@ -9,6 +9,7 @@ import { finishCapture } from '@presenters/redux/capture/slice';
 import {
   openPreferences,
   enableAreaSelection,
+  disableAreaSelection,
 } from '@presenters/redux/ui/slice';
 
 export const configureShortcuts = () => {
@@ -31,9 +32,22 @@ export const configureShortcuts = () => {
     }
   };
 
+  const handleEscapeInput = () => {
+    const state: RootState = store.getState();
+    if (state.ui.captureArea.screenIdOnSelection) {
+      store.dispatch(disableAreaSelection());
+    }
+  };
+
   const platformShortcuts: PlatformShortcuts = {
-    win32: [{ shortcut: 'Super+Shift+R', handler: handleCaptureShortcut }],
-    darwin: [{ shortcut: 'Super+Shift+7', handler: handleCaptureShortcut }],
+    win32: [
+      { shortcut: 'Super+Shift+R', handler: handleCaptureShortcut },
+      { shortcut: 'Escape', handler: handleEscapeInput },
+    ],
+    darwin: [
+      { shortcut: 'Super+Shift+7', handler: handleCaptureShortcut },
+      { shortcut: 'Escape', handler: handleEscapeInput },
+    ],
   };
 
   // FIXME: it's just for dev convenient
