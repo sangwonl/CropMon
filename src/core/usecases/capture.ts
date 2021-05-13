@@ -18,18 +18,18 @@ import { IGlobalRegistry, IScreenRecorder } from '@core/components';
 
 @injectable()
 export class CaptureUseCase {
-  public constructor(
+  constructor(
     private globalRegistry: IGlobalRegistry,
     @inject(TYPES.ScreenRecorder) private screenRecorder: IScreenRecorder
   ) {}
 
-  public startCapture(option: ICaptureOption): ICaptureContext | never {
+  async startCapture(option: ICaptureOption): Promise<ICaptureContext | never> {
     const ctx = createCaptureContext(option);
     ctx.outputPath = this.getOutputPath();
     this.globalRegistry.setCaptureContext(ctx);
 
     try {
-      this.screenRecorder.record(ctx);
+      await this.screenRecorder.record(ctx);
       ctx.status = CaptureStatus.IN_PROGRESS;
     } catch (e) {
       ctx.status = CaptureStatus.ERROR;
@@ -38,17 +38,17 @@ export class CaptureUseCase {
     return ctx;
   }
 
-  public pauseCapture() {
+  pauseCapture() {
     // eslint-disable-next-line no-console
     console.log(this.screenRecorder);
   }
 
-  public resumeCapture() {
+  resumeCapture() {
     // eslint-disable-next-line no-console
     console.log(this.screenRecorder);
   }
 
-  public finishCapture(): ICaptureContext | never {
+  finishCapture(): ICaptureContext | never {
     const curCtx = this.globalRegistry.getCaptureContext();
     assert(curCtx !== undefined);
 
