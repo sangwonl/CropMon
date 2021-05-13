@@ -5,6 +5,7 @@
 import assert from 'assert';
 
 import { Display, screen } from 'electron';
+import log from 'electron-log';
 import { ChildProcess } from 'child_process';
 import Ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
 import { injectable } from 'inversify';
@@ -23,7 +24,7 @@ export class ScreenRecorderWindows implements IScreenRecorder {
 
     const targetDisplay = this.getDisplay(screenId);
     if (targetDisplay === undefined || targetBounds === undefined) {
-      return;
+      return Promise.reject();
     }
 
     const { x, y, width, height } = this.adjustBoundsOnDisplay(
@@ -31,22 +32,31 @@ export class ScreenRecorderWindows implements IScreenRecorder {
       targetBounds
     );
 
-    const ffmpeg = Ffmpeg()
-      .input('desktop')
-      .inputFormat('gdigrab')
-      .inputOptions([
-        '-framerate 30',
-        `-offset_x ${x}`,
-        `-offset_y ${y}`,
-        `-video_size ${width}x${height}`,
-      ])
-      .videoCodec('libx264')
-      .withVideoFilter('pad=ceil(iw/2)*2:ceil(ih/2)*2')
-      .withOptions(['-pix_fmt yuv420p'])
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      .save(ctx.outputPath!);
-
-    this.lastFfmpeg = ffmpeg;
+    return new Promise((resolve, reject) => {
+      const ffmpeg = Ffmpeg()
+        .input('desktop')
+        .inputFormat('gdigrab')
+        .inputOptions([
+          '-framerate 30',
+          `-offset_x ${x}`,
+          `-offset_y ${y}`,
+          `-video_size ${width}x${height}`,
+        ])
+        .videoCodec('libx264')
+        .withVideoFilter('pad=ceil(iw/2)*2:ceil(ih/2)*2')
+        .withOptions(['-pix_fmt yuv420p'])
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        .save(ctx.outputPath!)
+        .on('start', (cmd) => {
+          log.info(cmd);
+          this.lastFfmpeg = ffmpeg;
+          resolve();
+        })
+        .on('error', (_err, _stdout, stderr) => {
+          log.error(stderr);
+          reject();
+        });
+    });
   }
 
   async finish(_ctx: ICaptureContext): Promise<void> {
@@ -55,6 +65,8 @@ export class ScreenRecorderWindows implements IScreenRecorder {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const proc = (this.lastFfmpeg as any).ffmpegProc as ChildProcess;
     proc?.stdin?.write('q');
+
+    return Promise.resolve();
   }
 
   private getDisplay(screenId: number): Display | undefined {
