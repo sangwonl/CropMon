@@ -33,9 +33,21 @@
   "build": {
     "productName": "Kropsaurus",
     "appId": "com.pineple.Kropsaurus",
+    "extraFiles": [
+      {
+        "from": "node_modules/ffmpeg-static",
+        "to": "3rdparty/ffmpeg",
+        "filter": [
+          "@(ffmpeg|ffmpeg.exe)",
+          "index.js",
+          "package.json"
+        ]
+      }
+    ],
     "files": [
+      "package.json",
+      "node_modules",
       "dist/",
-      "node_modules/",
       {
         "from": "presenters/ui/preferences",
         "to": "preferences",
@@ -49,8 +61,7 @@
         "filter": [
           "*.html"
         ]
-      },
-      "package.json"
+      }
     ],
     "afterSign": ".erb/scripts/Notarize.js",
     "mac": {
@@ -260,7 +271,6 @@
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "@reduxjs/toolkit": "^1.5.1",
-    "@types/ffmpeg-static": "^3.0.0",
     "classnames": "^2.3.1",
     "dayjs": "^1.10.4",
     "electron-debug": "^3.1.0",

@@ -1707,11 +1707,6 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.45.tgz#e9387572998e5ecdac221950dab3e8c3b16af884"
   integrity sha512-jnqIUKDUqJbDIUxm0Uj7bnlMnRm1T/eZ9N+AVMqhPgzrba2GhGG5o/jCTwmdPK709nEZsGoMzXEDUjcXHa3W0g==
 
-"@types/ffmpeg-static@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@types/ffmpeg-static/-/ffmpeg-static-3.0.0.tgz#723c2349da9e095cfa0ee6e6c1d5d4c87bb76933"
-  integrity sha512-JTwV8fFQYUgp8VLUKLd8zHfhFOoTTszMlofnWINAZYWSd/iR2ZZHJsWanUhBG4+c8QPfWE8P7t3nAjSxTNjevQ==
-
 "@types/fluent-ffmpeg@^2.1.17":
   version "2.1.17"
   resolved "https://registry.yarnpkg.com/@types/fluent-ffmpeg/-/fluent-ffmpeg-2.1.17.tgz#6958dda400fe1b33c21f3683db76905cb210d053"
