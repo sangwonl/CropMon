@@ -1,8 +1,7 @@
 /* eslint global-require: off, no-console: off */
 /* eslint-disable import/prefer-default-export */
 
-const isDebugMode = () =>
-  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+import { isDebugMode } from '@utils/process';
 
 const installDevTools = async () => {
   if (process.env.NODE_ENV === 'production') {
