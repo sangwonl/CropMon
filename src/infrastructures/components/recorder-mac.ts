@@ -4,11 +4,12 @@
 
 import assert from 'assert';
 
+import { ChildProcess } from 'child_process';
 import { Display, screen } from 'electron';
 import log from 'electron-log';
-import { ChildProcess } from 'child_process';
-import Ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
 import { injectable } from 'inversify';
+import Ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
+import pathToFfmpeg from 'ffmpeg-static';
 
 import { ICaptureContext } from '@core/entities/capture';
 import { IBounds } from '@core/entities/screen';
@@ -35,6 +36,7 @@ export class ScreenRecorderMac implements IScreenRecorder {
 
     return new Promise((resolve, reject) => {
       const ffmpeg = Ffmpeg()
+        .setFfmpegPath(pathToFfmpeg)
         .input(`${screenIdx}:none`)
         .inputFormat('avfoundation')
         .inputOptions(['-r 30', `-capture_cursor 1`])
