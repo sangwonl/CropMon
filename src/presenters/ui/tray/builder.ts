@@ -13,8 +13,7 @@ export class AppTrayBuilder {
   }
 
   build(): AppTray {
-    const iconName = isMac() ? 'icons/16x16.png' : 'icons/64x64.png';
-    const iconPath = this.assetResolver(iconName);
+    const iconPath = this.assetResolver('icon.png');
     return isMac() ? AppTray.forMac(iconPath) : AppTray.forWindows(iconPath);
   }
 }
