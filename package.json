@@ -93,6 +93,12 @@
         "nsis"
       ]
     },
+    "nsis": {
+      "artifactName": "${productName}-${version}.${ext}",
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true
+    },
     "linux": {
       "target": [
         "AppImage"
