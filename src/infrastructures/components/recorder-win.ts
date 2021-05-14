@@ -3,22 +3,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import assert from 'assert';
-import path from 'path';
 import { ChildProcess } from 'child_process';
 
 import log from 'electron-log';
-import { app, Display, screen } from 'electron';
+import { Display, screen } from 'electron';
 import { injectable } from 'inversify';
 import Ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
 
 import { ICaptureContext } from '@core/entities/capture';
 import { IBounds } from '@core/entities/screen';
 import { IScreenRecorder } from '@core/components';
-
-const ffmpegPath = path.join(
-  app.getAppPath(),
-  '../../3rdparty/ffmpeg/ffmpeg.exe'
-);
+import { getPathToFfmpeg } from '@utils/ffmpeg';
 
 @injectable()
 export class ScreenRecorderWindows implements IScreenRecorder {
@@ -40,7 +35,7 @@ export class ScreenRecorderWindows implements IScreenRecorder {
 
     return new Promise((resolve, reject) => {
       const ffmpeg = Ffmpeg()
-        .setFfmpegPath(ffmpegPath)
+        .setFfmpegPath(getPathToFfmpeg())
         .input('desktop')
         .inputFormat('gdigrab')
         .inputOptions([
@@ -49,7 +44,7 @@ export class ScreenRecorderWindows implements IScreenRecorder {
           `-offset_y ${y}`,
           `-video_size ${width}x${height}`,
         ])
-        .videoCodec('libx264')
+        .videoCodec('libvpx')
         .withVideoFilter('pad=ceil(iw/2)*2:ceil(ih/2)*2')
         .withOptions(['-pix_fmt yuv420p'])
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
