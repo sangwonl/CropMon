@@ -260,6 +260,7 @@
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "@reduxjs/toolkit": "^1.5.1",
+    "@types/ffmpeg-static": "^3.0.0",
     "classnames": "^2.3.1",
     "dayjs": "^1.10.4",
     "electron-debug": "^3.1.0",
@@ -268,6 +269,7 @@
     "electron-redux": "^2.0.0-alpha.8",
     "electron-store": "^8.0.0",
     "electron-updater": "^4.3.8",
+    "ffmpeg-static": "^4.3.0",
     "fluent-ffmpeg": "^2.1.2",
     "history": "^5.0.0",
     "inversify": "^5.0.5",
@@ -283,7 +285,7 @@
     "source-map-support": "^0.5.19"
   },
   "devEngines": {
-    "node": ">=10.x",
+    "node": ">=12.x",
     "npm": ">=6.x",
     "yarn": ">=1.21.3"
   },
