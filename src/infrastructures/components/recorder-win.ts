@@ -47,8 +47,6 @@ export class ScreenRecorderWindows implements IScreenRecorder {
         .videoCodec('libvpx')
         .withVideoFilter('pad=ceil(iw/2)*2:ceil(ih/2)*2')
         .withOptions(['-pix_fmt yuv420p'])
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        .save(ctx.outputPath!)
         .on('start', (cmd) => {
           log.info(cmd);
           this.lastFfmpeg = ffmpeg;
@@ -58,6 +56,9 @@ export class ScreenRecorderWindows implements IScreenRecorder {
           log.error(stderr);
           reject();
         });
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      ffmpeg.save(ctx.outputPath!);
     });
   }
 
