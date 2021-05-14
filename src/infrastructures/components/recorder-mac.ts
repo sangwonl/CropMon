@@ -3,19 +3,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import assert from 'assert';
-import path from 'path';
 import { ChildProcess } from 'child_process';
 
 import log from 'electron-log';
-import { app, Display, screen } from 'electron';
+import { Display, screen } from 'electron';
 import { injectable } from 'inversify';
 import Ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
 
 import { ICaptureContext } from '@core/entities/capture';
 import { IBounds } from '@core/entities/screen';
 import { IScreenRecorder } from '@core/components';
-
-const ffmpegPath = path.join(app.getAppPath(), '../../3rdparty/ffmpeg/ffmpeg');
+import { getPathToFfmpeg } from '@utils/ffmpeg';
 
 @injectable()
 export class ScreenRecorderMac implements IScreenRecorder {
@@ -38,11 +36,11 @@ export class ScreenRecorderMac implements IScreenRecorder {
 
     return new Promise((resolve, reject) => {
       const ffmpeg = Ffmpeg()
-        .setFfmpegPath(ffmpegPath)
+        .setFfmpegPath(getPathToFfmpeg())
         .input(`${screenIdx}:none`)
         .inputFormat('avfoundation')
         .inputOptions(['-r 30', `-capture_cursor 1`])
-        .videoCodec('libx264')
+        .videoCodec('libvpx')
         .withVideoFilter(`crop=${width}:${height}:${x}:${y}`)
         .withOptions(['-pix_fmt yuv420p'])
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
