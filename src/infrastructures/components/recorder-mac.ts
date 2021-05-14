@@ -13,7 +13,7 @@ import Ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
 import { ICaptureContext } from '@core/entities/capture';
 import { IBounds } from '@core/entities/screen';
 import { IScreenRecorder } from '@core/components';
-import { getPathToFfmpeg } from '@utils/ffmpeg';
+import { getPathToFfmpeg, inferVideoCodec } from '@utils/ffmpeg';
 
 @injectable()
 export class ScreenRecorderMac implements IScreenRecorder {
@@ -21,6 +21,8 @@ export class ScreenRecorderMac implements IScreenRecorder {
 
   // eslint-disable-next-line class-methods-use-this
   async record(ctx: ICaptureContext): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const outPath = ctx.outputPath!;
     const { screenId, bounds: targetBounds } = ctx.target;
 
     const targetDisplay = this.getDisplay(screenId);
@@ -39,10 +41,10 @@ export class ScreenRecorderMac implements IScreenRecorder {
         .setFfmpegPath(getPathToFfmpeg())
         .input(`${screenIdx}:none`)
         .inputFormat('avfoundation')
-        .inputOptions(['-r 30', `-capture_cursor 1`])
-        .videoCodec('libvpx')
+        .inputOptions(['-framerate 60', '-capture_cursor 1'])
+        .videoCodec(inferVideoCodec(outPath))
         .withVideoFilter(`crop=${width}:${height}:${x}:${y}`)
-        .withOptions(['-pix_fmt yuv420p'])
+        .withOptions(['-pix_fmt yuv420p', '-r 60'])
         .on('start', (cmd) => {
           log.info(cmd);
           this.lastFfmpeg = ffmpeg;
@@ -53,8 +55,7 @@ export class ScreenRecorderMac implements IScreenRecorder {
           reject();
         });
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      ffmpeg.save(ctx.outputPath!);
+      ffmpeg.save(outPath);
     });
   }
 
