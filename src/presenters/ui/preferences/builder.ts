@@ -23,6 +23,7 @@ export class PreferencesBuilder {
       resizable: false,
       minimizable: false,
       maximizable: false,
+      skipTaskbar: true,
       width: 640,
       height: 250,
       icon: this.assetResolver('icon.png'),

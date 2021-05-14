@@ -32,7 +32,7 @@ export class OverlaysBuilder {
     });
 
     window.setBounds(emptyBounds());
-    window.setVisibleOnAllWorkspaces(true);
+    window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     window.setAlwaysOnTop(true, 'main-menu', 1);
 
     // It is a quick solution to access index.html
