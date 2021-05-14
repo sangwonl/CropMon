@@ -6,10 +6,7 @@ import { CaptureStatus } from '@core/entities/capture';
 import store, { RootState } from '@presenters/redux/store-main';
 
 import { finishCapture } from '@presenters/redux/capture/slice';
-import {
-  openPreferences,
-  enableAreaSelection,
-} from '@presenters/redux/ui/slice';
+import { enableAreaSelection } from '@presenters/redux/ui/slice';
 
 export const configureShortcuts = () => {
   interface ShortcutHandler {
@@ -35,16 +32,6 @@ export const configureShortcuts = () => {
     win32: [{ shortcut: 'Super+Shift+R', handler: handleCaptureShortcut }],
     darwin: [{ shortcut: 'Super+Shift+7', handler: handleCaptureShortcut }],
   };
-
-  // FIXME: it's just for dev convenient
-  if (process.env.NODE_ENV === 'development') {
-    platformShortcuts.win32.push({
-      shortcut: 'Ctrl+Alt+E',
-      handler: () => {
-        store.dispatch(openPreferences());
-      },
-    });
-  }
 
   if (!Object.keys(platformShortcuts).includes(process.platform)) {
     throw new Error('Not supported platform.');

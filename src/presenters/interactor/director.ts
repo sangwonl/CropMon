@@ -64,6 +64,16 @@ class OverlaysWindowPool {
     });
   }
 
+  toggleDevTools() {
+    this.windows.forEach((w) => {
+      const isOpened = w.webContents.isDevToolsOpened();
+      w.webContents.toggleDevTools();
+      w.setVisibleOnAllWorkspaces(true, {
+        visibleOnFullScreen: isOpened,
+      });
+    });
+  }
+
   private getOrBuild(screenId: number): BrowserWindow {
     let window = this.windows.get(screenId);
     if (window === undefined) {
@@ -102,6 +112,11 @@ export class UiDirector {
       this.assetResolver,
       this.populateScreenInfos()
     );
+  }
+
+  toggleDevTools() {
+    this.preferencesWindow.webContents.toggleDevTools();
+    this.overlaysWindows.toggleDevTools();
   }
 
   quitApplication() {
