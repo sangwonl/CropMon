@@ -4,7 +4,7 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable import/prefer-default-export */
 
-import { Tray, nativeImage, Menu } from 'electron';
+import { Tray, nativeImage, Menu, NativeImage } from 'electron';
 
 import { CaptureStatus } from '@core/entities/capture';
 import store, { RootState } from '@presenters/redux/store';
@@ -19,8 +19,8 @@ export abstract class AppTray {
   tray: Tray;
   contextMenu: Menu;
 
-  constructor(iconPath: string) {
-    this.tray = new Tray(nativeImage.createFromPath(iconPath));
+  constructor(trayImage: NativeImage) {
+    this.tray = new Tray(trayImage);
 
     this.contextMenu = this.buildContextMenu();
     this.tray.setContextMenu(this.contextMenu);
@@ -59,11 +59,12 @@ export abstract class AppTray {
   }
 
   static forWindows(iconPath: string): AppTray {
-    return new WinAppTray(iconPath);
+    return new WinAppTray(nativeImage.createFromPath(iconPath));
   }
 
   static forMac(iconPath: string): AppTray {
-    return new MacAppTray(iconPath);
+    const trayImage = nativeImage.createFromPath(iconPath);
+    return new MacAppTray(trayImage.resize({ width: 16, height: 16 }));
   }
 }
 
