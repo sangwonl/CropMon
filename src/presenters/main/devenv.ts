@@ -1,19 +1,30 @@
 /* eslint global-require: off, no-console: off */
 /* eslint-disable import/prefer-default-export */
 
-import { isDebugMode } from '@utils/process';
+import { globalShortcut } from 'electron';
+
+import { TYPES } from '@di/types';
+import { diContainer } from '@di/container';
+import { UiDirector } from '@presenters/interactor/director';
+import { isDebugMode, isProduction } from '@utils/process';
+
+const uiDirector = diContainer.get<UiDirector>(TYPES.UiDirector);
 
 const installDevTools = async () => {
-  if (process.env.NODE_ENV === 'production') {
+  if (isProduction()) {
     const sourceMapSupport = require('source-map-support');
     sourceMapSupport.install();
   }
 
   if (isDebugMode()) {
-    require('electron-debug')();
+    require('electron-debug')({ showDevTools: false });
   } else {
     return;
   }
+
+  globalShortcut.register('Super+F12', () => {
+    uiDirector.toggleDevTools();
+  });
 
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
