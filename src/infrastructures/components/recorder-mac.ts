@@ -43,8 +43,6 @@ export class ScreenRecorderMac implements IScreenRecorder {
         .videoCodec('libvpx')
         .withVideoFilter(`crop=${width}:${height}:${x}:${y}`)
         .withOptions(['-pix_fmt yuv420p'])
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        .save(ctx.outputPath!)
         .on('start', (cmd) => {
           log.info(cmd);
           this.lastFfmpeg = ffmpeg;
@@ -54,6 +52,9 @@ export class ScreenRecorderMac implements IScreenRecorder {
           log.error(stderr);
           reject();
         });
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      ffmpeg.save(ctx.outputPath!);
     });
   }
 
