@@ -29,6 +29,7 @@ export class PreferencesBuilder {
       icon: this.assetResolver('icon.png'),
       webPreferences: {
         nodeIntegration: true,
+        enableRemoteModule: true,
       },
     });
 
