@@ -117,7 +117,8 @@ const handleMouseDown = (
     return;
   }
 
-  if (selCtx.selected) {
+  // if click after already area settled or right click while selecting
+  if (selCtx.selected || e.button === 2) {
     setSelCtx(initialSelCtx);
     onSelectionCancel();
     return;
