@@ -15,3 +15,15 @@ export const getPathToFfmpeg = (): string => {
       )
     : staticFfmpegPath;
 };
+
+export const inferVideoCodec = (outputPath: string): string => {
+  const ext = path.extname(outputPath);
+  switch (ext) {
+    case 'webm':
+      return 'libvpx';
+    case 'mp4':
+      return 'libx264';
+    default:
+      return 'libx264';
+  }
+};
