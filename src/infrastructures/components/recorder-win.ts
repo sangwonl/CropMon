@@ -3,17 +3,22 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import assert from 'assert';
-
+import path from 'path';
 import { ChildProcess } from 'child_process';
-import { Display, screen } from 'electron';
+
 import log from 'electron-log';
+import { app, Display, screen } from 'electron';
 import { injectable } from 'inversify';
 import Ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
-import pathToFfmpeg from 'ffmpeg-static';
 
 import { ICaptureContext } from '@core/entities/capture';
 import { IBounds } from '@core/entities/screen';
 import { IScreenRecorder } from '@core/components';
+
+const ffmpegPath = path.join(
+  app.getAppPath(),
+  '../../3rdparty/ffmpeg/ffmpeg.exe'
+);
 
 @injectable()
 export class ScreenRecorderWindows implements IScreenRecorder {
@@ -35,7 +40,7 @@ export class ScreenRecorderWindows implements IScreenRecorder {
 
     return new Promise((resolve, reject) => {
       const ffmpeg = Ffmpeg()
-        .setFfmpegPath(pathToFfmpeg)
+        .setFfmpegPath(ffmpegPath)
         .input('desktop')
         .inputFormat('gdigrab')
         .inputOptions([
