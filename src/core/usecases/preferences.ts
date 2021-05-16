@@ -38,6 +38,6 @@ export class PreferencesUseCase {
   ): Promise<void> | never {
     await this.preferencesStore.savePreferences(prefs);
     this.globalRegistry.setUserPreferences(prefs);
-    this.tracker.event('prefs', 'update-prefs', JSON.stringify(prefs));
+    this.tracker.eventL('prefs', 'update-prefs', JSON.stringify(prefs));
   }
 }

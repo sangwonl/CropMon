@@ -17,15 +17,26 @@ export class GoogleAnalyticsTracker implements IAnalyticsTracker {
     this.tracker.pageview(`/views/${name}`).send();
   }
 
-  event(
+  event(category: string, action: string, cb?: () => void): void {
+    this.tracker.event(category, action, cb).send();
+  }
+
+  eventL(
     category: string,
     action: string,
-    label?: string,
-    value?: string | number
+    label: string,
+    cb?: () => void
   ): void {
-    if (label !== undefined && value !== undefined) {
-      this.tracker.event(category, action, label, value).send();
-    }
-    this.tracker.event(category, action).send();
+    this.tracker.event(category, action, label, cb).send();
+  }
+
+  eventLV(
+    category: string,
+    action: string,
+    label: string,
+    value: number,
+    cb?: () => void
+  ): void {
+    this.tracker.event(category, action, label, value, cb).send();
   }
 }

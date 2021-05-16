@@ -34,10 +34,10 @@ export class CaptureUseCase {
     try {
       await this.screenRecorder.record(ctx);
       ctx.status = CaptureStatus.IN_PROGRESS;
-      this.tracker.event('capture', 'start-capture', 'success');
+      this.tracker.eventL('capture', 'start-capture', 'success');
     } catch (e) {
       ctx.status = CaptureStatus.ERROR;
-      this.tracker.event('capture', 'start-capture', 'fail');
+      this.tracker.eventL('capture', 'start-capture', 'fail');
     }
 
     return ctx;
@@ -63,10 +63,10 @@ export class CaptureUseCase {
       newStatus = CaptureStatus.FINISHED;
 
       const duration = dayjs().second() - curCtx.createdAt;
-      this.tracker.event('capture', 'finish-capture', 'duration', duration);
+      this.tracker.eventLV('capture', 'finish-capture', 'duration', duration);
     } catch (e) {
       newStatus = CaptureStatus.ERROR;
-      this.tracker.event('capture', 'finish-capture', 'fail');
+      this.tracker.eventL('capture', 'finish-capture', 'fail');
     }
 
     return { ...curCtx, status: newStatus };
