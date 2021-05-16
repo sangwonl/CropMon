@@ -4,7 +4,6 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
 
-import { TYPES } from '@di/types';
 import { diContainer } from '@di/container';
 import { IPreferences } from '@core/entities/preferences';
 import { IScreenInfo } from '@core/entities/screen';
@@ -33,7 +32,7 @@ import {
   IClosePreferencesPayload,
 } from '@presenters/redux/ui/types';
 
-const uiDirector = diContainer.get<UiDirector>(TYPES.UiDirector);
+const uiDirector = diContainer.get(UiDirector);
 const preferencesUseCase = diContainer.get(PreferencesUseCase);
 
 function* handleLoadPreferences(_action: PayloadAction) {
@@ -102,7 +101,7 @@ function* handleChooseRecordHomeDir(_action: PayloadAction) {
 }
 
 function* handleEnableAreaSelection(_action: PayloadAction) {
-  const screenInfos: Array<IScreenInfo> = uiDirector.enableCaptureSelection();
+  const screenInfos: Array<IScreenInfo> = uiDirector.enableCaptureSelectionMode();
 
   yield put(
     didEnableAreaSelection(
@@ -132,7 +131,7 @@ function* handleDisableAreaSelection(_action: PayloadAction) {
     uiDirector.showItemInFolder(captureCtx.outputPath);
   }
 
-  uiDirector.disableCaptureSelection();
+  uiDirector.disableCaptureSelectionMode();
 
   yield put(didDisableAreaSelection());
 }

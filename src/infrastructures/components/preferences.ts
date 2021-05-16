@@ -3,22 +3,30 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable import/prefer-default-export */
 
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { app } from 'electron';
 import Store from 'electron-store';
 
+import { TYPES } from '@di/types';
 import { IPreferences } from '@core/entities/preferences';
-import { IPreferencesStore } from '@core/components';
+import { IPreferencesStore } from '@core/components/preferences';
+import { IAnalyticsTracker } from '@core/components/tracker';
 
 const CUR_VERSION = '0.0.1';
 
 @injectable()
 export class PreferencesStoreImpl implements IPreferencesStore {
-  store: Store = new Store({
-    name: 'config',
-    fileExtension: 'json',
-    accessPropertiesByDotNotation: false,
-  });
+  store!: Store;
+
+  constructor(
+    @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
+  ) {
+    this.store = new Store({
+      name: 'config',
+      fileExtension: 'json',
+      accessPropertiesByDotNotation: false,
+    });
+  }
 
   async loadPreferences(): Promise<IPreferences> {
     const version = this.store.get('version');
@@ -28,6 +36,7 @@ export class PreferencesStoreImpl implements IPreferencesStore {
 
     const newPrefs = this.initialPreferences();
     await this.savePreferences(newPrefs);
+    this.tracker.event('app-lifecycle', 'initial-launch');
 
     return newPrefs;
   }

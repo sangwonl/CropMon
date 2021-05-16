@@ -6,7 +6,7 @@ import { ICaptureContext } from '@core/entities/capture';
 import { IPreferences } from '@core/entities/preferences';
 
 @injectable()
-export class IGlobalRegistry {
+export class GlobalRegistry {
   private curCaptureContext: ICaptureContext | undefined;
   private userPreferences: IPreferences | undefined;
 

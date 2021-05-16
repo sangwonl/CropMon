@@ -5,12 +5,16 @@ import 'reflect-metadata';
 
 import { Container } from 'inversify';
 
-import { IGlobalRegistry, IScreenRecorder, IPreferencesStore } from '@core/components';
+import { GlobalRegistry } from '@core/components/registry';
+import { IScreenRecorder } from '@core/components/recorder';
+import { IPreferencesStore } from '@core/components/preferences';
+import { IAnalyticsTracker } from '@core/components/tracker';
 import { CaptureUseCase } from '@core/usecases/capture';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { ScreenRecorderWindows } from '@infrastructures/components/recorder-win';
 import { ScreenRecorderMac } from '@infrastructures/components/recorder-mac';
 import { PreferencesStoreImpl } from '@infrastructures/components/preferences';
+import { GoogleAnalyticsTracker } from '@infrastructures/components/ga-tracker';
 import { UiDirector } from '@presenters/interactor/director';
 import { isMac } from '@utils/process';
 
@@ -19,7 +23,7 @@ import { TYPES } from './types';
 const diContainer = new Container();
 
 diContainer
-  .bind<IGlobalRegistry>(IGlobalRegistry)
+  .bind<GlobalRegistry>(GlobalRegistry)
   .toSelf()
   .inSingletonScope();
 
@@ -44,8 +48,13 @@ diContainer
   .inSingletonScope();
 
 diContainer
-  .bind<UiDirector>(TYPES.UiDirector)
-  .to(UiDirector)
+  .bind<UiDirector>(UiDirector)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<IAnalyticsTracker>(TYPES.AnalyticsTracker)
+  .to(GoogleAnalyticsTracker)
   .inSingletonScope();
 
 export { diContainer };
