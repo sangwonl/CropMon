@@ -31,9 +31,10 @@ export class OverlaysBuilder {
       },
     });
 
-    window.setBounds(emptyBounds());
-    window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     window.setAlwaysOnTop(true, 'main-menu', 1);
+    window.setBounds(emptyBounds());
+    // https://github.com/electron/electron/issues/25368
+    window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
 
     // It is a quick solution to access index.html
     // in the same way for both dev and prod.

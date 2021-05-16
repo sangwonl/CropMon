@@ -5,26 +5,33 @@ import 'reflect-metadata';
 import { mock, instance, verify, when, anything, capture } from 'ts-mockito';
 
 import { IPreferences } from '@core/entities/preferences';
-import { IGlobalRegistry, IPreferencesStore } from '@core/components';
+import { GlobalRegistry } from '@core/components/registry';
+import { IPreferencesStore } from '@core/components/preferences';
+import { IAnalyticsTracker } from '@core/components/tracker';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 
 describe('PreferenceUseCase', () => {
-  let mockedGlobalRegistry: IGlobalRegistry;
-  let mockRegistry: IGlobalRegistry;
+  let mockedGlobalRegistry: GlobalRegistry;
+  let mockRegistry: GlobalRegistry;
 
   let mockedPreferencesStore: IPreferencesStore;
   let mockPrefsStore: IPreferencesStore;
 
+  let mockedAnalyticsTracker: IAnalyticsTracker;
+  let mockTracker: IAnalyticsTracker;
+
   let useCase: PreferencesUseCase;
 
   beforeEach(() => {
-    mockedGlobalRegistry = mock(IGlobalRegistry);
+    mockedGlobalRegistry = mock(GlobalRegistry);
     mockedPreferencesStore = mock<IPreferencesStore>();
+    mockedAnalyticsTracker = mock<IAnalyticsTracker>();
 
     mockRegistry = instance(mockedGlobalRegistry);
     mockPrefsStore = instance(mockedPreferencesStore);
+    mockTracker = instance(mockedAnalyticsTracker);
 
-    useCase = new PreferencesUseCase(mockRegistry, mockPrefsStore);
+    useCase = new PreferencesUseCase(mockRegistry, mockPrefsStore, mockTracker);
   });
 
   describe('getUserPreferences', () => {

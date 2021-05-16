@@ -10,9 +10,11 @@
 import 'reflect-metadata';
 
 import { app, shell, dialog, BrowserWindow, screen } from 'electron';
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 
+import { TYPES } from '@di/types';
 import { IBounds, IScreenInfo } from '@core/entities/screen';
+import { IAnalyticsTracker } from '@core/components/tracker';
 import { AssetResolverFunc } from '@presenters/common/asset';
 import { AppTray } from '@presenters/ui/tray';
 import { OverlaysBuilder } from '@presenters/ui/overlays/builder';
@@ -104,6 +106,10 @@ export class UiDirector {
   private preferencesWindow!: BrowserWindow;
   private overlaysWindows!: OverlaysWindowPool;
 
+  constructor(
+    @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
+  ) {}
+
   intialize(assetResolver: AssetResolverFunc) {
     this.assetResolver = assetResolver;
     this.appTray = new AppTrayBuilder(this.assetResolver).build();
@@ -120,15 +126,18 @@ export class UiDirector {
   }
 
   quitApplication() {
+    this.tracker.event('app-lifecycle', 'quit');
     process.exit();
   }
 
   openPreferencesWindow() {
     this.preferencesWindow.show();
+    this.tracker.view('preferences-window');
   }
 
   closePreferencesWindow() {
     this.preferencesWindow.hide();
+    this.tracker.view('idle');
   }
 
   async openDialogForRecordHomeDir(path?: string): Promise<string> {
@@ -140,20 +149,21 @@ export class UiDirector {
     return filePaths.length > 0 ? filePaths[0] : '';
   }
 
-  enableCaptureSelection(): Array<IScreenInfo> {
+  enableCaptureSelectionMode(): Array<IScreenInfo> {
     const screenInfos = this.populateScreenInfos();
-
     this.overlaysWindows.showAll(screenInfos);
-
+    this.tracker.view('capture-area-selection');
     return screenInfos;
   }
 
-  disableCaptureSelection(): void {
+  disableCaptureSelectionMode(): void {
     this.overlaysWindows.hideAll();
+    this.tracker.view('idle');
   }
 
   enableRecordingMode(): void {
     this.overlaysWindows.ignoreMouseEvents();
+    this.tracker.view('in-recoding');
   }
 
   showItemInFolder(path: string): void {

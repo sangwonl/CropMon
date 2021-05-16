@@ -7,13 +7,16 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '@di/types';
 
 import { IPreferences } from '@core/entities/preferences';
-import { IGlobalRegistry, IPreferencesStore } from '@core/components';
+import { GlobalRegistry } from '@core/components/registry';
+import { IPreferencesStore } from '@core/components/preferences';
+import { IAnalyticsTracker } from '@core/components/tracker';
 
 @injectable()
 export class PreferencesUseCase {
   public constructor(
-    private globalRegistry: IGlobalRegistry,
-    @inject(TYPES.PreferencesStore) private preferencesStore: IPreferencesStore
+    private globalRegistry: GlobalRegistry,
+    @inject(TYPES.PreferencesStore) private preferencesStore: IPreferencesStore,
+    @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
   ) {}
 
   public async getUserPreferences(): Promise<IPreferences> | never {
@@ -35,5 +38,6 @@ export class PreferencesUseCase {
   ): Promise<void> | never {
     await this.preferencesStore.savePreferences(prefs);
     this.globalRegistry.setUserPreferences(prefs);
+    this.tracker.event('prefs', 'update-prefs', JSON.stringify(prefs));
   }
 }
