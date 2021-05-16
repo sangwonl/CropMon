@@ -126,8 +126,9 @@ export class UiDirector {
   }
 
   quitApplication() {
-    this.tracker.event('app-lifecycle', 'quit');
-    process.exit();
+    this.tracker.event('app-lifecycle', 'quit', () => {
+      process.exit();
+    });
   }
 
   openPreferencesWindow() {
