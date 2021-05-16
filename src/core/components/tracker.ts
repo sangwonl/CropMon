@@ -2,10 +2,18 @@
 
 export interface IAnalyticsTracker {
   view(name: string): void;
-  event(
+  event(category: string, action: string, cb?: () => void): void;
+  eventL(
     category: string,
     action: string,
-    label?: string,
-    value?: string | number
+    label: string,
+    cb?: () => void
+  ): void;
+  eventLV(
+    category: string,
+    action: string,
+    label: string,
+    value: number,
+    cb?: () => void
   ): void;
 }
