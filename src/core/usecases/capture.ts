@@ -14,13 +14,16 @@ import {
   ICaptureOption,
   createCaptureContext,
 } from '@core/entities/capture';
-import { IGlobalRegistry, IScreenRecorder } from '@core/components';
+import { GlobalRegistry } from '@core/components/registry';
+import { IScreenRecorder } from '@core/components/recorder';
+import { IAnalyticsTracker } from '@core/components/tracker';
 
 @injectable()
 export class CaptureUseCase {
   constructor(
-    private globalRegistry: IGlobalRegistry,
-    @inject(TYPES.ScreenRecorder) private screenRecorder: IScreenRecorder
+    private globalRegistry: GlobalRegistry,
+    @inject(TYPES.ScreenRecorder) private screenRecorder: IScreenRecorder,
+    @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
   ) {}
 
   async startCapture(option: ICaptureOption): Promise<ICaptureContext | never> {
@@ -31,8 +34,10 @@ export class CaptureUseCase {
     try {
       await this.screenRecorder.record(ctx);
       ctx.status = CaptureStatus.IN_PROGRESS;
+      this.tracker.event('capture', 'start-capture', 'success');
     } catch (e) {
       ctx.status = CaptureStatus.ERROR;
+      this.tracker.event('capture', 'start-capture', 'fail');
     }
 
     return ctx;
@@ -56,8 +61,12 @@ export class CaptureUseCase {
     try {
       this.screenRecorder.finish(curCtx);
       newStatus = CaptureStatus.FINISHED;
+
+      const duration = dayjs().second() - curCtx.createdAt;
+      this.tracker.event('capture', 'finish-capture', 'duration', duration);
     } catch (e) {
       newStatus = CaptureStatus.ERROR;
+      this.tracker.event('capture', 'finish-capture', 'fail');
     }
 
     return { ...curCtx, status: newStatus };

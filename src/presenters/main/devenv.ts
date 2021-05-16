@@ -3,12 +3,11 @@
 
 import { globalShortcut } from 'electron';
 
-import { TYPES } from '@di/types';
 import { diContainer } from '@di/container';
 import { UiDirector } from '@presenters/interactor/director';
 import { isDebugMode, isProduction } from '@utils/process';
 
-const uiDirector = diContainer.get<UiDirector>(TYPES.UiDirector);
+const uiDirector = diContainer.get(UiDirector);
 
 const installDevTools = async () => {
   if (isProduction()) {

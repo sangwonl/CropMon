@@ -12,7 +12,7 @@ import Ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
 
 import { ICaptureContext } from '@core/entities/capture';
 import { IBounds } from '@core/entities/screen';
-import { IScreenRecorder } from '@core/components';
+import { IScreenRecorder } from '@core/components/recorder';
 import { getPathToFfmpeg, inferVideoCodec } from '@utils/ffmpeg';
 
 @injectable()
