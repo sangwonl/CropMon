@@ -20,7 +20,7 @@ import { AppTray } from '@presenters/ui/tray';
 import { OverlaysBuilder } from '@presenters/ui/overlays/builder';
 import { PreferencesBuilder } from '@presenters/ui/preferences/builder';
 import { AppTrayBuilder } from '@presenters/ui/tray/builder';
-import { setCustomData } from '@utils/custom';
+import { setCustomData } from '@utils/remote';
 import { SPARE_PIXELS } from '@utils/bounds';
 
 class OverlaysWindowPool {
@@ -92,8 +92,8 @@ class OverlaysWindowPool {
     return {
       x: bounds.x - SPARE_PIXELS,
       y: bounds.y - SPARE_PIXELS,
-      // width: (bounds.width + SPARE_PIXELS * 2) / 2,
-      width: bounds.width + SPARE_PIXELS * 2,
+      width: (bounds.width + SPARE_PIXELS * 2) / 2,
+      // width: bounds.width + SPARE_PIXELS * 2,
       height: bounds.height + SPARE_PIXELS * 2,
     };
   }

@@ -15,7 +15,7 @@ import {
   disableAreaSelection,
 } from '@presenters/redux/ui/slice';
 import { startCapture } from '@presenters/redux/capture/slice';
-import { getCurWindowCustomData } from '@utils/custom';
+import { getCurWindowCustomData } from '@utils/remote';
 
 import { CaptureArea } from './CaptureArea';
 import styles from './Cover.css';
