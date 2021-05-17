@@ -2,7 +2,7 @@
 
 import { IBounds } from '@core/entities/screen';
 
-// WORKAROUND to fix non-clickable area at the nearest borders
+// WORKAROUND: to fix non-clickable area at the nearest borders
 // Same issue here: https://github.com/electron/electron/issues/21929
 export const SPARE_PIXELS = 5;
 

@@ -20,5 +20,9 @@ export function getCurWindowCustomData<T>(name: string): T {
 }
 
 export function focusCurWindow() {
-  remote.getCurrentWindow().focus();
+  // remote.app.focus({ steal: true });
+  const curWin = remote.getCurrentWindow();
+  if (!curWin.isFocused()) {
+    curWin.focus();
+  }
 }
