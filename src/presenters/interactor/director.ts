@@ -86,14 +86,14 @@ class OverlaysWindowPool {
     return window;
   }
 
-  // WORKAROUND to fix non-clickable area at the nearest borders
+  // WORKAROUND: to fix non-clickable area at the nearest borders
   // Same issue here: https://github.com/electron/electron/issues/21929
   private addSparePixels(bounds: IBounds): IBounds {
     return {
       x: bounds.x - SPARE_PIXELS,
       y: bounds.y - SPARE_PIXELS,
-      width: (bounds.width + SPARE_PIXELS * 2) / 2,
-      // width: bounds.width + SPARE_PIXELS * 2,
+      // width: (bounds.width + SPARE_PIXELS * 2) / 2,
+      width: bounds.width + SPARE_PIXELS * 2,
       height: bounds.height + SPARE_PIXELS * 2,
     };
   }
