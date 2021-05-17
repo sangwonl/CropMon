@@ -1,16 +1,35 @@
+/* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable import/prefer-default-export */
 
 import ua from 'universal-analytics';
 import { injectable } from 'inversify';
+import Store from 'electron-store';
+import { v4 as uuidv4 } from 'uuid';
 
 import { IAnalyticsTracker } from '@core/components/tracker';
 
 @injectable()
 export class GoogleAnalyticsTracker implements IAnalyticsTracker {
+  store!: Store;
   tracker!: ua.Visitor;
 
   constructor() {
-    this.tracker = ua('UA-197078322-1');
+    this.store = new Store({
+      name: 'session',
+      fileExtension: 'json',
+      accessPropertiesByDotNotation: false,
+    });
+
+    this.tracker = ua('UA-197078322-1', this.getTrackUid());
+  }
+
+  private getTrackUid(): string {
+    let uid = this.store.get('tuid') as string;
+    if (uid === undefined) {
+      uid = uuidv4();
+      this.store.set('tuid', uid);
+    }
+    return uid;
   }
 
   view(name: string): void {
