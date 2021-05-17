@@ -5,7 +5,7 @@ html {
 }
 
 body {
-  /* WORKAROUND to fix non-clickable area at the nearest borders */
+  /* WORKAROUND: to fix non-clickable area at the nearest borders */
   /* Same issue here: https://github.com/electron/electron/issues/21929 */
   margin: 5px;
   padding: 0;

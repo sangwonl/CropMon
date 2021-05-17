@@ -12,14 +12,11 @@ import React, {
   useEffect,
 } from 'react';
 import classNames from 'classnames';
+import { debounce } from 'debounce';
 
 import { IBounds } from '@core/entities/screen';
-import {
-  SPARE_PIXELS,
-  isEmptyBounds,
-  isCapturableBounds,
-  emptyBounds,
-} from '@utils/bounds';
+import { SPARE_PIXELS, isEmptyBounds, isCapturableBounds } from '@utils/bounds';
+import { isMac } from '@utils/process';
 import { focusCurWindow } from '@utils/remote';
 
 import { CaptureAreaHint } from './CaptureAreaHint';
@@ -61,10 +58,6 @@ const initialSelCtx: AreaSelectionCtx = {
 };
 
 const calcSelectedBounds = (selCtx: AreaSelectionCtx): IBounds => {
-  if (!selCtx.started) {
-    return emptyBounds();
-  }
-
   const endX = selCtx.selected ? selCtx.endX : selCtx.curX;
   const endY = selCtx.selected ? selCtx.endY : selCtx.curY;
   return {
@@ -162,16 +155,32 @@ const handleMouseUp = (
     return;
   }
 
+  updatedSelCtx.started = false;
   updatedSelCtx.selected = true;
   setSelCtx(updatedSelCtx);
   onSelectionFinish(bounds);
 };
 
+// WORKAROUND: for MacOS to fix missing focus on second screen overlays
+const focusCurWindowDebounced = (() => {
+  if (isMac()) {
+    return debounce(() => {
+      focusCurWindow();
+    }, 50);
+  }
+  return () => {};
+})();
+
 const handleMouseMove = (
   selCtx: AreaSelectionCtx,
   setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
 ) => (e: MouseEvent<HTMLDivElement>) => {
-  if (selCtx.recording || !selCtx.started) {
+  if (selCtx.recording) {
+    return;
+  }
+
+  if (!selCtx.started) {
+    focusCurWindowDebounced();
     return;
   }
 
@@ -219,7 +228,6 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
       onMouseDown={onMouseDown}
       onMouseUp={onMouseUp}
       onMouseMove={onMouseMove}
-      onMouseEnter={() => focusCurWindow()}
     >
       {active && (
         <div
