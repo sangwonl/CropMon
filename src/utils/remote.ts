@@ -18,3 +18,7 @@ export function getCustomData<T>(window: BrowserWindow, name: string): T {
 export function getCurWindowCustomData<T>(name: string): T {
   return getCustomData<T>(remote.getCurrentWindow(), name);
 }
+
+export function focusCurWindow() {
+  remote.getCurrentWindow().focus();
+}

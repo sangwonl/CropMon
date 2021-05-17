@@ -20,6 +20,7 @@ import {
   isCapturableBounds,
   emptyBounds,
 } from '@utils/bounds';
+import { focusCurWindow } from '@utils/remote';
 
 import { CaptureAreaHint } from './CaptureAreaHint';
 import { ControlBox } from './ControlBox';
@@ -218,6 +219,7 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
       onMouseDown={onMouseDown}
       onMouseUp={onMouseUp}
       onMouseMove={onMouseMove}
+      onMouseEnter={() => focusCurWindow()}
     >
       {active && (
         <div
