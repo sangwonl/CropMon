@@ -38,9 +38,9 @@
         "from": "node_modules/ffmpeg-static",
         "to": "3rdparty/ffmpeg",
         "filter": [
-          "@(ffmpeg|ffmpeg.exe)",
-          "index.js",
-          "package.json"
+          "LICENSE",
+          "@(ffmpeg|ffmpeg.exe).LICENSE",
+          "@(ffmpeg|ffmpeg.exe)"
         ]
       }
     ],
