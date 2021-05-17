@@ -11,6 +11,7 @@ import { TYPES } from '@di/types';
 import { IPreferences } from '@core/entities/preferences';
 import { IPreferencesStore } from '@core/components/preferences';
 import { IAnalyticsTracker } from '@core/components/tracker';
+import { getPlatform } from '@utils/process';
 
 const CUR_VERSION = '0.0.1';
 
@@ -36,7 +37,7 @@ export class PreferencesStoreImpl implements IPreferencesStore {
 
     const newPrefs = this.initialPreferences();
     await this.savePreferences(newPrefs);
-    this.tracker.event('app-lifecycle', 'initial-launch');
+    this.tracker.eventL('app-lifecycle', 'initial-launch', getPlatform());
 
     return newPrefs;
   }

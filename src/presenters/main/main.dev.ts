@@ -15,10 +15,11 @@ import { app } from 'electron';
 
 import { TYPES } from '@di/types';
 import { diContainer } from '@di/container';
-import { UiDirector } from '@presenters/interactor/director';
 import { IAnalyticsTracker } from '@core/components/tracker';
-import { loadPreferences } from '@presenters/redux/ui/slice';
+import { UiDirector } from '@presenters/interactor/director';
 import store, { initializeSaga } from '@presenters/redux/store-main';
+import { loadPreferences } from '@presenters/redux/ui/slice';
+import { getPlatform } from '@utils/process';
 
 import { assetResolver } from '../common/asset';
 import { AppUpdater } from './updater';
@@ -51,7 +52,7 @@ const start = async () => {
 
   initializeWindows();
 
-  tracker.event('app-lifecycle', 'launch');
+  tracker.eventL('app-lifecycle', 'launch', getPlatform());
 
   tracker.view('idle');
 };
