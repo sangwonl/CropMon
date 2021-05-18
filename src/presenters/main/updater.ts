@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable import/prefer-default-export */
 
-import { app, BrowserWindow, dialog } from 'electron';
+import { dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 
@@ -36,15 +36,7 @@ export class AppUpdater {
 
     const buttonId = result.response;
     if (buttonId === 0) {
-      this.closeAllWindows();
-      setImmediate(() => autoUpdater.quitAndInstall());
+      autoUpdater.quitAndInstall();
     }
-  }
-
-  private closeAllWindows() {
-    app.removeAllListeners('window-all-closed');
-    BrowserWindow.getAllWindows().forEach((w) => {
-      w.removeAllListeners('close');
-    });
   }
 }
