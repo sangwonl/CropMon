@@ -31,8 +31,7 @@ const tracker = diContainer.get<IAnalyticsTracker>(TYPES.AnalyticsTracker);
 
 const initializeApp = () => {
   // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  new AppUpdater();
+  new AppUpdater().checkForUpdates();
 
   configureShortcuts();
 
