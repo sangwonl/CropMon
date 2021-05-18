@@ -8,6 +8,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { IAnalyticsTracker } from '@core/components/tracker';
 
+import { version as curVersion, productName } from '../../package.json';
+
 @injectable()
 export class GoogleAnalyticsTracker implements IAnalyticsTracker {
   store!: Store;
@@ -34,6 +36,7 @@ export class GoogleAnalyticsTracker implements IAnalyticsTracker {
 
   view(name: string): void {
     this.tracker.pageview(`/views/${name}`).send();
+    this.tracker.screenview(`/views/${name}`, productName, curVersion).send();
   }
 
   event(category: string, action: string, cb?: () => void): void {

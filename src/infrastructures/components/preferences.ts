@@ -13,7 +13,7 @@ import { IPreferencesStore } from '@core/components/preferences';
 import { IAnalyticsTracker } from '@core/components/tracker';
 import { getPlatform } from '@utils/process';
 
-const CUR_VERSION = '0.0.1';
+import { version as curVersion } from '../../package.json';
 
 @injectable()
 export class PreferencesStoreImpl implements IPreferencesStore {
@@ -43,7 +43,7 @@ export class PreferencesStoreImpl implements IPreferencesStore {
   }
 
   async savePreferences(prefs: IPreferences): Promise<void> {
-    this.store.set('version', CUR_VERSION);
+    this.store.set('version', curVersion);
     this.store.set('openRecordHomeDirWhenRecordCompleted', prefs.openRecordHomeDirWhenRecordCompleted);
     this.store.set('recordHomeDir', prefs.recordHomeDir);
   }
