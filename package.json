@@ -1,7 +1,5 @@
 {
   "name": "kropsaurus",
-  "productName": "Kropsaurus",
-  "version": "0.1.0",
   "description": "Simple Screen Recorder",
   "scripts": {
     "build": "concurrently \"yarn build:main\" \"yarn build:renderer\"",
