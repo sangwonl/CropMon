@@ -1,9 +1,10 @@
+/* eslint-disable radix */
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import assert from 'assert';
-import { ChildProcess } from 'child_process';
+import { ChildProcess, exec } from 'child_process';
 
 import log from 'electron-log';
 import { Display, screen } from 'electron';
@@ -30,9 +31,12 @@ export class ScreenRecorderWindows implements IScreenRecorder {
       return Promise.reject();
     }
 
+    const wholeScreenBounds = await this.getWholeScreenBounds();
+
     const { x, y, width, height } = this.adjustBoundsOnDisplay(
       targetDisplay,
-      targetBounds
+      targetBounds,
+      wholeScreenBounds
     );
 
     return new Promise((resolve, reject) => {
@@ -78,13 +82,49 @@ export class ScreenRecorderWindows implements IScreenRecorder {
     return screen.getAllDisplays().find((d) => d.id === screenId);
   }
 
-  private adjustBoundsOnDisplay(targetDisp: Display, bounds: IBounds): IBounds {
+  private getWholeScreenBounds(): Promise<IBounds> {
+    return new Promise((resolve, reject) => {
+      exec(
+        `${getPathToFfmpeg()} -f gdigrab -i desktop`,
+        (_error, _stdout, stderr) => {
+          const matched = stderr.match(
+            /whole desktop as (-?\d+)x(-?\d+).*at \((-?\d+),(-?\d+)\)/
+          );
+          if (matched === null) {
+            reject();
+            return;
+          }
+
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          const [_, fw, fh, sx, sy] = matched;
+          const x = parseInt(sx);
+          const y = parseInt(sy);
+          resolve({
+            x,
+            y,
+            width: parseInt(fw) + x,
+            height: parseInt(fh) + y,
+          });
+        }
+      );
+    });
+  }
+
+  private adjustBoundsOnDisplay(
+    targetDisp: Display,
+    bounds: IBounds,
+    wholeScreenBounds: IBounds
+  ): IBounds {
     const scaledBounds = this.calcScaledScreenBounds(targetDisp);
+    const x = Math.floor(scaledBounds.x + bounds.x * targetDisp.scaleFactor);
+    const y = Math.floor(scaledBounds.y + bounds.y * targetDisp.scaleFactor);
+    const width = Math.floor(bounds.width * targetDisp.scaleFactor);
+    const height = Math.floor(bounds.height * targetDisp.scaleFactor);
     return {
-      x: scaledBounds.x + bounds.x * targetDisp.scaleFactor,
-      y: scaledBounds.y + bounds.y * targetDisp.scaleFactor,
-      width: bounds.width * targetDisp.scaleFactor,
-      height: bounds.height * targetDisp.scaleFactor,
+      x: Math.max(x, wholeScreenBounds.x),
+      y: Math.max(y, wholeScreenBounds.y),
+      width: Math.min(width, wholeScreenBounds.width),
+      height: Math.min(height, wholeScreenBounds.height),
     };
   }
 
