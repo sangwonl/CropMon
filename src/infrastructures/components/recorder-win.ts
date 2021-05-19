@@ -84,29 +84,27 @@ export class ScreenRecorderWindows implements IScreenRecorder {
 
   private getWholeScreenBounds(): Promise<IBounds> {
     return new Promise((resolve, reject) => {
-      exec(
-        `${getPathToFfmpeg()} -f gdigrab -i desktop`,
-        (_error, _stdout, stderr) => {
-          const matched = stderr.match(
-            /whole desktop as (-?\d+)x(-?\d+).*at \((-?\d+),(-?\d+)\)/
-          );
-          if (matched === null) {
-            reject();
-            return;
-          }
-
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          const [_, fw, fh, sx, sy] = matched;
-          const x = parseInt(sx);
-          const y = parseInt(sy);
-          resolve({
-            x,
-            y,
-            width: parseInt(fw) + x,
-            height: parseInt(fh) + y,
-          });
+      const cmd = `"${getPathToFfmpeg()}" -f gdigrab -i desktop`;
+      exec(cmd, (_error, _stdout, stderr) => {
+        const matched = stderr.match(
+          /whole desktop as (-?\d+)x(-?\d+).*at \((-?\d+),(-?\d+)\)/
+        );
+        if (matched === null) {
+          reject();
+          return;
         }
-      );
+
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        const [_, fw, fh, sx, sy] = matched;
+        const x = parseInt(sx);
+        const y = parseInt(sy);
+        resolve({
+          x,
+          y,
+          width: parseInt(fw) + x,
+          height: parseInt(fh) + y,
+        });
+      });
     });
   }
 
