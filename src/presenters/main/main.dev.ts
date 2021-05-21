@@ -30,7 +30,6 @@ const uiDirector = diContainer.get(UiDirector);
 const tracker = diContainer.get<IAnalyticsTracker>(TYPES.AnalyticsTracker);
 
 const initializeApp = () => {
-  // Remove this if your app does not use auto updates
   new AppUpdater().checkForUpdates();
 
   configureShortcuts();

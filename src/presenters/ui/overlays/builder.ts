@@ -28,6 +28,7 @@ export class OverlaysBuilder {
       webPreferences: {
         nodeIntegration: true,
         enableRemoteModule: true,
+        contextIsolation: false,
       },
     });
 
