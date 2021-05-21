@@ -22,17 +22,20 @@ import { loadPreferences } from '@presenters/redux/ui/slice';
 import { getPlatform } from '@utils/process';
 
 import { assetResolver } from '../common/asset';
-import { AppUpdater } from './updater';
+import { configureAppUpdater as initializeAppUpdater } from './updater';
 import { initializeDevEnv } from './devenv';
-import { configureShortcuts } from './shortcut';
+import { initializeShortcuts } from './shortcut';
+import { initializePermissions } from './permission';
 
 const uiDirector = diContainer.get(UiDirector);
 const tracker = diContainer.get<IAnalyticsTracker>(TYPES.AnalyticsTracker);
 
 const initializeApp = () => {
-  new AppUpdater().checkForUpdates();
+  initializePermissions();
 
-  configureShortcuts();
+  initializeAppUpdater();
+
+  initializeShortcuts();
 
   store.dispatch(loadPreferences());
 };
