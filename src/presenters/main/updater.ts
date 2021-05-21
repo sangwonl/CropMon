@@ -7,7 +7,7 @@ import log from 'electron-log';
 
 import { isWin } from '@utils/process';
 
-export class AppUpdater {
+class AppUpdater {
   constructor() {
     autoUpdater.logger = log;
     autoUpdater.autoDownload = false;
@@ -45,3 +45,7 @@ export class AppUpdater {
     }
   }
 }
+
+export const configureAppUpdater = () => {
+  new AppUpdater().checkForUpdates();
+};
