@@ -25,14 +25,11 @@ import { assetResolver } from '../common/asset';
 import { configureAppUpdater as initializeAppUpdater } from './updater';
 import { initializeDevEnv } from './devenv';
 import { initializeShortcuts } from './shortcut';
-import { initializePermissions } from './permission';
 
 const uiDirector = diContainer.get(UiDirector);
 const tracker = diContainer.get<IAnalyticsTracker>(TYPES.AnalyticsTracker);
 
 const initializeApp = () => {
-  initializePermissions();
-
   initializeAppUpdater();
 
   initializeShortcuts();
