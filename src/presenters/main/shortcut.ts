@@ -8,7 +8,7 @@ import store, { RootState } from '@presenters/redux/store-main';
 import { finishCapture } from '@presenters/redux/capture/slice';
 import { enableAreaSelection } from '@presenters/redux/ui/slice';
 
-export const configureShortcuts = () => {
+export const initializeShortcuts = () => {
   interface ShortcutHandler {
     shortcut: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
