@@ -30,6 +30,7 @@ export class PreferencesBuilder {
       webPreferences: {
         nodeIntegration: true,
         enableRemoteModule: true,
+        contextIsolation: false,
       },
     });
 

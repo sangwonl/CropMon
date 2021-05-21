@@ -3,17 +3,16 @@
 import path from 'path';
 
 import { app } from 'electron';
-import staticFfmpegPath from 'ffmpeg-static';
 
-import { isProduction, isWin } from './process';
+import { getArch, getPlatform, isProduction, isWin } from './process';
 
 export const getPathToFfmpeg = (): string => {
+  const executable = `ffmpeg${isWin() ? '.exe' : ''}`;
+  const relativePath = `../../3rdparty/ffmpeg/${getPlatform()}/${getArch()}/${executable}`;
+
   return isProduction()
-    ? path.join(
-        app.getAppPath(),
-        `../../3rdparty/ffmpeg/ffmpeg${isWin() ? '.exe' : ''}`
-      )
-    : staticFfmpegPath;
+    ? path.join(app.getAppPath(), relativePath)
+    : path.join(__dirname, relativePath);
 };
 
 export const inferVideoCodec = (outputPath: string): string => {
