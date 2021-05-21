@@ -304,6 +304,7 @@
     "electron-redux": "^2.0.0-alpha.8",
     "electron-store": "^8.0.0",
     "electron-updater": "^4.3.8",
+    "electron-util": "^0.16.0",
     "fluent-ffmpeg": "^2.1.2",
     "history": "^5.0.0",
     "inversify": "^5.0.5",
