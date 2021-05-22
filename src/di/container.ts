@@ -11,12 +11,10 @@ import { IPreferencesStore } from '@core/components/preferences';
 import { IAnalyticsTracker } from '@core/components/tracker';
 import { CaptureUseCase } from '@core/usecases/capture';
 import { PreferencesUseCase } from '@core/usecases/preferences';
-import { ScreenRecorderWindows } from '@infrastructures/components/recorder-win';
-import { ScreenRecorderMac } from '@infrastructures/components/recorder-mac';
+import { ElectronScreenRecorder } from '@infrastructures/components/electron-recorder/recorder';
 import { PreferencesStoreImpl } from '@infrastructures/components/preferences';
 import { GoogleAnalyticsTracker } from '@infrastructures/components/ga-tracker';
 import { UiDirector } from '@presenters/interactor/director';
-import { isMac } from '@utils/process';
 
 import { TYPES } from './types';
 
@@ -29,7 +27,7 @@ diContainer
 
 diContainer
   .bind<IScreenRecorder>(TYPES.ScreenRecorder)
-  .to(isMac() ? ScreenRecorderMac : ScreenRecorderWindows)
+  .to(ElectronScreenRecorder)
   .inSingletonScope();
 
 diContainer

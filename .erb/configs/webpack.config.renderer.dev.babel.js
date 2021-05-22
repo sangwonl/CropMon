@@ -51,6 +51,11 @@ export default merge(baseConfig, {
       'core-js',
       'regenerator-runtime/runtime',
       require.resolve('../../src/presenters/ui/overlays/index.tsx'),
+    ],
+    'renderer.recorder': [
+      'core-js',
+      'regenerator-runtime/runtime',
+      require.resolve('../../src/infrastructures/components/electron-recorder/renderer.ts'),
     ]
   },
 

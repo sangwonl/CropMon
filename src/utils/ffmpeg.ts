@@ -18,9 +18,9 @@ export const getPathToFfmpeg = (): string => {
 export const inferVideoCodec = (outputPath: string): string => {
   const ext = path.extname(outputPath);
   switch (ext) {
-    case 'webm':
-      return 'libvpx';
-    case 'mp4':
+    case '.webm':
+      return 'libvpx-vp9';
+    case '.mp4':
       return 'libx264';
     default:
       return 'libx264';

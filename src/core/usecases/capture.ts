@@ -53,13 +53,13 @@ export class CaptureUseCase {
     console.log(this.screenRecorder);
   }
 
-  finishCapture(): ICaptureContext | never {
+  async finishCapture(): Promise<ICaptureContext | never> {
     const curCtx = this.globalRegistry.getCaptureContext();
     assert(curCtx !== undefined);
 
     let newStatus = curCtx.status;
     try {
-      this.screenRecorder.finish(curCtx);
+      await this.screenRecorder.finish(curCtx);
       newStatus = CaptureStatus.FINISHED;
 
       const duration = dayjs().second() - curCtx.createdAt;
@@ -76,6 +76,7 @@ export class CaptureUseCase {
     const userPrefs = this.globalRegistry.getUserPreferences();
     const fileName = dayjs().format('YYYYMMDDHHmmss');
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    // return path.join(userPrefs!.recordHomeDir!, `${fileName}.webm`);
     return path.join(userPrefs!.recordHomeDir!, `${fileName}.mp4`);
   }
 }

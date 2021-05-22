@@ -21,7 +21,7 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "allowJs": true,
-    "types": ["reflect-metadata"],
+    "types": ["reflect-metadata", "dom-mediacapture-record"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "baseUrl": ".",

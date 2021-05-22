@@ -77,7 +77,7 @@ describe('CaptureUseCase', () => {
       });
       when(mockedGlobalRegistry.getCaptureContext()).thenReturn(capCtx);
 
-      const updatedCtx = useCase.finishCapture();
+      const updatedCtx = await useCase.finishCapture();
       expect(updatedCtx.status).toEqual(CaptureStatus.FINISHED);
       verify(mockedScreenRecorder.finish(capCtx)).once();
     });

@@ -16,7 +16,7 @@ import { IScreenRecorder } from '@core/components/recorder';
 import { getPathToFfmpeg, inferVideoCodec } from '@utils/ffmpeg';
 
 @injectable()
-export class ScreenRecorderMac implements IScreenRecorder {
+export class FfmpegScreenRecorderMac implements IScreenRecorder {
   lastFfmpeg!: FfmpegCommand;
 
   // eslint-disable-next-line class-methods-use-this
