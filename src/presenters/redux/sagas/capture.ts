@@ -46,9 +46,13 @@ function* handleStartCapture(action: PayloadAction<IStartCapturePayload>) {
 }
 
 function* handleFinishCapture(_action: PayloadAction) {
-  const updatedContext = captureUseCase.finishCapture();
-  yield put(didFinishCapture(updatedContext));
   yield put(disableAreaSelection());
+  const updatedContext: ICaptureContext = yield call([
+    captureUseCase,
+    captureUseCase.finishCapture,
+  ]);
+
+  yield put(didFinishCapture(updatedContext));
 }
 
 function* sagaEntry() {

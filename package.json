@@ -58,6 +58,13 @@
         "filter": [
           "*.html"
         ]
+      },
+      {
+        "from": "infrastructures/components/electron-recorder",
+        "to": "electron-recorder",
+        "filter": [
+          "*.html"
+        ]
       }
     ],
     "afterSign": ".erb/scripts/Notarize.js",
@@ -210,6 +217,7 @@
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",
     "@types/debounce": "^1.2.0",
+    "@types/dom-mediacapture-record": "^1.0.7",
     "@types/electron-localshortcut": "^3.1.0",
     "@types/enzyme": "^3.10.5",
     "@types/enzyme-adapter-react-16": "^1.0.6",

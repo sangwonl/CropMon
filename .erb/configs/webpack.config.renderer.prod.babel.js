@@ -37,6 +37,11 @@ export default merge(baseConfig, {
       'core-js',
       'regenerator-runtime/runtime',
       path.join(__dirname, '../../src/presenters/ui/overlays/index.tsx'),
+    ],
+    'renderer.recorder': [
+      'core-js',
+      'regenerator-runtime/runtime',
+      path.join(__dirname, '../../src/infrastructures/components/electron-recorder/renderer.ts'),
     ]
   },
 

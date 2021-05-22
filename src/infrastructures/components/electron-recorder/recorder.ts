@@ -1,27 +1,93 @@
+/* eslint-disable promise/catch-or-return */
+/* eslint-disable promise/always-return */
+/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable promise/param-names */
+/* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable radix */
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import assert from 'assert';
-import { ChildProcess, exec } from 'child_process';
+import { exec } from 'child_process';
+import fs from 'fs';
 
 import log from 'electron-log';
-import { Display, screen } from 'electron';
+import { BrowserWindow, Display, screen, ipcMain, app } from 'electron';
 import { injectable } from 'inversify';
-import Ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
+import Ffmpeg from 'fluent-ffmpeg';
 
 import { ICaptureContext } from '@core/entities/capture';
 import { IBounds } from '@core/entities/screen';
 import { IScreenRecorder } from '@core/components/recorder';
 import { getPathToFfmpeg, inferVideoCodec } from '@utils/ffmpeg';
 
-@injectable()
-export class ScreenRecorderWindows implements IScreenRecorder {
-  lastFfmpeg!: FfmpegCommand;
+import { RecorderRendererBuilder } from './builder';
 
-  // eslint-disable-next-line class-methods-use-this
+@injectable()
+export class ElectronScreenRecorder implements IScreenRecorder {
+  recorderDelegate!: BrowserWindow;
+
+  constructor() {
+    app.whenReady().then(async () => {
+      await this.initializeRecorderDelegate();
+    });
+  }
+
+  async initializeRecorderDelegate(): Promise<void> {
+    if (this.recorderDelegate !== undefined) {
+      return Promise.resolve();
+    }
+
+    this.recorderDelegate = new RecorderRendererBuilder().build();
+
+    return new Promise((resolve, _) => {
+      this.recorderDelegate.webContents.on('did-finish-load', () => {
+        resolve();
+      });
+    });
+  }
+
   async record(ctx: ICaptureContext): Promise<void> {
+    const { screenId, bounds: targetBounds } = ctx.target;
+
+    const targetDisplay = this.getDisplay(screenId);
+    if (targetDisplay === undefined || targetBounds === undefined) {
+      return Promise.reject();
+    }
+
+    const { bounds: dispBounds, scaleFactor } = targetDisplay;
+    const screenWidth = dispBounds.width * scaleFactor;
+    const screenHeight = dispBounds.height * scaleFactor;
+
+    return new Promise((resolve, reject) => {
+      const onRecordingStarted = (_event: any) => {
+        clearIpcListeners();
+        resolve();
+      };
+
+      const onRecordingFail = (_event: any, _data: any) => {
+        clearIpcListeners();
+        reject();
+      };
+
+      const setupIpcListeners = () => {
+        ipcMain.on('recording-started', onRecordingStarted);
+        ipcMain.on('recording-fail', onRecordingFail);
+      };
+
+      const clearIpcListeners = () => {
+        ipcMain.off('recording-started', onRecordingStarted);
+        ipcMain.off('recording-fail', onRecordingFail);
+      };
+
+      setupIpcListeners();
+
+      const args = { screenId, screenWidth, screenHeight };
+      this.recorderDelegate.webContents.send('start-record', args);
+    });
+  }
+
+  async finish(ctx: ICaptureContext): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const outPath = ctx.outputPath!;
     const { screenId, bounds: targetBounds } = ctx.target;
@@ -32,7 +98,6 @@ export class ScreenRecorderWindows implements IScreenRecorder {
     }
 
     const wholeScreenBounds = await this.getWholeScreenBounds();
-
     const { x, y, width, height } = this.adjustBoundsOnDisplay(
       targetDisplay,
       targetBounds,
@@ -40,42 +105,45 @@ export class ScreenRecorderWindows implements IScreenRecorder {
     );
 
     return new Promise((resolve, reject) => {
-      const ffmpeg = Ffmpeg()
-        .setFfmpegPath(getPathToFfmpeg())
-        .input('desktop')
-        .inputFormat('gdigrab')
-        .inputOptions([
-          '-framerate 60',
-          '-draw_mouse 1',
-          `-offset_x ${x}`,
-          `-offset_y ${y}`,
-          `-video_size ${width}x${height}`,
-        ])
-        .videoCodec(inferVideoCodec(outPath))
-        .withVideoFilter('pad=ceil(iw/2)*2:ceil(ih/2)*2')
-        .withOptions(['-pix_fmt yuv420p', '-r 60'])
-        .on('start', (cmd) => {
-          log.info(cmd);
-          this.lastFfmpeg = ffmpeg;
-          resolve();
-        })
-        .on('error', (_err, _stdout, stderr) => {
-          log.error(stderr);
-          reject();
-        });
+      const onRecordingFileSaved = (_event: any, data: any) => {
+        clearIpcListeners();
 
-      ffmpeg.save(outPath);
+        const { filePath: tmpFilePath } = data;
+
+        Ffmpeg()
+          .setFfmpegPath(getPathToFfmpeg())
+          .input(tmpFilePath)
+          .videoCodec(inferVideoCodec(outPath))
+          .withVideoFilter(`crop=${width}:${height}:${x}:${y}`)
+          .on('start', (cmd) => {
+            log.info(cmd);
+          })
+          .on('end', (stdout, stderr) => {
+            log.info(stdout);
+            log.error(stderr);
+            fs.unlink(tmpFilePath, () => {});
+            resolve();
+          })
+          .on('error', (error, _stdout, stderr) => {
+            log.error(error);
+            log.error(stderr);
+            reject();
+          })
+          .save(outPath);
+      };
+
+      const setupIpcListeners = () => {
+        ipcMain.on('recording-file-saved', onRecordingFileSaved);
+      };
+
+      const clearIpcListeners = () => {
+        ipcMain.off('recording-file-saved', onRecordingFileSaved);
+      };
+
+      setupIpcListeners();
+
+      this.recorderDelegate.webContents.send('stop-record', {});
     });
-  }
-
-  async finish(_ctx: ICaptureContext): Promise<void> {
-    assert(this.lastFfmpeg !== undefined);
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const proc = (this.lastFfmpeg as any).ffmpegProc as ChildProcess;
-    proc?.stdin?.write('q');
-
-    return Promise.resolve();
   }
 
   private getDisplay(screenId: number): Display | undefined {

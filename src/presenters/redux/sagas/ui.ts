@@ -7,7 +7,7 @@ import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
 import { diContainer } from '@di/container';
 import { IPreferences } from '@core/entities/preferences';
 import { IScreenInfo } from '@core/entities/screen';
-import { ICaptureContext } from '@core/entities/capture';
+import { CaptureStatus, ICaptureContext } from '@core/entities/capture';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { UiDirector } from '@presenters/interactor/director';
 import { RootState } from '@presenters/redux/store';
@@ -31,6 +31,7 @@ import {
   ICaptureArea,
   IClosePreferencesPayload,
 } from '@presenters/redux/ui/types';
+import { didFinishCapture } from '../capture/slice';
 
 const uiDirector = diContainer.get(UiDirector);
 const preferencesUseCase = diContainer.get(PreferencesUseCase);
@@ -111,29 +112,24 @@ function* handleEnableAreaSelection(_action: PayloadAction) {
 }
 
 function* handleDisableAreaSelection(_action: PayloadAction) {
+  uiDirector.disableCaptureSelectionMode();
+
+  yield put(didDisableAreaSelection());
+}
+
+function* handleDidFinishCapture(action: PayloadAction<ICaptureContext>) {
+  const captureCtx: ICaptureContext = action.payload;
   const uiPrefs: IPreferences = yield select(
     (state: RootState) => state.ui.preferencesWindow.preferences
   );
 
-  const captureArea: ICaptureArea = yield select(
-    (state: RootState) => state.ui.captureArea
-  );
-
-  const captureCtx: ICaptureContext = yield select(
-    (state: RootState) => state.capture.curCaptureCtx
-  );
-
   if (
-    captureArea.isRecording &&
-    uiPrefs.openRecordHomeDirWhenRecordCompleted &&
-    captureCtx.outputPath
+    captureCtx.outputPath &&
+    captureCtx.status === CaptureStatus.FINISHED &&
+    uiPrefs.openRecordHomeDirWhenRecordCompleted
   ) {
     uiDirector.showItemInFolder(captureCtx.outputPath);
   }
-
-  uiDirector.disableCaptureSelectionMode();
-
-  yield put(didDisableAreaSelection());
 }
 
 function* handleEnableRecording(_action: PayloadAction) {
@@ -152,6 +148,7 @@ function* sagaEntry() {
   yield takeLatest(enableAreaSelection.type, handleEnableAreaSelection);
   yield takeLatest(disableAreaSelection.type, handleDisableAreaSelection);
   yield takeLatest(enableRecording.type, handleEnableRecording);
+  yield takeLatest(didFinishCapture.type, handleDidFinishCapture);
   yield takeLatest(quitApplication.type, handleQuitApplication);
 }
 
