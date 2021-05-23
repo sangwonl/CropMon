@@ -5,3 +5,6 @@
 *.jpeg  binary
 *.ico   binary
 *.icns  binary
+3rdparty/ffmpeg/win32/x64/ffmpeg.exe filter=lfs diff=lfs merge=lfs -text
+3rdparty/ffmpeg/darwin/x64/ffmpeg filter=lfs diff=lfs merge=lfs -text
+3rdparty/ffmpeg/darwin/arm64/ffmpeg filter=lfs diff=lfs merge=lfs -text
