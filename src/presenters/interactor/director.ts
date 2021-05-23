@@ -23,7 +23,7 @@ import { AppTrayBuilder } from '@presenters/ui/tray/builder';
 import { setCustomData } from '@utils/remote';
 import { SPARE_PIXELS } from '@utils/bounds';
 
-class OverlaysWindowPool {
+class OverlaysWinPool {
   private builder!: OverlaysBuilder;
   private windows!: Map<number, BrowserWindow>;
 
@@ -56,7 +56,7 @@ class OverlaysWindowPool {
       w.setIgnoreMouseEvents(true);
       setTimeout(() => {
         w.hide();
-      }, 100);
+      }, 300);
     });
   }
 
@@ -104,20 +104,23 @@ export class UiDirector {
   private assetResolver!: AssetResolverFunc;
   private appTray!: AppTray;
   private preferencesWindow!: BrowserWindow;
-  private overlaysWindows!: OverlaysWindowPool;
+  private overlaysWindows!: OverlaysWinPool;
 
   constructor(
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
   ) {}
 
   intialize(assetResolver: AssetResolverFunc) {
+    const screenInfos = this.populateScreenInfos();
     this.assetResolver = assetResolver;
+
     this.appTray = new AppTrayBuilder(this.assetResolver).build();
     this.preferencesWindow = new PreferencesBuilder(this.assetResolver).build();
-    this.overlaysWindows = new OverlaysWindowPool(
-      this.assetResolver,
-      this.populateScreenInfos()
-    );
+    this.overlaysWindows = new OverlaysWinPool(this.assetResolver, screenInfos);
+
+    // WORKAROUND to fix wrong position and bounds at the initial time
+    this.overlaysWindows.showAll(screenInfos);
+    this.overlaysWindows.hideAll();
   }
 
   toggleDevTools() {
