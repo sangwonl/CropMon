@@ -51,7 +51,6 @@ function* handleFinishCapture(_action: PayloadAction) {
     captureUseCase,
     captureUseCase.finishCapture,
   ]);
-
   yield put(didFinishCapture(updatedContext));
 }
 
