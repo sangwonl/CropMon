@@ -8,11 +8,12 @@ import { getArch, getPlatform, isProduction, isWin } from './process';
 
 export const getPathToFfmpeg = (): string => {
   const executable = `ffmpeg${isWin() ? '.exe' : ''}`;
-  const relativePath = `../../3rdparty/ffmpeg/${getPlatform()}/${getArch()}/${executable}`;
+  const prodPath = `../../3rdparty/ffmpeg/${executable}`;
+  const devPath = `../../3rdparty/ffmpeg/${getPlatform()}/${getArch()}/${executable}`;
 
   return isProduction()
-    ? path.join(app.getAppPath(), relativePath)
-    : path.join(__dirname, relativePath);
+    ? path.join(app.getAppPath(), prodPath)
+    : path.join(__dirname, devPath);
 };
 
 export const inferVideoCodec = (outputPath: string): string => {
