@@ -1,47 +1,45 @@
+/* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable max-classes-per-file */
 
 import { BrowserWindow } from 'electron';
-import localShortcut from 'electron-localshortcut';
 
 import { AssetResolverFunc } from '@presenters/common/asset';
-import { closePreferences } from '@presenters/redux/ui/slice';
-import store from '@presenters/redux/store';
+import { emptyBounds } from '@utils/bounds';
+import { isMac } from '@utils/process';
 
-export class PreferencesBuilder {
-  assetResolver: AssetResolverFunc;
-
-  constructor(assetResolver: AssetResolverFunc) {
-    this.assetResolver = assetResolver;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  build(): BrowserWindow {
-    const window = new BrowserWindow({
+export class OverlaysWindow extends BrowserWindow {
+  constructor(private assetResolver: AssetResolverFunc) {
+    super({
       show: false,
-      frame: true,
+      frame: false,
       resizable: false,
-      minimizable: false,
-      maximizable: false,
+      focusable: isMac(),
       skipTaskbar: true,
-      width: 640,
-      height: 250,
-      icon: this.assetResolver('icon.png'),
+      transparent: true,
+      titleBarStyle: 'customButtonsOnHover', // for MacOS, with frame: false
+      enableLargerThanScreen: true, // for MacOS, margin 5px workaround
       webPreferences: {
         nodeIntegration: true,
         enableRemoteModule: true,
         contextIsolation: false,
       },
     });
+    this.setup();
+  }
 
-    window.removeMenu();
+  // eslint-disable-next-line class-methods-use-this
+  private setup() {
+    this.setAlwaysOnTop(true, 'main-menu', 1);
+    this.setBounds(emptyBounds());
+    // https://github.com/electron/electron/issues/25368
+    this.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
 
     // It is a quick solution to access index.html
     // in the same way for both dev and prod.
     // dev: current - ui/main -> ../main -> current
     // prod: current - dist -> ../main -> main
-    // dev
-    window.loadURL(`file://${__dirname}/../preferences/index.html`);
+    this.loadURL(`file://${__dirname}/../overlays/index.html`);
 
     // @TODO: Use 'ready-to-show' event
     //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -56,16 +54,5 @@ export class PreferencesBuilder {
     //     window.focus();
     //   }
     // });
-
-    window.on('close', (event) => {
-      event.preventDefault();
-      store.dispatch(closePreferences());
-    });
-
-    localShortcut.register(window, 'Escape', () => {
-      store.dispatch(closePreferences());
-    });
-
-    return window;
   }
 }

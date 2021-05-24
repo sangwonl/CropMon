@@ -17,22 +17,20 @@ import { IBounds, IScreenInfo } from '@core/entities/screen';
 import { IAnalyticsTracker } from '@core/components/tracker';
 import { AssetResolverFunc } from '@presenters/common/asset';
 import { AppTray } from '@presenters/ui/tray';
-import { OverlaysBuilder } from '@presenters/ui/overlays/builder';
-import { PreferencesBuilder } from '@presenters/ui/preferences/builder';
-import { AppTrayBuilder } from '@presenters/ui/tray/builder';
+import { OverlaysWindow } from '@presenters/ui/overlays';
+import { PreferencesWindow } from '@presenters/ui/preferences';
 import { setCustomData } from '@utils/remote';
 import { SPARE_PIXELS } from '@utils/bounds';
+import { isMac } from '@utils/process';
 
 class OverlaysWinPool {
-  private builder!: OverlaysBuilder;
-  private windows!: Map<number, BrowserWindow>;
+  private windows?: Map<number, OverlaysWindow>;
 
   constructor(
-    assetResolver: AssetResolverFunc,
+    private assetResolver: AssetResolverFunc,
     screenInfos: Array<IScreenInfo>
   ) {
-    this.builder = new OverlaysBuilder(assetResolver);
-    this.windows = new Map<number, BrowserWindow>();
+    this.windows = new Map<number, OverlaysWindow>();
 
     // pre-create overlays windows for pool
     screenInfos.forEach(({ id: screenId }) => {
@@ -52,7 +50,7 @@ class OverlaysWinPool {
   }
 
   hideAll() {
-    this.windows.forEach((w) => {
+    this.windows?.forEach((w) => {
       w.setIgnoreMouseEvents(true);
       setTimeout(() => {
         w.hide();
@@ -61,13 +59,13 @@ class OverlaysWinPool {
   }
 
   ignoreMouseEvents() {
-    this.windows.forEach((w) => {
+    this.windows?.forEach((w) => {
       w.setIgnoreMouseEvents(true);
     });
   }
 
   toggleDevTools() {
-    this.windows.forEach((w) => {
+    this.windows?.forEach((w) => {
       const isOpened = w.webContents.isDevToolsOpened();
       w.webContents.toggleDevTools();
       w.setVisibleOnAllWorkspaces(true, {
@@ -77,11 +75,11 @@ class OverlaysWinPool {
   }
 
   private getOrBuild(screenId: number): BrowserWindow {
-    let window = this.windows.get(screenId);
+    let window = this.windows?.get(screenId);
     if (window === undefined) {
-      window = this.builder.build();
+      window = new OverlaysWindow(this.assetResolver);
       setCustomData(window, 'screenId', screenId);
-      this.windows.set(screenId, window);
+      this.windows?.set(screenId, window);
     }
     return window;
   }
@@ -114,8 +112,12 @@ export class UiDirector {
     const screenInfos = this.populateScreenInfos();
     this.assetResolver = assetResolver;
 
-    this.appTray = new AppTrayBuilder(this.assetResolver).build();
-    this.preferencesWindow = new PreferencesBuilder(this.assetResolver).build();
+    const trayIconPath = this.assetResolver('icon.png');
+    this.appTray = isMac()
+      ? AppTray.forMac(trayIconPath)
+      : AppTray.forWindows(trayIconPath);
+
+    this.preferencesWindow = new PreferencesWindow(this.assetResolver);
     this.overlaysWindows = new OverlaysWinPool(this.assetResolver, screenInfos);
 
     // WORKAROUND to fix wrong position and bounds at the initial time
