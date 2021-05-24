@@ -24,26 +24,17 @@ import { RecorderRendererBuilder } from './builder';
 
 @injectable()
 export class ElectronScreenRecorder implements IScreenRecorder {
-  recorderDelegate!: BrowserWindow;
+  recorderDelegate?: BrowserWindow;
 
   constructor() {
-    app.whenReady().then(async () => {
-      await this.initializeRecorderDelegate();
+    app.whenReady().then(() => {
+      this.renewBuildRenderer();
     });
   }
 
-  async initializeRecorderDelegate(): Promise<void> {
-    if (this.recorderDelegate !== undefined) {
-      return Promise.resolve();
-    }
-
+  renewBuildRenderer() {
+    this.recorderDelegate?.destroy();
     this.recorderDelegate = new RecorderRendererBuilder().build();
-
-    return new Promise((resolve, _) => {
-      this.recorderDelegate.webContents.on('did-finish-load', () => {
-        resolve();
-      });
-    });
   }
 
   async record(ctx: ICaptureContext): Promise<void> {
@@ -81,7 +72,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
       setupIpcListeners();
 
       const args = { screenId, screenWidth, screenHeight };
-      this.recorderDelegate.webContents.send('start-record', args);
+      this.recorderDelegate?.webContents.send('start-record', args);
     });
   }
 
@@ -128,6 +119,8 @@ export class ElectronScreenRecorder implements IScreenRecorder {
         }
 
         ffmpegCmd.save(outPath);
+
+        this.renewBuildRenderer();
       };
 
       const setupIpcListeners = () => {
@@ -140,7 +133,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
 
       setupIpcListeners();
 
-      this.recorderDelegate.webContents.send('stop-record', {});
+      this.recorderDelegate?.webContents.send('stop-record', {});
     });
   }
 
