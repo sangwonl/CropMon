@@ -97,6 +97,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
           .setFfmpegPath(getPathToFfmpeg())
           .input(tmpFilePath)
           .videoCodec(inferVideoCodec(outPath))
+          .withOptions(['-r 30'])
           .on('start', (cmd) => {
             log.info(cmd);
           })
