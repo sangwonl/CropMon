@@ -31,12 +31,12 @@ export default merge(baseConfig, {
     'renderer.preferences': [
       'core-js',
       'regenerator-runtime/runtime',
-      path.join(__dirname, '../../src/presenters/ui/preferences/index.tsx'),
+      path.join(__dirname, '../../src/presenters/ui/preferences/renderer.tsx'),
     ],
     'renderer.overlays': [
       'core-js',
       'regenerator-runtime/runtime',
-      path.join(__dirname, '../../src/presenters/ui/overlays/index.tsx'),
+      path.join(__dirname, '../../src/presenters/ui/overlays/renderer.tsx'),
     ],
     'renderer.recorder': [
       'core-js',
