@@ -76,7 +76,7 @@ export class CaptureUseCase {
     const userPrefs = this.globalRegistry.getUserPreferences();
     const fileName = dayjs().format('YYYYMMDDHHmmss');
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    // return path.join(userPrefs!.recordHomeDir!, `${fileName}.webm`);
     return path.join(userPrefs!.recordHomeDir!, `${fileName}.mp4`);
+    // return path.join(userPrefs!.recordHomeDir!, `${fileName}.webm`);
   }
 }
