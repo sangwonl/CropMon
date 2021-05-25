@@ -15,21 +15,19 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '@di/types';
 import { IBounds, IScreenInfo } from '@core/entities/screen';
 import { IAnalyticsTracker } from '@core/components/tracker';
-import { AssetResolverFunc } from '@presenters/common/asset';
+import { assetResolver } from '@presenters/common/asset';
 import { AppTray } from '@presenters/ui/tray';
 import { OverlaysWindow } from '@presenters/ui/overlays';
 import { PreferencesWindow } from '@presenters/ui/preferences';
 import { setCustomData } from '@utils/remote';
 import { SPARE_PIXELS } from '@utils/bounds';
 import { isMac } from '@utils/process';
+import { ProgressBar } from '@presenters/ui/stateless/progress';
 
 class OverlaysWinPool {
   private windows?: Map<number, OverlaysWindow>;
 
-  constructor(
-    private assetResolver: AssetResolverFunc,
-    screenInfos: Array<IScreenInfo>
-  ) {
+  constructor(screenInfos: Array<IScreenInfo>) {
     this.windows = new Map<number, OverlaysWindow>();
 
     // pre-create overlays windows for pool
@@ -77,7 +75,7 @@ class OverlaysWinPool {
   private getOrBuild(screenId: number): BrowserWindow {
     let window = this.windows?.get(screenId);
     if (window === undefined) {
-      window = new OverlaysWindow(this.assetResolver);
+      window = new OverlaysWindow();
       setCustomData(window, 'screenId', screenId);
       this.windows?.set(screenId, window);
     }
@@ -99,7 +97,6 @@ class OverlaysWinPool {
 
 @injectable()
 export class UiDirector {
-  private assetResolver!: AssetResolverFunc;
   private appTray!: AppTray;
   private preferencesWindow!: BrowserWindow;
   private overlaysWindows!: OverlaysWinPool;
@@ -108,21 +105,22 @@ export class UiDirector {
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
   ) {}
 
-  intialize(assetResolver: AssetResolverFunc) {
+  intialize() {
     const screenInfos = this.populateScreenInfos();
-    this.assetResolver = assetResolver;
 
-    const trayIconPath = this.assetResolver('icon.png');
+    const trayIconPath = assetResolver('icon.png');
     this.appTray = isMac()
       ? AppTray.forMac(trayIconPath)
       : AppTray.forWindows(trayIconPath);
 
-    this.preferencesWindow = new PreferencesWindow(this.assetResolver);
-    this.overlaysWindows = new OverlaysWinPool(this.assetResolver, screenInfos);
+    this.preferencesWindow = new PreferencesWindow();
+    this.overlaysWindows = new OverlaysWinPool(screenInfos);
 
     // WORKAROUND to fix wrong position and bounds at the initial time
     this.overlaysWindows.showAll(screenInfos);
     this.overlaysWindows.hideAll();
+
+    const pb = new ProgressBar();
   }
 
   toggleDevTools() {

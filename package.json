@@ -46,6 +46,12 @@
       "node_modules",
       "dist/",
       {
+        "from": "presenters/ui/stateless",
+        "filter": [
+          "**/*.html"
+        ]
+      },
+      {
         "from": "presenters/ui/preferences",
         "to": "preferences",
         "filter": [

@@ -21,7 +21,6 @@ import store, { initializeSaga } from '@presenters/redux/store-main';
 import { loadPreferences } from '@presenters/redux/ui/slice';
 import { getPlatform } from '@utils/process';
 
-import { assetResolver } from '../common/asset';
 import { configureAppUpdater as initializeAppUpdater } from './updater';
 import { initializeDevEnv } from './devenv';
 import { initializeShortcuts } from './shortcut';
@@ -41,7 +40,7 @@ const initializeApp = async () => {
 };
 
 const initializeWindows = () => {
-  uiDirector.intialize(assetResolver);
+  uiDirector.intialize();
 };
 
 const start = async () => {
