@@ -4,12 +4,11 @@
 
 import { BrowserWindow } from 'electron';
 
-import { AssetResolverFunc } from '@presenters/common/asset';
 import { emptyBounds } from '@utils/bounds';
 import { isMac } from '@utils/process';
 
 export class OverlaysWindow extends BrowserWindow {
-  constructor(private assetResolver: AssetResolverFunc) {
+  constructor() {
     super({
       show: false,
       frame: false,
@@ -39,7 +38,7 @@ export class OverlaysWindow extends BrowserWindow {
     // in the same way for both dev and prod.
     // dev: current - ui/main -> ../main -> current
     // prod: current - dist -> ../main -> main
-    this.loadURL(`file://${__dirname}/../overlays/index.html`);
+    this.loadURL(`file://${__dirname}/../overlays/renderer.html`);
 
     // @TODO: Use 'ready-to-show' event
     //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
