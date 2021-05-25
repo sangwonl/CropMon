@@ -28,6 +28,11 @@ export default merge(baseConfig, {
   target: 'electron-renderer',
 
   entry: {
+    'renderer.stateless': [
+      'core-js',
+      'regenerator-runtime/runtime',
+      require.resolve('../../src/presenters/ui/stateless/renderer.tsx'),
+    ],
     'renderer.preferences': [
       'core-js',
       'regenerator-runtime/runtime',
