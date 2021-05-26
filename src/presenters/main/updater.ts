@@ -5,8 +5,6 @@ import { dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 
-import { isWin } from '@utils/process';
-
 class AppUpdater {
   constructor() {
     autoUpdater.logger = log;
@@ -18,10 +16,7 @@ class AppUpdater {
   }
 
   checkForUpdates() {
-    // FIXME: it should be disabled for mac until code sign
-    if (isWin()) {
-      autoUpdater.checkForUpdates();
-    }
+    autoUpdater.checkForUpdates();
   }
 
   private onUpdateAvailable() {
