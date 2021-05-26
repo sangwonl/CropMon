@@ -22,7 +22,6 @@ import { PreferencesWindow } from '@presenters/ui/preferences';
 import { setCustomData } from '@utils/remote';
 import { SPARE_PIXELS } from '@utils/bounds';
 import { isMac } from '@utils/process';
-import { ProgressBar } from '@presenters/ui/stateless/progress';
 
 class OverlaysWinPool {
   private windows?: Map<number, OverlaysWindow>;
@@ -119,8 +118,6 @@ export class UiDirector {
     // WORKAROUND to fix wrong position and bounds at the initial time
     this.overlaysWindows.showAll(screenInfos);
     this.overlaysWindows.hideAll();
-
-    const pb = new ProgressBar();
   }
 
   toggleDevTools() {
