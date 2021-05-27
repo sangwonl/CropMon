@@ -22,7 +22,6 @@
     "node_modules": true,
     "npm-debug.log.*": true,
     "test/**/__snapshots__": true,
-    "yarn.lock": true,
     "*.{css,sass,scss}.d.ts": true
   },
 
@@ -35,5 +34,5 @@
     "**/node_modules": true
   },
 
-  "jestrunner.jestCommand": "yarn test --"
+  "jestrunner.jestCommand": "npm run test --"
 }
