@@ -55,6 +55,12 @@ class OverlaysWinPool {
     });
   }
 
+  closeAll() {
+    this.windows?.forEach((w) => {
+      w.close();
+    });
+  }
+
   ignoreMouseEvents() {
     this.windows?.forEach((w) => {
       w.setIgnoreMouseEvents(true);
