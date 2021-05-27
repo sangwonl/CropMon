@@ -27,10 +27,7 @@ import {
   didDisableAreaSelection,
   enableRecording,
 } from '@presenters/redux/ui/slice';
-import {
-  ICaptureArea,
-  IClosePreferencesPayload,
-} from '@presenters/redux/ui/types';
+import { IClosePreferencesPayload } from '@presenters/redux/ui/types';
 import { didFinishCapture } from '../capture/slice';
 
 const uiDirector = diContainer.get(UiDirector);
