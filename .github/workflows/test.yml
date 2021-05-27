@@ -14,19 +14,19 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v1
 
-      - name: Install Node.js, NPM and Yarn
+      - name: Install Node.js, NPM
         uses: actions/setup-node@v1
         with:
           node-version: 12
 
-      - name: yarn install
+      - name: npm install
         run: |
-          yarn install --frozen-lockfile --network-timeout 300000
+          npm ci
 
-      - name: yarn test
+      - name: test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          yarn build
-          yarn lint
-          yarn test
+          npm run build
+          npm run lint
+          npm run test

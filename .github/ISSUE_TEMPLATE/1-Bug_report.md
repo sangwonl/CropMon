@@ -13,7 +13,7 @@ labels: 'bug'
 - [ ] Using yarn
 - [ ] Using an up-to-date [`master` branch](https://github.com/sangwonl/scaple/tree/master)
 - [ ] Using latest version of devtools. [Check the docs for how to update](https://electron-react-boilerplate.js.org/docs/dev-tools/)
-- [ ] For issue in production release, add devtools output of `DEBUG_PROD=true yarn build && yarn start`
+- [ ] For issue in production release, add devtools output of `DEBUG_PROD=true npm run build && yarn start`
 
 ## Expected Behavior
 

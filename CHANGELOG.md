@@ -92,8 +92,8 @@
 
 # 0.17.1 (2018.11.20)
 
-- Fix `yarn test-e2e` and testcafe for single package.json structure
-- Fixes incorrect path in `yarn start` script
+- Fix `npm run test-e2e` and testcafe for single package.json structure
+- Fixes incorrect path in `npm run start` script
 - Bumped deps
 - Bump g++ in travis
 - Change clone arguments to clone only master
@@ -134,7 +134,7 @@ For full change list, see https://github.com/electron-react-boilerplate/electron
 # 0.14.0 (2018.5.24)
 
 - Improved CI timings
-- Migrated README commands to yarn from npm
+- Migrated README commands to npm run from npm
 - Improved vscode config
 - Updated all dependencies to latest semver
 - Fix `electron-rebuild` script bug
@@ -244,7 +244,6 @@ Here's the most notable changes since `v0.10.0`. Its been about a year since a r
 
 #### Additions
 
-- **Added support for Yarn:** [#451](https://github.com/electron-react-boilerplate/electron-react-boilerplate/pull/451)
 - **Added support for Flow:** [#425](https://github.com/electron-react-boilerplate/electron-react-boilerplate/pull/425)
 - **Added support for stylelint:** [#911](https://github.com/electron-react-boilerplate/electron-react-boilerplate/pull/911)
 - **Added support for electron-builder:** [#876](https://github.com/electron-react-boilerplate/electron-react-boilerplate/pull/876)
