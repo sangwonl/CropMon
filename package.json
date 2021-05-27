@@ -31,16 +31,8 @@
   },
   "build": {
     "productName": "Kropsaurus",
-    "appId": "com.pineple.Kropsaurus",
-    "extraFiles": [
-      {
-        "from": "3rdparty/ffmpeg/${platform}/${arch}",
-        "to": "3rdparty/ffmpeg",
-        "filter": [
-          "@(ffmpeg|ffmpeg.exe)"
-        ]
-      }
-    ],
+    "appId": "com.pineple.kropsaurus",
+    "extraFiles": [],
     "files": [
       "package.json",
       "node_modules",
@@ -66,10 +58,12 @@
         ]
       },
       {
-        "from": "infrastructures/components/electron-recorder",
-        "to": "electron-recorder",
+        "from": "infrastructures/components/electron-recorder/recorder-delegate",
+        "to": "recorder-delegate",
         "filter": [
-          "*.html"
+          "preload.js",
+          "renderer.html",
+          "renderer.js"
         ]
       }
     ],
@@ -302,10 +296,11 @@
     "webpack-bundle-analyzer": "^4.1.0",
     "webpack-cli": "^4.2.0",
     "webpack-dev-server": "^3.11.0",
-    "webpack-merge": "^5.4.0",
-    "yarn-deduplicate": "^3.1.0"
+    "webpack-merge": "^5.4.0"
   },
   "dependencies": {
+    "@ffmpeg/core": "^0.10.0",
+    "@ffmpeg/ffmpeg": "^0.10.0",
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "@reduxjs/toolkit": "^1.5.1",
@@ -337,8 +332,7 @@
   },
   "devEngines": {
     "node": ">=12.x",
-    "npm": ">=6.x",
-    "yarn": ">=1.21.3"
+    "npm": ">=6.x"
   },
   "collective": {
     "url": "https://opencollective.com/..."

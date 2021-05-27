@@ -10,18 +10,13 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import fs from 'fs';
-
-import log from 'electron-log';
 import { BrowserWindow, Display, screen, ipcMain, app } from 'electron';
 import { injectable } from 'inversify';
-import Ffmpeg from 'fluent-ffmpeg';
 
 import { ICaptureContext } from '@core/entities/capture';
 import { IScreenRecorder } from '@core/components/recorder';
-import { getPathToFfmpeg, inferVideoCodec } from '@utils/ffmpeg';
 
-import { RecorderRendererBuilder } from './builder';
+import { RecorderRendererDelegate } from './recorder-delegate';
 
 @injectable()
 export class ElectronScreenRecorder implements IScreenRecorder {
@@ -30,12 +25,14 @@ export class ElectronScreenRecorder implements IScreenRecorder {
   constructor() {
     app.whenReady().then(() => {
       this.renewBuildRenderer();
+      this.recorderDelegate = new RecorderRendererDelegate();
+      this.recorderDelegate.webContents.openDevTools();
     });
   }
 
   renewBuildRenderer() {
     this.recorderDelegate?.destroy();
-    this.recorderDelegate = new RecorderRendererBuilder().build();
+    this.recorderDelegate = new RecorderRendererDelegate();
   }
 
   async record(ctx: ICaptureContext): Promise<void> {
@@ -85,44 +82,11 @@ export class ElectronScreenRecorder implements IScreenRecorder {
       return Promise.reject();
     }
 
-    const { x, y, width, height } = targetBounds!;
-    const { bounds: display } = targetDisplay;
-    const shouldCrop = width !== display.width || height !== display.height;
-
-    return new Promise((resolve, reject) => {
-      const onRecordingFileSaved = (_event: any, data: any) => {
+    return new Promise((resolve, _reject) => {
+      const onRecordingFileSaved = (_event: any, _data: any) => {
         clearIpcListeners();
-
-        const { filePath: tmpFilePath } = data;
-        let ffmpegCmd = Ffmpeg()
-          .setFfmpegPath(getPathToFfmpeg())
-          .input(tmpFilePath)
-          .videoCodec(inferVideoCodec(outPath))
-          .withOptions(['-r 30'])
-          .on('start', (cmd) => {
-            log.info(cmd);
-          })
-          .on('end', (stdout, stderr) => {
-            log.info(stdout);
-            log.error(stderr);
-            fs.unlink(tmpFilePath, () => {});
-            resolve();
-          })
-          .on('error', (error, _stdout, stderr) => {
-            log.error(error);
-            log.error(stderr);
-            reject();
-          });
-
-        if (shouldCrop) {
-          ffmpegCmd = ffmpegCmd.withVideoFilter(
-            `crop=${width}:${height}:${x}:${y}`
-          );
-        }
-
-        ffmpegCmd.save(outPath);
-
         this.renewBuildRenderer();
+        resolve();
       };
 
       const setupIpcListeners = () => {
@@ -135,7 +99,11 @@ export class ElectronScreenRecorder implements IScreenRecorder {
 
       setupIpcListeners();
 
-      this.recorderDelegate?.webContents.send('stop-record', {});
+      this.recorderDelegate?.webContents.send('stop-record', {
+        outputPath: outPath,
+        displayBounds: targetDisplay.bounds,
+        targetBounds,
+      });
     });
   }
 
