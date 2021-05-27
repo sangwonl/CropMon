@@ -21,18 +21,6 @@ const getTempOutputPath = () => {
   );
 };
 
-const inferVideoCodec = (outPath) => {
-  const ext = window.injected.pathExt(outPath);
-  switch (ext) {
-    case '.webm':
-      return 'libvpx-vp9';
-    case '.mp4':
-      return 'libx264';
-    default:
-      return 'libx264';
-  }
-};
-
 const handleStreamDataAvailable = (event) => {
   recordedChunks.push(event.data);
 };
@@ -44,28 +32,6 @@ const ensureTempDirPathExists = (tempPath) => {
   }
 };
 
-const cropWithFfmpeg = async (tempPath) => {
-  const skipCrop =
-    targetBounds.width === displayBounds.width &&
-    targetBounds.height === displayBounds.height;
-  if (skipCrop) {
-    return;
-  }
-
-  const { x, y, width, height } = targetBounds;
-  await window.injected.ffmpegRun(
-    '-i',
-    tempPath,
-    '-vf',
-    `crop=${width}:${height}:${x}:${y}`,
-    '-c:v',
-    `${inferVideoCodec(outputPath)}`,
-    '-r',
-    '30',
-    outputPath
-  );
-};
-
 const handleRecordStop = async (_event) => {
   const tempPath = getTempOutputPath();
   ensureTempDirPathExists(tempPath);
@@ -74,9 +40,9 @@ const handleRecordStop = async (_event) => {
   const buffer = window.injected.newBuffer(await blob.arrayBuffer());
   window.injected.fsWriteFile(tempPath, buffer);
 
-  await cropWithFfmpeg(tempPath);
+  // await cropWithFfmpeg(tempPath);
 
-  window.injected.ipcSend('recording-file-saved', {});
+  window.injected.ipcSend('recording-file-saved', { tempFilePath: tempPath });
 };
 
 window.injected.ipcOn('start-record', async (_event, data) => {

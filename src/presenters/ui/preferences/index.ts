@@ -54,7 +54,6 @@ export class PreferencesWindow extends BrowserWindow {
     // });
 
     this.on('close', (event) => {
-      // TODO: ignore preventDefault when auto updater quit and install
       event.preventDefault();
       store.dispatch(closePreferences());
     });

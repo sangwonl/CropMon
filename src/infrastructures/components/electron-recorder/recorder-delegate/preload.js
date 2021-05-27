@@ -10,7 +10,6 @@ const {
 const path = require('path');
 const fs = require('fs');
 const dayjs = require('dayjs');
-const { createFFmpeg } = require('@ffmpeg/ffmpeg');
 
 contextBridge.exposeInMainWorld('injected', {
   dateString: (fmt) => dayjs().format(fmt),
@@ -27,9 +26,4 @@ contextBridge.exposeInMainWorld('injected', {
   ipcSend: (e, data) => ipcRenderer.send(e, data),
   ipcOn: (ch, listener) => ipcRenderer.on(ch, listener),
   getCapturerSources: (opts) => desktopCapturer.getSources(opts),
-  async ffmpegRun() {
-    const ffmpeg = createFFmpeg({ log: true });
-    await ffmpeg.load();
-    await ffmpeg.run.apply(null, arguments);
-  },
 });
