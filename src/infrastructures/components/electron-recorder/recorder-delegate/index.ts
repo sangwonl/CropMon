@@ -1,11 +1,12 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable import/prefer-default-export */
 
+import path from 'path';
 import { BrowserWindow } from 'electron';
 
-export class RecorderRendererBuilder {
-  build(): BrowserWindow {
-    const window = new BrowserWindow({
+export class RecorderRendererDelegate extends BrowserWindow {
+  constructor() {
+    super({
       show: false,
       frame: false,
       resizable: false,
@@ -15,13 +16,13 @@ export class RecorderRendererBuilder {
       width: -1,
       height: -1,
       webPreferences: {
-        nodeIntegration: true,
+        nodeIntegration: false,
+        allowRunningInsecureContent: true,
+        contextIsolation: true,
         enableRemoteModule: true,
-        contextIsolation: false,
+        preload: path.join(__dirname, '..', 'recorder-delegate', 'preload.js'),
       },
     });
-    window.loadURL(`file://${__dirname}/../electron-recorder/renderer.html`);
-
-    return window;
+    this.loadURL(`file://${__dirname}/../recorder-delegate/renderer.html`);
   }
 }

@@ -11,10 +11,13 @@
   },
   "scripts": {
     "electron-rebuild": "node -r ../.erb/scripts/BabelRegister.js ../.erb/scripts/ElectronRebuild.js",
-    "postinstall": "yarn electron-rebuild"
+    "postinstall": "npm run electron-rebuild"
   },
   "license": "MIT",
   "dependencies": {
+    "@ffmpeg/core": "^0.10.0",
+    "@ffmpeg/ffmpeg": "^0.10.0",
+    "dayjs": "^1.10.4"
   },
   "devDependencies": {}
 }
