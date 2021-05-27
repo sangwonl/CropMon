@@ -17,14 +17,10 @@ jobs:
       - name: Checkout git repo
         uses: actions/checkout@v1
 
-      - name: Install Node, NPM and Yarn
+      - name: Install Node, NPM
         uses: actions/setup-node@v1
         with:
           node-version: 12
-
-      - name: Install dependencies
-        run: |
-          yarn install
 
       - name: Publish releases
         env:
@@ -36,4 +32,4 @@ jobs:
           # This is used for uploading release assets to github
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          yarn postinstall && yarn build && yarn electron-builder --publish always --win --mac --linux
+          npm run postinstall && npm run build && npm run electron-builder --publish always --win --mac --linux
