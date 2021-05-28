@@ -24,7 +24,6 @@ import {
 
 import { ICaptureContext } from '@core/entities/capture';
 import { IScreenRecorder } from '@core/components/recorder';
-import { IBounds } from '@core/entities/screen';
 import { isProduction } from '@utils/process';
 
 import { RecorderRendererDelegate } from './recorder-delegate';
@@ -55,10 +54,6 @@ export class ElectronScreenRecorder implements IScreenRecorder {
       return Promise.reject();
     }
 
-    const { bounds: dispBounds } = targetDisplay;
-    const screenWidth = dispBounds.width;
-    const screenHeight = dispBounds.height;
-
     return new Promise((resolve, reject) => {
       const onRecordingStarted = (_event: any) => {
         clearIpcListeners();
@@ -82,32 +77,23 @@ export class ElectronScreenRecorder implements IScreenRecorder {
 
       setupIpcListeners();
 
-      const args = { screenId, screenWidth, screenHeight };
+      const args = {
+        screenId,
+        screenBounds: targetDisplay.bounds,
+        targetBounds,
+      };
       this.recorderDelegate?.webContents.send('start-record', args);
     });
   }
 
   async finish(ctx: ICaptureContext): Promise<void> {
     const outPath = ctx.outputPath!;
-    const { screenId, bounds: targetBounds } = ctx.target;
-    const targetDisplay = this.getDisplay(screenId);
-    if (targetDisplay === undefined || targetBounds === undefined) {
-      return Promise.reject();
-    }
 
     return new Promise((resolve, _reject) => {
       const onRecordingFileSaved = async (_event: any, data: any) => {
         clearIpcListeners();
-
-        await this.cropWithFfmpeg(
-          data.tempFilePath,
-          outPath,
-          targetDisplay.bounds,
-          targetBounds
-        );
-
+        await this.postProcessWithFFmpeg(data.tempFilePath, outPath);
         this.renewBuildRenderer();
-
         resolve();
       };
 
@@ -123,8 +109,6 @@ export class ElectronScreenRecorder implements IScreenRecorder {
 
       this.recorderDelegate?.webContents.send('stop-record', {
         outputPath: outPath,
-        displayBounds: targetDisplay.bounds,
-        targetBounds,
       });
     });
   }
@@ -152,34 +136,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
     return screen.getAllDisplays().find((d) => d.id === screenId);
   }
 
-  private inferVideoCodec(outPath: string): string {
-    const ext = path.extname(outPath);
-    switch (ext) {
-      case '.webm':
-        return 'libvpx-vp9';
-      case '.mp4':
-        return 'libx264';
-      default:
-        return 'libx264';
-    }
-  }
-
-  private async cropWithFfmpeg(
-    tempPath: string,
-    outputPath: string,
-    displayBounds: IBounds,
-    targetBounds: IBounds
-  ) {
-    const skipCrop =
-      targetBounds.width === displayBounds.width &&
-      targetBounds.height === displayBounds.height;
-    if (skipCrop) {
-      await fs.promises.rename(tempPath, outputPath);
-      fs.unlink(tempPath, () => {});
-      return;
-    }
-
-    const { x, y, width, height } = targetBounds;
+  private async postProcessWithFFmpeg(tempPath: string, outputPath: string) {
     const memInputName = path.basename(tempPath);
     const memOutputName = path.basename(outputPath);
 
@@ -189,10 +146,8 @@ export class ElectronScreenRecorder implements IScreenRecorder {
       await this.ffmpeg!.run(
         '-i',
         memInputName,
-        '-vf',
-        `crop=${width}:${height}:${x}:${y}`,
-        '-c:v',
-        `${this.inferVideoCodec(outputPath)}`,
+        '-c',
+        'copy',
         '-r',
         '30',
         memOutputName

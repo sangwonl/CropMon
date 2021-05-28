@@ -13,8 +13,8 @@ export class RecorderRendererDelegate extends BrowserWindow {
       minimizable: false,
       maximizable: false,
       skipTaskbar: true,
-      width: -1,
-      height: -1,
+      width: 0,
+      height: 0,
       webPreferences: {
         nodeIntegration: false,
         allowRunningInsecureContent: true,
