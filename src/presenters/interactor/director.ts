@@ -132,8 +132,13 @@ export class UiDirector {
   }
 
   quitApplication() {
+    app.removeAllListeners('close');
+    app.removeAllListeners('window-all-closed');
+
+    // To make sure it's terminated in 3 seconds
+    setTimeout(() => process.exit(0), 3000);
     this.tracker.event('app-lifecycle', 'quit', () => {
-      process.exit();
+      process.exit(0);
     });
   }
 

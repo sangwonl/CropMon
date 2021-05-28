@@ -5,7 +5,6 @@
 import { dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-
 import { diContainer } from '@di/container';
 import { UiDirector } from '@presenters/interactor/director';
 
@@ -43,7 +42,7 @@ class AppUpdater {
 
     const buttonId = result.response;
     if (buttonId === 0) {
-      uiDirector.quitApplication();
+      setImmediate(() => uiDirector.quitApplication());
     }
   }
 }
