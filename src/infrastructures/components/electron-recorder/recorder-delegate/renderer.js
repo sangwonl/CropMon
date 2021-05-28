@@ -72,7 +72,7 @@ const withCanvasProcess = (stream, screenBounds, targetBounds) => {
 
   const canvasElem = document.getElementById('canvas');
   canvasElem.width = targetBounds.width;
-  canvasElem.height = targetBounds.width;
+  canvasElem.height = targetBounds.height;
 
   const canvasCtx = canvasElem.getContext('2d');
   const render = () => {
@@ -120,7 +120,7 @@ window.injected.ipcOn('start-record', async (_event, data) => {
   mediaRecorder.onstop = handleRecordStop;
 
   recordedChunks = [];
-  mediaRecorder.start();
+  setTimeout(() => mediaRecorder.start(), 500);
 
   window.injected.ipcSend('recording-started', {});
 });
