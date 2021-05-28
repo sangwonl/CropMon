@@ -37,6 +37,10 @@ const initializeApp = async () => {
   initializeShortcuts();
 
   store.dispatch(loadPreferences());
+
+  app.on('quit', () => {
+    uiDirector.quitApplication();
+  });
 };
 
 const initializeWindows = () => {
