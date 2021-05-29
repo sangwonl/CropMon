@@ -6,20 +6,21 @@
 import fs from 'fs';
 import path from 'path';
 import dayjs from 'dayjs';
-import { app, desktopCapturer, ipcRenderer } from 'electron';
+import { desktopCapturer, ipcRenderer } from 'electron';
 
 import { IBounds } from '@core/entities/screen';
+import { getApp } from '@utils/remote';
 
 // const MEDIA_MIME_TYPE = 'video/webm; codecs=vp9';
 const MEDIA_MIME_TYPE = 'video/webm; codecs=h264';
 
-let recordedChunks: Array<Blob> = [];
+const recordedChunks: Array<Blob> = [];
 let mediaRecorder: MediaRecorder;
 
 const getTempOutputPath = () => {
   const fileName = dayjs().format('YYYYMMDDHHmmss');
   return path.join(
-    app.getPath('temp'),
+    getApp().getPath('temp'),
     'kropsaurus',
     'recording',
     `tmp-${fileName}.webm`
@@ -29,7 +30,7 @@ const getTempOutputPath = () => {
 const ensureTempDirPathExists = (tempPath: string) => {
   const dirPath = path.dirname(tempPath);
   if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath);
+    fs.mkdirSync(dirPath, { recursive: true });
   }
 };
 
@@ -58,12 +59,9 @@ const getMediaConstraint = (sourceId: string, screenBounds: IBounds): any => {
 
 const withCanvasProcess = (
   stream: MediaStream,
-  screenBounds: IBounds,
   targetBounds: IBounds
-) => {
+): MediaStream => {
   const videoElem = document.getElementById('video') as HTMLVideoElement;
-  videoElem.width = screenBounds.width;
-  videoElem.height = screenBounds.height;
   videoElem.srcObject = stream;
   videoElem.play();
 
@@ -87,7 +85,7 @@ const withCanvasProcess = (
   };
   setInterval(render, 33);
 
-  return (canvasElem! as any).captureStream(30);
+  return (canvasElem as any).captureStream(30);
 };
 
 const handleStreamDataAvailable = (event: BlobEvent) => {
@@ -125,22 +123,29 @@ ipcRenderer.on('start-record', async (_event, data) => {
     return;
   }
 
-  const canvasStream = withCanvasProcess(stream, screenBounds, targetBounds);
+  const canvasStream = withCanvasProcess(stream, targetBounds);
   const recorderOpts = { mimeType: MEDIA_MIME_TYPE };
   mediaRecorder = new MediaRecorder(canvasStream, recorderOpts);
   mediaRecorder.ondataavailable = handleStreamDataAvailable;
   mediaRecorder.onstop = handleRecordStop;
 
-  recordedChunks = [];
-  setTimeout(() => mediaRecorder.start(), 500);
-
+  setTimeout(() => {
+    mediaRecorder.start(1000);
+  }, 500);
   ipcRenderer.send('recording-started', {});
 });
 
-ipcRenderer.on('stop-record', async (_event, data) => {
+ipcRenderer.on('stop-record', async (_event, _data) => {
   if (mediaRecorder === undefined) {
     ipcRenderer.send('recording-failed', {
       message: 'invalid media recorder state',
+    });
+    return;
+  }
+
+  if (recordedChunks.length === 0) {
+    ipcRenderer.send('recording-failed', {
+      message: 'empty recorded chunks',
     });
     return;
   }

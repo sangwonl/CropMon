@@ -36,10 +36,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
   constructor() {
     this.initializeFFmpeg();
 
-    app.whenReady().then(() => {
-      this.renewBuildRenderer();
-      this.recorderDelegate = new RecorderRendererDelegate();
-    });
+    app.whenReady().then(() => this.renewBuildRenderer());
   }
 
   renewBuildRenderer() {
@@ -60,19 +57,19 @@ export class ElectronScreenRecorder implements IScreenRecorder {
         resolve();
       };
 
-      const onRecordingFail = (_event: any, _data: any) => {
+      const onRecordingFailed = (_event: any, _data: any) => {
         clearIpcListeners();
         reject();
       };
 
       const setupIpcListeners = () => {
         ipcMain.on('recording-started', onRecordingStarted);
-        ipcMain.on('recording-fail', onRecordingFail);
+        ipcMain.on('recording-failed', onRecordingFailed);
       };
 
       const clearIpcListeners = () => {
         ipcMain.off('recording-started', onRecordingStarted);
-        ipcMain.off('recording-fail', onRecordingFail);
+        ipcMain.off('recording-failed', onRecordingFailed);
       };
 
       setupIpcListeners();
@@ -89,7 +86,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
   async finish(ctx: ICaptureContext): Promise<void> {
     const outPath = ctx.outputPath!;
 
-    return new Promise((resolve, _reject) => {
+    return new Promise((resolve, reject) => {
       const onRecordingFileSaved = async (_event: any, data: any) => {
         clearIpcListeners();
         await this.postProcessWithFFmpeg(data.tempFilePath, outPath);
@@ -97,12 +94,20 @@ export class ElectronScreenRecorder implements IScreenRecorder {
         resolve();
       };
 
+      const onRecordingFailed = (_event: any, _data: any) => {
+        clearIpcListeners();
+        this.renewBuildRenderer();
+        reject();
+      };
+
       const setupIpcListeners = () => {
         ipcMain.on('recording-file-saved', onRecordingFileSaved);
+        ipcMain.on('recording-failed', onRecordingFailed);
       };
 
       const clearIpcListeners = () => {
         ipcMain.off('recording-file-saved', onRecordingFileSaved);
+        ipcMain.off('recording-failed', onRecordingFailed);
       };
 
       setupIpcListeners();
