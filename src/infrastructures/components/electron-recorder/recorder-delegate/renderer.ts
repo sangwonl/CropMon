@@ -1,53 +1,46 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable radix */
+
+import fs from 'fs';
+import path from 'path';
+import dayjs from 'dayjs';
+import { app, desktopCapturer, ipcRenderer } from 'electron';
+
+import { IBounds } from '@core/entities/screen';
 
 // const MEDIA_MIME_TYPE = 'video/webm; codecs=vp9';
 const MEDIA_MIME_TYPE = 'video/webm; codecs=h264';
 
-let recordedChunks = [];
-let mediaRecorder;
-let outputPath;
+let recordedChunks: Array<Blob> = [];
+let mediaRecorder: MediaRecorder;
 
 const getTempOutputPath = () => {
-  const fileName = window.injected.dateString('YYYYMMDDHHmmss');
-  return window.injected.pathJoin(
-    window.injected.getAppTempPath(),
+  const fileName = dayjs().format('YYYYMMDDHHmmss');
+  return path.join(
+    app.getPath('temp'),
     'kropsaurus',
     'recording',
     `tmp-${fileName}.webm`
   );
 };
 
-const handleStreamDataAvailable = (event) => {
-  recordedChunks.push(event.data);
-};
-
-const ensureTempDirPathExists = (tempPath) => {
-  const dirPath = window.injected.pathDir(tempPath);
-  if (!window.injected.fsExists(dirPath)) {
-    window.injected.fsMakeDir(dirPath);
+const ensureTempDirPathExists = (tempPath: string) => {
+  const dirPath = path.dirname(tempPath);
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath);
   }
 };
 
-const handleRecordStop = async (_event) => {
-  const tempPath = getTempOutputPath();
-  ensureTempDirPathExists(tempPath);
-
-  const blob = new Blob(recordedChunks, { type: MEDIA_MIME_TYPE });
-  const buffer = window.injected.newBuffer(await blob.arrayBuffer());
-  window.injected.fsWriteFile(tempPath, buffer);
-
-  window.injected.ipcSend('recording-file-saved', { tempFilePath: tempPath });
-};
-
-const getTargetSource = async (screenId) => {
-  const inputSources = await window.injected.getCapturerSources({
+const getTargetSource = async (screenId: number) => {
+  const inputSources = await desktopCapturer.getSources({
     types: ['screen'],
   });
   return inputSources.find((s) => parseInt(s.display_id) === screenId);
 };
 
-const getMediaConstraint = (sourceId, screenBounds) => {
+const getMediaConstraint = (sourceId: string, screenBounds: IBounds): any => {
   return {
     audio: false,
     video: {
@@ -63,20 +56,24 @@ const getMediaConstraint = (sourceId, screenBounds) => {
   };
 };
 
-const withCanvasProcess = (stream, screenBounds, targetBounds) => {
-  const videoElem = document.getElementById('video');
-  videoElem.videoWidth = screenBounds.width;
-  videoElem.videoHeight = screenBounds.height;
+const withCanvasProcess = (
+  stream: MediaStream,
+  screenBounds: IBounds,
+  targetBounds: IBounds
+) => {
+  const videoElem = document.getElementById('video') as HTMLVideoElement;
+  videoElem.width = screenBounds.width;
+  videoElem.height = screenBounds.height;
   videoElem.srcObject = stream;
   videoElem.play();
 
-  const canvasElem = document.getElementById('canvas');
+  const canvasElem = document.getElementById('canvas') as HTMLCanvasElement;
   canvasElem.width = targetBounds.width;
   canvasElem.height = targetBounds.height;
 
   const canvasCtx = canvasElem.getContext('2d');
   const render = () => {
-    canvasCtx.drawImage(
+    canvasCtx!.drawImage(
       videoElem,
       targetBounds.x,
       targetBounds.y,
@@ -90,15 +87,30 @@ const withCanvasProcess = (stream, screenBounds, targetBounds) => {
   };
   setInterval(render, 33);
 
-  return canvasElem.captureStream(30);
+  return (canvasElem! as any).captureStream(30);
 };
 
-window.injected.ipcOn('start-record', async (_event, data) => {
+const handleStreamDataAvailable = (event: BlobEvent) => {
+  recordedChunks.push(event.data);
+};
+
+const handleRecordStop = async (_event: Event) => {
+  const tempPath = getTempOutputPath();
+  ensureTempDirPathExists(tempPath);
+
+  const blob = new Blob(recordedChunks, { type: MEDIA_MIME_TYPE });
+  const buffer = Buffer.from(await blob.arrayBuffer());
+  fs.writeFileSync(tempPath, buffer);
+
+  ipcRenderer.send('recording-file-saved', { tempFilePath: tempPath });
+};
+
+ipcRenderer.on('start-record', async (_event, data) => {
   const { screenId, screenBounds, targetBounds } = data;
 
   const targetSource = await getTargetSource(screenId);
   if (targetSource === undefined) {
-    window.injected.ipcSend('recording-failed', {
+    ipcRenderer.send('recording-failed', {
       message: 'failed to find input source matched to screen id',
     });
     return;
@@ -107,7 +119,7 @@ window.injected.ipcOn('start-record', async (_event, data) => {
   const constraints = getMediaConstraint(targetSource.id, screenBounds);
   const stream = await navigator.mediaDevices.getUserMedia(constraints);
   if (stream === undefined) {
-    window.injected.ipcSend('recording-failed', {
+    ipcRenderer.send('recording-failed', {
       message: 'fail to get user media',
     });
     return;
@@ -122,18 +134,16 @@ window.injected.ipcOn('start-record', async (_event, data) => {
   recordedChunks = [];
   setTimeout(() => mediaRecorder.start(), 500);
 
-  window.injected.ipcSend('recording-started', {});
+  ipcRenderer.send('recording-started', {});
 });
 
-window.injected.ipcOn('stop-record', async (_event, data) => {
+ipcRenderer.on('stop-record', async (_event, data) => {
   if (mediaRecorder === undefined) {
-    window.injected.ipcSend('recording-failed', {
+    ipcRenderer.send('recording-failed', {
       message: 'invalid media recorder state',
     });
     return;
   }
-
-  outputPath = data.outputPath;
 
   mediaRecorder.stop();
 });
