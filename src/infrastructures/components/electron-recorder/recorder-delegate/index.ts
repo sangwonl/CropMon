@@ -1,7 +1,6 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable import/prefer-default-export */
 
-import path from 'path';
 import { BrowserWindow } from 'electron';
 
 export class RecorderRendererDelegate extends BrowserWindow {

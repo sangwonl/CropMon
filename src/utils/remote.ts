@@ -25,3 +25,7 @@ export function focusCurWindow() {
     curWin.focus();
   }
 }
+
+export function getApp() {
+  return remote.app;
+}
