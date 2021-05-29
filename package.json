@@ -61,9 +61,7 @@
         "from": "infrastructures/components/electron-recorder/recorder-delegate",
         "to": "recorder-delegate",
         "filter": [
-          "preload.js",
-          "renderer.html",
-          "renderer.js"
+          "*.html"
         ]
       }
     ],

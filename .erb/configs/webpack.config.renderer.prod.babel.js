@@ -43,6 +43,11 @@ export default merge(baseConfig, {
       'regenerator-runtime/runtime',
       path.join(__dirname, '../../src/presenters/ui/overlays/renderer.tsx'),
     ],
+    'renderer.recorder': [
+      'core-js',
+      'regenerator-runtime/runtime',
+      require.resolve('../../src/infrastructures/components/electron-recorder/recorder-delegate/renderer.ts'),
+    ],
   },
 
   output: {
