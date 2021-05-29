@@ -16,11 +16,10 @@ export class RecorderRendererDelegate extends BrowserWindow {
       width: 0,
       height: 0,
       webPreferences: {
-        nodeIntegration: false,
-        allowRunningInsecureContent: true,
-        contextIsolation: true,
+        nodeIntegration: true,
         enableRemoteModule: true,
-        preload: path.join(__dirname, '..', 'recorder-delegate', 'preload.js'),
+        contextIsolation: false,
+        // preload: path.join(__dirname, '..', 'recorder-delegate', 'preload.js'),
       },
     });
     this.loadURL(`file://${__dirname}/../recorder-delegate/renderer.html`);
