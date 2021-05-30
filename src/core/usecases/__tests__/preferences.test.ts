@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-conditional-expect */
 /* eslint-disable jest/valid-expect-in-promise */
 
 import 'reflect-metadata';

@@ -18,13 +18,14 @@ describe('BasicPreferences', () => {
           show: false,
           preferences: {
             recordHomeDir: '',
-            shouldOpenRecordHomeDir: true,
+            openRecordHomeDirWhenRecordCompleted: true,
           },
         },
         overlaysWindows: {},
         captureArea: {
           screenIdOnSelection: undefined,
           selectedBounds: undefined,
+          isRecording: false,
         },
       },
       capture: { curCaptureCtx: undefined },
