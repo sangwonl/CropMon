@@ -101,65 +101,69 @@ const getAreaLayout = (bounds: IBounds): any => {
   };
 };
 
-const handleMouseDown = (
-  onSelectionStart: () => void,
-  onSelectionCancel: () => void,
-  selCtx: AreaSelectionCtx,
-  setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
-) => (e: MouseEvent<HTMLDivElement>) => {
-  if (selCtx.recording) {
-    return;
-  }
+const handleMouseDown =
+  (
+    onSelectionStart: () => void,
+    onSelectionCancel: () => void,
+    selCtx: AreaSelectionCtx,
+    setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
+  ) =>
+  (e: MouseEvent<HTMLDivElement>) => {
+    if (selCtx.recording) {
+      return;
+    }
 
-  // if click after already area settled or right click while selecting
-  if (selCtx.selected || e.button === 2) {
-    setSelCtx(initialSelCtx);
-    onSelectionCancel();
-    return;
-  }
+    // if click after already area settled or right click while selecting
+    if (selCtx.selected || e.button === 2) {
+      setSelCtx(initialSelCtx);
+      onSelectionCancel();
+      return;
+    }
 
-  setSelCtx({
-    ...selCtx,
-    started: true,
-    startX: e.clientX,
-    startY: e.clientY,
-    curX: e.clientX,
-    curY: e.clientY,
-  });
+    setSelCtx({
+      ...selCtx,
+      started: true,
+      startX: e.clientX,
+      startY: e.clientY,
+      curX: e.clientX,
+      curY: e.clientY,
+    });
 
-  onSelectionStart();
-};
-
-const handleMouseUp = (
-  onSelectionCancel: () => void,
-  onSelectionFinish: (bounds: IBounds) => void,
-  selCtx: AreaSelectionCtx,
-  setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
-) => (e: MouseEvent<HTMLDivElement>) => {
-  if (selCtx.recording) {
-    return;
-  }
-
-  const updatedSelCtx = {
-    ...selCtx,
-    endX: e.clientX,
-    endY: e.clientY,
-    curX: e.clientX,
-    curY: e.clientY,
+    onSelectionStart();
   };
 
-  const bounds = calcSelectedBounds(updatedSelCtx);
-  if (selCtx.started && !isCapturableBounds(bounds)) {
-    setSelCtx(initialSelCtx);
-    onSelectionCancel();
-    return;
-  }
+const handleMouseUp =
+  (
+    onSelectionCancel: () => void,
+    onSelectionFinish: (bounds: IBounds) => void,
+    selCtx: AreaSelectionCtx,
+    setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
+  ) =>
+  (e: MouseEvent<HTMLDivElement>) => {
+    if (selCtx.recording) {
+      return;
+    }
 
-  updatedSelCtx.started = false;
-  updatedSelCtx.selected = true;
-  setSelCtx(updatedSelCtx);
-  onSelectionFinish(bounds);
-};
+    const updatedSelCtx = {
+      ...selCtx,
+      endX: e.clientX,
+      endY: e.clientY,
+      curX: e.clientX,
+      curY: e.clientY,
+    };
+
+    const bounds = calcSelectedBounds(updatedSelCtx);
+    if (selCtx.started && !isCapturableBounds(bounds)) {
+      setSelCtx(initialSelCtx);
+      onSelectionCancel();
+      return;
+    }
+
+    updatedSelCtx.started = false;
+    updatedSelCtx.selected = true;
+    setSelCtx(updatedSelCtx);
+    onSelectionFinish(bounds);
+  };
 
 // WORKAROUND: for MacOS to fix missing focus on second screen overlays
 const focusCurWindowDebounced = (() => {
@@ -171,25 +175,27 @@ const focusCurWindowDebounced = (() => {
   return () => {};
 })();
 
-const handleMouseMove = (
-  selCtx: AreaSelectionCtx,
-  setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
-) => (e: MouseEvent<HTMLDivElement>) => {
-  if (selCtx.recording) {
-    return;
-  }
+const handleMouseMove =
+  (
+    selCtx: AreaSelectionCtx,
+    setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
+  ) =>
+  (e: MouseEvent<HTMLDivElement>) => {
+    if (selCtx.recording) {
+      return;
+    }
 
-  if (!selCtx.started) {
-    focusCurWindowDebounced();
-    return;
-  }
+    if (!selCtx.started) {
+      focusCurWindowDebounced();
+      return;
+    }
 
-  setSelCtx({
-    ...selCtx,
-    curX: e.clientX,
-    curY: e.clientY,
-  });
-};
+    setSelCtx({
+      ...selCtx,
+      curX: e.clientX,
+      curY: e.clientY,
+    });
+  };
 
 export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
   const {

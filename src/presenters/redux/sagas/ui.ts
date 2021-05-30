@@ -99,7 +99,8 @@ function* handleChooseRecordHomeDir(_action: PayloadAction) {
 }
 
 function* handleEnableAreaSelection(_action: PayloadAction) {
-  const screenInfos: Array<IScreenInfo> = uiDirector.enableCaptureSelectionMode();
+  const screenInfos: Array<IScreenInfo> =
+    uiDirector.enableCaptureSelectionMode();
 
   yield put(
     didEnableAreaSelection(

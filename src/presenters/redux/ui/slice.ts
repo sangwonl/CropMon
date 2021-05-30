@@ -60,7 +60,8 @@ const slice = createSlice({
     },
     toggleOpenRecordHomeDir: (state) => {
       const { preferences } = state.preferencesWindow;
-      state.preferencesWindow.preferences.openRecordHomeDirWhenRecordCompleted = !preferences.openRecordHomeDirWhenRecordCompleted;
+      state.preferencesWindow.preferences.openRecordHomeDirWhenRecordCompleted =
+        !preferences.openRecordHomeDirWhenRecordCompleted;
     },
     enableAreaSelection: (state) => {},
     didEnableAreaSelection: (
