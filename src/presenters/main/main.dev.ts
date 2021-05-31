@@ -20,9 +20,9 @@ import { IAnalyticsTracker } from '@core/components/tracker';
 import { UiDirector } from '@presenters/interactor/director';
 import store, { initializeSaga } from '@presenters/redux/store-main';
 import { loadPreferences } from '@presenters/redux/ui/slice';
+import { initializeAppUpdater } from '@infrastructures/components/updater';
 import { getPlatform } from '@utils/process';
 
-import { configureAppUpdater as initializeAppUpdater } from './updater';
 import { initializeDevEnv } from './devenv';
 import { initializeShortcuts } from './shortcut';
 import { initializePermissions } from './permission';
