@@ -3,11 +3,11 @@ import ReactDOM from 'react-dom';
 
 import { getCurWindowCustomData } from '@utils/remote';
 
-import { StatelessWindowType } from './types';
+import { WindowType } from './types';
 import ProgressBar from './progress/dom';
 
-const winType = getCurWindowCustomData<StatelessWindowType>('statelessWinType');
+const winType = getCurWindowCustomData<WindowType>('winType');
 
-if (winType === StatelessWindowType.PROGRESS_BAR) {
+if (winType === WindowType.PROGRESS_DIALOG) {
   ReactDOM.render(<ProgressBar />, document.getElementById('root'));
 }

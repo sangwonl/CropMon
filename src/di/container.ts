@@ -14,6 +14,7 @@ import { PreferencesUseCase } from '@core/usecases/preferences';
 import { ElectronScreenRecorder } from '@infrastructures/components/electron-recorder/recorder';
 import { PreferencesStoreImpl } from '@infrastructures/components/preferences';
 import { GoogleAnalyticsTracker } from '@infrastructures/components/ga-tracker';
+import { AppUpdater } from '@infrastructures/components/updater';
 import { UiDirector } from '@presenters/interactor/director';
 
 import { TYPES } from './types';
@@ -47,6 +48,11 @@ diContainer
 
 diContainer
   .bind<UiDirector>(UiDirector)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<AppUpdater>(AppUpdater)
   .toSelf()
   .inSingletonScope();
 

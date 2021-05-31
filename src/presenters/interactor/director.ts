@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable max-classes-per-file */
 /* eslint-disable @typescript-eslint/no-shadow */
@@ -22,6 +23,7 @@ import { PreferencesWindow } from '@presenters/ui/preferences';
 import { setCustomData } from '@utils/remote';
 import { SPARE_PIXELS } from '@utils/bounds';
 import { isMac } from '@utils/process';
+import { ProgressDialog } from '@presenters/ui/stateless/progress';
 
 class OverlaysWinPool {
   private windows?: Map<number, OverlaysWindow>;
@@ -105,6 +107,7 @@ export class UiDirector {
   private appTray!: AppTray;
   private preferencesWindow!: BrowserWindow;
   private overlaysWindows!: OverlaysWinPool;
+  private updateProgressDialog!: ProgressDialog;
 
   constructor(
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
@@ -180,6 +183,37 @@ export class UiDirector {
 
   showItemInFolder(path: string): void {
     shell.showItemInFolder(path);
+  }
+
+  async startDownloadUpdate(
+    onReady: () => void,
+    onDone: () => void,
+    onError: (e: Error) => void
+  ): Promise<void> {
+    this.updateProgressDialog = new ProgressDialog({
+      title: 'Update Download',
+      message: 'Downloading a new update...',
+      button: {
+        title: 'Restart',
+        enabled: false,
+        enableOnCompletion: true,
+      },
+    });
+
+    this.updateProgressDialog!.on('show', () => {
+      onReady();
+    });
+
+    try {
+      await this.updateProgressDialog!.open();
+      onDone();
+    } catch (e) {
+      onError(e);
+    }
+  }
+
+  setUpdateDownloadProgress(percent: number): void {
+    this.updateProgressDialog!.setProgress(percent);
   }
 
   private populateScreenInfos(): Array<IScreenInfo> {
