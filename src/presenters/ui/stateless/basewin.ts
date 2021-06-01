@@ -30,8 +30,9 @@ export class ContainerWindow extends BrowserWindow {
         contextIsolation: false,
       },
     });
+    this.removeMenu();
 
-    setCustomData(this, 'type', WindowType.PROGRESS_DIALOG);
+    setCustomData(this, 'type', type);
     setCustomData(this, 'props', options?.props);
     this.loadURL(`file://${__dirname}/../stateless/renderer.html`);
   }
