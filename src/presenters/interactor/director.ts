@@ -20,10 +20,10 @@ import { assetResolver } from '@presenters/common/asset';
 import { AppTray } from '@presenters/ui/tray';
 import { OverlaysWindow } from '@presenters/ui/overlays';
 import { PreferencesWindow } from '@presenters/ui/preferences';
+import { ProgressDialog } from '@presenters/ui/stateless/containers/progressdialog';
 import { setCustomData } from '@utils/remote';
 import { SPARE_PIXELS } from '@utils/bounds';
 import { isMac } from '@utils/process';
-import { ProgressDialog } from '@presenters/ui/stateless/progress';
 
 class OverlaysWinPool {
   private windows?: Map<number, OverlaysWindow>;

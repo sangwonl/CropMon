@@ -41,6 +41,7 @@
       "dist/",
       {
         "from": "presenters/ui/stateless",
+        "to": "stateless",
         "filter": [
           "**/*.html"
         ]
