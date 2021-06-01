@@ -3,11 +3,22 @@
 
 import React, { useEffect, useState } from 'react';
 
+import styles from './ProgressBar.css';
+
 export interface ProgressBarProps {
   progress: number;
 }
 
 export const ProgressBar = (props: ProgressBarProps) => {
   const { progress } = props;
-  return <div>{progress}</div>;
+  return (
+    <div className={styles.wrapper}>
+      <div
+        className={styles.inner}
+        style={{
+          width: `${progress}%`,
+        }}
+      />
+    </div>
+  );
 };

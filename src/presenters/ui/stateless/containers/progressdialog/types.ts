@@ -15,8 +15,8 @@ export interface ProgressDialogOptions {
   title: string;
   message: string;
   button: ProgressDialogButton;
-  timeout?: number;
   layout?: ProgressDialogLayout;
+  timeout?: number;
 }
 
 export interface IpcEventDataSetProgress {

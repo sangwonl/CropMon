@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { getCurWindowCustomData } from '@utils/remote';
 
 import { WindowType } from './types';
-import progressDialogCreator from './containers/progressdialog/dom';
+import progressDialogCreator from './containers/progressdialog/creator';
 
 type WinCreator = () => JSX.Element;
 interface WinFactories {

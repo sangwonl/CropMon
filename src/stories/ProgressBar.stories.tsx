@@ -6,7 +6,7 @@ import { Story, Meta } from '@storybook/react';
 import {
   ProgressBar,
   ProgressBarProps,
-} from '@presenters/ui/stateless/components/progressbar';
+} from '@presenters/ui/stateless/components/ProgressBar';
 
 export default {
   title: 'Kropsaurus/ProgressBar',

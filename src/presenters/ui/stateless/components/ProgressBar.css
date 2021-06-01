@@ -1,0 +1,10 @@
+.wrapper {
+  background-color: #e5ece9;
+  border: 1px solid #c8d4cd;
+  padding: 1px;
+}
+
+.inner {
+  background-color: #27a86e;
+  height: 22px;
+}
