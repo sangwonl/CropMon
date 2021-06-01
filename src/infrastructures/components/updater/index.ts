@@ -25,19 +25,19 @@ export class AppUpdater {
   }
 
   async checkForUpdates() {
-    // this.uiDirector.startDownloadUpdate(
-    //   () => {
-    //     let i = 0;
-    //     setInterval(() => {
-    //       this.uiDirector.setUpdateDownloadProgress(i * 10);
-    //       i += 1;
-    //     }, 1000);
-    //   },
-    //   () => setImmediate(() => this.uiDirector.quitApplication()),
-    //   (e) => log.error(e)
-    // );
+    this.uiDirector.startDownloadUpdate(
+      () => {
+        let i = 0;
+        setInterval(() => {
+          this.uiDirector.setUpdateDownloadProgress(i * 10);
+          i += 1;
+        }, 1000);
+      },
+      () => setImmediate(() => this.uiDirector.quitApplication()),
+      (e) => log.error(e)
+    );
 
-    autoUpdater.checkForUpdates().catch(() => {});
+    // autoUpdater.checkForUpdates().catch(() => {});
   }
 
   private onUpdateAvailable = async () => {
