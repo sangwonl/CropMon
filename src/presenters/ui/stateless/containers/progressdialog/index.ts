@@ -8,19 +8,24 @@ import { ipcMain } from 'electron';
 
 import { WindowType } from '@presenters/ui/stateless/types';
 
-import { ProgressDialogOptions } from './types';
+import {
+  ProgressDialogOptions,
+  IPC_EVENT_ON_BUTTON_CLICK,
+  IpcEventOnButtonClick,
+  IPC_EVENT_SET_PROGRESS,
+} from './shared';
 import { ContainerWindow } from '../../basewin';
 
 export class ProgressDialog extends ContainerWindow {
   options?: ProgressDialogOptions;
 
   constructor(options: ProgressDialogOptions) {
-    super(WindowType.PROGRESS_DIALOG, { props: options });
+    super(WindowType.PROGRESS_DIALOG, { options });
     this.options = options;
   }
 
-  setProgress(percent: number) {
-    this.webContents.send('set-progress', { percent });
+  setProgress(progress: number) {
+    this.webContents.send(IPC_EVENT_SET_PROGRESS, { progress });
   }
 
   open(): Promise<void> {
@@ -28,9 +33,12 @@ export class ProgressDialog extends ContainerWindow {
     return new Promise((resolve, reject) => {
       const timeout = this.options?.timeout || 300;
       setTimeout(() => reject(), timeout * 1000);
-      ipcMain.on('progress-done', (_event, _data) => {
-        resolve();
-      });
+      ipcMain.on(
+        IPC_EVENT_ON_BUTTON_CLICK,
+        (_event, _data: IpcEventOnButtonClick) => {
+          resolve();
+        }
+      );
     });
   }
 }

@@ -6,7 +6,7 @@ import { Story, Meta } from '@storybook/react';
 import {
   ProgressDialog,
   ProgressDialogProps,
-} from '@presenters/ui/stateless/containers/progressdialog/ProgressDialog';
+} from '@presenters/ui/stateless/components/ProgressDialog';
 
 export default {
   title: 'Kropsaurus/ProgressDialog',

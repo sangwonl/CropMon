@@ -8,7 +8,7 @@ import { setCustomData } from '@utils/remote';
 export interface ContainerWindowOptions {
   width?: number;
   height?: number;
-  props?: any;
+  options?: any;
 }
 
 export class ContainerWindow extends BrowserWindow {
@@ -33,7 +33,7 @@ export class ContainerWindow extends BrowserWindow {
     this.removeMenu();
 
     setCustomData(this, 'type', type);
-    setCustomData(this, 'props', options?.props);
+    setCustomData(this, 'options', options?.options);
     this.loadURL(`file://${__dirname}/../stateless/renderer.html`);
   }
 }
