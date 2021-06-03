@@ -33,6 +33,7 @@ export class AppUpdater {
     //       i += 1;
     //     }, 1000);
     //   },
+    //   () => {},
     //   () => setImmediate(() => this.uiDirector.quitApplication()),
     //   (e) => log.error(e)
     // );
@@ -53,6 +54,7 @@ export class AppUpdater {
     if (buttonId === 0) {
       this.uiDirector.startDownloadUpdate(
         () => autoUpdater.downloadUpdate(),
+        () => {},
         () => setImmediate(() => this.uiDirector.quitApplication()),
         (e) => log.error(e)
       );

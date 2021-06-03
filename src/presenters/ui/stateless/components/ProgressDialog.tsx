@@ -1,3 +1,4 @@
+/* eslint-disable react/button-has-type */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -5,38 +6,49 @@
 /* eslint-disable react/display-name */
 /* eslint-disable import/prefer-default-export */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { ProgressBar } from '@presenters/ui/stateless/components/ProgressBar';
 
 import styles from './ProgressDialog.css';
 
-export interface ProgressDialogButtonProps {
-  title: string;
-  enabled: boolean;
-  enableOnCompletion: boolean;
+export interface ProgressDialogButtonsProps {
+  cancelTitle: string;
+  actionTitle: string;
+  actionHideInProgress: boolean;
 }
 
 export interface ProgressDialogProps {
   title: string;
   message: string;
-  button: ProgressDialogButtonProps;
+  buttons: ProgressDialogButtonsProps;
   progress: number;
-  onButtonClick: () => void;
+  onCancelClick: () => void;
+  onActionClick: () => void;
 }
 
 export const ProgressDialog = (props: ProgressDialogProps) => {
-  const { title, message, progress } = props;
-
-  // useEffect(() => {
-  // }, [progress]);
+  const { title, message, buttons, progress } = props;
 
   return (
-    <div>
-      <div className={styles.title}>{title}</div>
-      <div className={styles.message}>{message}</div>
-      <ProgressBar progress={progress} />
-      <div>buttons</div>
+    <div className={styles.container}>
+      <div className={styles.info}>
+        <div className={styles.title}>{title}</div>
+        <div className={styles.message}>{message}</div>
+      </div>
+      <div className={styles.progress}>
+        <ProgressBar progress={progress} />
+      </div>
+      <div className={styles.buttons}>
+        {(!buttons.actionHideInProgress || progress >= 100) && (
+          <button className={styles.buttonAction} onClick={props.onActionClick}>
+            {buttons.actionTitle}
+          </button>
+        )}
+        <button className={styles.buttonCancel} onClick={props.onCancelClick}>
+          {buttons.cancelTitle}
+        </button>
+      </div>
     </div>
   );
 };

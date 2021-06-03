@@ -187,26 +187,34 @@ export class UiDirector {
 
   async startDownloadUpdate(
     onReady: () => void,
-    onDone: () => void,
+    onCancel: () => void,
+    onQuit: () => void,
     onError: (e: Error) => void
   ): Promise<void> {
     this.updateProgressDialog = new ProgressDialog({
       title: 'Update Download',
       message: 'Downloading a new update...',
-      button: {
-        title: 'Restart',
-        enabled: false,
-        enableOnCompletion: true,
+      buttons: {
+        cancelTitle: 'Cancel',
+        actionTitle: 'Quit & Install',
+        actionHideInProgress: true,
       },
+      timeout: 300,
+      width: 400,
+      height: 200,
     });
 
-    this.updateProgressDialog!.on('show', () => {
+    this.updateProgressDialog!.on('ready-to-show', () => {
       onReady();
     });
 
     try {
-      await this.updateProgressDialog!.open();
-      onDone();
+      const restart = await this.updateProgressDialog!.open();
+      if (restart) {
+        onQuit();
+      } else {
+        onCancel();
+      }
     } catch (e) {
       onError(e);
     }

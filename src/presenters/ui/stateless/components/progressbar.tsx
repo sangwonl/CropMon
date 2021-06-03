@@ -1,7 +1,7 @@
 /* eslint-disable react/display-name */
 /* eslint-disable import/prefer-default-export */
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import styles from './ProgressBar.css';
 
@@ -16,7 +16,7 @@ export const ProgressBar = (props: ProgressBarProps) => {
       <div
         className={styles.inner}
         style={{
-          width: `${progress}%`,
+          width: `${Math.min(progress, 100)}%`,
         }}
       />
     </div>
