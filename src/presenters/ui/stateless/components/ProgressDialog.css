@@ -1,11 +1,86 @@
+.container {
+  padding: 10px;
+  background-color: rgb(245, 252, 246);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.info {
+  padding: 0px 2px;
+}
+
 .title {
+  margin: 8px 0px;
   font-family: Roboto;
-  font-size: 17px;
-  margin: 10px 0px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #010c02;
 }
 
 .message {
   font-family: Roboto;
-  font-size: 15px;
-  margin: 10px 0px;
+  font-size: 13px;
+  margin: 8px 0px;
+  color: #272b27;
+}
+
+.progress {
+  margin: 6px 0px;
+}
+
+.buttons {
+  margin: 6px 0px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.buttonAction {
+  justify-content: flex-end;
+  box-shadow: inset 0px 1px 0px 0px #9acc85;
+  background: linear-gradient(to bottom, #74ad5a 5%, #68a54b 100%);
+  background-color: #74ad5a;
+  border: 1px solid #3b6e22;
+  display: inline-block;
+  cursor: pointer;
+  color: #ffffff;
+  font-family: Roboto;
+  font-size: 13px;
+  font-weight: normal;
+  padding: 6px 12px;
+  text-decoration: none;
+  margin-right: 10px;
+}
+.buttonAction:hover {
+  background: linear-gradient(to bottom, #68a54b 5%, #74ad5a 100%);
+  background-color: #68a54b;
+}
+.buttonAction:active {
+  position: relative;
+  top: 1px;
+}
+
+.buttonCancel {
+  justify-content: flex-end;
+  box-shadow: inset 0px 1px 0px 0px #9acc85;
+  background: linear-gradient(to bottom, #adadad 5%, #a5a5a5 100%);
+  background-color: #adadad;
+  border: 1px solid #6e6e6e;
+  display: inline-block;
+  cursor: pointer;
+  color: #ffffff;
+  font-family: Roboto;
+  font-size: 13px;
+  font-weight: normal;
+  padding: 6px 12px;
+  text-decoration: none;
+}
+.buttonCancel:hover {
+  background: linear-gradient(to bottom, #a5a5a5 5%, #adadad 100%);
+  background-color: #a5a5a5;
+}
+.buttonCancel:active {
+  position: relative;
+  top: 1px;
 }

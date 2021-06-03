@@ -12,9 +12,10 @@ import { getCurWindowCustomData } from '@utils/remote';
 import { ProgressDialog } from '../../components/ProgressDialog';
 import {
   ProgressDialogOptions,
-  IPC_EVENT_ON_BUTTON_CLICK,
-  IPC_EVENT_SET_PROGRESS,
   IpcEventSetProgress,
+  IPC_EVENT_SET_PROGRESS,
+  IPC_EVENT_ON_ACTION_BTN_CLICK,
+  IPC_EVENT_ON_CANCEL_BTN_CLICK,
 } from './shared';
 
 const options = getCurWindowCustomData<ProgressDialogOptions>('options');
@@ -33,14 +34,17 @@ const Wrapper = () => {
     <ProgressDialog
       title={options.title}
       message={options.message}
-      button={{
-        title: options.button.title,
-        enabled: options.button.enabled,
-        enableOnCompletion: options.button.enableOnCompletion,
+      buttons={{
+        cancelTitle: options.buttons.cancelTitle,
+        actionTitle: options.buttons.actionTitle,
+        actionHideInProgress: options.buttons.actionHideInProgress,
       }}
       progress={progress}
-      onButtonClick={() => {
-        ipcRenderer.send(IPC_EVENT_ON_BUTTON_CLICK, {});
+      onActionClick={() => {
+        ipcRenderer.send(IPC_EVENT_ON_ACTION_BTN_CLICK, {});
+      }}
+      onCancelClick={() => {
+        ipcRenderer.send(IPC_EVENT_ON_CANCEL_BTN_CLICK, {});
       }}
     />
   );
