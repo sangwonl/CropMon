@@ -1,0 +1,16 @@
+body {
+  overflow-x: hidden;
+  background-color: rgb(250, 250, 250);
+}
+
+body::-webkit-scrollbar {
+  width: 0px;
+}
+
+* {
+  font-family: Roboto;
+}
+
+.container {
+  padding: 10px 20px;
+}

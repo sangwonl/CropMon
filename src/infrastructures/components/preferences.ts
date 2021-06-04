@@ -43,13 +43,14 @@ export class PreferencesStoreImpl implements IPreferencesStore {
   }
 
   async savePreferences(prefs: IPreferences): Promise<void> {
-    this.store.set('version', curVersion);
+    this.store.set('version', prefs.version);
     this.store.set('openRecordHomeDirWhenRecordCompleted', prefs.openRecordHomeDirWhenRecordCompleted);
     this.store.set('recordHomeDir', prefs.recordHomeDir);
   }
 
   private initialPreferences(): IPreferences {
     return {
+      version: curVersion,
       openRecordHomeDirWhenRecordCompleted: true,
       recordHomeDir: app.getPath('videos'),
     };
@@ -57,6 +58,7 @@ export class PreferencesStoreImpl implements IPreferencesStore {
 
   private mapStoreToPreferences(): IPreferences {
     return {
+      version: this.store.get('version') as string,
       openRecordHomeDirWhenRecordCompleted: this.store.get('openRecordHomeDirWhenRecordCompleted') as boolean,
       recordHomeDir: this.store.get('recordHomeDir') as string,
     };

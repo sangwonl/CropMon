@@ -31,9 +31,9 @@ const tracker = diContainer.get<IAnalyticsTracker>(TYPES.AnalyticsTracker);
 const initializeApp = async () => {
   initializeShortcuts();
 
-  store.dispatch(checkForUpdates());
-
   store.dispatch(loadPreferences());
+
+  store.dispatch(checkForUpdates());
 
   app.on('quit', () => {
     uiDirector.quitApplication();

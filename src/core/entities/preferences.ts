@@ -1,6 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 
 export interface IPreferences {
-  recordHomeDir?: string;
+  version: string;
   openRecordHomeDirWhenRecordCompleted: boolean;
+  recordHomeDir?: string;
 }
