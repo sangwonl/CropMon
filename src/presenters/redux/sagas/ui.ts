@@ -13,6 +13,7 @@ import { AppUpdater } from '@infrastructures/components/updater';
 import { UiDirector } from '@presenters/interactor/director';
 import { RootState } from '@presenters/redux/store';
 import {
+  showAbout,
   loadPreferences,
   didLoadPreferences,
   openPreferences,
@@ -36,6 +37,10 @@ import { didFinishCapture } from '../capture/slice';
 const appUpdater = diContainer.get(AppUpdater);
 const uiDirector = diContainer.get(UiDirector);
 const prefsUseCase = diContainer.get(PreferencesUseCase);
+
+function* handleShowAbout(_action: PayloadAction) {
+  uiDirector.openAboutWindow();
+}
 
 function* handleCheckForUpdates(_action: PayloadAction) {
   yield appUpdater.checkForUpdates();
@@ -147,6 +152,7 @@ function handleQuitApplication(_action: PayloadAction) {
 
 function* sagaEntry() {
   yield takeLeading(loadPreferences.type, handleLoadPreferences);
+  yield takeLatest(showAbout.type, handleShowAbout);
   yield takeLatest(checkForUpdates.type, handleCheckForUpdates);
   yield takeLatest(openPreferences.type, handleOpenPreferences);
   yield takeLatest(closePreferences.type, handleClosePreferences);

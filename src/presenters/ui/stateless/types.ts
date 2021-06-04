@@ -2,5 +2,5 @@
 
 export enum WindowType {
   PROGRESS_DIALOG = 1,
-  MARKDOWN_POPUP = 2,
+  STATIC_PAGE_POPUP = 2,
 }

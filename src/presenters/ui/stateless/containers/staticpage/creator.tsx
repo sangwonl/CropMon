@@ -6,16 +6,16 @@
 
 import React from 'react';
 
-import { MarkdownPage } from '@presenters/ui/stateless/components/MarkdownPage';
+import { StaticPage } from '@presenters/ui/stateless/components/StaticPage';
 import { getCurWindowCustomData } from '@utils/remote';
 
-import { MarkdownPopupOptions } from './shared';
+import { StaticPagePopupOptions } from './shared';
 
-const options = getCurWindowCustomData<MarkdownPopupOptions>('options');
+const options = getCurWindowCustomData<StaticPagePopupOptions>('options');
 
 const Wrapper = () => (
   <div style={{ width: '100%', height: '100%' }}>
-    <MarkdownPage markdown={options.markdown} />
+    <StaticPage markdown={options.markdown} html={options.html} />
   </div>
 );
 

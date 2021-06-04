@@ -14,6 +14,7 @@ import {
   enableAreaSelection,
   openPreferences,
   quitApplication,
+  showAbout,
 } from '@presenters/redux/ui/slice';
 import { finishCapture } from '@presenters/redux/capture/slice';
 
@@ -46,6 +47,10 @@ export abstract class AppTray {
     };
 
     updateRecordMenuItemVisibility();
+  }
+
+  protected onAbout() {
+    store.dispatch(showAbout());
   }
 
   protected onCheckForUpdates() {
@@ -91,7 +96,7 @@ class WinAppTray extends AppTray {
       },
       {
         label: '&About',
-        // click: super.onPreferences,
+        click: super.onAbout,
       },
       {
         label: '&Preferences',
@@ -135,7 +140,7 @@ class MacAppTray extends AppTray {
       },
       {
         label: 'About',
-        // click: super.onPreferences,
+        click: super.onAbout,
       },
       {
         label: 'Preferences',

@@ -24,6 +24,9 @@ import { ProgressDialog } from '@presenters/ui/stateless/containers/progressdial
 import { setCustomData } from '@utils/remote';
 import { SPARE_PIXELS } from '@utils/bounds';
 import { isMac } from '@utils/process';
+import { StaticPagePopup } from '@presenters/ui/stateless/containers/staticpage';
+
+import { version as curVersion } from '../../package.json';
 
 class OverlaysWinPool {
   private windows?: Map<number, OverlaysWindow>;
@@ -143,6 +146,27 @@ export class UiDirector {
     this.tracker.event('app-lifecycle', 'quit', () => {
       process.exit(0);
     });
+  }
+
+  openAboutWindow() {
+    const staticPopup = new StaticPagePopup({
+      width: 300,
+      height: 180,
+      html: `
+        <div style="display: flex;
+          flex-direction: column;
+          align-items: center;">
+          <h2 style="margin: 4px 0px;">Kropsaurus</h2>
+          <p style="margin: 0px; font-size: 12px;">Unregistered</p>
+          <p style="font-size: 13px;
+            margin: 20px 0px 0px 0px;">Copyright @2021 Pineple</p>
+          <p style="margin: 4px;
+            font-size: 14px;
+            font-weight: 500;">${curVersion}</p>
+      `,
+    });
+    staticPopup.on('ready-to-show', () => staticPopup.show());
+    staticPopup.webContents.openDevTools();
   }
 
   openPreferencesWindow() {
