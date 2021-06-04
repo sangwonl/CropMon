@@ -35,7 +35,7 @@ import { didFinishCapture } from '../capture/slice';
 
 const appUpdater = diContainer.get(AppUpdater);
 const uiDirector = diContainer.get(UiDirector);
-const preferencesUseCase = diContainer.get(PreferencesUseCase);
+const prefsUseCase = diContainer.get(PreferencesUseCase);
 
 function* handleCheckForUpdates(_action: PayloadAction) {
   yield appUpdater.checkForUpdates();
@@ -43,12 +43,13 @@ function* handleCheckForUpdates(_action: PayloadAction) {
 
 function* handleLoadPreferences(_action: PayloadAction) {
   const prefs: IPreferences = yield call([
-    preferencesUseCase,
-    preferencesUseCase.getUserPreferences,
+    prefsUseCase,
+    prefsUseCase.getUserPreferences,
   ]);
 
   yield put(
     didLoadPreferences({
+      version: prefs.version,
       recordHomeDir: prefs.recordHomeDir || '',
       openRecordHomeDirWhenRecordCompleted:
         prefs.openRecordHomeDirWhenRecordCompleted,
@@ -73,15 +74,13 @@ function* handleClosePreferences(
     );
 
     const prefs: IPreferences = {
+      version: uiPrefs.version,
       recordHomeDir: uiPrefs.recordHomeDir,
       openRecordHomeDirWhenRecordCompleted:
         uiPrefs.openRecordHomeDirWhenRecordCompleted,
     };
 
-    yield call(
-      [preferencesUseCase, preferencesUseCase.updateUserPreference],
-      prefs
-    );
+    yield call([prefsUseCase, prefsUseCase.updateUserPreference], prefs);
 
     yield put(loadPreferences());
   }

@@ -17,6 +17,7 @@ const initialState: IUiState = {
   preferencesWindow: {
     show: false,
     preferences: {
+      version: '',
       recordHomeDir: '',
       openRecordHomeDirWhenRecordCompleted: true,
     },

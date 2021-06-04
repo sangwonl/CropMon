@@ -4,11 +4,15 @@ import { app } from 'electron';
 import path from 'path';
 
 const RESOURCES_PATH = app.isPackaged
-  ? path.join(process.resourcesPath, 'assets')
-  : path.join(__dirname, '../../../assets');
-
-export const assetResolver = (...paths: string[]): string => {
-  return path.join(RESOURCES_PATH, ...paths);
-};
+  ? process.resourcesPath
+  : path.join(__dirname, '../../../');
 
 export type AssetResolverFunc = (path: string) => string;
+
+export const assetResolver = (...paths: string[]): string => {
+  return path.join(RESOURCES_PATH, 'assets', ...paths);
+};
+
+export const resourceResolver = (...paths: string[]): string => {
+  return path.join(RESOURCES_PATH, ...paths);
+};
