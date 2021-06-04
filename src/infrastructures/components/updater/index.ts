@@ -1,15 +1,25 @@
+/* eslint-disable import/first */
+/* eslint-disable import/order */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable promise/valid-params */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable import/prefer-default-export */
 
+import { app, dialog } from 'electron';
 import { injectable } from 'inversify';
-import { dialog } from 'electron';
-import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 
-import { diContainer } from '@di/container';
 import { UiDirector } from '@presenters/interactor/director';
+import { isProduction } from '@utils/process';
+
+import { version as appVersion } from '../../../package.json';
+
+if (!isProduction()) {
+  app.getVersion = () => appVersion;
+}
+
+// this should be imported after version overriding in dev mode
+import { autoUpdater } from 'electron-updater';
 
 @injectable()
 export class AppUpdater {
@@ -25,19 +35,6 @@ export class AppUpdater {
   }
 
   async checkForUpdates() {
-    // this.uiDirector.startDownloadUpdate(
-    //   () => {
-    //     let i = 0;
-    //     setInterval(() => {
-    //       this.uiDirector.setUpdateDownloadProgress(i * 10);
-    //       i += 1;
-    //     }, 1000);
-    //   },
-    //   () => {},
-    //   () => setImmediate(() => this.uiDirector.quitApplication()),
-    //   (e) => log.error(e)
-    // );
-
     autoUpdater.checkForUpdates().catch(() => {});
   }
 
@@ -54,7 +51,9 @@ export class AppUpdater {
     if (buttonId === 0) {
       this.uiDirector.startDownloadUpdate(
         () => autoUpdater.downloadUpdate(),
-        () => {},
+        () => {
+          autoUpdater.autoInstallOnAppQuit = false;
+        },
         () => setImmediate(() => this.uiDirector.quitApplication()),
         (e) => log.error(e)
       );
@@ -78,7 +77,3 @@ export class AppUpdater {
     this.uiDirector.setUpdateDownloadProgress(100);
   };
 }
-
-export const initializeAppUpdater = () => {
-  diContainer.get(AppUpdater).checkForUpdates();
-};

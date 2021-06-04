@@ -1,14 +1,16 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable max-classes-per-file */
 /* eslint-disable import/prefer-default-export */
 
-import { Tray, nativeImage, Menu, NativeImage } from 'electron';
+import { Tray, nativeImage, Menu, NativeImage, MenuItem } from 'electron';
 
 import { CaptureStatus } from '@core/entities/capture';
 import store, { RootState } from '@presenters/redux/store';
 import {
+  checkForUpdates,
   enableAreaSelection,
   openPreferences,
   quitApplication,
@@ -30,16 +32,24 @@ export abstract class AppTray {
 
   protected abstract buildContextMenu(): Menu;
 
+  private getMenuItemById(id: string): MenuItem {
+    return this.contextMenu.items.find((m: MenuItem) => m.id === id)!;
+  }
+
   private onStateChanged(state: RootState): void {
     const updateRecordMenuItemVisibility = () => {
       const isRecording =
         state.capture.curCaptureCtx?.status === CaptureStatus.IN_PROGRESS;
 
-      this.contextMenu.items[0].visible = !isRecording;
-      this.contextMenu.items[1].visible = isRecording;
+      this.getMenuItemById('start-capture').visible = !isRecording;
+      this.getMenuItemById('stop-capture').visible = isRecording;
     };
 
     updateRecordMenuItemVisibility();
+  }
+
+  protected onCheckForUpdates() {
+    store.dispatch(checkForUpdates());
   }
 
   protected onStartRecording() {
@@ -73,17 +83,36 @@ class WinAppTray extends AppTray {
   protected buildContextMenu(): Menu {
     return Menu.buildFromTemplate([
       {
+        label: 'Check for &Updates',
+        click: super.onCheckForUpdates,
+      },
+      {
+        type: 'separator',
+      },
+      {
+        label: '&About',
+        // click: super.onPreferences,
+      },
+      {
+        label: '&Preferences',
+        click: super.onPreferences,
+      },
+      {
+        type: 'separator',
+      },
+      {
+        id: 'start-capture',
         label: 'Start &Recording',
         click: super.onStartRecording,
       },
       {
+        id: 'stop-capture',
         label: 'Stop &Recording',
         click: super.onStopRecording,
         visible: false,
       },
       {
-        label: '&Preferences',
-        click: super.onPreferences,
+        type: 'separator',
       },
       {
         label: '&Quit',
@@ -98,17 +127,36 @@ class MacAppTray extends AppTray {
   protected buildContextMenu(): Menu {
     return Menu.buildFromTemplate([
       {
+        label: 'Check for Updates',
+        click: super.onCheckForUpdates,
+      },
+      {
+        type: 'separator',
+      },
+      {
+        label: 'About',
+        // click: super.onPreferences,
+      },
+      {
+        label: 'Preferences',
+        click: super.onPreferences,
+      },
+      {
+        type: 'separator',
+      },
+      {
+        id: 'start-capture',
         label: 'Start Recording',
         click: super.onStartRecording,
       },
       {
+        id: 'stop-capture',
         label: 'Stop Recording',
         click: super.onStopRecording,
         visible: false,
       },
       {
-        label: 'Preferences',
-        click: super.onPreferences,
+        type: 'separator',
       },
       {
         label: 'Quit',

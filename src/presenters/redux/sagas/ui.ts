@@ -9,6 +9,7 @@ import { IPreferences } from '@core/entities/preferences';
 import { IScreenInfo } from '@core/entities/screen';
 import { CaptureStatus, ICaptureContext } from '@core/entities/capture';
 import { PreferencesUseCase } from '@core/usecases/preferences';
+import { AppUpdater } from '@infrastructures/components/updater';
 import { UiDirector } from '@presenters/interactor/director';
 import { RootState } from '@presenters/redux/store';
 import {
@@ -26,12 +27,19 @@ import {
   disableAreaSelection,
   didDisableAreaSelection,
   enableRecording,
+  checkForUpdates,
 } from '@presenters/redux/ui/slice';
 import { IClosePreferencesPayload } from '@presenters/redux/ui/types';
+
 import { didFinishCapture } from '../capture/slice';
 
+const appUpdater = diContainer.get(AppUpdater);
 const uiDirector = diContainer.get(UiDirector);
 const preferencesUseCase = diContainer.get(PreferencesUseCase);
+
+function* handleCheckForUpdates(_action: PayloadAction) {
+  yield appUpdater.checkForUpdates();
+}
 
 function* handleLoadPreferences(_action: PayloadAction) {
   const prefs: IPreferences = yield call([
@@ -140,6 +148,7 @@ function handleQuitApplication(_action: PayloadAction) {
 
 function* sagaEntry() {
   yield takeLeading(loadPreferences.type, handleLoadPreferences);
+  yield takeLatest(checkForUpdates.type, handleCheckForUpdates);
   yield takeLatest(openPreferences.type, handleOpenPreferences);
   yield takeLatest(closePreferences.type, handleClosePreferences);
   yield takeLatest(chooseRecordHomeDir.type, handleChooseRecordHomeDir);
