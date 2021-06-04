@@ -10,13 +10,17 @@
 
 import 'reflect-metadata';
 
+import fs from 'fs';
 import { app, shell, dialog, BrowserWindow, screen } from 'electron';
 import { inject, injectable } from 'inversify';
 
 import { TYPES } from '@di/types';
 import { IBounds, IScreenInfo } from '@core/entities/screen';
 import { IAnalyticsTracker } from '@core/components/tracker';
-import { assetResolver } from '@presenters/common/asset';
+import {
+  assetPathResolver,
+  resourcePathResolver,
+} from '@presenters/common/asset';
 import { AppTray } from '@presenters/ui/tray';
 import { OverlaysWindow } from '@presenters/ui/overlays';
 import { PreferencesWindow } from '@presenters/ui/preferences';
@@ -119,7 +123,7 @@ export class UiDirector {
   intialize() {
     const screenInfos = this.populateScreenInfos();
 
-    const trayIconPath = assetResolver('icon.png');
+    const trayIconPath = assetPathResolver('icon.png');
     this.appTray = isMac()
       ? AppTray.forMac(trayIconPath)
       : AppTray.forWindows(trayIconPath);
@@ -166,7 +170,19 @@ export class UiDirector {
       `,
     });
     staticPopup.on('ready-to-show', () => staticPopup.show());
-    staticPopup.webContents.openDevTools();
+  }
+
+  async openReleaseNotes() {
+    const relNotePath = resourcePathResolver('RELEASE.md');
+    const content = await fs.promises.readFile(relNotePath, 'utf-8');
+    const notePopup = new StaticPagePopup({
+      width: 440,
+      height: 480,
+      markdown: content,
+    });
+    notePopup.on('ready-to-show', () => {
+      notePopup.show();
+    });
   }
 
   openPreferencesWindow() {

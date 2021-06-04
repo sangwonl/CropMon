@@ -7,12 +7,12 @@ const RESOURCES_PATH = app.isPackaged
   ? process.resourcesPath
   : path.join(__dirname, '../../../');
 
-export type AssetResolverFunc = (path: string) => string;
+export type AssetPathResolverFunc = (path: string) => string;
 
-export const assetResolver = (...paths: string[]): string => {
+export const assetPathResolver = (...paths: string[]): string => {
   return path.join(RESOURCES_PATH, 'assets', ...paths);
 };
 
-export const resourceResolver = (...paths: string[]): string => {
+export const resourcePathResolver = (...paths: string[]): string => {
   return path.join(RESOURCES_PATH, ...paths);
 };

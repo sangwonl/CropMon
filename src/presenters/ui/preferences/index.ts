@@ -6,7 +6,7 @@ import localShortcut from 'electron-localshortcut';
 
 import store from '@presenters/redux/store';
 import { closePreferences } from '@presenters/redux/ui/slice';
-import { assetResolver } from '@presenters/common/asset';
+import { assetPathResolver } from '@presenters/common/asset';
 
 export class PreferencesWindow extends BrowserWindow {
   constructor() {
@@ -19,7 +19,7 @@ export class PreferencesWindow extends BrowserWindow {
       skipTaskbar: true,
       width: 640,
       height: 250,
-      icon: assetResolver('icon.png'),
+      icon: assetPathResolver('icon.png'),
       webPreferences: {
         nodeIntegration: true,
         enableRemoteModule: true,

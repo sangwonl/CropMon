@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BrowserWindow } from 'electron';
 
-import { assetResolver } from '@presenters/common/asset';
+import { assetPathResolver } from '@presenters/common/asset';
 import { WindowType } from '@presenters/ui/stateless/types';
 import { setCustomData } from '@utils/remote';
 
@@ -21,7 +21,7 @@ export class ContainerWindow extends BrowserWindow {
   constructor(type: WindowType, options?: ContainerWindowOptions) {
     super({
       show: false,
-      icon: assetResolver('icon.png'),
+      icon: assetPathResolver('icon.png'),
       width: options?.width || 500,
       height: options?.height || 240,
       frame: options?.frame || true,

@@ -6,7 +6,6 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable import/prefer-default-export */
 
-import fs from 'fs';
 import { app, dialog } from 'electron';
 import { injectable } from 'inversify';
 import semver from 'semver';
@@ -24,8 +23,6 @@ if (!isProduction()) {
 // this should be imported after version overriding in dev mode
 import { autoUpdater } from 'electron-updater';
 import { PreferencesUseCase } from '@core/usecases/preferences';
-import { StaticPagePopup } from '@presenters/ui/stateless/containers/staticpage';
-import { resourceResolver } from '@presenters/common/asset';
 
 @injectable()
 export class AppUpdater {
@@ -55,7 +52,8 @@ export class AppUpdater {
   private async openReleaseNotesIfUpdated() {
     const prefs = await this.prefsUseCase.getUserPreferences();
     if (semver.gt(curVersion, prefs.version!)) {
-      this.uiDirector.showReleaseNotes();
+      await this.uiDirector.openReleaseNotes();
+
       prefs.version = curVersion;
       await this.prefsUseCase.updateUserPreference(prefs);
     }
