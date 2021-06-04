@@ -34,6 +34,7 @@ const slice = createSlice({
   name: 'ui',
   initialState,
   reducers: {
+    showAbout: (_state) => {},
     checkForUpdates: (_state) => {},
     loadPreferences: (_state) => {},
     didLoadPreferences: (state, action: PayloadAction<IPreferences>) => {
@@ -107,6 +108,7 @@ const slice = createSlice({
 });
 
 export const {
+  showAbout,
   checkForUpdates,
   loadPreferences,
   didLoadPreferences,

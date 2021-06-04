@@ -6,7 +6,7 @@ import { getCurWindowCustomData } from '@utils/remote';
 
 import { WindowType } from './types';
 import progressDialogCreator from './containers/progressdialog/creator';
-import markdownPopupCreator from './containers/markdownpopup/creator';
+import staticPagePopupCreator from './containers/staticpage/creator';
 
 type WinCreator = () => JSX.Element;
 interface WinCreatorMap {
@@ -15,7 +15,7 @@ interface WinCreatorMap {
 
 const creators: WinCreatorMap = {
   [WindowType.PROGRESS_DIALOG]: progressDialogCreator,
-  [WindowType.MARKDOWN_POPUP]: markdownPopupCreator,
+  [WindowType.STATIC_PAGE_POPUP]: staticPagePopupCreator,
 };
 
 const winType = getCurWindowCustomData<WindowType>('type');

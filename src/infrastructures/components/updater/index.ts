@@ -24,7 +24,7 @@ if (!isProduction()) {
 // this should be imported after version overriding in dev mode
 import { autoUpdater } from 'electron-updater';
 import { PreferencesUseCase } from '@core/usecases/preferences';
-import { MarkdownPopup } from '@presenters/ui/stateless/containers/markdownpopup';
+import { StaticPagePopup } from '@presenters/ui/stateless/containers/staticpage';
 import { resourceResolver } from '@presenters/common/asset';
 
 @injectable()
@@ -55,17 +55,7 @@ export class AppUpdater {
   private async openReleaseNotesIfUpdated() {
     const prefs = await this.prefsUseCase.getUserPreferences();
     if (semver.gt(curVersion, prefs.version!)) {
-      const relNotePath = resourceResolver('RELEASE.md');
-      const content = await fs.promises.readFile(relNotePath, 'utf-8');
-      const notePopup = new MarkdownPopup({
-        width: 440,
-        height: 480,
-        markdown: content,
-      });
-      notePopup.on('ready-to-show', () => {
-        notePopup.show();
-      });
-
+      this.uiDirector.showReleaseNotes();
       prefs.version = curVersion;
       await this.prefsUseCase.updateUserPreference(prefs);
     }

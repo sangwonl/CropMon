@@ -8,14 +8,14 @@
 
 import { WindowType } from '@presenters/ui/stateless/types';
 
-import { MarkdownPopupOptions } from './shared';
+import { StaticPagePopupOptions } from './shared';
 import { ContainerWindow } from '../../basewin';
 
-export class MarkdownPopup extends ContainerWindow {
-  options?: MarkdownPopupOptions;
+export class StaticPagePopup extends ContainerWindow {
+  options?: StaticPagePopupOptions;
 
-  constructor(options: MarkdownPopupOptions) {
-    super(WindowType.MARKDOWN_POPUP, {
+  constructor(options: StaticPagePopupOptions) {
+    super(WindowType.STATIC_PAGE_POPUP, {
       width: options.width,
       height: options.height,
       maximizable: false,
