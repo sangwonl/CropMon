@@ -6,7 +6,7 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable import/prefer-default-export */
 
-import { app, dialog } from 'electron';
+import { app } from 'electron';
 import { injectable } from 'inversify';
 import semver from 'semver';
 import log from 'electron-log';
@@ -60,15 +60,7 @@ export class AppUpdater {
   }
 
   private onUpdateAvailable = async () => {
-    const { response: buttonId } = await dialog.showMessageBox({
-      title: 'Update Available',
-      message:
-        'An update is available. Do you want to download and install it now?',
-      defaultId: 0,
-      cancelId: 1,
-      buttons: ['Download and Install', 'Update Later'],
-    });
-
+    const buttonId = await this.uiDirector.openUpdateAvailableDialog();
     if (buttonId === 0) {
       this.uiDirector.startDownloadUpdate(
         () => autoUpdater.downloadUpdate(),

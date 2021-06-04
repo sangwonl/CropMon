@@ -225,6 +225,19 @@ export class UiDirector {
     shell.showItemInFolder(path);
   }
 
+  async openUpdateAvailableDialog(): Promise<number> {
+    const { response: buttonId } = await dialog.showMessageBox({
+      title: 'Update Available',
+      message:
+        'An update is available. Do you want to download and install it now?',
+      defaultId: 0,
+      cancelId: 1,
+      buttons: ['Download and Install', 'Update Later'],
+    });
+
+    return buttonId;
+  }
+
   async startDownloadUpdate(
     onReady: () => void,
     onCancel: () => void,
