@@ -1,6 +1,6 @@
 ## Release Notes
 
-### v0.1.3
+### v0.2.0
 
 _6 June 2021_
 
