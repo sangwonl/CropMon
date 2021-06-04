@@ -107,7 +107,7 @@ export class UiDirector {
   private appTray!: AppTray;
   private preferencesWindow!: BrowserWindow;
   private overlaysWindows!: OverlaysWinPool;
-  private updateProgressDialog!: ProgressDialog;
+  private updateProgressDialog?: ProgressDialog;
 
   constructor(
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
@@ -217,11 +217,14 @@ export class UiDirector {
       }
     } catch (e) {
       onError(e);
+    } finally {
+      this.updateProgressDialog!.destroy();
+      this.updateProgressDialog = undefined;
     }
   }
 
   setUpdateDownloadProgress(percent: number): void {
-    this.updateProgressDialog!.setProgress(percent);
+    this.updateProgressDialog?.setProgress(percent);
   }
 
   private populateScreenInfos(): Array<IScreenInfo> {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-this-alias */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable promise/param-names */
@@ -37,19 +38,32 @@ export class ProgressDialog extends ContainerWindow {
     this.show();
 
     return new Promise((resolve, reject) => {
-      const resolveAndClose = (result: boolean) => {
-        setImmediate(() => this.hide());
-        resolve(result);
-      };
-
       const timeout = this.options?.timeout || 300;
       setTimeout(() => reject(), timeout * 1000);
-      ipcMain.on(IPC_EVENT_ON_ACTION_BTN_CLICK, (_event, _data) => {
-        resolveAndClose(true);
-      });
-      ipcMain.on(IPC_EVENT_ON_CANCEL_BTN_CLICK, (_event, _data) => {
-        resolveAndClose(false);
-      });
+
+      const onActionBtnClick = () => {
+        clearIpcListeners();
+        this.hide();
+        resolve(true);
+      };
+
+      const onCancelBtnClick = () => {
+        clearIpcListeners();
+        this.hide();
+        resolve(false);
+      };
+
+      const setupIpcListeners = () => {
+        ipcMain.on(IPC_EVENT_ON_ACTION_BTN_CLICK, onActionBtnClick);
+        ipcMain.on(IPC_EVENT_ON_CANCEL_BTN_CLICK, onCancelBtnClick);
+      };
+
+      const clearIpcListeners = () => {
+        ipcMain.off(IPC_EVENT_ON_ACTION_BTN_CLICK, onActionBtnClick);
+        ipcMain.off(IPC_EVENT_ON_CANCEL_BTN_CLICK, onCancelBtnClick);
+      };
+
+      setupIpcListeners();
     });
   }
 }
