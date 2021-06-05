@@ -11,7 +11,14 @@
 import 'reflect-metadata';
 
 import fs from 'fs';
-import { app, shell, dialog, BrowserWindow, screen } from 'electron';
+import {
+  app,
+  shell,
+  dialog,
+  BrowserWindow,
+  screen,
+  nativeImage,
+} from 'electron';
 import { inject, injectable } from 'inversify';
 
 import { TYPES } from '@di/types';
@@ -217,7 +224,9 @@ export class UiDirector {
   }
 
   async openUpdateAvailableDialog(): Promise<number> {
+    const appIcon = nativeImage.createFromPath(assetPathResolver('icon.png'));
     const { response: buttonId } = await dialog.showMessageBox({
+      icon: appIcon,
       title: 'Update Available',
       message:
         'An update is available. Do you want to download and install it now?',
