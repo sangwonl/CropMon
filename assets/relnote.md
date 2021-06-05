@@ -9,3 +9,10 @@ _6 June 2021_
 - Improvement in core recording
 - Added auto-update feature
 - Added minor UI improvements
+
+### v0.1.0
+
+_19 May 2021_
+
+- Initial release as MVP
+- Simple screen recording feature
