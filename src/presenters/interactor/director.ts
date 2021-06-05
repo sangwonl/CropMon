@@ -17,18 +17,15 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '@di/types';
 import { IBounds, IScreenInfo } from '@core/entities/screen';
 import { IAnalyticsTracker } from '@core/components/tracker';
-import {
-  assetPathResolver,
-  resourcePathResolver,
-} from '@presenters/common/asset';
+import { assetPathResolver } from '@presenters/common/asset';
 import { AppTray } from '@presenters/ui/tray';
 import { OverlaysWindow } from '@presenters/ui/overlays';
 import { PreferencesWindow } from '@presenters/ui/preferences';
 import { ProgressDialog } from '@presenters/ui/stateless/containers/progressdialog';
+import { StaticPagePopup } from '@presenters/ui/stateless/containers/staticpage';
 import { setCustomData } from '@utils/remote';
 import { SPARE_PIXELS } from '@utils/bounds';
 import { isMac } from '@utils/process';
-import { StaticPagePopup } from '@presenters/ui/stateless/containers/staticpage';
 
 import { version as curVersion } from '../../package.json';
 
@@ -152,28 +149,19 @@ export class UiDirector {
     });
   }
 
-  openAboutWindow() {
+  async openAboutWindow() {
+    const aboutHtmlPath = assetPathResolver('about.html');
+    const content = await fs.promises.readFile(aboutHtmlPath, 'utf-8');
     const staticPopup = new StaticPagePopup({
       width: 300,
       height: 180,
-      html: `
-        <div style="display: flex;
-          flex-direction: column;
-          align-items: center;">
-          <h2 style="margin: 4px 0px;">Kropsaurus</h2>
-          <p style="margin: 0px; font-size: 12px;">Unregistered</p>
-          <p style="font-size: 13px;
-            margin: 20px 0px 0px 0px;">Copyright @2021 Pineple</p>
-          <p style="margin: 4px;
-            font-size: 14px;
-            font-weight: 500;">${curVersion}</p>
-      `,
+      html: content.replace('__version__', curVersion),
     });
     staticPopup.on('ready-to-show', () => staticPopup.show());
   }
 
   async openReleaseNotes() {
-    const relNotePath = resourcePathResolver('RELEASE.md');
+    const relNotePath = assetPathResolver('relnote.md');
     const content = await fs.promises.readFile(relNotePath, 'utf-8');
     const notePopup = new StaticPagePopup({
       width: 440,

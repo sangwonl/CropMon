@@ -134,7 +134,6 @@
       "output": "release"
     },
     "extraResources": [
-      "./RELEASE.md",
       "./assets/**",
       {
         "from": "node_modules/@ffmpeg/core/dist",
