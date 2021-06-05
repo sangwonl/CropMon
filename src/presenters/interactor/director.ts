@@ -151,11 +151,14 @@ export class UiDirector {
 
   async openAboutWindow() {
     const aboutHtmlPath = assetPathResolver('about.html');
-    const content = await fs.promises.readFile(aboutHtmlPath, 'utf-8');
+    const content = (await fs.promises.readFile(aboutHtmlPath, 'utf-8'))
+      .replace('__shortcut__', isMac() ? '⌘ + ⇧ + 9' : '❖ + ⇧ + D')
+      .replace('__version__', curVersion);
+
     const staticPopup = new StaticPagePopup({
       width: 300,
-      height: 180,
-      html: content.replace('__version__', curVersion),
+      height: 220,
+      html: content,
     });
     staticPopup.on('ready-to-show', () => staticPopup.show());
   }

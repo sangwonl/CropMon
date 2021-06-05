@@ -107,12 +107,12 @@ class WinAppTray extends AppTray {
       },
       {
         id: 'start-capture',
-        label: 'Start &Recording',
+        label: 'Start &Recording  ❖ + ⇧ + D',
         click: super.onStartRecording,
       },
       {
         id: 'stop-capture',
-        label: 'Stop &Recording',
+        label: 'Stop &Recording  ❖ + ⇧ + D',
         click: super.onStopRecording,
         visible: false,
       },
@@ -151,12 +151,12 @@ class MacAppTray extends AppTray {
       },
       {
         id: 'start-capture',
-        label: 'Start Recording',
+        label: 'Start Recording  ⌘ + ⇧ + 9',
         click: super.onStartRecording,
       },
       {
         id: 'stop-capture',
-        label: 'Stop Recording',
+        label: 'Stop Recording  ⌘ + ⇧ + 9',
         click: super.onStopRecording,
         visible: false,
       },

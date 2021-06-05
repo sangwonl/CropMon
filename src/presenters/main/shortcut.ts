@@ -29,8 +29,8 @@ export const initializeShortcuts = () => {
   };
 
   const platformShortcuts: PlatformShortcuts = {
-    win32: [{ shortcut: 'Super+Shift+R', handler: handleCaptureShortcut }],
-    darwin: [{ shortcut: 'Super+Shift+7', handler: handleCaptureShortcut }],
+    win32: [{ shortcut: 'Super+Shift+D', handler: handleCaptureShortcut }],
+    darwin: [{ shortcut: 'Super+Shift+9', handler: handleCaptureShortcut }],
   };
 
   if (!Object.keys(platformShortcuts).includes(process.platform)) {
