@@ -12,6 +12,7 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 import { app } from 'electron';
+import log from 'electron-log';
 
 import { TYPES } from '@di/types';
 import { diContainer } from '@di/container';
@@ -61,4 +62,4 @@ const start = async () => {
   tracker.view('idle');
 };
 
-app.whenReady().then(start).catch(console.log);
+app.whenReady().then(start).catch(log.error);
