@@ -38,6 +38,7 @@ describe('PreferenceUseCase', () => {
   describe('getUserPreferences', () => {
     it('should return preferences if it exists in registry', async () => {
       const mockPrefs: IPreferences = {
+        version: '0.0.1',
         openRecordHomeDirWhenRecordCompleted: true,
         recordHomeDir: '/temp/records',
       };
@@ -53,6 +54,7 @@ describe('PreferenceUseCase', () => {
 
     it('should try to load preferences from persistent app data', async () => {
       const mockPrefs: IPreferences = {
+        version: '0.0.1',
         openRecordHomeDirWhenRecordCompleted: true,
         recordHomeDir: '/temp/records',
       };
@@ -85,6 +87,7 @@ describe('PreferenceUseCase', () => {
   describe('updateUserPreferences', () => {
     it('should save user preferences to persistent app data', async () => {
       const mockPrefs: IPreferences = {
+        version: '0.0.1',
         openRecordHomeDirWhenRecordCompleted: true,
         recordHomeDir: '/temp/records',
       };

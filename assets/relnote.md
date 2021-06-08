@@ -5,6 +5,7 @@
 _14 June 2021_
 
 - Fixed hanging bug on quit
+- Fixed showing buttons at beginning
 
 ### v0.2.0
 
