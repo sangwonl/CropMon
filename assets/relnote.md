@@ -6,6 +6,7 @@ _14 June 2021_
 
 - Fixed hanging bug on quit
 - Fixed showing buttons at beginning
+- Fixed mis-focused bug when recording
 
 ### v0.2.0
 

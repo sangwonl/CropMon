@@ -77,6 +77,7 @@ class OverlaysWinPool {
   ignoreMouseEvents() {
     this.windows?.forEach((w) => {
       w.setIgnoreMouseEvents(true);
+      w.blur();
     });
   }
 
