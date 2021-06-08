@@ -2,11 +2,12 @@
 
 ### v0.2.1
 
-_14 June 2021_
+_10 June 2021_
 
 - Fixed hanging bug on quit
 - Fixed showing buttons at beginning
 - Fixed mis-focused bug when recording
+- Fixed multiple instances running
 
 ### v0.2.0
 

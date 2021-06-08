@@ -59,4 +59,10 @@ const start = async () => {
   tracker.view('idle');
 };
 
-app.whenReady().then(start).catch(log.error);
+const instanceLock = app.requestSingleInstanceLock();
+
+if (!instanceLock) {
+  app.quit();
+} else {
+  app.whenReady().then(start).catch(log.error);
+}
