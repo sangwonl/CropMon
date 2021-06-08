@@ -1,5 +1,11 @@
 ## Release Notes
 
+### v0.2.1
+
+_14 June 2021_
+
+- Fixed hanging bug on quit
+
 ### v0.2.0
 
 _6 June 2021_

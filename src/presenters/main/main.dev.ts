@@ -35,7 +35,8 @@ const initializeApp = async () => {
 
   store.dispatch(checkForUpdates());
 
-  app.on('quit', () => {
+  app.on('will-quit', () => {
+    log.info('got will-quit');
     uiDirector.quitApplication();
   });
 };

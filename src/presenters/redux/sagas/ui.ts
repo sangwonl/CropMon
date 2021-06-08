@@ -78,14 +78,7 @@ function* handleClosePreferences(
       (state: RootState) => state.ui.preferencesWindow.preferences
     );
 
-    const prefs: IPreferences = {
-      version: uiPrefs.version,
-      recordHomeDir: uiPrefs.recordHomeDir,
-      openRecordHomeDirWhenRecordCompleted:
-        uiPrefs.openRecordHomeDirWhenRecordCompleted,
-    };
-
-    yield call([prefsUseCase, prefsUseCase.updateUserPreference], prefs);
+    yield call([prefsUseCase, prefsUseCase.updateUserPreference], uiPrefs);
 
     yield put(loadPreferences());
   }

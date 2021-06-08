@@ -116,9 +116,9 @@ class OverlaysWinPool {
 @injectable()
 export class UiDirector {
   private appTray!: AppTray;
-  private preferencesWindow!: BrowserWindow;
+  private preferencesWindow?: BrowserWindow;
   private overlaysWindows!: OverlaysWinPool;
-  private updateProgressDialog?: ProgressDialog;
+  private updateProgressDialog: ProgressDialog | undefined;
 
   constructor(
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
@@ -132,7 +132,6 @@ export class UiDirector {
       ? AppTray.forMac(trayIconPath)
       : AppTray.forWindows(trayIconPath);
 
-    this.preferencesWindow = new PreferencesWindow();
     this.overlaysWindows = new OverlaysWinPool(screenInfos);
 
     // WORKAROUND to fix wrong position and bounds at the initial time
@@ -141,19 +140,13 @@ export class UiDirector {
   }
 
   toggleDevTools() {
-    this.preferencesWindow.webContents.toggleDevTools();
+    this.preferencesWindow?.webContents.toggleDevTools();
     this.overlaysWindows.toggleDevTools();
   }
 
   quitApplication() {
-    app.removeAllListeners('close');
-    app.removeAllListeners('window-all-closed');
-
-    // To make sure it's terminated in 3 seconds
-    setTimeout(() => process.exit(0), 3000);
-    this.tracker.event('app-lifecycle', 'quit', () => {
-      process.exit(0);
-    });
+    app.quit();
+    this.tracker.event('app-lifecycle', 'quit');
   }
 
   async openAboutWindow() {
@@ -184,17 +177,20 @@ export class UiDirector {
   }
 
   openPreferencesWindow() {
-    this.preferencesWindow.show();
-    this.tracker.view('preferences-window');
+    this.preferencesWindow = new PreferencesWindow();
+    this.preferencesWindow.on('ready-to-show', () => {
+      this.preferencesWindow?.show();
+      this.tracker.view('preferences-window');
+    });
   }
 
   closePreferencesWindow() {
-    this.preferencesWindow.hide();
+    this.preferencesWindow?.close();
     this.tracker.view('idle');
   }
 
   async openDialogForRecordHomeDir(path?: string): Promise<string> {
-    const { filePaths } = await dialog.showOpenDialog(this.preferencesWindow, {
+    const { filePaths } = await dialog.showOpenDialog(this.preferencesWindow!, {
       defaultPath: path ?? app.getPath('videos'),
       properties: ['openDirectory'],
     });
