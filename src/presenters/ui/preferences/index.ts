@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable max-classes-per-file */
 
@@ -9,6 +10,8 @@ import { closePreferences } from '@presenters/redux/ui/slice';
 import { assetPathResolver } from '@presenters/common/asset';
 
 export class PreferencesWindow extends BrowserWindow {
+  private forceClose = false;
+
   constructor() {
     super({
       show: false,
@@ -53,13 +56,19 @@ export class PreferencesWindow extends BrowserWindow {
     //   }
     // });
 
-    this.on('close', (event) => {
-      event.preventDefault();
+    this.on('close', (_event) => {
+      this.forceClose = true;
       store.dispatch(closePreferences());
     });
 
     localShortcut.register(this, 'Escape', () => {
       store.dispatch(closePreferences());
     });
+  }
+
+  close() {
+    if (!this.forceClose) {
+      super.close();
+    }
   }
 }

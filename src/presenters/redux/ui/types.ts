@@ -17,8 +17,8 @@ export interface IOverlaysWindows {
 }
 
 export interface ICaptureArea {
-  screenIdOnSelection?: number;
-  selectedBounds?: IBounds;
+  screenIdOnSelection: number | undefined;
+  selectedBounds: IBounds | undefined;
   isRecording: boolean;
 }
 
