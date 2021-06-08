@@ -152,7 +152,7 @@ export class UiDirector {
   async openAboutWindow() {
     const aboutHtmlPath = assetPathResolver('about.html');
     const content = (await fs.promises.readFile(aboutHtmlPath, 'utf-8'))
-      .replace('__shortcut__', isMac() ? '⌘ + ⇧ + 9' : '❖ + ⇧ + D')
+      .replace('__shortcut__', isMac() ? '⌘ + ⇧ + 9' : '❖ + ⇧ + E')
       .replace('__version__', curVersion);
 
     const staticPopup = new StaticPagePopup({
