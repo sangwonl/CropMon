@@ -29,7 +29,7 @@ export const initializeShortcuts = () => {
   };
 
   const platformShortcuts: PlatformShortcuts = {
-    win32: [{ shortcut: 'Super+Shift+D', handler: handleCaptureShortcut }],
+    win32: [{ shortcut: 'Super+Shift+E', handler: handleCaptureShortcut }],
     darwin: [{ shortcut: 'Super+Shift+9', handler: handleCaptureShortcut }],
   };
 

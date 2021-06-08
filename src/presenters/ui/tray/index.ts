@@ -107,12 +107,12 @@ class WinAppTray extends AppTray {
       },
       {
         id: 'start-capture',
-        label: 'Start &Recording  ❖ + ⇧ + D',
+        label: 'Start &Recording  ❖ + ⇧ + E',
         click: super.onStartRecording,
       },
       {
         id: 'stop-capture',
-        label: 'Stop &Recording  ❖ + ⇧ + D',
+        label: 'Stop &Recording  ❖ + ⇧ + E',
         click: super.onStopRecording,
         visible: false,
       },
