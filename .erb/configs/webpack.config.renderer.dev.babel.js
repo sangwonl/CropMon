@@ -45,12 +45,12 @@ export default merge(baseConfig, {
     'renderer.ui': [
       'core-js',
       'regenerator-runtime/runtime',
-      require.resolve('../../src/presenters/ui/renderers/index.tsx'),
+      require.resolve('../../src/presenters/ui/ui-renderers/index.tsx'),
     ],
     'renderer.recorder': [
       'core-js',
       'regenerator-runtime/runtime',
-      require.resolve('../../src/infrastructures/components/electron-recorder/recorder-delegate/renderer.ts'),
+      require.resolve('../../src/infrastructures/recorder/rec-renderer/delegate.ts'),
     ],
   },
 

@@ -9,7 +9,7 @@ import { IPreferences } from '@core/entities/preferences';
 import { IScreenInfo } from '@core/entities/screen';
 import { CaptureStatus, ICaptureContext } from '@core/entities/capture';
 import { PreferencesUseCase } from '@core/usecases/preferences';
-import { AppUpdater } from '@infrastructures/components/updater';
+import { AppUpdater } from '@infrastructures/updater';
 import { UiDirector } from '@presenters/interactor/director';
 import { RootState } from '@presenters/redux/store';
 import {

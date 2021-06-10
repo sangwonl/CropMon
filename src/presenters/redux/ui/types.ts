@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
+
 import { IPreferences } from '@core/entities/preferences';
 import { IBounds, IScreenInfo } from '@core/entities/screen';
 

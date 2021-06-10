@@ -1,18 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable import/prefer-default-export */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import localShortcut from 'electron-localshortcut';
 
+import { assetPathResolver } from '@presenters/common/asset';
 import store from '@presenters/redux/store';
 import { closePreferences } from '@presenters/redux/ui/slice';
-import { WindowType } from '@presenters/ui/renderers/types';
-import { BaseWindow } from '@presenters/ui/renderers/win';
+import { WindowType } from '@presenters/ui/ui-renderers/types';
+import { BaseWindow } from '@presenters/ui/ui-renderers/win';
 
 export class PreferencesWindow extends BaseWindow {
   private forceClose = false;
 
   constructor() {
     super(WindowType.PREFERENECS_WINDOW, {
+      icon: assetPathResolver('icon.png'),
       width: 640,
       height: 250,
       frame: true,

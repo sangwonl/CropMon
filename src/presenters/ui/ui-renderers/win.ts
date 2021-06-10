@@ -2,8 +2,7 @@
 
 import { BrowserWindow } from 'electron';
 
-import { assetPathResolver } from '@presenters/common/asset';
-import { WindowType } from '@presenters/ui/renderers/types';
+import { WindowType } from '@presenters/ui/ui-renderers/types';
 import { setCustomData } from '@utils/remote';
 
 export interface WindowOptions {
@@ -51,6 +50,6 @@ export class BaseWindow extends BrowserWindow {
 
     setCustomData(this, 'type', type);
     setCustomData(this, 'options', options?.options);
-    this.loadURL(`file://${__dirname}/../renderers/index.html`);
+    this.loadURL(`file://${__dirname}/../ui-renderers/index.html`);
   }
 }

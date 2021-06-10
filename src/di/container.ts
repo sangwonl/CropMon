@@ -11,10 +11,10 @@ import { IPreferencesStore } from '@core/components/preferences';
 import { IAnalyticsTracker } from '@core/components/tracker';
 import { CaptureUseCase } from '@core/usecases/capture';
 import { PreferencesUseCase } from '@core/usecases/preferences';
-import { ElectronScreenRecorder } from '@infrastructures/components/electron-recorder/recorder';
-import { PreferencesStoreImpl } from '@infrastructures/components/preferences';
-import { GoogleAnalyticsTracker } from '@infrastructures/components/ga-tracker';
-import { AppUpdater } from '@infrastructures/components/updater';
+import { ElectronScreenRecorder } from '@infrastructures/recorder/recorder';
+import { PreferencesStoreImpl } from '@infrastructures/preferences';
+import { GoogleAnalyticsTracker } from '@infrastructures/ga-tracker';
+import { AppUpdater } from '@infrastructures/updater';
 import { UiDirector } from '@presenters/interactor/director';
 
 import { TYPES } from './types';

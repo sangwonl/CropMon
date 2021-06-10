@@ -40,29 +40,15 @@
       "node_modules",
       "dist/",
       {
-        "from": "presenters/ui/stateless",
-        "to": "stateless",
+        "from": "presenters/ui/ui-renderers",
+        "to": "ui-renderers",
         "filter": [
           "**/*.html"
         ]
       },
       {
-        "from": "presenters/ui/preferences",
-        "to": "preferences",
-        "filter": [
-          "*.html"
-        ]
-      },
-      {
-        "from": "presenters/ui/overlays",
-        "to": "overlays",
-        "filter": [
-          "*.html"
-        ]
-      },
-      {
-        "from": "infrastructures/components/electron-recorder/recorder-delegate",
-        "to": "recorder-delegate",
+        "from": "infrastructures/recorder/rec-renderer",
+        "to": "rec-renderer",
         "filter": [
           "*.html"
         ]
