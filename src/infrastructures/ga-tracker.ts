@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { IAnalyticsTracker } from '@core/components/tracker';
 
-import { version as curVersion, productName } from '../../package.json';
+import { version as curVersion, productName } from '../package.json';
 
 @injectable()
 export class GoogleAnalyticsTracker implements IAnalyticsTracker {

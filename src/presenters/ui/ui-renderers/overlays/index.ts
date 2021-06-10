@@ -1,15 +1,17 @@
-/* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable import/prefer-default-export */
+/* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable max-classes-per-file */
 
 import { emptyBounds } from '@utils/bounds';
 import { isMac } from '@utils/process';
-import { WindowType } from '@presenters/ui/renderers/types';
-import { BaseWindow } from '@presenters/ui/renderers/win';
+import { assetPathResolver } from '@presenters/common/asset';
+import { WindowType } from '@presenters/ui/ui-renderers/types';
+import { BaseWindow } from '@presenters/ui/ui-renderers/win';
 
 export class OverlaysWindow extends BaseWindow {
   constructor() {
     super(WindowType.OVERLAYS_WINDOW, {
+      icon: assetPathResolver('icon.png'),
       show: false,
       frame: false,
       resizable: false,

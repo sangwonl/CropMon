@@ -13,7 +13,7 @@ import { IPreferencesStore } from '@core/components/preferences';
 import { IAnalyticsTracker } from '@core/components/tracker';
 import { getPlatform } from '@utils/process';
 
-import { version as curVersion } from '../../package.json';
+import { version as curVersion } from '../package.json';
 
 @injectable()
 export class PreferencesStoreImpl implements IPreferencesStore {

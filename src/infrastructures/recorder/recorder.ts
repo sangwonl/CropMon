@@ -13,7 +13,7 @@
 import fs from 'fs';
 import path from 'path';
 import log from 'electron-log';
-import { BrowserWindow, Display, screen, ipcMain, app } from 'electron';
+import { Display, screen, ipcMain, app } from 'electron';
 import { injectable } from 'inversify';
 import {
   createFFmpeg,
@@ -26,12 +26,12 @@ import { ICaptureContext } from '@core/entities/capture';
 import { IScreenRecorder } from '@core/components/recorder';
 import { isProduction } from '@utils/process';
 
-import { RecorderRendererDelegate } from './recorder-delegate';
+import { RecorderDelegate } from './rec-renderer';
 
 @injectable()
 export class ElectronScreenRecorder implements IScreenRecorder {
   ffmpeg?: FFmpeg;
-  recorderDelegate?: BrowserWindow;
+  delegate?: RecorderDelegate;
 
   constructor() {
     this.initializeFFmpeg();
@@ -40,8 +40,8 @@ export class ElectronScreenRecorder implements IScreenRecorder {
   }
 
   renewBuildRenderer() {
-    this.recorderDelegate?.destroy();
-    this.recorderDelegate = new RecorderRendererDelegate();
+    this.delegate?.destroy();
+    this.delegate = new RecorderDelegate();
   }
 
   async record(ctx: ICaptureContext): Promise<void> {
@@ -79,7 +79,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
         screenBounds: targetDisplay.bounds,
         targetBounds,
       };
-      this.recorderDelegate?.webContents.send('start-record', args);
+      this.delegate?.webContents.send('start-record', args);
     });
   }
 
@@ -112,7 +112,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
 
       setupIpcListeners();
 
-      this.recorderDelegate?.webContents.send('stop-record', {
+      this.delegate?.webContents.send('stop-record', {
         outputPath: outPath,
       });
     });

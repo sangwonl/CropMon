@@ -1,9 +1,9 @@
 import ReactDOM from 'react-dom';
 
-import progressDialogCreator from '@presenters/ui/renderers/progressdialog/creator';
-import staticPagePopupCreator from '@presenters/ui/renderers/staticpage/creator';
-import preferencesWindowCreator from '@presenters/ui/renderers/preferences/creator';
-import overlaysWindowCreator from '@presenters/ui/renderers/overlays/creator';
+import progressDialogCreator from '@presenters/ui/ui-renderers/progressdialog/creator';
+import staticPagePopupCreator from '@presenters/ui/ui-renderers/staticpage/creator';
+import preferencesWindowCreator from '@presenters/ui/ui-renderers/preferences/creator';
+import overlaysWindowCreator from '@presenters/ui/ui-renderers/overlays/creator';
 import { getCurWindowCustomData } from '@utils/remote';
 
 import { WindowType } from './types';

@@ -14,7 +14,7 @@ import log from 'electron-log';
 import { UiDirector } from '@presenters/interactor/director';
 import { isProduction } from '@utils/process';
 
-import { version as curVersion } from '../../../package.json';
+import { version as curVersion } from '../../package.json';
 
 if (!isProduction()) {
   app.getVersion = () => curVersion;

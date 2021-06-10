@@ -8,7 +8,8 @@
 
 import { ipcMain } from 'electron';
 
-import { WindowType } from '@presenters/ui/renderers/types';
+import { assetPathResolver } from '@presenters/common/asset';
+import { WindowType } from '@presenters/ui/ui-renderers/types';
 
 import {
   ProgressDialogOptions,
@@ -23,6 +24,7 @@ export class ProgressDialog extends BaseWindow {
 
   constructor(options: ProgressDialogOptions) {
     super(WindowType.PROGRESS_DIALOG, {
+      icon: assetPathResolver('icon.png'),
       width: options.width,
       height: options.height,
       options,

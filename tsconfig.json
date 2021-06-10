@@ -27,10 +27,10 @@
     "baseUrl": ".",
     "paths": {
       "@core/*": ["./src/core/*"],
-      "@infrastructures/*": ["src/infrastructures/*"],
-      "@presenters/*": ["src/presenters/*"],
-      "@utils/*": ["src/utils/*"],
-      "@di/*": ["src/di/*"]
+      "@infrastructures/*": ["./src/infrastructures/*"],
+      "@presenters/*": ["./src/presenters/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@di/*": ["./src/di/*"]
     }
   },
   "exclude": [

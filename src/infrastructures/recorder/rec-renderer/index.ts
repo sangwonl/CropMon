@@ -3,7 +3,7 @@
 
 import { BrowserWindow } from 'electron';
 
-export class RecorderRendererDelegate extends BrowserWindow {
+export class RecorderDelegate extends BrowserWindow {
   constructor() {
     super({
       show: false,
@@ -21,6 +21,6 @@ export class RecorderRendererDelegate extends BrowserWindow {
         // preload: path.join(__dirname, '..', 'recorder-delegate', 'preload.js'),
       },
     });
-    this.loadURL(`file://${__dirname}/../recorder-delegate/renderer.html`);
+    this.loadURL(`file://${__dirname}/../rec-renderer/index.html`);
   }
 }
