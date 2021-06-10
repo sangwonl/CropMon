@@ -9,7 +9,8 @@
 import { ipcMain } from 'electron';
 
 import { assetPathResolver } from '@presenters/common/asset';
-import { WindowType } from '@presenters/ui/ui-renderers/types';
+import { WidgetType } from '@presenters/ui/widgets/types';
+import { Widget } from '@presenters/ui/widgets/widget';
 
 import {
   ProgressDialogOptions,
@@ -17,13 +18,12 @@ import {
   IPC_EVENT_SET_PROGRESS,
   IPC_EVENT_ON_CANCEL_BTN_CLICK,
 } from './shared';
-import { BaseWindow } from '../win';
 
-export class ProgressDialog extends BaseWindow {
+export class ProgressDialog extends Widget {
   options?: ProgressDialogOptions;
 
   constructor(options: ProgressDialogOptions) {
-    super(WindowType.PROGRESS_DIALOG, {
+    super(WidgetType.PROGRESS_DIALOG, {
       icon: assetPathResolver('icon.png'),
       width: options.width,
       height: options.height,

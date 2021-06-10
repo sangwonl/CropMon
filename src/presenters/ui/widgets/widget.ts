@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import log from 'electron-log';
 import { BrowserWindow } from 'electron';
 
-import { WindowType } from '@presenters/ui/ui-renderers/types';
 import { setCustomData } from '@utils/remote';
 
-export interface WindowOptions {
+import { WidgetType } from './types';
+
+export interface WidgetOptions {
   icon?: string;
   show?: boolean;
   width?: number;
@@ -23,8 +25,8 @@ export interface WindowOptions {
   options?: any;
 }
 
-export class BaseWindow extends BrowserWindow {
-  constructor(type: WindowType, options?: WindowOptions) {
+export class Widget extends BrowserWindow {
+  constructor(type: WidgetType, options?: WidgetOptions) {
     super({
       icon: options?.icon,
       show: options?.show ?? true,
@@ -50,6 +52,6 @@ export class BaseWindow extends BrowserWindow {
 
     setCustomData(this, 'type', type);
     setCustomData(this, 'options', options?.options);
-    this.loadURL(`file://${__dirname}/../ui-renderers/index.html`);
+    this.loadURL(`file://${__dirname}/../widgets/index.html`);
   }
 }

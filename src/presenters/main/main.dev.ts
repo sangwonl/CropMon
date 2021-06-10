@@ -35,13 +35,10 @@ const initializeApp = async () => {
 
   store.dispatch(checkForUpdates());
 
-  app.on('will-quit', () => {
-    log.info('got will-quit');
-    uiDirector.quitApplication();
-  });
+  app.on('will-quit', () => {});
 };
 
-const initializeWindows = () => {
+const initializeWidgets = () => {
   uiDirector.intialize();
 };
 
@@ -52,7 +49,7 @@ const start = async () => {
 
   await initializeApp();
 
-  initializeWindows();
+  initializeWidgets();
 
   tracker.eventL('app-lifecycle', 'launch', getPlatform());
 

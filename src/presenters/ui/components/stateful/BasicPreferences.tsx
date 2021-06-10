@@ -25,7 +25,7 @@ export const BasicPreferences = () => {
   const dispatch = useDispatch();
 
   const prefsState: IPreferences = useSelector(
-    (state: RootState) => state.ui.preferencesWindow.preferences
+    (state: RootState) => state.ui.preferencesModal.preferences
   );
 
   return (

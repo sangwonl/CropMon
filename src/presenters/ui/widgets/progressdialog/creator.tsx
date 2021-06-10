@@ -7,8 +7,8 @@
 import { ipcRenderer } from 'electron';
 import React, { useEffect, useState } from 'react';
 
-import { ProgressDialog } from '@presenters/ui/components/ProgressDialog';
-import { getCurWindowCustomData } from '@utils/remote';
+import { ProgressDialog } from '@presenters/ui/components/stateless/ProgressDialog';
+import { getCurWidgetCustomData } from '@utils/remote';
 
 import {
   ProgressDialogOptions,
@@ -18,7 +18,7 @@ import {
   IPC_EVENT_ON_CANCEL_BTN_CLICK,
 } from './shared';
 
-const options = getCurWindowCustomData<ProgressDialogOptions>('options');
+const options = getCurWidgetCustomData<ProgressDialogOptions>('options');
 
 const Wrapper = () => {
   const [progress, setProgress] = useState(0);

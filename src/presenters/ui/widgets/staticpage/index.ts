@@ -7,16 +7,16 @@
 /* eslint-disable max-classes-per-file */
 
 import { assetPathResolver } from '@presenters/common/asset';
-import { WindowType } from '@presenters/ui/ui-renderers/types';
-import { BaseWindow } from '@presenters/ui/ui-renderers/win';
+import { WidgetType } from '@presenters/ui/widgets/types';
+import { Widget } from '@presenters/ui/widgets/widget';
 
 import { StaticPagePopupOptions } from './shared';
 
-export class StaticPagePopup extends BaseWindow {
+export class StaticPagePopup extends Widget {
   options?: StaticPagePopupOptions;
 
   constructor(options: StaticPagePopupOptions) {
-    super(WindowType.STATIC_PAGE_POPUP, {
+    super(WidgetType.STATIC_PAGE_POPUP, {
       icon: assetPathResolver('icon.png'),
       width: options.width,
       height: options.height,

@@ -8,20 +8,20 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IBounds } from '@core/entities/screen';
 import { RootState } from '@presenters/redux/store';
-import { ICaptureArea, IOverlaysWindows } from '@presenters/redux/ui/types';
+import { ICaptureArea, ICaptureOverlays } from '@presenters/redux/ui/types';
 import {
   startAreaSelection,
   finishAreaSelection,
   disableAreaSelection,
 } from '@presenters/redux/ui/slice';
 import { startCapture } from '@presenters/redux/capture/slice';
-import { getCurWindowCustomData } from '@utils/remote';
+import { getCurWidgetCustomData } from '@utils/remote';
 
 import { CaptureArea } from './CaptureArea';
 import styles from './Cover.css';
 
 const getScreenId = () => {
-  return getCurWindowCustomData<number>('screenId');
+  return getCurWidgetCustomData<number>('screenId');
 };
 
 const stretchBodySize = (w: number, h: number) => {
@@ -29,23 +29,23 @@ const stretchBodySize = (w: number, h: number) => {
   document.body.style.height = `${h}px`;
 };
 
-const adjustBodySize = (overlaysWindows: IOverlaysWindows) => {
+const adjustBodySize = (captureOverlays: ICaptureOverlays) => {
   if (
-    overlaysWindows === undefined ||
-    Object.keys(overlaysWindows).length === 0
+    captureOverlays === undefined ||
+    Object.keys(captureOverlays).length === 0
   ) {
     return;
   }
 
-  const { screenInfo } = overlaysWindows[getScreenId()];
+  const { screenInfo } = captureOverlays[getScreenId()];
   stretchBodySize(screenInfo.bounds.width, screenInfo.bounds.height);
 };
 
 export const Cover = () => {
   const dispatch = useDispatch();
 
-  const overlaysWindows: IOverlaysWindows = useSelector(
-    (state: RootState) => state.ui.overlaysWindows
+  const captureOverlays: ICaptureOverlays = useSelector(
+    (state: RootState) => state.ui.captureOverlays
   );
 
   const captureArea: ICaptureArea = useSelector(
@@ -55,8 +55,8 @@ export const Cover = () => {
   const [coverActive, setCoverActive] = useState<boolean>(false);
 
   useLayoutEffect(() => {
-    adjustBodySize(overlaysWindows);
-  }, [overlaysWindows]);
+    adjustBodySize(captureOverlays);
+  }, [captureOverlays]);
 
   useLayoutEffect(() => {
     setCoverActive(captureArea.screenIdOnSelection === getScreenId());

@@ -17,9 +17,9 @@ import { debounce } from 'debounce';
 import { IBounds } from '@core/entities/screen';
 import { SPARE_PIXELS, isEmptyBounds, isCapturableBounds } from '@utils/bounds';
 import { isMac } from '@utils/process';
-import { focusCurWindow } from '@utils/remote';
-import { CaptureAreaHint } from '@presenters/ui/components/CaptureAreaHint';
-import { ControlBox } from '@presenters/ui/components/ControlBox';
+import { focusCurWidget } from '@utils/remote';
+import { CaptureAreaHint } from '@presenters/ui/components/stateless/CaptureAreaHint';
+import { ControlBox } from '@presenters/ui/components/stateless/ControlBox';
 
 import styles from './CaptureArea.css';
 
@@ -166,10 +166,10 @@ const handleMouseUp =
   };
 
 // WORKAROUND: for MacOS to fix missing focus on second screen overlays
-const focusCurWindowDebounced = (() => {
+const focusCurWigetDebounced = (() => {
   if (isMac()) {
     return debounce(() => {
-      focusCurWindow();
+      focusCurWidget();
     }, 50);
   }
   return () => {};
@@ -186,7 +186,7 @@ const handleMouseMove =
     }
 
     if (!selCtx.started) {
-      focusCurWindowDebounced();
+      focusCurWigetDebounced();
       return;
     }
 

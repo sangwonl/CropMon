@@ -26,7 +26,7 @@ import { ICaptureContext } from '@core/entities/capture';
 import { IScreenRecorder } from '@core/components/recorder';
 import { isProduction } from '@utils/process';
 
-import { RecorderDelegate } from './rec-renderer';
+import { RecorderDelegate } from './rec-delegate';
 
 @injectable()
 export class ElectronScreenRecorder implements IScreenRecorder {

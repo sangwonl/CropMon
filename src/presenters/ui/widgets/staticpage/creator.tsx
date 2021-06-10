@@ -6,12 +6,12 @@
 
 import React from 'react';
 
-import { getCurWindowCustomData } from '@utils/remote';
-import { StaticPage } from '@presenters/ui/components/StaticPage';
+import { getCurWidgetCustomData } from '@utils/remote';
+import { StaticPage } from '@presenters/ui/components/stateless/StaticPage';
 
 import { StaticPagePopupOptions } from './shared';
 
-const options = getCurWindowCustomData<StaticPagePopupOptions>('options');
+const options = getCurWidgetCustomData<StaticPagePopupOptions>('options');
 
 const Wrapper = () => (
   <div style={{ width: '100%', height: '100%' }}>

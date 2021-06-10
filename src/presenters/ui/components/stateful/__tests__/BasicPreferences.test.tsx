@@ -14,14 +14,14 @@ describe('BasicPreferences', () => {
   it('should render', () => {
     const store = mockStore({
       ui: {
-        preferencesWindow: {
+        preferencesModal: {
           show: false,
           preferences: {
             recordHomeDir: '',
             openRecordHomeDirWhenRecordCompleted: true,
           },
         },
-        overlaysWindows: {},
+        captureOverlays: {},
         captureArea: {
           screenIdOnSelection: undefined,
           selectedBounds: undefined,

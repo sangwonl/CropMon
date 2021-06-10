@@ -6,7 +6,7 @@ import { Story, Meta } from '@storybook/react';
 import {
   StaticPage,
   StaticPageProps,
-} from '@presenters/ui/components/StaticPage';
+} from '@presenters/ui/components/stateless/StaticPage';
 
 export default {
   title: 'Kropsaurus/StaticPage',

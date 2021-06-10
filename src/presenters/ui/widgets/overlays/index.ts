@@ -5,19 +5,18 @@
 import { emptyBounds } from '@utils/bounds';
 import { isMac } from '@utils/process';
 import { assetPathResolver } from '@presenters/common/asset';
-import { WindowType } from '@presenters/ui/ui-renderers/types';
-import { BaseWindow } from '@presenters/ui/ui-renderers/win';
+import { WidgetType } from '@presenters/ui/widgets/types';
+import { Widget } from '@presenters/ui/widgets/widget';
 
-export class OverlaysWindow extends BaseWindow {
+export class CaptureOverlay extends Widget {
   constructor() {
-    super(WindowType.OVERLAYS_WINDOW, {
+    super(WidgetType.CAPTURE_OVERLAY, {
       icon: assetPathResolver('icon.png'),
       show: false,
       frame: false,
       resizable: false,
       maximizable: false,
       minimizable: false,
-      closable: false,
       focusable: isMac(),
       skipTaskbar: true,
       transparent: true,

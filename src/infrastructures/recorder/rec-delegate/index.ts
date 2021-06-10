@@ -21,6 +21,6 @@ export class RecorderDelegate extends BrowserWindow {
         // preload: path.join(__dirname, '..', 'recorder-delegate', 'preload.js'),
       },
     });
-    this.loadURL(`file://${__dirname}/../rec-renderer/index.html`);
+    this.loadURL(`file://${__dirname}/../rec-delegate/index.html`);
   }
 }

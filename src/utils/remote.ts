@@ -1,25 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/prefer-default-export */
 
-import { BrowserWindow, remote } from 'electron';
+import { remote } from 'electron';
 
-export function setCustomData<T>(
-  window: BrowserWindow,
-  name: string,
-  value: T
-) {
-  (window as any)[name] = value;
+import { Widget } from '@presenters/ui/widgets/widget';
+
+export function setCustomData<T>(widget: Widget, name: string, value: T) {
+  (widget as any)[name] = value;
 }
 
-export function getCustomData<T>(window: BrowserWindow, name: string): T {
-  return (window as any)[name] as T;
+export function getCustomData<T>(widget: Widget, name: string): T {
+  return (widget as any)[name] as T;
 }
 
-export function getCurWindowCustomData<T>(name: string): T {
+export function getCurWidgetCustomData<T>(name: string): T {
   return getCustomData<T>(remote.getCurrentWindow(), name);
 }
 
-export function focusCurWindow() {
+export function focusCurWidget() {
   const curWin = remote.getCurrentWindow();
   if (!curWin.isFocused()) {
     curWin.focus();

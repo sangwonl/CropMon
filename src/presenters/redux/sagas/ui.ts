@@ -39,7 +39,7 @@ const uiDirector = diContainer.get(UiDirector);
 const prefsUseCase = diContainer.get(PreferencesUseCase);
 
 function* handleShowAbout(_action: PayloadAction) {
-  uiDirector.openAboutWindow();
+  uiDirector.openAboutPopup();
 }
 
 function* handleCheckForUpdates(_action: PayloadAction) {
@@ -65,7 +65,7 @@ function* handleLoadPreferences(_action: PayloadAction) {
 function* handleOpenPreferences(_action: PayloadAction) {
   yield put(loadPreferences());
 
-  uiDirector.openPreferencesWindow();
+  uiDirector.openPreferencesModal();
 
   yield put(didOpenPreferences());
 }
@@ -75,7 +75,7 @@ function* handleClosePreferences(
 ) {
   if (action.payload.shouldSave) {
     const uiPrefs: IPreferences = yield select(
-      (state: RootState) => state.ui.preferencesWindow.preferences
+      (state: RootState) => state.ui.preferencesModal.preferences
     );
 
     yield call([prefsUseCase, prefsUseCase.updateUserPreference], uiPrefs);
@@ -83,14 +83,14 @@ function* handleClosePreferences(
     yield put(loadPreferences());
   }
 
-  uiDirector.closePreferencesWindow();
+  uiDirector.closePreferencesModal();
 
   yield put(didClosePreferences());
 }
 
 function* handleChooseRecordHomeDir(_action: PayloadAction) {
   const uiPrefs: IPreferences = yield select(
-    (state: RootState) => state.ui.preferencesWindow.preferences
+    (state: RootState) => state.ui.preferencesModal.preferences
   );
 
   const dir: string = yield call(
@@ -123,7 +123,7 @@ function* handleDisableAreaSelection(_action: PayloadAction) {
 function* handleDidFinishCapture(action: PayloadAction<ICaptureContext>) {
   const captureCtx: ICaptureContext = action.payload;
   const uiPrefs: IPreferences = yield select(
-    (state: RootState) => state.ui.preferencesWindow.preferences
+    (state: RootState) => state.ui.preferencesModal.preferences
   );
 
   if (
