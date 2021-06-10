@@ -1,5 +1,12 @@
 ## Release Notes
 
+### v0.3.0
+
+_7 July 2021_
+
+- Fixed relaunch fail bug after quit
+- Fixed timing issue at recording start
+
 ### v0.2.1
 
 _10 June 2021_

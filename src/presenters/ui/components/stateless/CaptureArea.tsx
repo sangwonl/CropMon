@@ -22,7 +22,6 @@ import styles from './CaptureArea.css';
 
 interface PropTypes {
   active: boolean;
-  isRecording: boolean;
   selectedBounds?: IBounds;
   onSelectionStart: () => void;
   onSelectionCancel: () => void;
@@ -67,7 +66,7 @@ const calcSelectedBounds = (selCtx: AreaSelectionCtx): IBounds => {
 };
 
 const getAreaClasses = (
-  isRecording: boolean,
+  recording: boolean,
   bounds: IBounds,
   selCtx: AreaSelectionCtx
 ): string => {
@@ -79,7 +78,7 @@ const getAreaClasses = (
     return classNames(styles.area, styles.areaUncapturable);
   }
 
-  if (isRecording) {
+  if (recording) {
     return classNames(styles.area, styles.areaRecording);
   }
 
@@ -189,7 +188,6 @@ const handleMouseMove =
 export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
   const {
     active,
-    isRecording,
     selectedBounds,
     onSelectionStart: onStart,
     onSelectionFinish: onFinish,
@@ -199,14 +197,21 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
   } = props;
 
   const [selCtx, setSelCtx] = useState<AreaSelectionCtx>(initialSelCtx);
+  const [recording, setRecording] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (selectedBounds === undefined) {
+      setRecording(false);
+    }
+  }, [selectedBounds]);
 
   useEffect(() => {
     setSelCtx({
       ...selCtx,
-      recording: isRecording,
+      recording,
       selected: selectedBounds !== undefined,
     });
-  }, [isRecording, selectedBounds]);
+  }, [recording, selectedBounds]);
 
   const onMouseDown = handleMouseDown(onStart, onCancel, selCtx, setSelCtx);
   const onMouseUp = handleMouseUp(onCancel, onFinish, selCtx, setSelCtx);
@@ -218,7 +223,7 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     <div
       className={classNames({
         [styles.wrapper]: true,
-        [styles.wrapperHack]: !isRecording,
+        [styles.wrapperHack]: !recording,
         [styles.crosshair]: !selCtx.selected,
       })}
       onMouseDown={onMouseDown}
@@ -227,14 +232,20 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     >
       {active && (
         <div
-          className={getAreaClasses(isRecording, calcBounds, selCtx)}
+          className={getAreaClasses(recording, calcBounds, selCtx)}
           style={getAreaLayout(calcBounds)}
         >
-          {!isRecording && calcBounds.width > 100 && calcBounds.height > 60 && (
+          {!recording && calcBounds.width > 100 && calcBounds.height > 60 && (
             <CaptureAreaHint selectedBounds={calcBounds} />
           )}
-          {!isRecording && selectedBounds && (
-            <ControlBox onRecord={onRecord} onClose={onCancel} />
+          {!recording && selectedBounds && (
+            <ControlBox
+              onClose={onCancel}
+              onRecord={() => {
+                setRecording(true);
+                onRecord();
+              }}
+            />
           )}
         </div>
       )}
