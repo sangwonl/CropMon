@@ -3,12 +3,12 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 
-import { Cover } from '@presenters/ui/components/stateful/Cover';
+import { CaptureCover } from '@presenters/ui/components/stateful/CaptureCover';
 import store from '@presenters/redux/store';
 
 const Wrapper = () => (
   <Provider store={store}>
-    <Cover />
+    <CaptureCover />
   </Provider>
 );
 

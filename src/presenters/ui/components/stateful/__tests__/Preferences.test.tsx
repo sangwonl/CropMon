@@ -6,9 +6,9 @@ import { render } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 
 import { RootState } from '@presenters/redux/store';
-import { BasicPreferences } from '@presenters/ui/preferences/BasicPreferences';
+import { Preferences } from '@presenters/ui/components/stateful/Preferences';
 
-describe('BasicPreferences', () => {
+describe('Preferences', () => {
   const mockStore = configureStore<RootState>();
 
   it('should render', () => {
@@ -17,6 +17,7 @@ describe('BasicPreferences', () => {
         preferencesModal: {
           show: false,
           preferences: {
+            version: '0.0.1',
             recordHomeDir: '',
             openRecordHomeDirWhenRecordCompleted: true,
           },
@@ -34,7 +35,7 @@ describe('BasicPreferences', () => {
     expect(
       render(
         <Provider store={store}>
-          <BasicPreferences />
+          <Preferences />
         </Provider>
       )
     ).toBeTruthy();

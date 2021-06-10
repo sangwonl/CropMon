@@ -1,14 +1,14 @@
 html {
+  /* WORKAROUND: to fix non-clickable area at the nearest borders */
+  /* Same issue here: https://github.com/electron/electron/issues/21929 */
+  padding: 40px;
   margin: 0;
-  padding: 0;
   overflow: hidden;
 }
 
 body {
-  /* WORKAROUND: to fix non-clickable area at the nearest borders */
-  /* Same issue here: https://github.com/electron/electron/issues/21929 */
-  margin: 40px;
   padding: 0;
+  margin: 0;
   overflow: hidden;
   background-color: transparent;
 }

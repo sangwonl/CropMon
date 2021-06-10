@@ -19,9 +19,9 @@ import {
   closePreferences,
 } from '@presenters/redux/ui/slice';
 
-import styles from './BasicPreferences.css';
+import styles from './Preferences.css';
 
-export const BasicPreferences = () => {
+export const Preferences = () => {
   const dispatch = useDispatch();
 
   const prefsState: IPreferences = useSelector(

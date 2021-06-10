@@ -12,12 +12,9 @@ import React, {
   useEffect,
 } from 'react';
 import classNames from 'classnames';
-import { debounce } from 'debounce';
 
 import { IBounds } from '@core/entities/screen';
 import { SPARE_PIXELS, isEmptyBounds, isCapturableBounds } from '@utils/bounds';
-import { isMac } from '@utils/process';
-import { focusCurWidget } from '@utils/remote';
 import { CaptureAreaHint } from '@presenters/ui/components/stateless/CaptureAreaHint';
 import { ControlBox } from '@presenters/ui/components/stateless/ControlBox';
 
@@ -31,6 +28,7 @@ interface PropTypes {
   onSelectionCancel: () => void;
   onSelectionFinish: (bounds: IBounds) => void;
   onRecordStart: () => void;
+  onHovering: () => void;
 }
 
 interface AreaSelectionCtx {
@@ -165,18 +163,9 @@ const handleMouseUp =
     onSelectionFinish(bounds);
   };
 
-// WORKAROUND: for MacOS to fix missing focus on second screen overlays
-const focusCurWigetDebounced = (() => {
-  if (isMac()) {
-    return debounce(() => {
-      focusCurWidget();
-    }, 50);
-  }
-  return () => {};
-})();
-
 const handleMouseMove =
   (
+    onHovering: () => void,
     selCtx: AreaSelectionCtx,
     setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
   ) =>
@@ -186,7 +175,7 @@ const handleMouseMove =
     }
 
     if (!selCtx.started) {
-      focusCurWigetDebounced();
+      onHovering();
       return;
     }
 
@@ -206,6 +195,7 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     onSelectionFinish: onFinish,
     onSelectionCancel: onCancel,
     onRecordStart: onRecord,
+    onHovering,
   } = props;
 
   const [selCtx, setSelCtx] = useState<AreaSelectionCtx>(initialSelCtx);
@@ -220,7 +210,7 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
 
   const onMouseDown = handleMouseDown(onStart, onCancel, selCtx, setSelCtx);
   const onMouseUp = handleMouseUp(onCancel, onFinish, selCtx, setSelCtx);
-  const onMouseMove = handleMouseMove(selCtx, setSelCtx);
+  const onMouseMove = handleMouseMove(onHovering, selCtx, setSelCtx);
   const calcBounds = calcSelectedBounds(selCtx);
 
   return (
