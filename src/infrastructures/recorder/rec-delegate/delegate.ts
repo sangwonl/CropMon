@@ -131,7 +131,7 @@ ipcRenderer.on('start-record', async (_event, data) => {
 
   setTimeout(() => {
     mediaRecorder.start(1000);
-  }, 1000);
+  }, 100);
   ipcRenderer.send('recording-started', {});
 });
 

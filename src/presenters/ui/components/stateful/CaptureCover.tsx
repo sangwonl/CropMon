@@ -100,7 +100,6 @@ export const CaptureCover = () => {
     <div className={styles.cover}>
       <CaptureArea
         active={coverActive}
-        isRecording={captureArea.isRecording}
         selectedBounds={captureArea.selectedBounds}
         onSelectionStart={onSelectionStart}
         onSelectionCancel={onSelectionCancel}
