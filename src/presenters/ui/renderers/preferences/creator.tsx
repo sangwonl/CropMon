@@ -1,19 +1,22 @@
+/* eslint-disable react/display-name */
+
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
+import { BasicPreferences } from '@presenters/ui/containers/BasicPreferences';
 import store from '@presenters/redux/store';
 
-import { BasicPreferences } from './BasicPreferences';
-
-ReactDOM.render(
+const Wrapper = () => (
   <Provider store={store}>
     <Router>
       <Switch>
         <Route path="/" component={BasicPreferences} />
       </Switch>
     </Router>
-  </Provider>,
-  document.getElementById('root')
+  </Provider>
 );
+
+export default () => {
+  return <Wrapper />;
+};

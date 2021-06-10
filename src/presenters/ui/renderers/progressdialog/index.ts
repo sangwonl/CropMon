@@ -8,7 +8,7 @@
 
 import { ipcMain } from 'electron';
 
-import { WindowType } from '@presenters/ui/stateless/types';
+import { WindowType } from '@presenters/ui/renderers/types';
 
 import {
   ProgressDialogOptions,
@@ -16,9 +16,9 @@ import {
   IPC_EVENT_SET_PROGRESS,
   IPC_EVENT_ON_CANCEL_BTN_CLICK,
 } from './shared';
-import { ContainerWindow } from '../../basewin';
+import { BaseWindow } from '../win';
 
-export class ProgressDialog extends ContainerWindow {
+export class ProgressDialog extends BaseWindow {
   options?: ProgressDialogOptions;
 
   constructor(options: ProgressDialogOptions) {

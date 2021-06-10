@@ -7,9 +7,9 @@
 import { ipcRenderer } from 'electron';
 import React, { useEffect, useState } from 'react';
 
+import { ProgressDialog } from '@presenters/ui/components/ProgressDialog';
 import { getCurWindowCustomData } from '@utils/remote';
 
-import { ProgressDialog } from '../../components/ProgressDialog';
 import {
   ProgressDialogOptions,
   IpcEventSetProgress,

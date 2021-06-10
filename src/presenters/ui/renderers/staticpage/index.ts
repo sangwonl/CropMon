@@ -6,12 +6,12 @@
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable max-classes-per-file */
 
-import { WindowType } from '@presenters/ui/stateless/types';
+import { WindowType } from '@presenters/ui/renderers/types';
+import { BaseWindow } from '@presenters/ui/renderers/win';
 
 import { StaticPagePopupOptions } from './shared';
-import { ContainerWindow } from '../../basewin';
 
-export class StaticPagePopup extends ContainerWindow {
+export class StaticPagePopup extends BaseWindow {
   options?: StaticPagePopupOptions;
 
   constructor(options: StaticPagePopupOptions) {

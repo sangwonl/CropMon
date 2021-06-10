@@ -6,8 +6,8 @@
 
 import React from 'react';
 
-import { StaticPage } from '@presenters/ui/stateless/components/StaticPage';
 import { getCurWindowCustomData } from '@utils/remote';
+import { StaticPage } from '@presenters/ui/components/StaticPage';
 
 import { StaticPagePopupOptions } from './shared';
 

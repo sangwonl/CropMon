@@ -38,6 +38,7 @@ describe('CaptureUseCase', () => {
     useCase = new CaptureUseCase(mockRegistry, mockRecorder, mockTracker);
 
     mockPrefs = {
+      version: '0.0.1',
       recordHomeDir: '/tmp/recordhome',
       openRecordHomeDirWhenRecordCompleted: true,
     };

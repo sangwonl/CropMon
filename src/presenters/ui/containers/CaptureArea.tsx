@@ -18,9 +18,9 @@ import { IBounds } from '@core/entities/screen';
 import { SPARE_PIXELS, isEmptyBounds, isCapturableBounds } from '@utils/bounds';
 import { isMac } from '@utils/process';
 import { focusCurWindow } from '@utils/remote';
+import { CaptureAreaHint } from '@presenters/ui/components/CaptureAreaHint';
+import { ControlBox } from '@presenters/ui/components/ControlBox';
 
-import { CaptureAreaHint } from './CaptureAreaHint';
-import { ControlBox } from './ControlBox';
 import styles from './CaptureArea.css';
 
 interface PropTypes {
