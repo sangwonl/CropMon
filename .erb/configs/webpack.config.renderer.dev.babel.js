@@ -42,20 +42,10 @@ export default merge(baseConfig, {
   target: 'electron-renderer',
 
   entry: {
-    'renderer.stateless': [
+    'renderer.ui': [
       'core-js',
       'regenerator-runtime/runtime',
-      require.resolve('../../src/presenters/ui/stateless/renderer.tsx'),
-    ],
-    'renderer.preferences': [
-      'core-js',
-      'regenerator-runtime/runtime',
-      require.resolve('../../src/presenters/ui/preferences/renderer.tsx'),
-    ],
-    'renderer.overlays': [
-      'core-js',
-      'regenerator-runtime/runtime',
-      require.resolve('../../src/presenters/ui/overlays/renderer.tsx'),
+      require.resolve('../../src/presenters/ui/renderers/index.tsx'),
     ],
     'renderer.recorder': [
       'core-js',
@@ -110,9 +100,9 @@ export default merge(baseConfig, {
           {
             loader: 'style-loader',
           },
-          {
-            loader: 'css-modules-typescript-loader',
-          },
+          // {
+          //   loader: 'css-modules-typescript-loader',
+          // },
           {
             loader: 'css-loader',
             options: {

@@ -60,7 +60,6 @@ const start = async () => {
 };
 
 const instanceLock = app.requestSingleInstanceLock();
-
 if (!instanceLock) {
   app.quit();
 } else {

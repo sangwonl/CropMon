@@ -2,8 +2,10 @@
  * @NOTE: Prepend a `~` to css file paths that are in your node_modules
  *        See https://github.com/webpack-contrib/sass-loader#imports
  */
-body {
+html body {
   overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 .mainContainer {
@@ -11,7 +13,7 @@ body {
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  padding: 20px;
+  padding: 28px;
 }
 
 .itemRow {

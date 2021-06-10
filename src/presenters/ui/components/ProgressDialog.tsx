@@ -8,7 +8,7 @@
 
 import React from 'react';
 
-import { ProgressBar } from '@presenters/ui/stateless/components/ProgressBar';
+import { ProgressBar } from '@presenters/ui/components/ProgressBar';
 
 import styles from './ProgressDialog.css';
 
