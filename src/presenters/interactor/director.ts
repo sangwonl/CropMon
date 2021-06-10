@@ -11,38 +11,31 @@
 import 'reflect-metadata';
 
 import fs from 'fs';
-import {
-  app,
-  shell,
-  dialog,
-  BrowserWindow,
-  screen,
-  nativeImage,
-} from 'electron';
+import { app, shell, dialog, screen, nativeImage } from 'electron';
 import { inject, injectable } from 'inversify';
 
 import { TYPES } from '@di/types';
 import { IBounds, IScreenInfo } from '@core/entities/screen';
 import { IAnalyticsTracker } from '@core/components/tracker';
 import { assetPathResolver } from '@presenters/common/asset';
-import { AppTray } from '@presenters/ui/tray';
-import { OverlaysWindow } from '@presenters/ui/ui-renderers/overlays';
-import { PreferencesWindow } from '@presenters/ui/ui-renderers/preferences';
-import { ProgressDialog } from '@presenters/ui/ui-renderers/progressdialog';
-import { StaticPagePopup } from '@presenters/ui/ui-renderers/staticpage';
+import { AppTray } from '@presenters/ui/widgets/tray';
+import { CaptureOverlay } from '@presenters/ui/widgets/overlays';
+import { PreferencesModal } from '@presenters/ui/widgets/preferences';
+import { ProgressDialog } from '@presenters/ui/widgets/progressdialog';
+import { StaticPagePopup } from '@presenters/ui/widgets/staticpage';
 import { setCustomData } from '@utils/remote';
 import { SPARE_PIXELS } from '@utils/bounds';
 import { isMac } from '@utils/process';
 
 import { version as curVersion } from '../../package.json';
 
-class OverlaysWinPool {
-  private windows?: Map<number, OverlaysWindow>;
+class CaptureOverlayPool {
+  private widgets?: Map<number, CaptureOverlay>;
 
   constructor(screenInfos: Array<IScreenInfo>) {
-    this.windows = new Map<number, OverlaysWindow>();
+    this.widgets = new Map<number, CaptureOverlay>();
 
-    // pre-create overlays windows for pool
+    // pre-create overlays pool
     screenInfos.forEach(({ id: screenId }) => {
       this.getOrBuild(screenId);
     });
@@ -60,7 +53,7 @@ class OverlaysWinPool {
   }
 
   hideAll() {
-    this.windows?.forEach((w) => {
+    this.widgets?.forEach((w) => {
       w.setIgnoreMouseEvents(true);
       setTimeout(() => {
         w.hide();
@@ -69,20 +62,20 @@ class OverlaysWinPool {
   }
 
   closeAll() {
-    this.windows?.forEach((w) => {
+    this.widgets?.forEach((w) => {
       w.close();
     });
   }
 
   ignoreMouseEvents() {
-    this.windows?.forEach((w) => {
+    this.widgets?.forEach((w) => {
       w.setIgnoreMouseEvents(true);
       w.blur();
     });
   }
 
   toggleDevTools() {
-    this.windows?.forEach((w) => {
+    this.widgets?.forEach((w) => {
       const isOpened = w.webContents.isDevToolsOpened();
       w.webContents.toggleDevTools();
       w.setVisibleOnAllWorkspaces(true, {
@@ -91,14 +84,14 @@ class OverlaysWinPool {
     });
   }
 
-  private getOrBuild(screenId: number): BrowserWindow {
-    let window = this.windows?.get(screenId);
-    if (window === undefined) {
-      window = new OverlaysWindow();
-      setCustomData(window, 'screenId', screenId);
-      this.windows?.set(screenId, window);
+  private getOrBuild(screenId: number): CaptureOverlay {
+    let w = this.widgets?.get(screenId);
+    if (w === undefined) {
+      w = new CaptureOverlay();
+      setCustomData(w, 'screenId', screenId);
+      this.widgets?.set(screenId, w);
     }
-    return window;
+    return w;
   }
 
   // WORKAROUND: to fix non-clickable area at the nearest borders
@@ -117,8 +110,8 @@ class OverlaysWinPool {
 @injectable()
 export class UiDirector {
   private appTray!: AppTray;
-  private preferencesWindow?: BrowserWindow;
-  private overlaysWindows!: OverlaysWinPool;
+  private preferencesModal?: PreferencesModal;
+  private captureOverlays!: CaptureOverlayPool;
   private updateProgressDialog: ProgressDialog | undefined;
 
   constructor(
@@ -133,24 +126,27 @@ export class UiDirector {
       ? AppTray.forMac(trayIconPath)
       : AppTray.forWindows(trayIconPath);
 
-    this.overlaysWindows = new OverlaysWinPool(screenInfos);
+    this.captureOverlays = new CaptureOverlayPool(screenInfos);
 
     // WORKAROUND to fix wrong position and bounds at the initial time
-    this.overlaysWindows.showAll(screenInfos);
-    this.overlaysWindows.hideAll();
+    this.captureOverlays.showAll(screenInfos);
+    this.captureOverlays.hideAll();
   }
 
   toggleDevTools() {
-    this.preferencesWindow?.webContents.toggleDevTools();
-    this.overlaysWindows.toggleDevTools();
+    this.preferencesModal?.webContents.toggleDevTools();
+    this.captureOverlays.toggleDevTools();
   }
 
-  quitApplication() {
+  quitApplication(relaunch?: boolean) {
+    if (relaunch) {
+      app.relaunch();
+    }
     app.quit();
     this.tracker.event('app-lifecycle', 'quit');
   }
 
-  async openAboutWindow() {
+  async openAboutPopup() {
     const aboutHtmlPath = assetPathResolver('about.html');
     const content = (await fs.promises.readFile(aboutHtmlPath, 'utf-8'))
       .replace('__shortcut__', isMac() ? '⌘ + ⇧ + 9' : '❖ + ⇧ + E')
@@ -177,21 +173,21 @@ export class UiDirector {
     });
   }
 
-  openPreferencesWindow() {
-    this.preferencesWindow = new PreferencesWindow();
-    this.preferencesWindow.on('ready-to-show', () => {
-      this.preferencesWindow?.show();
-      this.tracker.view('preferences-window');
+  openPreferencesModal() {
+    this.preferencesModal = new PreferencesModal();
+    this.preferencesModal.on('ready-to-show', () => {
+      this.preferencesModal?.show();
+      this.tracker.view('preferences-modal');
     });
   }
 
-  closePreferencesWindow() {
-    this.preferencesWindow?.close();
+  closePreferencesModal() {
+    this.preferencesModal?.close();
     this.tracker.view('idle');
   }
 
   async openDialogForRecordHomeDir(path?: string): Promise<string> {
-    const { filePaths } = await dialog.showOpenDialog(this.preferencesWindow!, {
+    const { filePaths } = await dialog.showOpenDialog(this.preferencesModal!, {
       defaultPath: path ?? app.getPath('videos'),
       properties: ['openDirectory'],
     });
@@ -201,19 +197,19 @@ export class UiDirector {
 
   enableCaptureSelectionMode(): Array<IScreenInfo> {
     const screenInfos = this.populateScreenInfos();
-    this.overlaysWindows.showAll(screenInfos);
+    this.captureOverlays.showAll(screenInfos);
     this.tracker.view('capture-area-selection');
     return screenInfos;
   }
 
   disableCaptureSelectionMode(): void {
-    this.overlaysWindows.hideAll();
+    this.captureOverlays.hideAll();
     this.tracker.view('idle');
   }
 
   enableRecordingMode(): void {
-    this.overlaysWindows.ignoreMouseEvents();
-    this.tracker.view('in-recoding');
+    this.captureOverlays.ignoreMouseEvents();
+    this.tracker.view('in-recording');
   }
 
   showItemInFolder(path: string): void {

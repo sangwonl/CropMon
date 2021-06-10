@@ -14,7 +14,7 @@ import {
 } from './types';
 
 const initialState: IUiState = {
-  preferencesWindow: {
+  preferencesModal: {
     show: false,
     preferences: {
       version: '',
@@ -22,7 +22,7 @@ const initialState: IUiState = {
       openRecordHomeDirWhenRecordCompleted: true,
     },
   },
-  overlaysWindows: {},
+  captureOverlays: {},
   captureArea: {
     screenIdOnSelection: undefined,
     selectedBounds: undefined,
@@ -38,11 +38,11 @@ const slice = createSlice({
     checkForUpdates: (_state) => {},
     loadPreferences: (_state) => {},
     didLoadPreferences: (state, action: PayloadAction<IPreferences>) => {
-      state.preferencesWindow.preferences = action.payload;
+      state.preferencesModal.preferences = action.payload;
     },
     openPreferences: (_state) => {},
     didOpenPreferences: (state) => {
-      state.preferencesWindow.show = true;
+      state.preferencesModal.show = true;
     },
     closePreferences: {
       reducer: (_state, _action: PayloadAction<IClosePreferencesPayload>) => {},
@@ -51,19 +51,19 @@ const slice = createSlice({
       }),
     },
     didClosePreferences: (state) => {
-      state.preferencesWindow.show = false;
+      state.preferencesModal.show = false;
     },
     chooseRecordHomeDir: (_state) => {},
     didChooseRecordHomeDir: (
       state,
       action: PayloadAction<IChooseRecordHomeDirPayload>
     ) => {
-      state.preferencesWindow.preferences.recordHomeDir =
+      state.preferencesModal.preferences.recordHomeDir =
         action.payload.recordHomeDir;
     },
     toggleOpenRecordHomeDir: (state) => {
-      const { preferences } = state.preferencesWindow;
-      state.preferencesWindow.preferences.openRecordHomeDirWhenRecordCompleted =
+      const { preferences } = state.preferencesModal;
+      state.preferencesModal.preferences.openRecordHomeDirWhenRecordCompleted =
         !preferences.openRecordHomeDirWhenRecordCompleted;
     },
     enableAreaSelection: (state) => {},
@@ -75,7 +75,7 @@ const slice = createSlice({
       state.captureArea.selectedBounds = undefined;
 
       action.payload.forEach((screenInfo) => {
-        state.overlaysWindows[screenInfo.id] = { show: true, screenInfo };
+        state.captureOverlays[screenInfo.id] = { show: true, screenInfo };
       });
     },
     startAreaSelection: (state, action: PayloadAction<IStartAreaSelection>) => {
@@ -94,10 +94,10 @@ const slice = createSlice({
       state.captureArea.selectedBounds = undefined;
       state.captureArea.isRecording = false;
 
-      Object.keys(state.overlaysWindows).forEach((k) => {
+      Object.keys(state.captureOverlays).forEach((k) => {
         // https://stackoverflow.com/questions/14667713/how-to-convert-a-string-to-number-in-typescript
         const screenId: number = +k;
-        state.overlaysWindows[screenId].show = false;
+        state.captureOverlays[screenId].show = false;
       });
     },
     enableRecording: (state) => {

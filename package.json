@@ -40,15 +40,15 @@
       "node_modules",
       "dist/",
       {
-        "from": "presenters/ui/ui-renderers",
-        "to": "ui-renderers",
+        "from": "presenters/ui/widgets",
+        "to": "widgets",
         "filter": [
           "**/*.html"
         ]
       },
       {
-        "from": "infrastructures/recorder/rec-renderer",
-        "to": "rec-renderer",
+        "from": "infrastructures/recorder/rec-delegate",
+        "to": "rec-delegate",
         "filter": [
           "*.html"
         ]
@@ -60,15 +60,13 @@
         {
           "target": "dmg",
           "arch": [
-            "x64",
-            "arm64"
+            "x64"
           ]
         },
         {
           "target": "zip",
           "arch": [
-            "x64",
-            "arm64"
+            "x64"
           ]
         }
       ],

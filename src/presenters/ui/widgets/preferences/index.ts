@@ -6,14 +6,14 @@ import localShortcut from 'electron-localshortcut';
 import { assetPathResolver } from '@presenters/common/asset';
 import store from '@presenters/redux/store';
 import { closePreferences } from '@presenters/redux/ui/slice';
-import { WindowType } from '@presenters/ui/ui-renderers/types';
-import { BaseWindow } from '@presenters/ui/ui-renderers/win';
+import { WidgetType } from '@presenters/ui/widgets/types';
+import { Widget } from '@presenters/ui/widgets/widget';
 
-export class PreferencesWindow extends BaseWindow {
+export class PreferencesModal extends Widget {
   private forceClose = false;
 
   constructor() {
-    super(WindowType.PREFERENECS_WINDOW, {
+    super(WidgetType.PREFERENECS_MODAL, {
       icon: assetPathResolver('icon.png'),
       width: 640,
       height: 250,
@@ -21,7 +21,6 @@ export class PreferencesWindow extends BaseWindow {
       resizable: false,
       minimizable: false,
       maximizable: false,
-      closable: true,
       skipTaskbar: true,
     });
 

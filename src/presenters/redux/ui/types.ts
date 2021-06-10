@@ -3,18 +3,18 @@
 import { IPreferences } from '@core/entities/preferences';
 import { IBounds, IScreenInfo } from '@core/entities/screen';
 
-export interface IPreferencesWindow {
+export interface IPreferencesModal {
   show: boolean;
   preferences: IPreferences;
 }
 
-export interface IOverlaysWindow {
+export interface ICaptureOverlay {
   show: boolean;
   screenInfo: IScreenInfo;
 }
 
-export interface IOverlaysWindows {
-  [screenId: number]: IOverlaysWindow;
+export interface ICaptureOverlays {
+  [screenId: number]: ICaptureOverlay;
 }
 
 export interface ICaptureArea {
@@ -24,8 +24,8 @@ export interface ICaptureArea {
 }
 
 export interface IUiState {
-  preferencesWindow: IPreferencesWindow;
-  overlaysWindows: IOverlaysWindows;
+  preferencesModal: IPreferencesModal;
+  captureOverlays: ICaptureOverlays;
   captureArea: ICaptureArea;
 }
 
