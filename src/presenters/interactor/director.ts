@@ -45,6 +45,7 @@ class CaptureOverlayPool {
     screenInfos.forEach(({ id: screenId, bounds }) => {
       const sparedBounds = this.addSparePixels(bounds);
       const w = this.getOrBuild(screenId);
+      w.setFocusable(true);
       w.setIgnoreMouseEvents(false);
       w.setPosition(sparedBounds.x, sparedBounds.y);
       w.setBounds(sparedBounds);
@@ -69,8 +70,9 @@ class CaptureOverlayPool {
 
   ignoreMouseEvents() {
     this.widgets?.forEach((w) => {
-      w.setIgnoreMouseEvents(true);
       w.blur();
+      w.setFocusable(false);
+      w.setIgnoreMouseEvents(true);
     });
   }
 
