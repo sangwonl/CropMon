@@ -10,6 +10,8 @@
 
 import 'reflect-metadata';
 
+import log from 'electron-log';
+
 import fs from 'fs';
 import { app, shell, dialog, screen, nativeImage } from 'electron';
 import { inject, injectable } from 'inversify';
@@ -18,6 +20,7 @@ import { TYPES } from '@di/types';
 import { IBounds, IScreenInfo } from '@core/entities/screen';
 import { IAnalyticsTracker } from '@core/components/tracker';
 import { assetPathResolver } from '@presenters/common/asset';
+import { Widget } from '@presenters/ui/widgets/widget';
 import { AppTray } from '@presenters/ui/widgets/tray';
 import { CaptureOverlay } from '@presenters/ui/widgets/overlays';
 import { PreferencesModal } from '@presenters/ui/widgets/preferences';
@@ -45,7 +48,6 @@ class CaptureOverlayPool {
     screenInfos.forEach(({ id: screenId, bounds }) => {
       const sparedBounds = this.addSparePixels(bounds);
       const w = this.getOrBuild(screenId);
-      w.setFocusable(true);
       w.setIgnoreMouseEvents(false);
       w.setPosition(sparedBounds.x, sparedBounds.y);
       w.setBounds(sparedBounds);
@@ -55,7 +57,6 @@ class CaptureOverlayPool {
 
   hideAll() {
     this.widgets?.forEach((w) => {
-      w.setIgnoreMouseEvents(true);
       setTimeout(() => {
         w.hide();
       }, 300);
@@ -70,9 +71,8 @@ class CaptureOverlayPool {
 
   ignoreMouseEvents() {
     this.widgets?.forEach((w) => {
-      w.blur();
-      w.setFocusable(false);
       w.setIgnoreMouseEvents(true);
+      w.blur();
     });
   }
 
@@ -90,6 +90,12 @@ class CaptureOverlayPool {
     let w = this.widgets?.get(screenId);
     if (w === undefined) {
       w = new CaptureOverlay();
+      w.on('focus', () => {
+        log.info('focused...');
+      });
+      w.on('blur', () => {
+        log.info('blured...');
+      });
       setCustomData(w, 'screenId', screenId);
       this.widgets?.set(screenId, w);
     }
@@ -236,8 +242,7 @@ export class UiDirector {
   async startDownloadUpdate(
     onReady: () => void,
     onCancel: () => void,
-    onQuit: () => void,
-    onError: (e: Error) => void
+    onQuit: () => void
   ): Promise<void> {
     this.updateProgressDialog = new ProgressDialog({
       title: 'Update Download',
@@ -256,19 +261,15 @@ export class UiDirector {
       onReady();
     });
 
-    try {
-      const restart = await this.updateProgressDialog!.open();
-      if (restart) {
-        onQuit();
-      } else {
-        onCancel();
-      }
-    } catch (e) {
-      onError(e);
-    } finally {
-      this.updateProgressDialog!.destroy();
-      this.updateProgressDialog = undefined;
+    const restart = await this.updateProgressDialog!.open();
+    if (restart) {
+      onQuit();
+    } else {
+      onCancel();
     }
+
+    this.updateProgressDialog!.destroy();
+    this.updateProgressDialog = undefined;
   }
 
   setUpdateDownloadProgress(percent: number): void {

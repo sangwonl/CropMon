@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable prefer-destructuring */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { PayloadAction } from '@reduxjs/toolkit';
-import { call, put, takeLatest } from 'redux-saga/effects';
+import * as Effects from 'redux-saga/effects';
 
 import {
   CaptureMode,
@@ -24,6 +26,9 @@ import {
   enableRecording,
 } from '@presenters/redux/ui/slice';
 
+const { put, takeLatest } = Effects;
+const call: any = Effects.call;
+
 const captureUseCase = diContainer.get(CaptureUseCase);
 
 function* handleStartCapture(action: PayloadAction<IStartCapturePayload>) {
@@ -33,7 +38,7 @@ function* handleStartCapture(action: PayloadAction<IStartCapturePayload>) {
     bounds: action.payload.bounds,
   };
   const newContext: ICaptureContext = yield call(
-    [captureUseCase, captureUseCase.startCapture],
+    captureUseCase.startCapture,
     captureOpt
   );
 
@@ -47,10 +52,9 @@ function* handleStartCapture(action: PayloadAction<IStartCapturePayload>) {
 
 function* handleFinishCapture(_action: PayloadAction) {
   yield put(disableAreaSelection());
-  const updatedContext: ICaptureContext = yield call([
-    captureUseCase,
-    captureUseCase.finishCapture,
-  ]);
+  const updatedContext: ICaptureContext = yield call(
+    captureUseCase.finishCapture
+  );
   yield put(didFinishCapture(updatedContext));
 }
 

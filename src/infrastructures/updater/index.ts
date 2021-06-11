@@ -67,8 +67,7 @@ export class AppUpdater {
         () => {
           autoUpdater.autoInstallOnAppQuit = false;
         },
-        () => setImmediate(() => this.uiDirector.quitApplication(true)),
-        (e) => log.error(e)
+        () => setImmediate(() => this.uiDirector.quitApplication(true))
       );
     }
   };

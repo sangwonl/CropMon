@@ -19,7 +19,7 @@ export class PreferencesUseCase {
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
   ) {}
 
-  public async getUserPreferences(): Promise<IPreferences> | never {
+  getUserPreferences = async (): Promise<IPreferences> => {
     const curUserPrefs = this.globalRegistry.getUserPreferences();
     if (curUserPrefs !== undefined) {
       return curUserPrefs;
@@ -31,13 +31,11 @@ export class PreferencesUseCase {
     this.globalRegistry.setUserPreferences(loadedPrefs);
 
     return loadedPrefs;
-  }
+  };
 
-  public async updateUserPreference(
-    prefs: IPreferences
-  ): Promise<void> | never {
+  updateUserPreference = async (prefs: IPreferences): Promise<void> => {
     await this.preferencesStore.savePreferences(prefs);
     this.globalRegistry.setUserPreferences(prefs);
     this.tracker.eventL('prefs', 'update-prefs', JSON.stringify(prefs));
-  }
+  };
 }

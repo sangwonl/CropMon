@@ -22,7 +22,7 @@ import styles from './CaptureArea.css';
 
 interface PropTypes {
   active: boolean;
-  selectedBounds?: IBounds;
+  selectedBounds?: IBounds | undefined;
   onSelectionStart: () => void;
   onSelectionCancel: () => void;
   onSelectionFinish: (bounds: IBounds) => void;

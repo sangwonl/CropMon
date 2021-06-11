@@ -26,7 +26,7 @@ export class CaptureUseCase {
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
   ) {}
 
-  async startCapture(option: ICaptureOption): Promise<ICaptureContext | never> {
+  startCapture = async (option: ICaptureOption): Promise<ICaptureContext> => {
     const ctx = createCaptureContext(option);
     ctx.outputPath = this.getOutputPath();
     this.globalRegistry.setCaptureContext(ctx);
@@ -41,19 +41,19 @@ export class CaptureUseCase {
     }
 
     return ctx;
-  }
+  };
 
-  pauseCapture() {
+  pauseCapture = () => {
     // eslint-disable-next-line no-console
     console.log(this.screenRecorder);
-  }
+  };
 
-  resumeCapture() {
+  resumeCapture = () => {
     // eslint-disable-next-line no-console
     console.log(this.screenRecorder);
-  }
+  };
 
-  async finishCapture(): Promise<ICaptureContext | never> {
+  finishCapture = async (): Promise<ICaptureContext> => {
     const curCtx = this.globalRegistry.getCaptureContext();
     assert(curCtx !== undefined);
 
@@ -70,7 +70,7 @@ export class CaptureUseCase {
     }
 
     return { ...curCtx, status: newStatus };
-  }
+  };
 
   private getOutputPath(): string {
     const userPrefs = this.globalRegistry.getUserPreferences();

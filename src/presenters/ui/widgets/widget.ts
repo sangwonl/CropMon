@@ -1,34 +1,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import log from 'electron-log';
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, NativeImage } from 'electron';
+import { BrowserWindowConstructorOptions } from 'electron/main';
 
 import { setCustomData } from '@utils/remote';
 
 import { WidgetType } from './types';
 
 export interface WidgetOptions {
-  icon?: string;
-  show?: boolean;
-  width?: number;
-  height?: number;
-  frame?: boolean;
-  focusable?: boolean;
-  resizable?: boolean;
-  maximizable?: boolean;
-  minimizable?: boolean;
-  closable?: boolean;
-  skipTaskbar?: boolean;
-  transparent?: boolean;
-  enableLargerThanScreen?: boolean;
-  titleBarStyle?: 'default' | 'hidden' | 'hiddenInset' | 'customButtonsOnHover';
-  options?: any;
+  icon?: NativeImage | string | undefined;
+  show?: boolean | undefined;
+  width?: number | undefined;
+  height?: number | undefined;
+  frame?: boolean | undefined;
+  focusable?: boolean | undefined;
+  resizable?: boolean | undefined;
+  maximizable?: boolean | undefined;
+  minimizable?: boolean | undefined;
+  closable?: boolean | undefined;
+  skipTaskbar?: boolean | undefined;
+  transparent?: boolean | undefined;
+  enableLargerThanScreen?: boolean | undefined;
+  titleBarStyle?:
+    | 'default'
+    | 'hidden'
+    | 'hiddenInset'
+    | 'customButtonsOnHover'
+    | undefined;
+  options?: any | undefined;
 }
 
 export class Widget extends BrowserWindow {
   constructor(type: WidgetType, options?: WidgetOptions) {
-    super({
-      icon: options?.icon,
+    const bwOpts: BrowserWindowConstructorOptions = {
       show: options?.show ?? true,
       width: options?.width ?? 800,
       height: options?.height ?? 600,
@@ -47,7 +51,13 @@ export class Widget extends BrowserWindow {
         enableRemoteModule: true,
         contextIsolation: false,
       },
-    });
+    };
+    if (options?.icon) {
+      bwOpts.icon = options.icon;
+    }
+
+    super(bwOpts);
+
     this.removeMenu();
 
     setCustomData(this, 'type', type);
