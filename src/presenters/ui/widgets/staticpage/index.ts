@@ -20,6 +20,7 @@ export class StaticPagePopup extends Widget {
       icon: assetPathResolver('icon.png'),
       width: options.width,
       height: options.height,
+      resizable: false,
       maximizable: false,
       minimizable: false,
       closable: true,
@@ -27,5 +28,7 @@ export class StaticPagePopup extends Widget {
       options,
     });
     this.options = options;
+
+    this.loadURL(`file://${__dirname}/../staticpage/index.html`);
   }
 }

@@ -62,6 +62,5 @@ export class Widget extends BrowserWindow {
 
     setCustomData(this, 'type', type);
     setCustomData(this, 'options', options?.options);
-    this.loadURL(`file://${__dirname}/../widgets/index.html`);
   }
 }

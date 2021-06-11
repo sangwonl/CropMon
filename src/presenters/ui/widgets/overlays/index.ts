@@ -28,5 +28,7 @@ export class CaptureOverlay extends Widget {
     this.setBounds(emptyBounds());
     // https://github.com/electron/electron/issues/25368
     this.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+
+    this.loadURL(`file://${__dirname}/../overlays/index.html`);
   }
 }

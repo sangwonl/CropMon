@@ -30,6 +30,8 @@ export class ProgressDialog extends Widget {
       options,
     });
     this.options = options;
+
+    this.loadURL(`file://${__dirname}/../progressdialog/index.html`);
   }
 
   setProgress(progress: number) {

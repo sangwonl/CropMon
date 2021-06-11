@@ -1,19 +1,9 @@
-/*
- * @NOTE: Prepend a `~` to css file paths that are in your node_modules
- *        See https://github.com/webpack-contrib/sass-loader#imports
- */
-html body {
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
-}
-
 .mainContainer {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  padding: 28px;
+  padding: 20px;
 }
 
 .itemRow {

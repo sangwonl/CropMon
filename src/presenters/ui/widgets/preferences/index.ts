@@ -24,8 +24,6 @@ export class PreferencesModal extends Widget {
       skipTaskbar: true,
     });
 
-    this.removeMenu();
-
     this.on('close', (_event) => {
       this.forceClose = true;
       store.dispatch(closePreferences());
@@ -34,6 +32,8 @@ export class PreferencesModal extends Widget {
     localShortcut.register(this, 'Escape', () => {
       store.dispatch(closePreferences());
     });
+
+    this.loadURL(`file://${__dirname}/../preferences/index.html`);
   }
 
   close() {
