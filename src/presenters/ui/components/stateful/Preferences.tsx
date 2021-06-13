@@ -6,9 +6,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IPreferences } from '@core/entities/preferences';
 import { RootState } from '@presenters/redux/store';
 import {
-  toggleOpenRecordHomeDir,
   chooseRecordHomeDir,
   closePreferences,
+  setFlagToOpenRecordHomeDir,
 } from '@presenters/redux/ui/slice';
 
 import { BasePreferences } from '../stateless/BasePreferences';
@@ -25,7 +25,9 @@ export const Preferences = () => {
       prefs={prefsState}
       onClose={(shouldSave = false) => dispatch(closePreferences(shouldSave))}
       onChooseRecordHomeDir={() => dispatch(chooseRecordHomeDir())}
-      onToggleOpenRecordHomeDir={() => dispatch(toggleOpenRecordHomeDir())}
+      onToggleOpenRecordHomeDir={(shouldOpen) =>
+        dispatch(setFlagToOpenRecordHomeDir(shouldOpen))
+      }
     />
   );
 };

@@ -1,7 +1,7 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable import/prefer-default-export */
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Grid,
@@ -18,12 +18,16 @@ import styles from './BasePreferences.css';
 export interface BasePreferencesProps {
   prefs: IPreferences;
   onChooseRecordHomeDir: () => void;
-  onToggleOpenRecordHomeDir: () => void;
+  onToggleOpenRecordHomeDir: (shouldOpen: boolean) => void;
   onClose: (shouldSave?: boolean) => void;
 }
 
 export const BasePreferences = (props: BasePreferencesProps) => {
   const { prefs } = props;
+
+  const [openRecordHomeDir, setOpenRecordHomeDir] = useState<boolean>(
+    prefs.openRecordHomeDirWhenRecordCompleted
+  );
 
   return (
     <Grid container className={styles.mainContainer}>
@@ -45,8 +49,12 @@ export const BasePreferences = (props: BasePreferencesProps) => {
             <Checkbox
               color="primary"
               name="open-record-home-when-completed"
-              checked={prefs.openRecordHomeDirWhenRecordCompleted}
-              onChange={props.onToggleOpenRecordHomeDir}
+              checked={openRecordHomeDir}
+              onChange={(event) => {
+                const { checked } = event.target;
+                setOpenRecordHomeDir(checked);
+                props.onToggleOpenRecordHomeDir(checked);
+              }}
             />
           }
           label="Open the folder when recording complete"
