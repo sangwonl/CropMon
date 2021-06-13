@@ -61,10 +61,9 @@ const slice = createSlice({
       state.preferencesModal.preferences.recordHomeDir =
         action.payload.recordHomeDir;
     },
-    toggleOpenRecordHomeDir: (state) => {
-      const { preferences } = state.preferencesModal;
+    setFlagToOpenRecordHomeDir: (state, action: PayloadAction<boolean>) => {
       state.preferencesModal.preferences.openRecordHomeDirWhenRecordCompleted =
-        !preferences.openRecordHomeDirWhenRecordCompleted;
+        action.payload;
     },
     enableAreaSelection: (state) => {},
     didEnableAreaSelection: (
@@ -116,7 +115,7 @@ export const {
   didOpenPreferences,
   closePreferences,
   didClosePreferences,
-  toggleOpenRecordHomeDir,
+  setFlagToOpenRecordHomeDir,
   chooseRecordHomeDir,
   didChooseRecordHomeDir,
   enableAreaSelection,
