@@ -18,17 +18,6 @@ const Template: Story<ProgressDialogProps> = (args) => (
   <ProgressDialog {...args} />
 );
 
-export const BasicState = Template.bind({});
-BasicState.args = {
-  title: 'Basic Progress Dialog',
-  message: 'This is message',
-  buttons: {
-    cancelTitle: 'Cancel',
-    actionTitle: 'Restart',
-    actionHideInProgress: true,
-  },
-};
-
 export const InProgressState = Template.bind({});
 InProgressState.args = {
   title: 'In Progress Dialog',
