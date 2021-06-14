@@ -2,7 +2,9 @@
 
 import { BrowserWindow, NativeImage } from 'electron';
 import { BrowserWindowConstructorOptions } from 'electron/main';
+import localShortcut from 'electron-localshortcut';
 
+import { isDebugMode } from '@utils/process';
 import { setCustomData } from '@utils/remote';
 
 import { WidgetType } from './types';
@@ -62,5 +64,11 @@ export class Widget extends BrowserWindow {
 
     setCustomData(this, 'type', type);
     setCustomData(this, 'options', options?.options);
+
+    if (isDebugMode()) {
+      localShortcut.register(this, 'Ctrl+F12', () => {
+        this.webContents.openDevTools();
+      });
+    }
   }
 }

@@ -20,7 +20,6 @@ import { TYPES } from '@di/types';
 import { IBounds, IScreenInfo } from '@core/entities/screen';
 import { IAnalyticsTracker } from '@core/components/tracker';
 import { assetPathResolver } from '@presenters/common/asset';
-import { Widget } from '@presenters/ui/widgets/widget';
 import { AppTray } from '@presenters/ui/widgets/tray';
 import { CaptureOverlay } from '@presenters/ui/widgets/overlays';
 import { PreferencesModal } from '@presenters/ui/widgets/preferences';
@@ -73,16 +72,6 @@ class CaptureOverlayPool {
     this.widgets?.forEach((w) => {
       w.setIgnoreMouseEvents(true);
       w.blur();
-    });
-  }
-
-  toggleDevTools() {
-    this.widgets?.forEach((w) => {
-      const isOpened = w.webContents.isDevToolsOpened();
-      w.webContents.toggleDevTools();
-      w.setVisibleOnAllWorkspaces(true, {
-        visibleOnFullScreen: isOpened,
-      });
     });
   }
 
@@ -139,11 +128,6 @@ export class UiDirector {
     // WORKAROUND to fix wrong position and bounds at the initial time
     this.captureOverlays.showAll(screenInfos);
     this.captureOverlays.hideAll();
-  }
-
-  toggleDevTools() {
-    this.preferencesModal?.webContents.toggleDevTools();
-    this.captureOverlays.toggleDevTools();
   }
 
   quitApplication(relaunch?: boolean) {

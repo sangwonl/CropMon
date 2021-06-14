@@ -1,13 +1,7 @@
 /* eslint global-require: off, no-console: off */
 /* eslint-disable import/prefer-default-export */
 
-import { globalShortcut } from 'electron';
-
-import { diContainer } from '@di/container';
-import { UiDirector } from '@presenters/interactor/director';
 import { isDebugMode, isProduction } from '@utils/process';
-
-const uiDirector = diContainer.get(UiDirector);
 
 const installDevTools = async () => {
   if (isProduction()) {
@@ -20,10 +14,6 @@ const installDevTools = async () => {
   } else {
     return;
   }
-
-  globalShortcut.register('Super+F12', () => {
-    uiDirector.toggleDevTools();
-  });
 
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;

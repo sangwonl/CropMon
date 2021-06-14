@@ -14,9 +14,7 @@ import { StaticPagePopupOptions } from './shared';
 const options = getCurWidgetCustomData<StaticPagePopupOptions>('options');
 
 const Wrapper = () => (
-  <div style={{ width: '100%', height: '100%' }}>
-    <StaticPage markdown={options.markdown} html={options.html} />
-  </div>
+  <StaticPage markdown={options.markdown} html={options.html} />
 );
 
 export default () => {
