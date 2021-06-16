@@ -23,14 +23,11 @@ import { checkForUpdates, loadPreferences } from '@presenters/redux/ui/slice';
 import { getPlatform } from '@utils/process';
 
 import { initializeDevEnv } from './devenv';
-import { initializeShortcuts } from './shortcut';
 
 const uiDirector = diContainer.get(UiDirector);
 const tracker = diContainer.get<IAnalyticsTracker>(TYPES.AnalyticsTracker);
 
 const initializeApp = async () => {
-  initializeShortcuts();
-
   store.dispatch(loadPreferences());
 
   store.dispatch(checkForUpdates());

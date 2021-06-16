@@ -41,6 +41,7 @@ describe('CaptureUseCase', () => {
       version: '0.0.1',
       recordHomeDir: '/tmp/recordhome',
       openRecordHomeDirWhenRecordCompleted: true,
+      shortcut: 'Super+Shift+E',
     };
     when(mockedGlobalRegistry.getUserPreferences()).thenReturn(mockPrefs);
   });

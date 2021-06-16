@@ -9,6 +9,7 @@ import {
   chooseRecordHomeDir,
   closePreferences,
   setFlagToOpenRecordHomeDir,
+  setShortcut,
 } from '@presenters/redux/ui/slice';
 
 import { BasePreferences } from '../stateless/BasePreferences';
@@ -28,6 +29,7 @@ export const Preferences = () => {
       onToggleOpenRecordHomeDir={(shouldOpen) =>
         dispatch(setFlagToOpenRecordHomeDir(shouldOpen))
       }
+      onChangeShortcut={(shortcut) => dispatch(setShortcut(shortcut))}
     />
   );
 };
