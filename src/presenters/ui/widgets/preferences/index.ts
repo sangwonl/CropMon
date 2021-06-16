@@ -16,7 +16,7 @@ export class PreferencesModal extends Widget {
     super(WidgetType.PREFERENECS_MODAL, {
       icon: assetPathResolver('icon.png'),
       width: 640,
-      height: 250,
+      height: 450,
       frame: true,
       resizable: false,
       minimizable: false,

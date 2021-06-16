@@ -1,8 +1,11 @@
+/* eslint-disable prefer-destructuring */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable require-yield */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
+import { globalShortcut } from 'electron';
 import { PayloadAction } from '@reduxjs/toolkit';
-import { call, put, select, takeLatest, takeLeading } from 'redux-saga/effects';
+import * as Effects from 'redux-saga/effects';
 
 import { diContainer } from '@di/container';
 import { IPreferences } from '@core/entities/preferences';
@@ -11,7 +14,7 @@ import { CaptureStatus, ICaptureContext } from '@core/entities/capture';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { AppUpdater } from '@infrastructures/updater';
 import { UiDirector } from '@presenters/interactor/director';
-import { RootState } from '@presenters/redux/store';
+import store, { RootState } from '@presenters/redux/store';
 import {
   showAbout,
   loadPreferences,
@@ -30,9 +33,14 @@ import {
   enableRecording,
   checkForUpdates,
 } from '@presenters/redux/ui/slice';
+import {
+  didFinishCapture,
+  finishCapture,
+} from '@presenters/redux/capture/slice';
 import { IClosePreferencesPayload } from '@presenters/redux/ui/types';
 
-import { didFinishCapture } from '../capture/slice';
+const { put, select, takeLatest, takeLeading } = Effects;
+const call: any = Effects.call;
 
 const appUpdater = diContainer.get(AppUpdater);
 const uiDirector = diContainer.get(UiDirector);
@@ -46,11 +54,20 @@ function* handleCheckForUpdates(_action: PayloadAction) {
   yield appUpdater.checkForUpdates();
 }
 
+const handleCaptureShortcut = () => {
+  const state: RootState = store.getState();
+  if (state.capture.curCaptureCtx?.status === CaptureStatus.IN_PROGRESS) {
+    store.dispatch(finishCapture());
+  } else {
+    store.dispatch(enableAreaSelection());
+  }
+};
+
 function* handleLoadPreferences(_action: PayloadAction) {
-  const prefs: IPreferences = yield call([
-    prefsUseCase,
-    prefsUseCase.getUserPreferences,
-  ]);
+  const prefs: IPreferences = yield call(prefsUseCase.getUserPreferences);
+
+  globalShortcut.unregisterAll();
+  globalShortcut.register(prefs.shortcut, handleCaptureShortcut);
 
   yield put(
     didLoadPreferences({
@@ -58,6 +75,7 @@ function* handleLoadPreferences(_action: PayloadAction) {
       recordHomeDir: prefs.recordHomeDir || '',
       openRecordHomeDirWhenRecordCompleted:
         prefs.openRecordHomeDirWhenRecordCompleted,
+      shortcut: prefs.shortcut,
     })
   );
 }
@@ -78,7 +96,7 @@ function* handleClosePreferences(
       (state: RootState) => state.ui.preferencesModal.preferences
     );
 
-    yield call([prefsUseCase, prefsUseCase.updateUserPreference], uiPrefs);
+    yield call(prefsUseCase.updateUserPreference, uiPrefs);
 
     yield put(loadPreferences());
   }
@@ -94,7 +112,7 @@ function* handleChooseRecordHomeDir(_action: PayloadAction) {
   );
 
   const dir: string = yield call(
-    [uiDirector, uiDirector.openDialogForRecordHomeDir],
+    uiDirector.openDialogForRecordHomeDir,
     uiPrefs.recordHomeDir
   );
 

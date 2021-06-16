@@ -41,6 +41,7 @@ describe('PreferenceUseCase', () => {
         version: '0.0.1',
         openRecordHomeDirWhenRecordCompleted: true,
         recordHomeDir: '/temp/records',
+        shortcut: 'Super+Shift+E',
       };
 
       when(mockedGlobalRegistry.getUserPreferences()).thenReturn(mockPrefs);
@@ -57,6 +58,7 @@ describe('PreferenceUseCase', () => {
         version: '0.0.1',
         openRecordHomeDirWhenRecordCompleted: true,
         recordHomeDir: '/temp/records',
+        shortcut: 'Super+Shift+E',
       };
 
       when(mockedGlobalRegistry.getUserPreferences()).thenReturn(undefined);
@@ -90,6 +92,7 @@ describe('PreferenceUseCase', () => {
         version: '0.0.1',
         openRecordHomeDirWhenRecordCompleted: true,
         recordHomeDir: '/temp/records',
+        shortcut: 'Super+Shift+E',
       };
 
       await useCase.updateUserPreference(mockPrefs);

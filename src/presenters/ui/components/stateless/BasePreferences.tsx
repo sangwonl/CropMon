@@ -1,9 +1,10 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable import/prefer-default-export */
 
-import React, { useState } from 'react';
+import React, { useState, KeyboardEvent } from 'react';
 
 import {
+  Paper,
   Grid,
   Button,
   Checkbox,
@@ -19,6 +20,7 @@ export interface BasePreferencesProps {
   prefs: IPreferences;
   onChooseRecordHomeDir: () => void;
   onToggleOpenRecordHomeDir: (shouldOpen: boolean) => void;
+  onChangeShortcut: (shortcut: string) => void;
   onClose: (shouldSave?: boolean) => void;
 }
 
@@ -29,37 +31,79 @@ export const BasePreferences = (props: BasePreferencesProps) => {
     prefs.openRecordHomeDirWhenRecordCompleted
   );
 
+  const [shortcutKey, setShortcutKey] = useState<string>(prefs.shortcut);
+
+  const onShortcutHandler = (e: KeyboardEvent<HTMLDivElement>) => {
+    const modifiers = ['Meta', 'Shift', 'Alt', 'Control'];
+    const pressed = [];
+    if (e.metaKey) {
+      pressed.push('Super');
+    }
+    if (e.shiftKey) {
+      pressed.push('Shift');
+    }
+    if (e.altKey) {
+      pressed.push('Alt');
+    }
+    if (e.ctrlKey) {
+      pressed.push('Ctrl');
+    }
+    if (e.key.length > 0 && !modifiers.includes(e.key)) {
+      pressed.push(e.key.toUpperCase());
+    }
+
+    const shortcut = pressed.join('+');
+    setShortcutKey(shortcut);
+    props.onChangeShortcut(shortcut);
+  };
+
   return (
-    <Grid container className={styles.mainContainer}>
-      <Grid container className={styles.itemRow}>
-        <TextField
-          className={styles.itemRecordHome}
-          label="Record files to:"
-          variant="outlined"
-          value={prefs.recordHomeDir}
-          InputProps={{ readOnly: true }}
-        />
-        <Button variant="outlined" onClick={props.onChooseRecordHomeDir}>
-          ...
-        </Button>
-      </Grid>
-      <Grid container className={styles.itemOpenRecordHome}>
-        <FormControlLabel
-          control={
-            <Checkbox
-              color="primary"
-              name="open-record-home-when-completed"
-              checked={openRecordHomeDir}
-              onChange={(event) => {
-                const { checked } = event.target;
-                setOpenRecordHomeDir(checked);
-                props.onToggleOpenRecordHomeDir(checked);
-              }}
-            />
-          }
-          label="Open the folder when recording complete"
-        />
-      </Grid>
+    <>
+      <Paper className={styles.itemContainer}>
+        <p>General</p>
+        <Grid container className={styles.itemRow}>
+          <TextField
+            className={styles.itemRecordHome}
+            label="Record files to:"
+            variant="outlined"
+            value={prefs.recordHomeDir}
+            InputProps={{ readOnly: true }}
+          />
+          <Button variant="outlined" onClick={props.onChooseRecordHomeDir}>
+            ...
+          </Button>
+        </Grid>
+        <Grid container>
+          <FormControlLabel
+            control={
+              <Checkbox
+                color="primary"
+                name="open-record-home-when-completed"
+                checked={openRecordHomeDir}
+                onChange={(event) => {
+                  const { checked } = event.target;
+                  setOpenRecordHomeDir(checked);
+                  props.onToggleOpenRecordHomeDir(checked);
+                }}
+              />
+            }
+            label="Open the folder when recording complete"
+          />
+        </Grid>
+      </Paper>
+      <Paper className={styles.itemContainer}>
+        <p>Shortcut</p>
+        <Grid container className={styles.itemRow}>
+          <TextField
+            className={styles.itemRecordHome}
+            label="Shortcut to start or stop recording:"
+            variant="outlined"
+            value={shortcutKey}
+            onKeyDown={onShortcutHandler}
+            InputProps={{ readOnly: true }}
+          />
+        </Grid>
+      </Paper>
       <Grid container className={styles.buttonRow}>
         <Button
           className={styles.button}
@@ -78,6 +122,6 @@ export const BasePreferences = (props: BasePreferencesProps) => {
           Close
         </Button>
       </Grid>
-    </Grid>
+    </>
   );
 };

@@ -20,6 +20,7 @@ const initialState: IUiState = {
       version: '',
       recordHomeDir: '',
       openRecordHomeDirWhenRecordCompleted: true,
+      shortcut: '',
     },
   },
   captureOverlays: {},
@@ -65,7 +66,10 @@ const slice = createSlice({
       state.preferencesModal.preferences.openRecordHomeDirWhenRecordCompleted =
         action.payload;
     },
-    enableAreaSelection: (state) => {},
+    setShortcut: (state, action: PayloadAction<string>) => {
+      state.preferencesModal.preferences.shortcut = action.payload;
+    },
+    enableAreaSelection: (_state) => {},
     didEnableAreaSelection: (
       state,
       action: PayloadAction<Array<IScreenInfo>>
@@ -116,6 +120,7 @@ export const {
   closePreferences,
   didClosePreferences,
   setFlagToOpenRecordHomeDir,
+  setShortcut,
   chooseRecordHomeDir,
   didChooseRecordHomeDir,
   enableAreaSelection,

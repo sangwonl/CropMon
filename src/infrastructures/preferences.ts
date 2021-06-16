@@ -46,6 +46,7 @@ export class PreferencesStoreImpl implements IPreferencesStore {
     this.store.set('version', prefs.version);
     this.store.set('openRecordHomeDirWhenRecordCompleted', prefs.openRecordHomeDirWhenRecordCompleted);
     this.store.set('recordHomeDir', prefs.recordHomeDir);
+    this.store.set('shortcut', prefs.shortcut);
   }
 
   private initialPreferences(): IPreferences {
@@ -53,6 +54,7 @@ export class PreferencesStoreImpl implements IPreferencesStore {
       version: curVersion,
       openRecordHomeDirWhenRecordCompleted: true,
       recordHomeDir: app.getPath('videos'),
+      shortcut: 'Super+Shift+E',
     };
   }
 
@@ -61,6 +63,7 @@ export class PreferencesStoreImpl implements IPreferencesStore {
       version: this.store.get('version') as string,
       openRecordHomeDirWhenRecordCompleted: this.store.get('openRecordHomeDirWhenRecordCompleted') as boolean,
       recordHomeDir: this.store.get('recordHomeDir') as string,
+      shortcut: this.store.get('shortcut', 'Super+Shift+E') as string,
     };
   }
 }

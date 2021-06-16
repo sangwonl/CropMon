@@ -15,7 +15,7 @@ export default {
 } as Meta;
 
 const Template: Story<BasePreferencesProps> = (args) => (
-  <div style={{ width: 600, height: 300 }}>
+  <div style={{ width: 600, padding: 20, backgroundColor: '#f1f1f1' }}>
     <BasePreferences {...args} />
   </div>
 );
@@ -26,6 +26,7 @@ Default.args = {
     version: '0.0.1',
     recordHomeDir: '/home/pineple/kropsaurus',
     openRecordHomeDirWhenRecordCompleted: true,
+    shortcut: 'Super+Shift+E',
   },
   onChooseRecordHomeDir: () => {},
   onToggleOpenRecordHomeDir: () => {},
