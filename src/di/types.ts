@@ -7,6 +7,7 @@ const TYPES = {
   PreferencesStore: Symbol.for('PreferencesStore'),
   UiDirector: Symbol.for('UiDirector'),
   AnalyticsTracker: Symbol.for('AnalyticsTracker'),
+  HookManager: Symbol.for('HookManager'),
 };
 
 export { TYPES };

@@ -3,16 +3,16 @@
 /* eslint-disable require-yield */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { globalShortcut } from 'electron';
 import { PayloadAction } from '@reduxjs/toolkit';
 import * as Effects from 'redux-saga/effects';
 
+import { TYPES } from '@di/types';
 import { diContainer } from '@di/container';
 import { IPreferences } from '@core/entities/preferences';
 import { IScreenInfo } from '@core/entities/screen';
 import { CaptureStatus, ICaptureContext } from '@core/entities/capture';
 import { PreferencesUseCase } from '@core/usecases/preferences';
-import { AppUpdater } from '@infrastructures/updater';
+import { AppUpdater } from '@presenters/interactor/updater';
 import { UiDirector } from '@presenters/interactor/director';
 import store, { RootState } from '@presenters/redux/store';
 import {
@@ -38,6 +38,8 @@ import {
   finishCapture,
 } from '@presenters/redux/capture/slice';
 import { IClosePreferencesPayload } from '@presenters/redux/ui/types';
+import { IHookManager } from '@core/components/hook';
+import { ShortcutManager } from '@infrastructures/shortcut';
 
 const { put, select, takeLatest, takeLeading } = Effects;
 const call: any = Effects.call;
@@ -45,6 +47,8 @@ const call: any = Effects.call;
 const appUpdater = diContainer.get(AppUpdater);
 const uiDirector = diContainer.get(UiDirector);
 const prefsUseCase = diContainer.get(PreferencesUseCase);
+const shortcutManager = diContainer.get(ShortcutManager);
+const hookManager = diContainer.get<IHookManager>(TYPES.HookManager);
 
 function* handleShowAbout(_action: PayloadAction) {
   uiDirector.openAboutPopup();
@@ -54,20 +58,8 @@ function* handleCheckForUpdates(_action: PayloadAction) {
   yield appUpdater.checkForUpdates();
 }
 
-const handleCaptureShortcut = () => {
-  const state: RootState = store.getState();
-  if (state.capture.curCaptureCtx?.status === CaptureStatus.IN_PROGRESS) {
-    store.dispatch(finishCapture());
-  } else {
-    store.dispatch(enableAreaSelection());
-  }
-};
-
 function* handleLoadPreferences(_action: PayloadAction) {
   const prefs: IPreferences = yield call(prefsUseCase.getUserPreferences);
-
-  globalShortcut.unregisterAll();
-  globalShortcut.register(prefs.shortcut, handleCaptureShortcut);
 
   yield put(
     didLoadPreferences({
@@ -173,6 +165,23 @@ function* sagaEntry() {
   yield takeLatest(enableRecording.type, handleEnableRecording);
   yield takeLatest(didFinishCapture.type, handleDidFinishCapture);
   yield takeLatest(quitApplication.type, handleQuitApplication);
+
+  const handleCaptureShortcut = () => {
+    const state: RootState = store.getState();
+    if (state.capture.curCaptureCtx?.status === CaptureStatus.IN_PROGRESS) {
+      store.dispatch(finishCapture());
+    } else {
+      store.dispatch(enableAreaSelection());
+    }
+  };
+
+  const handlePrefsChanged = async () => {
+    const prefs = await prefsUseCase.getUserPreferences();
+    shortcutManager.register(prefs.shortcut, handleCaptureShortcut);
+  };
+
+  hookManager.on('after-preferences-loaded', handlePrefsChanged);
+  hookManager.on('after-preferences-updated', handlePrefsChanged);
 }
 
 export default sagaEntry;

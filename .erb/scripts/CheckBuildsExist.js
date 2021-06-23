@@ -5,8 +5,8 @@ import fs from 'fs';
 
 const buildPaths = [
   path.join(__dirname, '../../src/dist/main.prod.js'),
-  path.join(__dirname, '../../src/dist/renderer.preferences.prod.js'),
-  path.join(__dirname, '../../src/dist/renderer.overlays.prod.js'),
+  path.join(__dirname, '../../src/dist/renderer.ui.prod.js'),
+  path.join(__dirname, '../../src/dist/renderer.recorder.prod.js'),
 ];
 
 buildPaths.forEach((buildPath) => {

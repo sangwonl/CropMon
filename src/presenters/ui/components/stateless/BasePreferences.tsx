@@ -13,6 +13,7 @@ import {
 } from '@material-ui/core';
 
 import { IPreferences } from '@core/entities/preferences';
+import { capitalize } from '@utils/strings';
 
 import styles from './BasePreferences.css';
 
@@ -49,7 +50,7 @@ export const BasePreferences = (props: BasePreferencesProps) => {
       pressed.push('Ctrl');
     }
     if (e.key.length > 0 && !modifiers.includes(e.key)) {
-      pressed.push(e.key.toUpperCase());
+      pressed.push(capitalize(e.key));
     }
 
     const shortcut = pressed.join('+');

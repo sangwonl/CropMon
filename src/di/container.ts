@@ -9,12 +9,15 @@ import { GlobalRegistry } from '@core/components/registry';
 import { IScreenRecorder } from '@core/components/recorder';
 import { IPreferencesStore } from '@core/components/preferences';
 import { IAnalyticsTracker } from '@core/components/tracker';
+import { IHookManager } from '@core/components/hook';
 import { CaptureUseCase } from '@core/usecases/capture';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { ElectronScreenRecorder } from '@infrastructures/recorder/recorder';
-import { PreferencesStoreImpl } from '@infrastructures/preferences';
+import { PreferencesStore } from '@infrastructures/preferences';
 import { GoogleAnalyticsTracker } from '@infrastructures/ga-tracker';
-import { AppUpdater } from '@infrastructures/updater';
+import { HookManager } from '@infrastructures/hook';
+import { ShortcutManager } from '@infrastructures/shortcut';
+import { AppUpdater } from '@presenters/interactor/updater';
 import { UiDirector } from '@presenters/interactor/director';
 
 import { TYPES } from './types';
@@ -33,7 +36,7 @@ diContainer
 
 diContainer
   .bind<IPreferencesStore>(TYPES.PreferencesStore)
-  .to(PreferencesStoreImpl)
+  .to(PreferencesStore)
   .inSingletonScope();
 
 diContainer
@@ -59,6 +62,16 @@ diContainer
 diContainer
   .bind<IAnalyticsTracker>(TYPES.AnalyticsTracker)
   .to(GoogleAnalyticsTracker)
+  .inSingletonScope();
+
+diContainer
+  .bind<IHookManager>(TYPES.HookManager)
+  .to(HookManager)
+  .inSingletonScope();
+
+diContainer
+  .bind<ShortcutManager>(ShortcutManager)
+  .toSelf()
   .inSingletonScope();
 
 export { diContainer };
