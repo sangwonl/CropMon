@@ -16,7 +16,7 @@ import { getPlatform } from '@utils/process';
 import { version as curVersion } from '../package.json';
 
 @injectable()
-export class PreferencesStoreImpl implements IPreferencesStore {
+export class PreferencesStore implements IPreferencesStore {
   store!: Store;
 
   constructor(

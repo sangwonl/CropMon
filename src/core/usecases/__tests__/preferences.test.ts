@@ -10,6 +10,7 @@ import { GlobalRegistry } from '@core/components/registry';
 import { IPreferencesStore } from '@core/components/preferences';
 import { IAnalyticsTracker } from '@core/components/tracker';
 import { PreferencesUseCase } from '@core/usecases/preferences';
+import { IHookManager } from '@core/components/hook';
 
 describe('PreferenceUseCase', () => {
   let mockedGlobalRegistry: GlobalRegistry;
@@ -21,18 +22,28 @@ describe('PreferenceUseCase', () => {
   let mockedAnalyticsTracker: IAnalyticsTracker;
   let mockTracker: IAnalyticsTracker;
 
+  let mockedHookManager: IHookManager;
+  let mockHookMgr: IHookManager;
+
   let useCase: PreferencesUseCase;
 
   beforeEach(() => {
     mockedGlobalRegistry = mock(GlobalRegistry);
     mockedPreferencesStore = mock<IPreferencesStore>();
     mockedAnalyticsTracker = mock<IAnalyticsTracker>();
+    mockedHookManager = mock<IHookManager>();
 
     mockRegistry = instance(mockedGlobalRegistry);
     mockPrefsStore = instance(mockedPreferencesStore);
     mockTracker = instance(mockedAnalyticsTracker);
+    mockHookMgr = instance(mockedHookManager);
 
-    useCase = new PreferencesUseCase(mockRegistry, mockPrefsStore, mockTracker);
+    useCase = new PreferencesUseCase(
+      mockRegistry,
+      mockPrefsStore,
+      mockTracker,
+      mockHookMgr
+    );
   });
 
   describe('getUserPreferences', () => {

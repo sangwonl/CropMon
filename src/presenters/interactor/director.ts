@@ -10,11 +10,10 @@
 
 import 'reflect-metadata';
 
-import log from 'electron-log';
-
 import fs from 'fs';
-import { app, shell, dialog, screen, nativeImage } from 'electron';
 import { inject, injectable } from 'inversify';
+import { app, shell, dialog, screen, nativeImage } from 'electron';
+import log from 'electron-log';
 
 import { TYPES } from '@di/types';
 import { IBounds, IScreenInfo } from '@core/entities/screen';
