@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core';
 
 import { IPreferences } from '@core/entities/preferences';
-import { capitalize } from '@utils/strings';
+import { textifyShortcut } from '@utils/shortcut';
 
 import styles from './BasePreferences.css';
 
@@ -35,25 +35,7 @@ export const BasePreferences = (props: BasePreferencesProps) => {
   const [shortcutKey, setShortcutKey] = useState<string>(prefs.shortcut);
 
   const onShortcutHandler = (e: KeyboardEvent<HTMLDivElement>) => {
-    const modifiers = ['Meta', 'Shift', 'Alt', 'Control'];
-    const pressed = [];
-    if (e.metaKey) {
-      pressed.push('Super');
-    }
-    if (e.shiftKey) {
-      pressed.push('Shift');
-    }
-    if (e.altKey) {
-      pressed.push('Alt');
-    }
-    if (e.ctrlKey) {
-      pressed.push('Ctrl');
-    }
-    if (e.key.length > 0 && !modifiers.includes(e.key)) {
-      pressed.push(capitalize(e.key));
-    }
-
-    const shortcut = pressed.join('+');
+    const shortcut = textifyShortcut(e);
     setShortcutKey(shortcut);
     props.onChangeShortcut(shortcut);
   };
