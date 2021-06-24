@@ -18,6 +18,7 @@ import log from 'electron-log';
 import { TYPES } from '@di/types';
 import { IBounds, IScreenInfo } from '@core/entities/screen';
 import { IAnalyticsTracker } from '@core/components/tracker';
+import { GlobalRegistry } from '@core/components/registry';
 import { assetPathResolver } from '@presenters/common/asset';
 import { AppTray } from '@presenters/ui/widgets/tray';
 import { CaptureOverlay } from '@presenters/ui/widgets/overlays';
@@ -26,6 +27,7 @@ import { ProgressDialog } from '@presenters/ui/widgets/progressdialog';
 import { StaticPagePopup } from '@presenters/ui/widgets/staticpage';
 import { setCustomData } from '@utils/remote';
 import { SPARE_PIXELS } from '@utils/bounds';
+import { iconizeShortcut, INITIAL_SHORTCUT } from '@utils/shortcut';
 import { isMac } from '@utils/process';
 
 import { version as curVersion } from '../../package.json';
@@ -111,22 +113,26 @@ export class UiDirector {
   private updateProgressDialog: ProgressDialog | undefined;
 
   constructor(
+    private globalRegistry: GlobalRegistry,
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
   ) {}
 
   intialize() {
-    const screenInfos = this.populateScreenInfos();
-
     const trayIconPath = assetPathResolver('icon.png');
     this.appTray = isMac()
-      ? AppTray.forMac(trayIconPath)
-      : AppTray.forWindows(trayIconPath);
+      ? AppTray.forMac(trayIconPath, this.globalRegistry)
+      : AppTray.forWindows(trayIconPath, this.globalRegistry);
 
+    const screenInfos = this.populateScreenInfos();
     this.captureOverlays = new CaptureOverlayPool(screenInfos);
 
     // WORKAROUND to fix wrong position and bounds at the initial time
     this.captureOverlays.showAll(screenInfos);
     this.captureOverlays.hideAll();
+  }
+
+  refreshAppTrayState() {
+    this.appTray.refreshContextMenu();
   }
 
   quitApplication(relaunch?: boolean) {
@@ -138,9 +144,12 @@ export class UiDirector {
   }
 
   async openAboutPopup() {
+    const prefs = this.globalRegistry.getUserPreferences();
+    const shortcut = prefs?.shortcut ?? INITIAL_SHORTCUT;
+
     const aboutHtmlPath = assetPathResolver('about.html');
     const content = (await fs.promises.readFile(aboutHtmlPath, 'utf-8'))
-      .replace('__shortcut__', isMac() ? '⌘ + ⇧ + 9' : '❖ + ⇧ + E')
+      .replace('__shortcut__', iconizeShortcut(shortcut))
       .replace('__version__', curVersion);
 
     const staticPopup = new StaticPagePopup({

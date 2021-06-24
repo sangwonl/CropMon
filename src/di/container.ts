@@ -16,7 +16,6 @@ import { ElectronScreenRecorder } from '@infrastructures/recorder/recorder';
 import { PreferencesStore } from '@infrastructures/preferences';
 import { GoogleAnalyticsTracker } from '@infrastructures/ga-tracker';
 import { HookManager } from '@infrastructures/hook';
-import { ShortcutManager } from '@infrastructures/shortcut';
 import { AppUpdater } from '@presenters/interactor/updater';
 import { UiDirector } from '@presenters/interactor/director';
 
@@ -67,11 +66,6 @@ diContainer
 diContainer
   .bind<IHookManager>(TYPES.HookManager)
   .to(HookManager)
-  .inSingletonScope();
-
-diContainer
-  .bind<ShortcutManager>(ShortcutManager)
-  .toSelf()
   .inSingletonScope();
 
 export { diContainer };
