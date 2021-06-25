@@ -16,8 +16,6 @@ import {
   MenuItemConstructorOptions,
 } from 'electron';
 
-import { StateManager } from '@core/interfaces/state';
-import { CaptureStatus } from '@core/entities/capture';
 import store from '@ui/redux/store';
 import {
   enableCaptureMode,
@@ -27,18 +25,15 @@ import {
   quitApplication,
   showAbout,
 } from '@ui/redux/slice';
-import { iconizeShortcut, INITIAL_SHORTCUT } from '@utils/shortcut';
 
 export abstract class AppTray {
   tray: Tray;
 
-  constructor(trayImage: NativeImage, protected stateManager: StateManager) {
+  constructor(trayImage: NativeImage) {
     this.tray = new Tray(trayImage);
-
-    this.refreshContextMenu();
   }
 
-  protected abstract buildContextMenuTempl(): Array<
+  protected abstract buildMenuTempl(): Array<
     MenuItemConstructorOptions | MenuItem
   >;
 
@@ -66,50 +61,38 @@ export abstract class AppTray {
     store.dispatch(quitApplication());
   }
 
-  protected getShortcut(): string {
-    const prefs = this.stateManager.getUserPreferences();
-    return iconizeShortcut(prefs?.shortcut ?? INITIAL_SHORTCUT);
-  }
-
   private getMenuItemTemplById(contextMenuTempl: any, id: string): any {
     return contextMenuTempl.find((m: any) => m.id === id)!;
   }
 
-  refreshContextMenu() {
-    const templ = this.buildContextMenuTempl();
+  async refreshContextMenu(isRecording: boolean, shortcut: string) {
+    const templ = this.buildMenuTempl();
 
     const menuStartCapt = this.getMenuItemTemplById(templ, 'start-capture');
-    const menuStopCapt = this.getMenuItemTemplById(templ, 'stop-capture');
-
-    const shortcut = this.getShortcut();
     menuStartCapt.label = menuStartCapt.label.replace('__shortcut__', shortcut);
-    menuStopCapt.label = menuStopCapt.label.replace('__shortcut__', shortcut);
-
-    const captCtx = this.stateManager.getCaptureContext();
-    const isRecording = captCtx?.status === CaptureStatus.IN_PROGRESS;
     menuStartCapt.visible = !isRecording;
+
+    const menuStopCapt = this.getMenuItemTemplById(templ, 'stop-capture');
+    menuStopCapt.label = menuStopCapt.label.replace('__shortcut__', shortcut);
     menuStopCapt.visible = isRecording;
 
     this.tray.setContextMenu(Menu.buildFromTemplate(templ));
   }
 
-  static forWindows(iconPath: string, stateManager: StateManager): AppTray {
-    return new WinAppTray(nativeImage.createFromPath(iconPath), stateManager);
+  static forWindows(iconPath: string): AppTray {
+    return new WinAppTray(nativeImage.createFromPath(iconPath));
   }
 
-  static forMac(iconPath: string, stateManager: StateManager): AppTray {
-    const trayImage = nativeImage
-      .createFromPath(iconPath)
-      .resize({ width: 16, height: 16 });
-    return new MacAppTray(trayImage, stateManager);
+  static forMac(iconPath: string): AppTray {
+    return new MacAppTray(
+      nativeImage.createFromPath(iconPath).resize({ width: 16, height: 16 })
+    );
   }
 }
 
 class WinAppTray extends AppTray {
   // eslint-disable-next-line class-methods-use-this
-  protected buildContextMenuTempl(): Array<
-    MenuItemConstructorOptions | MenuItem
-  > {
+  protected buildMenuTempl(): Array<MenuItemConstructorOptions | MenuItem> {
     return [
       {
         label: 'Check for &Updates',
@@ -153,9 +136,7 @@ class WinAppTray extends AppTray {
 
 class MacAppTray extends AppTray {
   // eslint-disable-next-line class-methods-use-this
-  protected buildContextMenuTempl(): Array<
-    MenuItemConstructorOptions | MenuItem
-  > {
+  protected buildMenuTempl(): Array<MenuItemConstructorOptions | MenuItem> {
     return [
       {
         label: 'Check for Updates',

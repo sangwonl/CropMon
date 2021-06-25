@@ -17,9 +17,9 @@ import log from 'electron-log';
 
 import { TYPES } from '@di/types';
 import { IBounds, IScreenInfo } from '@core/entities/screen';
+import { IPreferences } from '@core/entities/preferences';
 import { IUiDirector } from '@core/interfaces/director';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
-import { StateManager } from '@core/interfaces/state';
 import { assetPathResolver } from '@utils/asset';
 import { AppTray } from '@ui/widgets/tray';
 import { CaptureOverlay } from '@ui/widgets/overlays';
@@ -28,7 +28,7 @@ import { ProgressDialog } from '@ui/widgets/progressdialog';
 import { StaticPagePopup } from '@ui/widgets/staticpage';
 import { setCustomData } from '@utils/remote';
 import { SPARE_PIXELS } from '@utils/bounds';
-import { iconizeShortcut, INITIAL_SHORTCUT } from '@utils/shortcut';
+import { iconizeShortcut } from '@utils/shortcut';
 import { isMac } from '@utils/process';
 
 import { version as curVersion } from '../package.json';
@@ -114,15 +114,15 @@ export class UiDirector implements IUiDirector {
   private updateProgressDialog: ProgressDialog | undefined;
 
   constructor(
-    private stateManager: StateManager,
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
   ) {}
 
-  intialize(): void {
+  initialize(prefs: IPreferences): void {
     const trayIconPath = assetPathResolver('icon.png');
     this.appTray = isMac()
-      ? AppTray.forMac(trayIconPath, this.stateManager)
-      : AppTray.forWindows(trayIconPath, this.stateManager);
+      ? AppTray.forMac(trayIconPath)
+      : AppTray.forWindows(trayIconPath);
+    this.refreshTrayState(prefs, false);
 
     const screenInfos = this.populateScreenInfos();
     this.captureOverlays = new CaptureOverlayPool(screenInfos);
@@ -132,8 +132,14 @@ export class UiDirector implements IUiDirector {
     this.captureOverlays.hideAll();
   }
 
-  refreshAppTrayState(): void {
-    this.appTray.refreshContextMenu();
+  async refreshTrayState(
+    prefs: IPreferences,
+    recording: boolean
+  ): Promise<void> {
+    await this.appTray.refreshContextMenu(
+      recording,
+      iconizeShortcut(prefs.shortcut)
+    );
   }
 
   quitApplication(relaunch?: boolean): void {
@@ -144,13 +150,10 @@ export class UiDirector implements IUiDirector {
     this.tracker.event('app-lifecycle', 'quit');
   }
 
-  async openAboutPopup(): Promise<void> {
-    const prefs = this.stateManager.getUserPreferences();
-    const shortcut = prefs?.shortcut ?? INITIAL_SHORTCUT;
-
+  async openAboutPopup(prefs: IPreferences): Promise<void> {
     const aboutHtmlPath = assetPathResolver('about.html');
     const content = (await fs.promises.readFile(aboutHtmlPath, 'utf-8'))
-      .replace('__shortcut__', iconizeShortcut(shortcut))
+      .replace('__shortcut__', iconizeShortcut(prefs.shortcut))
       .replace('__version__', curVersion);
 
     const staticPopup = new StaticPagePopup({

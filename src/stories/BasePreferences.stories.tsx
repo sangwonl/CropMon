@@ -24,9 +24,9 @@ export const Default = Template.bind({});
 Default.args = {
   prefs: {
     version: '0.0.1',
-    recordHomeDir: '/home/pineple/kropsaurus',
+    recordHome: '/home/pineple/kropsaurus',
     openRecordHomeWhenRecordCompleted: true,
-    shortcut: 'Super+Shift+E',
+    shortcut: 'Win + Shift + E',
   },
   onChooseRecordHomeDir: () => {},
   onToggleOpenRecordHomeDir: () => {},

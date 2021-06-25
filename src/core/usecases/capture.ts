@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/prefer-default-export */
 
@@ -13,6 +14,7 @@ import {
   CaptureStatus,
   ICaptureOption,
   createCaptureContext,
+  ICaptureContext,
 } from '@core/entities/capture';
 import { StateManager } from '@core/interfaces/state';
 import { IScreenRecorder } from '@core/interfaces/recorder';
@@ -21,16 +23,25 @@ import { IAnalyticsTracker } from '@core/interfaces/tracker';
 import { ICaptureOverlays, IUiState } from '@core/entities/ui';
 import { IBounds, IScreenInfo } from '@core/entities/screen';
 
+import { PreferencesUseCase } from './preferences';
+
 @injectable()
 export class CaptureUseCase {
+  private lastCaptureCtx: ICaptureContext | undefined;
+
   constructor(
+    private prefsUseCase: PreferencesUseCase,
     private stateManager: StateManager,
     @inject(TYPES.ScreenRecorder) private screenRecorder: IScreenRecorder,
     @inject(TYPES.UiDirector) private uiDirector: IUiDirector,
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
   ) {}
 
-  enableCaptureSelection = () => {
+  curCaptureContext(): ICaptureContext | undefined {
+    return this.lastCaptureCtx;
+  }
+
+  enableCaptureSelection() {
     const screenInfos = this.uiDirector.enableCaptureSelectionMode();
     const captureOverlays: ICaptureOverlays = {};
     screenInfos.forEach((si: IScreenInfo) => {
@@ -48,9 +59,9 @@ export class CaptureUseCase {
         captureOverlays,
       };
     });
-  };
+  }
 
-  disableCaptureSelection = () => {
+  disableCaptureSelection() {
     this.uiDirector.disableCaptureSelectionMode();
 
     this.stateManager.updateUiState((state: IUiState): IUiState => {
@@ -72,9 +83,9 @@ export class CaptureUseCase {
         captureOverlays,
       };
     });
-  };
+  }
 
-  startAreaSelection = (screenId: number) => {
+  startAreaSelection(screenId: number) {
     this.stateManager.updateUiState((state: IUiState): IUiState => {
       return {
         ...state,
@@ -85,9 +96,9 @@ export class CaptureUseCase {
         },
       };
     });
-  };
+  }
 
-  finishAreaSelection = (bounds: IBounds) => {
+  finishAreaSelection(bounds: IBounds) {
     this.stateManager.updateUiState((state: IUiState): IUiState => {
       return {
         ...state,
@@ -97,46 +108,39 @@ export class CaptureUseCase {
         },
       };
     });
-  };
+  }
 
-  startCapture = async (option: ICaptureOption): Promise<void> => {
-    const ctx = createCaptureContext(option);
-    ctx.outputPath = this.getOutputPath();
+  async startCapture(option: ICaptureOption): Promise<void> {
+    const newCtx = createCaptureContext(option);
+
+    const prefs = await this.prefsUseCase.fetchUserPreferences();
+    newCtx.outputPath = await this.getOutputPath(prefs.recordHome);
 
     try {
-      await this.screenRecorder.record(ctx);
-      ctx.status = CaptureStatus.IN_PROGRESS;
+      await this.screenRecorder.record(newCtx);
+      newCtx.status = CaptureStatus.IN_PROGRESS;
       this.tracker.eventL('capture', 'start-capture', 'success');
     } catch (e) {
-      ctx.status = CaptureStatus.ERROR;
+      newCtx.status = CaptureStatus.ERROR;
       this.tracker.eventL('capture', 'start-capture', 'fail');
     }
 
-    this.stateManager.setCaptureContext(ctx);
+    this.lastCaptureCtx = newCtx;
 
-    if (ctx.status === CaptureStatus.IN_PROGRESS) {
+    const isRecording = newCtx.status === CaptureStatus.IN_PROGRESS;
+    if (isRecording) {
       this.uiDirector.enableRecordingMode();
     } else {
       this.uiDirector.disableCaptureSelectionMode();
     }
 
-    this.uiDirector.refreshAppTrayState();
-  };
+    await this.uiDirector.refreshTrayState(prefs, isRecording);
+  }
 
-  pauseCapture = () => {
-    // eslint-disable-next-line no-console
-    console.log(this.screenRecorder);
-  };
-
-  resumeCapture = () => {
-    // eslint-disable-next-line no-console
-    console.log(this.screenRecorder);
-  };
-
-  finishCapture = async (): Promise<void> => {
+  async finishCapture(): Promise<void> {
     this.uiDirector.disableCaptureSelectionMode();
 
-    const curCtx = this.stateManager.getCaptureContext();
+    const curCtx = this.lastCaptureCtx;
     assert(curCtx !== undefined);
 
     let newStatus = curCtx.status;
@@ -152,25 +156,22 @@ export class CaptureUseCase {
     }
 
     const newCtx = { ...curCtx, status: newStatus };
-    this.stateManager.setCaptureContext(newCtx);
+    this.lastCaptureCtx = newCtx;
 
-    const prefs = this.stateManager.getUserPreferences();
+    const prefs = await this.prefsUseCase.fetchUserPreferences();
     if (
       newCtx.outputPath &&
       newCtx.status === CaptureStatus.FINISHED &&
-      prefs?.openRecordHomeWhenRecordCompleted
+      prefs.openRecordHomeWhenRecordCompleted
     ) {
       this.uiDirector.showItemInFolder(newCtx.outputPath);
     }
 
-    this.uiDirector.refreshAppTrayState();
-  };
+    await this.uiDirector.refreshTrayState(prefs, false);
+  }
 
-  private getOutputPath(): string {
-    const userPrefs = this.stateManager.getUserPreferences();
+  private getOutputPath(recordHome: string): string {
     const fileName = dayjs().format('YYYYMMDDHHmmss');
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return path.join(userPrefs!.recordHomeDir, `${fileName}.mp4`);
-    // return path.join(userPrefs!.recordHomeDir, `${fileName}.webm`);
+    return path.join(recordHome, `${fileName}.mp4`);
   }
 }

@@ -18,25 +18,25 @@ import { TYPES } from '@di/types';
 import { diContainer } from '@di/container';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
 import { IUiDirector } from '@core/interfaces/director';
-import { checkForUpdates, loadPreferences } from '@ui/redux/slice';
+import { PreferencesUseCase } from '@core/usecases/preferences';
+import { checkForUpdates } from '@ui/redux/slice';
 import { getPlatform } from '@utils/process';
 
 import store, { initializeSaga } from './store-main';
 import { initializeDevEnv } from './devenv';
 
+const prefsUseCase = diContainer.get(PreferencesUseCase);
 const uiDirector = diContainer.get<IUiDirector>(TYPES.UiDirector);
 const tracker = diContainer.get<IAnalyticsTracker>(TYPES.AnalyticsTracker);
 
 const initializeApp = () => {
-  store.dispatch(loadPreferences());
-
   store.dispatch(checkForUpdates());
 
   app.on('will-quit', () => {});
 };
 
-const initializeWidgets = () => {
-  uiDirector.intialize();
+const initializeWidgets = async () => {
+  uiDirector.initialize(await prefsUseCase.fetchUserPreferences());
 };
 
 const start = async () => {
@@ -46,10 +46,9 @@ const start = async () => {
 
   initializeApp();
 
-  initializeWidgets();
+  await initializeWidgets();
 
   tracker.eventL('app-lifecycle', 'launch', getPlatform());
-
   tracker.view('idle');
 };
 

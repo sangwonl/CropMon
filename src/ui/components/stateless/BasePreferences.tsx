@@ -49,7 +49,7 @@ export const BasePreferences = (props: BasePreferencesProps) => {
             className={styles.itemRecordHome}
             label="Record files to:"
             variant="outlined"
-            value={prefs.recordHomeDir}
+            value={prefs.recordHome}
             InputProps={{ readOnly: true }}
           />
           <Button variant="outlined" onClick={props.onChooseRecordHomeDir}>

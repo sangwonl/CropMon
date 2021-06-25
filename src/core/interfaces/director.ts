@@ -1,12 +1,13 @@
 import 'reflect-metadata';
 
 import { IScreenInfo } from '@core/entities/screen';
+import { IPreferences } from '@core/entities/preferences';
 
 export interface IUiDirector {
-  intialize(): void;
-  refreshAppTrayState(): void;
+  initialize(prefs: IPreferences): void;
+  refreshTrayState(prefs: IPreferences, recording: boolean): Promise<void>;
   quitApplication(relaunch?: boolean): void;
-  openAboutPopup(): Promise<void>;
+  openAboutPopup(prefs: IPreferences): Promise<void>;
   openReleaseNotes(): Promise<void>;
   openPreferencesModal(): void;
   closePreferencesModal(): void;

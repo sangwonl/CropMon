@@ -18,7 +18,7 @@ describe('Preferences', () => {
           show: false,
           preferences: {
             version: '0.0.1',
-            recordHomeDir: '/temp/record',
+            recordHome: '/temp/record',
             openRecordHomeWhenRecordCompleted: true,
             shortcut: 'Super+Shift+E',
           },
