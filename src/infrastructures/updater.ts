@@ -23,7 +23,7 @@ if (!isProduction()) {
 import { autoUpdater } from 'electron-updater';
 
 import { TYPES } from '@di/types';
-import { IUiDirector } from '@core/interfaces/ui';
+import { IUiDirector } from '@core/interfaces/director';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 
 @injectable()

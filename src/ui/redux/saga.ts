@@ -9,11 +9,11 @@ import * as Effects from 'redux-saga/effects';
 import { TYPES } from '@di/types';
 import { diContainer } from '@di/container';
 import { IPreferences } from '@core/entities/preferences';
-import { IScreenInfo } from '@core/entities/screen';
-import { CaptureStatus, ICaptureContext } from '@core/entities/capture';
+import { CaptureStatus } from '@core/entities/capture';
+import { IFinishAreaSelection, IStartAreaSelection } from '@core/entities/ui';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { IHookManager } from '@core/interfaces/hook';
-import { IUiDirector } from '@core/interfaces/ui';
+import { IUiDirector } from '@core/interfaces/director';
 import { StateManager } from '@core/interfaces/state';
 import { AppUpdater } from '@infrastructures/updater';
 import { ActionDispatcher } from '@adapters/action';
@@ -21,6 +21,12 @@ import { INITIAL_SHORTCUT, registerShortcut } from '@utils/shortcut';
 
 import { RootState } from './store';
 import {
+  enableCaptureMode,
+  disableCaptureMode,
+  startAreaSelection,
+  finishAreaSelection,
+  startCapture,
+  finishCapture,
   showAbout,
   loadPreferences,
   didLoadPreferences,
@@ -31,15 +37,7 @@ import {
   quitApplication,
   chooseRecordHomeDir,
   didChooseRecordHomeDir,
-  enableAreaSelection,
-  didEnableAreaSelection,
-  disableAreaSelection,
-  didDisableAreaSelection,
-  enableRecording,
   checkForUpdates,
-  didFinishCapture,
-  finishCapture,
-  startCapture,
 } from './slice';
 import { IStartCapturePayload, IClosePreferencesPayload } from './types';
 
@@ -68,8 +66,8 @@ function* handleLoadPreferences(_action: PayloadAction) {
     didLoadPreferences({
       version: prefs.version,
       recordHomeDir: prefs.recordHomeDir || '',
-      openRecordHomeDirWhenRecordCompleted:
-        prefs.openRecordHomeDirWhenRecordCompleted,
+      openRecordHomeWhenRecordCompleted:
+        prefs.openRecordHomeWhenRecordCompleted,
       shortcut: prefs.shortcut,
     })
   );
@@ -117,45 +115,6 @@ function* handleChooseRecordHomeDir(_action: PayloadAction) {
   }
 }
 
-function* handleEnableAreaSelection(_action: PayloadAction) {
-  const screenInfos: Array<IScreenInfo> =
-    uiDirector.enableCaptureSelectionMode();
-
-  yield put(
-    didEnableAreaSelection(
-      screenInfos.map((s): IScreenInfo => ({ id: s.id, bounds: s.bounds }))
-    )
-  );
-}
-
-function* handleDisableAreaSelection(_action: PayloadAction) {
-  uiDirector.disableCaptureSelectionMode();
-
-  yield put(didDisableAreaSelection());
-}
-
-function* handleDidFinishCapture(action: PayloadAction<ICaptureContext>) {
-  const captureCtx: ICaptureContext = action.payload;
-  const uiPrefs: IPreferences = yield select(
-    (state: RootState) => state.ui.preferencesModal.preferences
-  );
-
-  if (
-    captureCtx.outputPath &&
-    captureCtx.status === CaptureStatus.FINISHED &&
-    uiPrefs.openRecordHomeDirWhenRecordCompleted
-  ) {
-    uiDirector.showItemInFolder(captureCtx.outputPath);
-  }
-
-  uiDirector.refreshAppTrayState();
-}
-
-function handleEnableRecording(_action: PayloadAction) {
-  uiDirector.enableRecordingMode();
-  uiDirector.refreshAppTrayState();
-}
-
 function handleQuitApplication(_action: PayloadAction) {
   uiDirector.quitApplication();
 }
@@ -165,7 +124,7 @@ const handleCaptureShortcut = () => {
   if (captCtx?.status === CaptureStatus.IN_PROGRESS) {
     actionDispatcher.finishCapture();
   } else {
-    uiDirector.enableCaptureSelectionMode();
+    actionDispatcher.enableCaptureSelection();
   }
 };
 
@@ -175,28 +134,47 @@ const handlePrefsChanged = () => {
   registerShortcut(shortcut, handleCaptureShortcut);
 };
 
+function handleEnableCaptureSelection() {
+  actionDispatcher.enableCaptureSelection();
+}
+
+function handleDisableCaptureSelection() {
+  actionDispatcher.disableCaptureSelection();
+}
+
+function handleStartAreaSelection(action: PayloadAction<IStartAreaSelection>) {
+  actionDispatcher.startAreaSelection(action.payload.screenId);
+}
+
+function handleFinishAreaSelection(
+  action: PayloadAction<IFinishAreaSelection>
+) {
+  actionDispatcher.finishAreaSelection(action.payload.bounds);
+}
+
 function handleStartCapture(action: PayloadAction<IStartCapturePayload>) {
   actionDispatcher.startCapture(action.payload.screenId, action.payload.bounds);
 }
 
-function handleFinishCapture(_action: PayloadAction) {
+function handleFinishCapture() {
   actionDispatcher.finishCapture();
 }
 
 function* sagaEntry() {
+  yield takeLatest(enableCaptureMode.type, handleEnableCaptureSelection);
+  yield takeLatest(disableCaptureMode.type, handleDisableCaptureSelection);
+  yield takeLatest(startAreaSelection.type, handleStartAreaSelection);
+  yield takeLatest(finishAreaSelection.type, handleFinishAreaSelection);
+  yield takeLatest(startCapture.type, handleStartCapture);
+  yield takeLatest(finishCapture.type, handleFinishCapture);
+
   yield takeLeading(loadPreferences.type, handleLoadPreferences);
   yield takeLatest(showAbout.type, handleShowAbout);
   yield takeLatest(checkForUpdates.type, handleCheckForUpdates);
   yield takeLatest(openPreferences.type, handleOpenPreferences);
   yield takeLatest(closePreferences.type, handleClosePreferences);
   yield takeLatest(chooseRecordHomeDir.type, handleChooseRecordHomeDir);
-  yield takeLatest(enableAreaSelection.type, handleEnableAreaSelection);
-  yield takeLatest(disableAreaSelection.type, handleDisableAreaSelection);
-  yield takeLatest(enableRecording.type, handleEnableRecording);
-  yield takeLatest(didFinishCapture.type, handleDidFinishCapture);
   yield takeLatest(quitApplication.type, handleQuitApplication);
-  yield takeLatest(startCapture.type, handleStartCapture);
-  yield takeLatest(finishCapture.type, handleFinishCapture);
 
   hookManager.on('after-preferences-loaded', handlePrefsChanged);
   hookManager.on('after-preferences-updated', handlePrefsChanged);

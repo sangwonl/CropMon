@@ -50,7 +50,7 @@ describe('PreferenceUseCase', () => {
     it('should return preferences if it exists in registry', async () => {
       const mockPrefs: IPreferences = {
         version: '0.0.1',
-        openRecordHomeDirWhenRecordCompleted: true,
+        openRecordHomeWhenRecordCompleted: true,
         recordHomeDir: '/temp/records',
         shortcut: 'Super+Shift+E',
       };
@@ -59,7 +59,7 @@ describe('PreferenceUseCase', () => {
 
       const userPrefs = await useCase.getUserPreferences();
       expect(userPrefs.recordHomeDir).toEqual(mockPrefs.recordHomeDir);
-      expect(userPrefs.openRecordHomeDirWhenRecordCompleted).toBeTruthy();
+      expect(userPrefs.openRecordHomeWhenRecordCompleted).toBeTruthy();
       verify(mockedGlobalRegistry.getUserPreferences()).once();
       verify(mockedPreferencesStore.loadPreferences()).never();
     });
@@ -67,7 +67,7 @@ describe('PreferenceUseCase', () => {
     it('should try to load preferences from persistent app data', async () => {
       const mockPrefs: IPreferences = {
         version: '0.0.1',
-        openRecordHomeDirWhenRecordCompleted: true,
+        openRecordHomeWhenRecordCompleted: true,
         recordHomeDir: '/temp/records',
         shortcut: 'Super+Shift+E',
       };
@@ -79,7 +79,7 @@ describe('PreferenceUseCase', () => {
 
       const userPrefs = await useCase.getUserPreferences();
       expect(userPrefs.recordHomeDir).toEqual(mockPrefs.recordHomeDir);
-      expect(userPrefs.openRecordHomeDirWhenRecordCompleted).toBeTruthy();
+      expect(userPrefs.openRecordHomeWhenRecordCompleted).toBeTruthy();
       verify(mockedGlobalRegistry.getUserPreferences()).once();
       verify(mockedPreferencesStore.loadPreferences()).once();
       verify(mockedGlobalRegistry.setUserPreferences(anything())).once();
@@ -101,7 +101,7 @@ describe('PreferenceUseCase', () => {
     it('should save user preferences to persistent app data', async () => {
       const mockPrefs: IPreferences = {
         version: '0.0.1',
-        openRecordHomeDirWhenRecordCompleted: true,
+        openRecordHomeWhenRecordCompleted: true,
         recordHomeDir: '/temp/records',
         shortcut: 'Super+Shift+E',
       };

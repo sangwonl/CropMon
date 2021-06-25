@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/prefer-default-export */
 
 import 'reflect-metadata';
@@ -15,8 +16,10 @@ import {
 } from '@core/entities/capture';
 import { StateManager } from '@core/interfaces/state';
 import { IScreenRecorder } from '@core/interfaces/recorder';
-import { IUiDirector } from '@core/interfaces/ui';
+import { IUiDirector } from '@core/interfaces/director';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
+import { ICaptureOverlays, IUiState } from '@core/entities/ui';
+import { IBounds, IScreenInfo } from '@core/entities/screen';
 
 @injectable()
 export class CaptureUseCase {
@@ -26,6 +29,75 @@ export class CaptureUseCase {
     @inject(TYPES.UiDirector) private uiDirector: IUiDirector,
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
   ) {}
+
+  enableCaptureSelection = () => {
+    const screenInfos = this.uiDirector.enableCaptureSelectionMode();
+    const captureOverlays: ICaptureOverlays = {};
+    screenInfos.forEach((si: IScreenInfo) => {
+      captureOverlays[si.id] = { show: true, screenInfo: si };
+    });
+
+    this.stateManager.updateUiState((state: IUiState): IUiState => {
+      return {
+        ...state,
+        captureArea: {
+          ...state.captureArea,
+          screenIdOnSelection: undefined,
+          selectedBounds: undefined,
+        },
+        captureOverlays,
+      };
+    });
+  };
+
+  disableCaptureSelection = () => {
+    this.uiDirector.disableCaptureSelectionMode();
+
+    this.stateManager.updateUiState((state: IUiState): IUiState => {
+      const captureOverlays: ICaptureOverlays = {};
+      Object.keys(state.captureOverlays).forEach((k) => {
+        // https://stackoverflow.com/questions/14667713/how-to-convert-a-string-to-number-in-typescript
+        const screenId: number = +k;
+        const overlay = state.captureOverlays[screenId];
+        captureOverlays[screenId] = { ...overlay, show: false };
+      });
+
+      return {
+        ...state,
+        captureArea: {
+          screenIdOnSelection: undefined,
+          selectedBounds: undefined,
+          isRecording: false,
+        },
+        captureOverlays,
+      };
+    });
+  };
+
+  startAreaSelection = (screenId: number) => {
+    this.stateManager.updateUiState((state: IUiState): IUiState => {
+      return {
+        ...state,
+        captureArea: {
+          ...state.captureArea,
+          screenIdOnSelection: screenId,
+          selectedBounds: undefined,
+        },
+      };
+    });
+  };
+
+  finishAreaSelection = (bounds: IBounds) => {
+    this.stateManager.updateUiState((state: IUiState): IUiState => {
+      return {
+        ...state,
+        captureArea: {
+          ...state.captureArea,
+          selectedBounds: bounds,
+        },
+      };
+    });
+  };
 
   startCapture = async (option: ICaptureOption): Promise<void> => {
     const ctx = createCaptureContext(option);
@@ -86,7 +158,7 @@ export class CaptureUseCase {
     if (
       newCtx.outputPath &&
       newCtx.status === CaptureStatus.FINISHED &&
-      prefs?.openRecordHomeDirWhenRecordCompleted
+      prefs?.openRecordHomeWhenRecordCompleted
     ) {
       this.uiDirector.showItemInFolder(newCtx.outputPath);
     }
