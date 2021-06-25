@@ -45,7 +45,7 @@ export class PreferencesStore implements IPreferencesStore {
   async savePreferences(prefs: IPreferences): Promise<void> {
     this.store.set('version', prefs.version);
     this.store.set('openRecordHomeDirWhenRecordCompleted', prefs.openRecordHomeWhenRecordCompleted);
-    this.store.set('recordHomeDir', prefs.recordHomeDir);
+    this.store.set('recordHomeDir', prefs.recordHome);
     this.store.set('shortcut', prefs.shortcut);
   }
 
@@ -53,7 +53,7 @@ export class PreferencesStore implements IPreferencesStore {
     return {
       version: curVersion,
       openRecordHomeWhenRecordCompleted: true,
-      recordHomeDir: app.getPath('videos'),
+      recordHome: app.getPath('videos'),
       shortcut: 'Super+Shift+E',
     };
   }
@@ -62,7 +62,7 @@ export class PreferencesStore implements IPreferencesStore {
     return {
       version: this.store.get('version') as string,
       openRecordHomeWhenRecordCompleted: this.store.get('openRecordHomeDirWhenRecordCompleted') as boolean,
-      recordHomeDir: this.store.get('recordHomeDir') as string,
+      recordHome: this.store.get('recordHomeDir') as string,
       shortcut: this.store.get('shortcut', 'Super+Shift+E') as string,
     };
   }

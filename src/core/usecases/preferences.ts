@@ -7,41 +7,38 @@ import { injectable, inject } from 'inversify';
 
 import { TYPES } from '@di/types';
 import { IPreferences } from '@core/entities/preferences';
-import { StateManager } from '@core/interfaces/state';
 import { IPreferencesStore } from '@core/interfaces/preferences';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
 import { IHookManager } from '@core/interfaces/hook';
 
 @injectable()
 export class PreferencesUseCase {
+  private cachedUserPrefs: IPreferences | undefined;
+
   public constructor(
-    private stateManager: StateManager,
     @inject(TYPES.PreferencesStore) private preferencesStore: IPreferencesStore,
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker,
     @inject(TYPES.HookManager) private hookManager: IHookManager
   ) {}
 
-  getUserPreferences = async (): Promise<IPreferences> => {
-    const curUserPrefs = this.stateManager.getUserPreferences();
-    if (curUserPrefs !== undefined) {
-      return curUserPrefs;
+  async fetchUserPreferences(): Promise<IPreferences> {
+    if (this.cachedUserPrefs === undefined) {
+      // load pref from persistent storage
+      // it returns new default one if no pref info in storage
+      this.cachedUserPrefs = await this.preferencesStore.loadPreferences();
+      this.hookManager.emit('after-preferences-loaded');
     }
 
-    // load pref from persistent storage
-    // it returns new default one if no pref info in storage
-    const loadedPrefs = await this.preferencesStore.loadPreferences();
-    this.stateManager.setUserPreferences(loadedPrefs);
-    this.hookManager.emit('after-preferences-loaded');
+    return this.cachedUserPrefs;
+  }
 
-    return loadedPrefs;
-  };
-
-  updateUserPreference = async (prefs: IPreferences): Promise<void> => {
+  async updateUserPreference(prefs: IPreferences): Promise<void> {
     await this.preferencesStore.savePreferences(prefs);
-    this.stateManager.setUserPreferences(prefs);
+
+    this.cachedUserPrefs = prefs;
     this.hookManager.emit('after-preferences-updated');
 
     // TODO: Try to move this to hook
     this.tracker.eventL('prefs', 'update-prefs', JSON.stringify(prefs));
-  };
+  }
 }

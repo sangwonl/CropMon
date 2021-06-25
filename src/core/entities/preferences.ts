@@ -3,6 +3,6 @@
 export interface IPreferences {
   version: string;
   openRecordHomeWhenRecordCompleted: boolean;
-  recordHomeDir: string;
+  recordHome: string;
   shortcut: string;
 }

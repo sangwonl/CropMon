@@ -40,7 +40,7 @@ export const initialUiState: IUiState = {
     show: false,
     preferences: {
       version: '',
-      recordHomeDir: '',
+      recordHome: '',
       openRecordHomeWhenRecordCompleted: true,
       shortcut: '',
     },

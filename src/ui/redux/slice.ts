@@ -2,7 +2,6 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { IPreferences } from '@core/entities/preferences';
 import {
   initialUiState,
   IFinishAreaSelection,
@@ -40,10 +39,6 @@ const slice = createSlice({
     finishCapture: () => {},
 
     // legacy
-    loadPreferences: () => {},
-    didLoadPreferences: (s, a: PayloadAction<IPreferences>) => {
-      s.preferencesModal.preferences = a.payload;
-    },
     openPreferences: () => {},
     didOpenPreferences: (s) => {
       s.preferencesModal.show = true;
@@ -59,7 +54,7 @@ const slice = createSlice({
     },
     chooseRecordHomeDir: () => {},
     didChooseRecordHomeDir: (s, a: PayloadAction<IChooseRecordHomePayload>) => {
-      s.preferencesModal.preferences.recordHomeDir = a.payload.recordHomeDir;
+      s.preferencesModal.preferences.recordHome = a.payload.recordHomeDir;
     },
     setFlagToOpenRecordHomeDir: (s, a: PayloadAction<boolean>) => {
       s.preferencesModal.preferences.openRecordHomeWhenRecordCompleted =
@@ -82,8 +77,6 @@ export const {
   finishAreaSelection,
   startCapture,
   finishCapture,
-  loadPreferences,
-  didLoadPreferences,
   openPreferences,
   didOpenPreferences,
   closePreferences,

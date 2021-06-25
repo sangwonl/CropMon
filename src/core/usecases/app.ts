@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable import/prefer-default-export */
@@ -18,7 +19,7 @@ export class AppUseCase {
     @inject(TYPES.AppUpdater) private appUpdater: IAppUpdater
   ) {}
 
-  checkForUpdates = async () => {
+  async checkForUpdates() {
     await this.appUpdater.checkForUpdates(
       this.onUpdateAvailable,
       this.onUpdateNotAvailable,
@@ -27,18 +28,19 @@ export class AppUseCase {
     );
 
     this.openReleaseNotesIfUpdated();
-  };
+  }
 
-  showAboutPopup = async () => {
-    await this.uiDirector.openAboutPopup();
-  };
+  async showAboutPopup() {
+    const prefs = await this.prefsUseCase.fetchUserPreferences();
+    await this.uiDirector.openAboutPopup(prefs);
+  }
 
-  quitApplication = () => {
+  quitApplication() {
     this.uiDirector.quitApplication();
-  };
+  }
 
   private async openReleaseNotesIfUpdated() {
-    const prefs = await this.prefsUseCase.getUserPreferences();
+    const prefs = await this.prefsUseCase.fetchUserPreferences();
     const oldVersion = prefs.version;
     const curVersion = this.appUpdater.getCurAppVersion();
     if (semver.gt(curVersion, oldVersion)) {
@@ -49,7 +51,7 @@ export class AppUseCase {
     }
   }
 
-  private onUpdateAvailable = async () => {
+  private async onUpdateAvailable() {
     const buttonId = await this.uiDirector.openUpdateAvailableDialog();
     if (buttonId === 0) {
       this.uiDirector.startDownloadUpdate(
@@ -58,11 +60,11 @@ export class AppUseCase {
         () => setImmediate(() => this.uiDirector.quitApplication(true))
       );
     }
-  };
+  }
 
-  private onUpdateNotAvailable = () => {};
+  private onUpdateNotAvailable() {}
 
-  private onDownloadProgress = (progressInfo: any) => {
+  private onDownloadProgress(progressInfo: any) {
     const maxPercentage = 0.95; // yield marking 100% to onUpdateDownloaded()
     let percent = 0;
     if (progressInfo.total > 0) {
@@ -71,9 +73,9 @@ export class AppUseCase {
       );
     }
     this.uiDirector.setUpdateDownloadProgress(percent);
-  };
+  }
 
-  private onUpdateDownloaded = () => {
+  private onUpdateDownloaded() {
     this.uiDirector.setUpdateDownloadProgress(100);
-  };
+  }
 }

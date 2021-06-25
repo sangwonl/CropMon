@@ -6,16 +6,13 @@ import 'reflect-metadata';
 import { mock, instance, verify, when, anything, capture } from 'ts-mockito';
 
 import { IPreferences } from '@core/entities/preferences';
-import { StateManager } from '@core/interfaces/state';
 import { IPreferencesStore } from '@core/interfaces/preferences';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { IHookManager } from '@core/interfaces/hook';
+import { INITIAL_SHORTCUT } from '@utils/shortcut';
 
 describe('PreferenceUseCase', () => {
-  let mockedGlobalRegistry: StateManager;
-  let mockRegistry: StateManager;
-
   let mockedPreferencesStore: IPreferencesStore;
   let mockPrefsStore: IPreferencesStore;
 
@@ -28,71 +25,42 @@ describe('PreferenceUseCase', () => {
   let useCase: PreferencesUseCase;
 
   beforeEach(() => {
-    mockedGlobalRegistry = mock(StateManager);
     mockedPreferencesStore = mock<IPreferencesStore>();
     mockedAnalyticsTracker = mock<IAnalyticsTracker>();
     mockedHookManager = mock<IHookManager>();
 
-    mockRegistry = instance(mockedGlobalRegistry);
     mockPrefsStore = instance(mockedPreferencesStore);
     mockTracker = instance(mockedAnalyticsTracker);
     mockHookMgr = instance(mockedHookManager);
 
-    useCase = new PreferencesUseCase(
-      mockRegistry,
-      mockPrefsStore,
-      mockTracker,
-      mockHookMgr
-    );
+    useCase = new PreferencesUseCase(mockPrefsStore, mockTracker, mockHookMgr);
   });
 
-  describe('getUserPreferences', () => {
-    it('should return preferences if it exists in registry', async () => {
-      const mockPrefs: IPreferences = {
-        version: '0.0.1',
-        openRecordHomeWhenRecordCompleted: true,
-        recordHomeDir: '/temp/records',
-        shortcut: 'Super+Shift+E',
-      };
-
-      when(mockedGlobalRegistry.getUserPreferences()).thenReturn(mockPrefs);
-
-      const userPrefs = await useCase.getUserPreferences();
-      expect(userPrefs.recordHomeDir).toEqual(mockPrefs.recordHomeDir);
-      expect(userPrefs.openRecordHomeWhenRecordCompleted).toBeTruthy();
-      verify(mockedGlobalRegistry.getUserPreferences()).once();
-      verify(mockedPreferencesStore.loadPreferences()).never();
-    });
-
+  describe('fetchUserPreferences', () => {
     it('should try to load preferences from persistent app data', async () => {
       const mockPrefs: IPreferences = {
         version: '0.0.1',
         openRecordHomeWhenRecordCompleted: true,
-        recordHomeDir: '/temp/records',
-        shortcut: 'Super+Shift+E',
+        recordHome: '/temp/records',
+        shortcut: INITIAL_SHORTCUT,
       };
 
-      when(mockedGlobalRegistry.getUserPreferences()).thenReturn(undefined);
       when(mockedPreferencesStore.loadPreferences()).thenReturn(
         Promise.resolve(mockPrefs)
       );
 
-      const userPrefs = await useCase.getUserPreferences();
-      expect(userPrefs.recordHomeDir).toEqual(mockPrefs.recordHomeDir);
+      const userPrefs = await useCase.fetchUserPreferences();
+      expect(userPrefs.recordHome).toEqual(mockPrefs.recordHome);
       expect(userPrefs.openRecordHomeWhenRecordCompleted).toBeTruthy();
-      verify(mockedGlobalRegistry.getUserPreferences()).once();
       verify(mockedPreferencesStore.loadPreferences()).once();
-      verify(mockedGlobalRegistry.setUserPreferences(anything())).once();
     });
 
     it('should throw error if there is some error to load preferences', async () => {
-      when(mockedGlobalRegistry.getUserPreferences()).thenReturn(undefined);
       when(mockedPreferencesStore.loadPreferences()).thenThrow(new Error());
 
-      useCase.getUserPreferences().catch((e) => {
+      useCase.fetchUserPreferences().catch((e) => {
         expect(e).toBeInstanceOf(Error);
       });
-      verify(mockedGlobalRegistry.getUserPreferences()).once();
       verify(mockedPreferencesStore.loadPreferences()).once();
     });
   });
@@ -102,8 +70,8 @@ describe('PreferenceUseCase', () => {
       const mockPrefs: IPreferences = {
         version: '0.0.1',
         openRecordHomeWhenRecordCompleted: true,
-        recordHomeDir: '/temp/records',
-        shortcut: 'Super+Shift+E',
+        recordHome: '/temp/records',
+        shortcut: INITIAL_SHORTCUT,
       };
 
       await useCase.updateUserPreference(mockPrefs);
@@ -111,7 +79,6 @@ describe('PreferenceUseCase', () => {
       const [argPrefs] = capture(mockedPreferencesStore.savePreferences).last();
       expect(argPrefs).toStrictEqual(mockPrefs);
       verify(mockedPreferencesStore.savePreferences(anything())).once();
-      verify(mockedGlobalRegistry.setUserPreferences(anything())).once();
     });
   });
 });

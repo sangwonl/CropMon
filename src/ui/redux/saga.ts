@@ -11,10 +11,10 @@ import { diContainer } from '@di/container';
 import { IPreferences } from '@core/entities/preferences';
 import { CaptureStatus } from '@core/entities/capture';
 import { IFinishAreaSelection, IStartAreaSelection } from '@core/entities/ui';
+import { CaptureUseCase } from '@core/usecases/capture';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { IHookManager } from '@core/interfaces/hook';
 import { IUiDirector } from '@core/interfaces/director';
-import { StateManager } from '@core/interfaces/state';
 import { ActionDispatcher } from '@adapters/action';
 import { INITIAL_SHORTCUT, registerShortcut } from '@utils/shortcut';
 
@@ -27,8 +27,6 @@ import {
   startCapture,
   finishCapture,
   showAbout,
-  loadPreferences,
-  didLoadPreferences,
   openPreferences,
   didOpenPreferences,
   closePreferences,
@@ -40,32 +38,16 @@ import {
 } from './slice';
 import { IStartCapturePayload, IClosePreferencesPayload } from './types';
 
-const { put, select, takeLatest, takeLeading } = Effects;
+const { put, select, takeLatest } = Effects;
 const call: any = Effects.call;
 
+const captUseCase = diContainer.get(CaptureUseCase);
 const prefsUseCase = diContainer.get(PreferencesUseCase);
-const globalRegistry = diContainer.get(StateManager);
 const actionDispatcher = diContainer.get(ActionDispatcher);
 const hookManager = diContainer.get<IHookManager>(TYPES.HookManager);
 const uiDirector = diContainer.get<IUiDirector>(TYPES.UiDirector);
 
-function* onLoadPreferences(_action: PayloadAction) {
-  const prefs: IPreferences = yield call(prefsUseCase.getUserPreferences);
-
-  yield put(
-    didLoadPreferences({
-      version: prefs.version,
-      recordHomeDir: prefs.recordHomeDir || '',
-      openRecordHomeWhenRecordCompleted:
-        prefs.openRecordHomeWhenRecordCompleted,
-      shortcut: prefs.shortcut,
-    })
-  );
-}
-
-function* onOpenPreferences(_action: PayloadAction) {
-  yield put(loadPreferences());
-
+function* onOpenPreferences() {
   uiDirector.openPreferencesModal();
 
   yield put(didOpenPreferences());
@@ -78,12 +60,9 @@ function* onClosePreferences(action: PayloadAction<IClosePreferencesPayload>) {
     );
 
     yield call(prefsUseCase.updateUserPreference, uiPrefs);
-
-    yield put(loadPreferences());
   }
 
   uiDirector.closePreferencesModal();
-  uiDirector.refreshAppTrayState();
 
   yield put(didClosePreferences());
 }
@@ -95,7 +74,7 @@ function* onChooseRecordHome(_action: PayloadAction) {
 
   const dir: string = yield call(
     uiDirector.openDialogForRecordHomeDir,
-    uiPrefs.recordHomeDir
+    uiPrefs.recordHome
   );
 
   if (dir.length > 0) {
@@ -104,7 +83,7 @@ function* onChooseRecordHome(_action: PayloadAction) {
 }
 
 const onCaptureShortcut = () => {
-  const captCtx = globalRegistry.getCaptureContext();
+  const captCtx = captUseCase.curCaptureContext();
   if (captCtx?.status === CaptureStatus.IN_PROGRESS) {
     actionDispatcher.finishCapture();
   } else {
@@ -112,9 +91,9 @@ const onCaptureShortcut = () => {
   }
 };
 
-const onPrefsChanged = () => {
-  const prefs = globalRegistry.getUserPreferences();
-  const shortcut = prefs?.shortcut ?? INITIAL_SHORTCUT;
+const onPrefsChanged = async () => {
+  const prefs = await prefsUseCase.fetchUserPreferences();
+  const shortcut = prefs.shortcut ?? INITIAL_SHORTCUT;
   registerShortcut(shortcut, onCaptureShortcut);
 };
 
@@ -169,7 +148,6 @@ function* sagaEntry() {
   yield takeLatest(finishCapture.type, onFinishCapture);
 
   // legacy..
-  yield takeLeading(loadPreferences.type, onLoadPreferences);
   yield takeLatest(openPreferences.type, onOpenPreferences);
   yield takeLatest(closePreferences.type, onClosePreferences);
   yield takeLatest(chooseRecordHomeDir.type, onChooseRecordHome);
