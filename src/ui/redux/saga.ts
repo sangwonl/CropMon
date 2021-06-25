@@ -49,7 +49,7 @@ const actionDispatcher = diContainer.get(ActionDispatcher);
 const hookManager = diContainer.get<IHookManager>(TYPES.HookManager);
 const uiDirector = diContainer.get<IUiDirector>(TYPES.UiDirector);
 
-function* handleLoadPreferences(_action: PayloadAction) {
+function* onLoadPreferences(_action: PayloadAction) {
   const prefs: IPreferences = yield call(prefsUseCase.getUserPreferences);
 
   yield put(
@@ -63,7 +63,7 @@ function* handleLoadPreferences(_action: PayloadAction) {
   );
 }
 
-function* handleOpenPreferences(_action: PayloadAction) {
+function* onOpenPreferences(_action: PayloadAction) {
   yield put(loadPreferences());
 
   uiDirector.openPreferencesModal();
@@ -71,9 +71,7 @@ function* handleOpenPreferences(_action: PayloadAction) {
   yield put(didOpenPreferences());
 }
 
-function* handleClosePreferences(
-  action: PayloadAction<IClosePreferencesPayload>
-) {
+function* onClosePreferences(action: PayloadAction<IClosePreferencesPayload>) {
   if (action.payload.shouldSave) {
     const uiPrefs: IPreferences = yield select(
       (state: RootState) => state.ui.preferencesModal.preferences
@@ -90,7 +88,7 @@ function* handleClosePreferences(
   yield put(didClosePreferences());
 }
 
-function* handleChooseRecordHomeDir(_action: PayloadAction) {
+function* onChooseRecordHome(_action: PayloadAction) {
   const uiPrefs: IPreferences = yield select(
     (state: RootState) => state.ui.preferencesModal.preferences
   );
@@ -105,11 +103,7 @@ function* handleChooseRecordHomeDir(_action: PayloadAction) {
   }
 }
 
-function handleQuitApplication(_action: PayloadAction) {
-  uiDirector.quitApplication();
-}
-
-const handleCaptureShortcut = () => {
+const onCaptureShortcut = () => {
   const captCtx = globalRegistry.getCaptureContext();
   if (captCtx?.status === CaptureStatus.IN_PROGRESS) {
     actionDispatcher.finishCapture();
@@ -118,68 +112,70 @@ const handleCaptureShortcut = () => {
   }
 };
 
-const handlePrefsChanged = () => {
+const onPrefsChanged = () => {
   const prefs = globalRegistry.getUserPreferences();
   const shortcut = prefs?.shortcut ?? INITIAL_SHORTCUT;
-  registerShortcut(shortcut, handleCaptureShortcut);
+  registerShortcut(shortcut, onCaptureShortcut);
 };
 
-function handleCheckForUpdates() {
+function onCheckForUpdates() {
   actionDispatcher.checkForUpdates();
 }
 
-function handleShowAbout() {
+function onShowAbout() {
   actionDispatcher.showAboutPopup();
 }
 
-function handleEnableCaptureSelection() {
+function onQuitApplication() {
+  actionDispatcher.quitApplication();
+}
+
+function onEnableCaptureSelection() {
   actionDispatcher.enableCaptureSelection();
 }
 
-function handleDisableCaptureSelection() {
+function onDisableCaptureSelection() {
   actionDispatcher.disableCaptureSelection();
 }
 
-function handleStartAreaSelection(action: PayloadAction<IStartAreaSelection>) {
+function onStartAreaSelection(action: PayloadAction<IStartAreaSelection>) {
   actionDispatcher.startAreaSelection(action.payload.screenId);
 }
 
-function handleFinishAreaSelection(
-  action: PayloadAction<IFinishAreaSelection>
-) {
+function onFinishAreaSelection(action: PayloadAction<IFinishAreaSelection>) {
   actionDispatcher.finishAreaSelection(action.payload.bounds);
 }
 
-function handleStartCapture(action: PayloadAction<IStartCapturePayload>) {
+function onStartCapture(action: PayloadAction<IStartCapturePayload>) {
   actionDispatcher.startCapture(action.payload.screenId, action.payload.bounds);
 }
 
-function handleFinishCapture() {
+function onFinishCapture() {
   actionDispatcher.finishCapture();
 }
 
 function* sagaEntry() {
   // app related use cases
-  yield takeLatest(checkForUpdates.type, handleCheckForUpdates);
-  yield takeLatest(showAbout.type, handleShowAbout);
+  yield takeLatest(checkForUpdates.type, onCheckForUpdates);
+  yield takeLatest(showAbout.type, onShowAbout);
+  yield takeLatest(quitApplication.type, onQuitApplication);
 
   // capture related use cases
-  yield takeLatest(enableCaptureMode.type, handleEnableCaptureSelection);
-  yield takeLatest(disableCaptureMode.type, handleDisableCaptureSelection);
-  yield takeLatest(startAreaSelection.type, handleStartAreaSelection);
-  yield takeLatest(finishAreaSelection.type, handleFinishAreaSelection);
-  yield takeLatest(startCapture.type, handleStartCapture);
-  yield takeLatest(finishCapture.type, handleFinishCapture);
+  yield takeLatest(enableCaptureMode.type, onEnableCaptureSelection);
+  yield takeLatest(disableCaptureMode.type, onDisableCaptureSelection);
+  yield takeLatest(startAreaSelection.type, onStartAreaSelection);
+  yield takeLatest(finishAreaSelection.type, onFinishAreaSelection);
+  yield takeLatest(startCapture.type, onStartCapture);
+  yield takeLatest(finishCapture.type, onFinishCapture);
 
   // legacy..
-  yield takeLeading(loadPreferences.type, handleLoadPreferences);
-  yield takeLatest(openPreferences.type, handleOpenPreferences);
-  yield takeLatest(closePreferences.type, handleClosePreferences);
-  yield takeLatest(chooseRecordHomeDir.type, handleChooseRecordHomeDir);
-  yield takeLatest(quitApplication.type, handleQuitApplication);
+  yield takeLeading(loadPreferences.type, onLoadPreferences);
+  yield takeLatest(openPreferences.type, onOpenPreferences);
+  yield takeLatest(closePreferences.type, onClosePreferences);
+  yield takeLatest(chooseRecordHomeDir.type, onChooseRecordHome);
 
-  hookManager.on('after-preferences-loaded', handlePrefsChanged);
-  hookManager.on('after-preferences-updated', handlePrefsChanged);
+  hookManager.on('after-preferences-loaded', onPrefsChanged);
+  hookManager.on('after-preferences-updated', onPrefsChanged);
 }
 
 export default sagaEntry;

@@ -22,6 +22,10 @@ export class ActionDispatcher {
     this.appUseCase.showAboutPopup();
   }
 
+  quitApplication() {
+    this.appUseCase.quitApplication();
+  }
+
   enableCaptureSelection() {
     this.captureUseCase.enableCaptureSelection();
   }

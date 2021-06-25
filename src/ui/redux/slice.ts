@@ -11,7 +11,7 @@ import {
 } from '@core/entities/ui';
 
 import {
-  IChooseRecordHomeDirPayload as IChooseRecordHomePayload,
+  IChooseRecordHomePayload,
   IClosePreferencesPayload,
   IStartCapturePayload,
 } from './types';
@@ -20,29 +20,31 @@ const slice = createSlice({
   name: 'ui',
   initialState: initialUiState,
   reducers: {
-    // app
-    checkForUpdates: (_s) => {},
-    showAbout: (_s) => {},
-
-    // capture
     updateUiState: (s, { payload }: PayloadAction<IUiState>) => {
       s.captureArea = payload.captureArea;
       s.captureOverlays = payload.captureOverlays;
       s.preferencesModal = payload.preferencesModal;
     },
-    enableCaptureMode: (_s) => {},
-    disableCaptureMode: (_s) => {},
+
+    // app
+    checkForUpdates: () => {},
+    showAbout: () => {},
+    quitApplication: () => {},
+
+    // capture
+    enableCaptureMode: () => {},
+    disableCaptureMode: () => {},
     startAreaSelection: (_s, _a: PayloadAction<IStartAreaSelection>) => {},
     finishAreaSelection: (_s, _a: PayloadAction<IFinishAreaSelection>) => {},
     startCapture: (_s, _a: PayloadAction<IStartCapturePayload>) => {},
-    finishCapture: (_s) => {},
+    finishCapture: () => {},
 
     // legacy
-    loadPreferences: (_s) => {},
+    loadPreferences: () => {},
     didLoadPreferences: (s, a: PayloadAction<IPreferences>) => {
       s.preferencesModal.preferences = a.payload;
     },
-    openPreferences: (_s) => {},
+    openPreferences: () => {},
     didOpenPreferences: (s) => {
       s.preferencesModal.show = true;
     },
@@ -55,7 +57,7 @@ const slice = createSlice({
     didClosePreferences: (s) => {
       s.preferencesModal.show = false;
     },
-    chooseRecordHomeDir: (_s) => {},
+    chooseRecordHomeDir: () => {},
     didChooseRecordHomeDir: (s, a: PayloadAction<IChooseRecordHomePayload>) => {
       s.preferencesModal.preferences.recordHomeDir = a.payload.recordHomeDir;
     },
@@ -66,21 +68,20 @@ const slice = createSlice({
     setShortcut: (s, a: PayloadAction<string>) => {
       s.preferencesModal.preferences.shortcut = a.payload;
     },
-    quitApplication: (_s) => {},
   },
 });
 
 export const {
   updateUiState,
+  checkForUpdates,
+  showAbout,
+  quitApplication,
   enableCaptureMode,
   disableCaptureMode,
   startAreaSelection,
   finishAreaSelection,
   startCapture,
   finishCapture,
-
-  showAbout,
-  checkForUpdates,
   loadPreferences,
   didLoadPreferences,
   openPreferences,
@@ -91,7 +92,6 @@ export const {
   setShortcut,
   chooseRecordHomeDir,
   didChooseRecordHomeDir,
-  quitApplication,
 } = slice.actions;
 
 export default slice.reducer;
