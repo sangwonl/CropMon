@@ -20,6 +20,10 @@ const slice = createSlice({
   name: 'ui',
   initialState: initialUiState,
   reducers: {
+    // app
+    checkForUpdates: (_s) => {},
+
+    // capture
     updateUiState: (s, { payload }: PayloadAction<IUiState>) => {
       s.captureArea = payload.captureArea;
       s.captureOverlays = payload.captureOverlays;
@@ -32,8 +36,8 @@ const slice = createSlice({
     startCapture: (_s, _a: PayloadAction<IStartCapturePayload>) => {},
     finishCapture: (_s) => {},
 
+    // legacy
     showAbout: (_s) => {},
-    checkForUpdates: (_s) => {},
     loadPreferences: (_s) => {},
     didLoadPreferences: (s, a: PayloadAction<IPreferences>) => {
       s.preferencesModal.preferences = a.payload;

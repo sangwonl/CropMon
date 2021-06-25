@@ -4,11 +4,19 @@ import { injectable } from 'inversify';
 
 import { CaptureMode } from '@core/entities/capture';
 import { IBounds } from '@core/entities/screen';
+import { AppUseCase } from '@core/usecases/app';
 import { CaptureUseCase } from '@core/usecases/capture';
 
 @injectable()
 export class ActionDispatcher {
-  constructor(private captureUseCase: CaptureUseCase) {}
+  constructor(
+    private appUseCase: AppUseCase,
+    private captureUseCase: CaptureUseCase
+  ) {}
+
+  checkForUpdates() {
+    this.appUseCase.checkForUpdates();
+  }
 
   enableCaptureSelection() {
     this.captureUseCase.enableCaptureSelection();
