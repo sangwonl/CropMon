@@ -22,6 +22,7 @@ const slice = createSlice({
   reducers: {
     // app
     checkForUpdates: (_s) => {},
+    showAbout: (_s) => {},
 
     // capture
     updateUiState: (s, { payload }: PayloadAction<IUiState>) => {
@@ -37,7 +38,6 @@ const slice = createSlice({
     finishCapture: (_s) => {},
 
     // legacy
-    showAbout: (_s) => {},
     loadPreferences: (_s) => {},
     didLoadPreferences: (s, a: PayloadAction<IPreferences>) => {
       s.preferencesModal.preferences = a.payload;

@@ -49,10 +49,6 @@ const actionDispatcher = diContainer.get(ActionDispatcher);
 const hookManager = diContainer.get<IHookManager>(TYPES.HookManager);
 const uiDirector = diContainer.get<IUiDirector>(TYPES.UiDirector);
 
-function handleShowAbout() {
-  uiDirector.openAboutPopup();
-}
-
 function* handleLoadPreferences(_action: PayloadAction) {
   const prefs: IPreferences = yield call(prefsUseCase.getUserPreferences);
 
@@ -132,6 +128,10 @@ function handleCheckForUpdates() {
   actionDispatcher.checkForUpdates();
 }
 
+function handleShowAbout() {
+  actionDispatcher.showAboutPopup();
+}
+
 function handleEnableCaptureSelection() {
   actionDispatcher.enableCaptureSelection();
 }
@@ -161,6 +161,7 @@ function handleFinishCapture() {
 function* sagaEntry() {
   // app related use cases
   yield takeLatest(checkForUpdates.type, handleCheckForUpdates);
+  yield takeLatest(showAbout.type, handleShowAbout);
 
   // capture related use cases
   yield takeLatest(enableCaptureMode.type, handleEnableCaptureSelection);
@@ -172,7 +173,6 @@ function* sagaEntry() {
 
   // legacy..
   yield takeLeading(loadPreferences.type, handleLoadPreferences);
-  yield takeLatest(showAbout.type, handleShowAbout);
   yield takeLatest(openPreferences.type, handleOpenPreferences);
   yield takeLatest(closePreferences.type, handleClosePreferences);
   yield takeLatest(chooseRecordHomeDir.type, handleChooseRecordHomeDir);
