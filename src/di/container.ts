@@ -11,6 +11,8 @@ import { IPreferencesStore } from '@core/interfaces/preferences';
 import { IUiDirector } from '@core/interfaces/director';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
 import { IHookManager } from '@core/interfaces/hook';
+import { IAppUpdater } from '@core/interfaces/updater';
+import { AppUseCase } from '@core/usecases/app';
 import { CaptureUseCase } from '@core/usecases/capture';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { ElectronScreenRecorder } from '@infrastructures/recorder/recorder';
@@ -25,11 +27,6 @@ import { UiStateApplier } from '@infrastructures/state';
 import { TYPES } from './types';
 
 const diContainer = new Container();
-
-diContainer
-  .bind<StateManager>(StateManager)
-  .toSelf()
-  .inSingletonScope();
 
 diContainer
   .bind<IScreenRecorder>(TYPES.ScreenRecorder)
@@ -62,22 +59,32 @@ diContainer
   .inSingletonScope();
 
 diContainer
+  .bind<IAppUpdater>(TYPES.AppUpdater)
+  .to(AppUpdater)
+  .inSingletonScope();
+
+diContainer
+  .bind<StateManager>(StateManager)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<ActionDispatcher>(ActionDispatcher)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<AppUseCase>(AppUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
   .bind<CaptureUseCase>(CaptureUseCase)
   .toSelf()
   .inSingletonScope();
 
 diContainer
   .bind<PreferencesUseCase>(PreferencesUseCase)
-  .toSelf()
-  .inSingletonScope();
-
-diContainer
-  .bind<AppUpdater>(AppUpdater)
-  .toSelf()
-  .inSingletonScope();
-
-diContainer
-  .bind<ActionDispatcher>(ActionDispatcher)
   .toSelf()
   .inSingletonScope();
 

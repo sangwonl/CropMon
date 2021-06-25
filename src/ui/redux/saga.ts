@@ -15,7 +15,6 @@ import { PreferencesUseCase } from '@core/usecases/preferences';
 import { IHookManager } from '@core/interfaces/hook';
 import { IUiDirector } from '@core/interfaces/director';
 import { StateManager } from '@core/interfaces/state';
-import { AppUpdater } from '@infrastructures/updater';
 import { ActionDispatcher } from '@adapters/action';
 import { INITIAL_SHORTCUT, registerShortcut } from '@utils/shortcut';
 
@@ -44,19 +43,14 @@ import { IStartCapturePayload, IClosePreferencesPayload } from './types';
 const { put, select, takeLatest, takeLeading } = Effects;
 const call: any = Effects.call;
 
-const appUpdater = diContainer.get(AppUpdater);
 const prefsUseCase = diContainer.get(PreferencesUseCase);
 const globalRegistry = diContainer.get(StateManager);
 const actionDispatcher = diContainer.get(ActionDispatcher);
 const hookManager = diContainer.get<IHookManager>(TYPES.HookManager);
 const uiDirector = diContainer.get<IUiDirector>(TYPES.UiDirector);
 
-function handleShowAbout(_action: PayloadAction) {
+function handleShowAbout() {
   uiDirector.openAboutPopup();
-}
-
-function* handleCheckForUpdates(_action: PayloadAction) {
-  yield appUpdater.checkForUpdates();
 }
 
 function* handleLoadPreferences(_action: PayloadAction) {
@@ -134,6 +128,10 @@ const handlePrefsChanged = () => {
   registerShortcut(shortcut, handleCaptureShortcut);
 };
 
+function handleCheckForUpdates() {
+  actionDispatcher.checkForUpdates();
+}
+
 function handleEnableCaptureSelection() {
   actionDispatcher.enableCaptureSelection();
 }
@@ -161,6 +159,10 @@ function handleFinishCapture() {
 }
 
 function* sagaEntry() {
+  // app related use cases
+  yield takeLatest(checkForUpdates.type, handleCheckForUpdates);
+
+  // capture related use cases
   yield takeLatest(enableCaptureMode.type, handleEnableCaptureSelection);
   yield takeLatest(disableCaptureMode.type, handleDisableCaptureSelection);
   yield takeLatest(startAreaSelection.type, handleStartAreaSelection);
@@ -168,9 +170,9 @@ function* sagaEntry() {
   yield takeLatest(startCapture.type, handleStartCapture);
   yield takeLatest(finishCapture.type, handleFinishCapture);
 
+  // legacy..
   yield takeLeading(loadPreferences.type, handleLoadPreferences);
   yield takeLatest(showAbout.type, handleShowAbout);
-  yield takeLatest(checkForUpdates.type, handleCheckForUpdates);
   yield takeLatest(openPreferences.type, handleOpenPreferences);
   yield takeLatest(closePreferences.type, handleClosePreferences);
   yield takeLatest(chooseRecordHomeDir.type, handleChooseRecordHomeDir);

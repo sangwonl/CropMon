@@ -27,7 +27,7 @@ import { initializeDevEnv } from './devenv';
 const uiDirector = diContainer.get<IUiDirector>(TYPES.UiDirector);
 const tracker = diContainer.get<IAnalyticsTracker>(TYPES.AnalyticsTracker);
 
-const initializeApp = async () => {
+const initializeApp = () => {
   store.dispatch(loadPreferences());
 
   store.dispatch(checkForUpdates());
@@ -44,7 +44,7 @@ const start = async () => {
 
   initializeSaga();
 
-  await initializeApp();
+  initializeApp();
 
   initializeWidgets();
 
