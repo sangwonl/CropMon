@@ -6,7 +6,7 @@ import { Story, Meta } from '@storybook/react';
 import {
   BasePreferences,
   BasePreferencesProps,
-} from '@presenters/ui/components/stateless/BasePreferences';
+} from '@ui/components/stateless/BasePreferences';
 
 export default {
   title: 'Kropsaurus/BasePreferences',

@@ -13,10 +13,10 @@ import {
   ICaptureOption,
   createCaptureContext,
 } from '@core/entities/capture';
-import { StateManager } from '@core/components/state';
-import { IScreenRecorder } from '@core/components/recorder';
-import { IUiDirector } from '@core/components/ui';
-import { IAnalyticsTracker } from '@core/components/tracker';
+import { StateManager } from '@core/interfaces/state';
+import { IScreenRecorder } from '@core/interfaces/recorder';
+import { IUiDirector } from '@core/interfaces/ui';
+import { IAnalyticsTracker } from '@core/interfaces/tracker';
 
 @injectable()
 export class CaptureUseCase {

@@ -4,7 +4,7 @@
 
 import { injectable } from 'inversify';
 
-import { HookType, IHookManager } from '@core/components/hook';
+import { HookType, IHookManager } from '@core/interfaces/hook';
 
 type HookHandler = () => void;
 

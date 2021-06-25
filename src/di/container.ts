@@ -5,21 +5,21 @@ import 'reflect-metadata';
 
 import { Container } from 'inversify';
 
-import { StateManager } from '@core/components/state';
-import { IScreenRecorder } from '@core/components/recorder';
-import { IPreferencesStore } from '@core/components/preferences';
-import { IUiDirector } from '@core/components/ui';
-import { IAnalyticsTracker } from '@core/components/tracker';
-import { IHookManager } from '@core/components/hook';
+import { StateManager } from '@core/interfaces/state';
+import { IScreenRecorder } from '@core/interfaces/recorder';
+import { IPreferencesStore } from '@core/interfaces/preferences';
+import { IUiDirector } from '@core/interfaces/ui';
+import { IAnalyticsTracker } from '@core/interfaces/tracker';
+import { IHookManager } from '@core/interfaces/hook';
 import { CaptureUseCase } from '@core/usecases/capture';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { ElectronScreenRecorder } from '@infrastructures/recorder/recorder';
 import { PreferencesStore } from '@infrastructures/preferences';
-import { GoogleAnalyticsTracker } from '@infrastructures/ga-tracker';
+import { GoogleAnalyticsTracker } from '@infrastructures/tracker';
 import { HookManager } from '@infrastructures/hook';
-import { AppUpdater } from '@presenters/interactor/updater';
-import { UiDirector } from '@presenters/interactor/director';
-import { ActionDispatcher } from '@presenters/interactor/action';
+import { AppUpdater } from '@infrastructures/updater';
+import { UiDirector } from '@infrastructures/director';
+import { ActionDispatcher } from '@adapters/action';
 
 import { TYPES } from './types';
 

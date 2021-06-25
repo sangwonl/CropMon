@@ -6,11 +6,11 @@ import 'reflect-metadata';
 import { mock, instance, verify, when, anything, capture } from 'ts-mockito';
 
 import { IPreferences } from '@core/entities/preferences';
-import { StateManager } from '@core/components/state';
-import { IPreferencesStore } from '@core/components/preferences';
-import { IAnalyticsTracker } from '@core/components/tracker';
+import { StateManager } from '@core/interfaces/state';
+import { IPreferencesStore } from '@core/interfaces/preferences';
+import { IAnalyticsTracker } from '@core/interfaces/tracker';
 import { PreferencesUseCase } from '@core/usecases/preferences';
-import { IHookManager } from '@core/components/hook';
+import { IHookManager } from '@core/interfaces/hook';
 
 describe('PreferenceUseCase', () => {
   let mockedGlobalRegistry: StateManager;

@@ -7,10 +7,10 @@ import { injectable, inject } from 'inversify';
 
 import { TYPES } from '@di/types';
 import { IPreferences } from '@core/entities/preferences';
-import { StateManager } from '@core/components/state';
-import { IPreferencesStore } from '@core/components/preferences';
-import { IAnalyticsTracker } from '@core/components/tracker';
-import { IHookManager } from '@core/components/hook';
+import { StateManager } from '@core/interfaces/state';
+import { IPreferencesStore } from '@core/interfaces/preferences';
+import { IAnalyticsTracker } from '@core/interfaces/tracker';
+import { IHookManager } from '@core/interfaces/hook';
 
 @injectable()
 export class PreferencesUseCase {

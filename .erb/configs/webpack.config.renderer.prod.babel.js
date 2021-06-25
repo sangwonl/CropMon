@@ -31,7 +31,7 @@ export default merge(baseConfig, {
     'renderer.ui': [
       'core-js',
       'regenerator-runtime/runtime',
-      require.resolve('../../src/presenters/ui/widgets/index.tsx'),
+      require.resolve('../../src/ui/widgets/index.tsx'),
     ],
     'renderer.recorder': [
       'core-js',

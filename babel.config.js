@@ -69,8 +69,9 @@ module.exports = (api) => {
         {
           alias: {
             '@core': './src/core',
+            '@adapters': './src/adapters',
             '@infrastructures': './src/infrastructures',
-            '@presenters': './src/presenters',
+            '@ui': './src/ui',
             '@utils': './src/utils',
             '@di': './src/di',
           },

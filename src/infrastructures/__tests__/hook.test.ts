@@ -2,7 +2,7 @@
 
 import 'reflect-metadata';
 
-import { IHookManager } from '@core/components/hook';
+import { IHookManager } from '@core/interfaces/hook';
 import { HookManager } from '@infrastructures/hook';
 
 describe('HookManager', () => {

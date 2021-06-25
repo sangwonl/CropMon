@@ -9,8 +9,8 @@ import Store from 'electron-store';
 
 import { TYPES } from '@di/types';
 import { IPreferences } from '@core/entities/preferences';
-import { IPreferencesStore } from '@core/components/preferences';
-import { IAnalyticsTracker } from '@core/components/tracker';
+import { IPreferencesStore } from '@core/interfaces/preferences';
+import { IAnalyticsTracker } from '@core/interfaces/tracker';
 import { getPlatform } from '@utils/process';
 
 import { version as curVersion } from '../package.json';
