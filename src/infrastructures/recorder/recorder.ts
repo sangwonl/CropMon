@@ -23,7 +23,7 @@ import {
 } from '@ffmpeg/ffmpeg';
 
 import { ICaptureContext } from '@core/entities/capture';
-import { IScreenRecorder } from '@core/components/recorder';
+import { IScreenRecorder } from '@core/interfaces/recorder';
 import { isProduction } from '@utils/process';
 
 import { RecorderDelegate } from './rec-delegate';

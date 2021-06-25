@@ -27,8 +27,9 @@
     "baseUrl": ".",
     "paths": {
       "@core/*": ["./src/core/*"],
+      "@adapters/*": ["./src/adapters/*"],
       "@infrastructures/*": ["./src/infrastructures/*"],
-      "@presenters/*": ["./src/presenters/*"],
+      "@ui/*": ["./src/ui/*"],
       "@utils/*": ["./src/utils/*"],
       "@di/*": ["./src/di/*"]
     }
@@ -36,7 +37,7 @@
   "exclude": [
     "test",
     "release",
-    "src/presenters/main/main.prod.js",
+    "src/main/main.prod.js",
     "src/dist",
     ".erb/dll"
   ]

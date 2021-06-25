@@ -3,7 +3,7 @@
 
 import { remote } from 'electron';
 
-import { Widget } from '@presenters/ui/widgets/widget';
+import { Widget } from '@ui/widgets/widget';
 
 export function setCustomData<T>(widget: Widget, name: string, value: T) {
   (widget as any)[name] = value;

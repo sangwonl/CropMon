@@ -8,11 +8,11 @@ import {
   createCaptureContext,
 } from '@core/entities/capture';
 import { IPreferences } from '@core/entities/preferences';
-import { StateManager } from '@core/components/state';
-import { IScreenRecorder } from '@core/components/recorder';
+import { StateManager } from '@core/interfaces/state';
+import { IScreenRecorder } from '@core/interfaces/recorder';
 import { CaptureUseCase } from '@core/usecases/capture';
-import { IAnalyticsTracker } from '@core/components/tracker';
-import { IUiDirector } from '@core/components/ui';
+import { IAnalyticsTracker } from '@core/interfaces/tracker';
+import { IUiDirector } from '@core/interfaces/ui';
 
 describe('CaptureUseCase', () => {
   let mockedStateManager: StateManager;
