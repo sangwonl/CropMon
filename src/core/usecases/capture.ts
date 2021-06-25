@@ -10,26 +10,26 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '@di/types';
 import {
   CaptureStatus,
-  ICaptureContext,
   ICaptureOption,
   createCaptureContext,
 } from '@core/entities/capture';
-import { GlobalRegistry } from '@core/components/registry';
+import { StateManager } from '@core/components/state';
 import { IScreenRecorder } from '@core/components/recorder';
+import { IUiDirector } from '@core/components/ui';
 import { IAnalyticsTracker } from '@core/components/tracker';
 
 @injectable()
 export class CaptureUseCase {
   constructor(
-    private globalRegistry: GlobalRegistry,
+    private stateManager: StateManager,
     @inject(TYPES.ScreenRecorder) private screenRecorder: IScreenRecorder,
+    @inject(TYPES.UiDirector) private uiDirector: IUiDirector,
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
   ) {}
 
-  startCapture = async (option: ICaptureOption): Promise<ICaptureContext> => {
+  startCapture = async (option: ICaptureOption): Promise<void> => {
     const ctx = createCaptureContext(option);
     ctx.outputPath = this.getOutputPath();
-    this.globalRegistry.setCaptureContext(ctx);
 
     try {
       await this.screenRecorder.record(ctx);
@@ -40,7 +40,15 @@ export class CaptureUseCase {
       this.tracker.eventL('capture', 'start-capture', 'fail');
     }
 
-    return ctx;
+    this.stateManager.setCaptureContext(ctx);
+
+    if (ctx.status === CaptureStatus.IN_PROGRESS) {
+      this.uiDirector.enableRecordingMode();
+    } else {
+      this.uiDirector.disableCaptureSelectionMode();
+    }
+
+    this.uiDirector.refreshAppTrayState();
   };
 
   pauseCapture = () => {
@@ -53,8 +61,10 @@ export class CaptureUseCase {
     console.log(this.screenRecorder);
   };
 
-  finishCapture = async (): Promise<ICaptureContext> => {
-    const curCtx = this.globalRegistry.getCaptureContext();
+  finishCapture = async (): Promise<void> => {
+    this.uiDirector.disableCaptureSelectionMode();
+
+    const curCtx = this.stateManager.getCaptureContext();
     assert(curCtx !== undefined);
 
     let newStatus = curCtx.status;
@@ -69,11 +79,23 @@ export class CaptureUseCase {
       this.tracker.eventL('capture', 'finish-capture', 'fail');
     }
 
-    return { ...curCtx, status: newStatus };
+    const newCtx = { ...curCtx, status: newStatus };
+    this.stateManager.setCaptureContext(newCtx);
+
+    const prefs = this.stateManager.getUserPreferences();
+    if (
+      newCtx.outputPath &&
+      newCtx.status === CaptureStatus.FINISHED &&
+      prefs?.openRecordHomeDirWhenRecordCompleted
+    ) {
+      this.uiDirector.showItemInFolder(newCtx.outputPath);
+    }
+
+    this.uiDirector.refreshAppTrayState();
   };
 
   private getOutputPath(): string {
-    const userPrefs = this.globalRegistry.getUserPreferences();
+    const userPrefs = this.stateManager.getUserPreferences();
     const fileName = dayjs().format('YYYYMMDDHHmmss');
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return path.join(userPrefs!.recordHomeDir, `${fileName}.mp4`);

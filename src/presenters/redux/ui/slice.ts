@@ -107,6 +107,9 @@ const slice = createSlice({
       state.captureArea.isRecording = true;
     },
     quitApplication: (_state) => {},
+    startCapture: (_state) => {},
+    finishCapture: (_state) => {},
+    didFinishCapture: (_state) => {},
   },
 });
 
@@ -131,6 +134,9 @@ export const {
   didDisableAreaSelection,
   enableRecording,
   quitApplication,
+  startCapture,
+  finishCapture,
+  didFinishCapture,
 } = slice.actions;
 
 export default slice.reducer;

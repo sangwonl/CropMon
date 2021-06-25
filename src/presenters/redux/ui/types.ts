@@ -23,6 +23,14 @@ export interface ICaptureArea {
   isRecording: boolean;
 }
 
+export interface IStartAreaSelection {
+  screenId: number;
+}
+
+export interface IFinishAreaSelection {
+  bounds: IBounds;
+}
+
 export interface IUiState {
   preferencesModal: IPreferencesModal;
   captureOverlays: ICaptureOverlays;
@@ -37,10 +45,7 @@ export interface IClosePreferencesPayload {
   shouldSave: boolean;
 }
 
-export interface IStartAreaSelection {
+export interface IStartCapturePayload {
   screenId: number;
-}
-
-export interface IFinishAreaSelection {
-  bounds: IBounds;
+  bounds?: IBounds | undefined;
 }

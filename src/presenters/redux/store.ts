@@ -5,16 +5,12 @@ import createSagaMiddleware from 'redux-saga';
 import { composeWithStateSync } from 'electron-redux';
 
 import uiReducer from './ui/slice';
-import captureReducer from './capture/slice';
 
 const sagaMiddleware = createSagaMiddleware();
 const composedEnhancer = composeWithStateSync(applyMiddleware(sagaMiddleware));
 
 const store = configureStore({
-  reducer: {
-    ui: uiReducer,
-    capture: captureReducer,
-  },
+  reducer: { ui: uiReducer },
   enhancers: [composedEnhancer],
 });
 
