@@ -17,7 +17,7 @@ import log from 'electron-log';
 import { TYPES } from '@di/types';
 import { diContainer } from '@di/container';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
-import { IUiDirector } from '@core/interfaces/ui';
+import { IUiDirector } from '@core/interfaces/director';
 import { checkForUpdates, loadPreferences } from '@ui/redux/slice';
 import { getPlatform } from '@utils/process';
 

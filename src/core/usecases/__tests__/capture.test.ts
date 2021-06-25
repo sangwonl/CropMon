@@ -12,7 +12,7 @@ import { StateManager } from '@core/interfaces/state';
 import { IScreenRecorder } from '@core/interfaces/recorder';
 import { CaptureUseCase } from '@core/usecases/capture';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
-import { IUiDirector } from '@core/interfaces/ui';
+import { IUiDirector } from '@core/interfaces/director';
 
 describe('CaptureUseCase', () => {
   let mockedStateManager: StateManager;
@@ -51,7 +51,7 @@ describe('CaptureUseCase', () => {
     mockPrefs = {
       version: '0.0.1',
       recordHomeDir: '/tmp/recordhome',
-      openRecordHomeDirWhenRecordCompleted: true,
+      openRecordHomeWhenRecordCompleted: true,
       shortcut: 'Super+Shift+E',
     };
     when(mockedStateManager.getUserPreferences()).thenReturn(mockPrefs);

@@ -8,13 +8,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { debounce } from 'debounce';
 
 import { IBounds } from '@core/entities/screen';
+import { ICaptureArea, ICaptureOverlays } from '@core/entities/ui';
 import { RootState } from '@ui/redux/store';
-import { ICaptureArea, ICaptureOverlays } from '@ui/redux/types';
 import {
   startAreaSelection,
   finishAreaSelection,
-  disableAreaSelection,
   startCapture,
+  disableCaptureMode,
 } from '@ui/redux/slice';
 import { focusCurWidget, getCurWidgetCustomData } from '@utils/remote';
 import { isMac } from '@utils/process';
@@ -83,7 +83,7 @@ export const CaptureCover = () => {
   };
 
   const onSelectionCancel = () => {
-    dispatch(disableAreaSelection());
+    dispatch(disableCaptureMode());
   };
 
   const onRecordStart = () => {

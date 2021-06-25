@@ -29,7 +29,7 @@ export const BasePreferences = (props: BasePreferencesProps) => {
   const { prefs } = props;
 
   const [openRecordHomeDir, setOpenRecordHomeDir] = useState<boolean>(
-    prefs.openRecordHomeDirWhenRecordCompleted
+    prefs.openRecordHomeWhenRecordCompleted
   );
 
   const [shortcutKey, setShortcutKey] = useState<string>(prefs.shortcut);

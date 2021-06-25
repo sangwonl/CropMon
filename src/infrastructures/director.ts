@@ -17,7 +17,7 @@ import log from 'electron-log';
 
 import { TYPES } from '@di/types';
 import { IBounds, IScreenInfo } from '@core/entities/screen';
-import { IUiDirector } from '@core/interfaces/ui';
+import { IUiDirector } from '@core/interfaces/director';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
 import { StateManager } from '@core/interfaces/state';
 import { assetPathResolver } from '@utils/asset';

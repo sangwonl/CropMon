@@ -6,6 +6,7 @@ const TYPES = {
   ScreenRecorder: Symbol.for('ScreenRecorder'),
   PreferencesStore: Symbol.for('PreferencesStore'),
   UiDirector: Symbol.for('UiDirector'),
+  UiStateApplier: Symbol.for('UiStateApplier'),
   AnalyticsTracker: Symbol.for('AnalyticsTracker'),
   HookManager: Symbol.for('HookManager'),
 };

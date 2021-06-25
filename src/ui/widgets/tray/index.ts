@@ -20,12 +20,12 @@ import { StateManager } from '@core/interfaces/state';
 import { CaptureStatus } from '@core/entities/capture';
 import store from '@ui/redux/store';
 import {
+  enableCaptureMode,
+  finishCapture,
   checkForUpdates,
-  enableAreaSelection,
   openPreferences,
   quitApplication,
   showAbout,
-  finishCapture,
 } from '@ui/redux/slice';
 import { iconizeShortcut, INITIAL_SHORTCUT } from '@utils/shortcut';
 
@@ -51,7 +51,7 @@ export abstract class AppTray {
   }
 
   protected onStartRecording() {
-    store.dispatch(enableAreaSelection());
+    store.dispatch(enableCaptureMode());
   }
 
   protected onStopRecording() {

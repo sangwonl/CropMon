@@ -5,10 +5,10 @@ import 'reflect-metadata';
 
 import { Container } from 'inversify';
 
-import { StateManager } from '@core/interfaces/state';
+import { IUiStateApplier, StateManager } from '@core/interfaces/state';
 import { IScreenRecorder } from '@core/interfaces/recorder';
 import { IPreferencesStore } from '@core/interfaces/preferences';
-import { IUiDirector } from '@core/interfaces/ui';
+import { IUiDirector } from '@core/interfaces/director';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
 import { IHookManager } from '@core/interfaces/hook';
 import { CaptureUseCase } from '@core/usecases/capture';
@@ -20,6 +20,7 @@ import { HookManager } from '@infrastructures/hook';
 import { AppUpdater } from '@infrastructures/updater';
 import { UiDirector } from '@infrastructures/director';
 import { ActionDispatcher } from '@adapters/action';
+import { UiStateApplier } from '@infrastructures/state';
 
 import { TYPES } from './types';
 
@@ -43,6 +44,11 @@ diContainer
 diContainer
   .bind<IUiDirector>(TYPES.UiDirector)
   .to(UiDirector)
+  .inSingletonScope();
+
+diContainer
+  .bind<IUiStateApplier>(TYPES.UiStateApplier)
+  .to(UiStateApplier)
   .inSingletonScope();
 
 diContainer

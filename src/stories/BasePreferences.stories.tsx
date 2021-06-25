@@ -25,7 +25,7 @@ Default.args = {
   prefs: {
     version: '0.0.1',
     recordHomeDir: '/home/pineple/kropsaurus',
-    openRecordHomeDirWhenRecordCompleted: true,
+    openRecordHomeWhenRecordCompleted: true,
     shortcut: 'Super+Shift+E',
   },
   onChooseRecordHomeDir: () => {},
