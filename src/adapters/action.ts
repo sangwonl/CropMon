@@ -18,6 +18,10 @@ export class ActionDispatcher {
     this.appUseCase.checkForUpdates();
   }
 
+  showAboutPopup() {
+    this.appUseCase.showAboutPopup();
+  }
+
   enableCaptureSelection() {
     this.captureUseCase.enableCaptureSelection();
   }

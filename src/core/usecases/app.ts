@@ -28,6 +28,10 @@ export class AppUseCase {
     this.openReleaseNotesIfUpdated();
   };
 
+  showAboutPopup = async () => {
+    await this.uiDirector.openAboutPopup();
+  };
+
   private async openReleaseNotesIfUpdated() {
     const prefs = await this.prefsUseCase.getUserPreferences();
     const oldVersion = prefs.version;
