@@ -2,7 +2,7 @@
 
 import { IBounds } from '@core/entities/screen';
 
-export interface IChooseRecordHomeDirPayload {
+export interface IChooseRecordHomePayload {
   recordHomeDir: string;
 }
 

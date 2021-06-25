@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable import/prefer-default-export */
 
@@ -30,6 +31,10 @@ export class AppUseCase {
 
   showAboutPopup = async () => {
     await this.uiDirector.openAboutPopup();
+  };
+
+  quitApplication = () => {
+    this.uiDirector.quitApplication();
   };
 
   private async openReleaseNotesIfUpdated() {
