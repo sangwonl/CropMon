@@ -7,11 +7,10 @@
 /* eslint-disable import/prefer-default-export */
 
 import { app } from 'electron';
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import semver from 'semver';
 import log from 'electron-log';
 
-import { UiDirector } from '@presenters/interactor/director';
 import { isProduction } from '@utils/process';
 
 import { version as curVersion } from '../../package.json';
@@ -22,13 +21,16 @@ if (!isProduction()) {
 
 // this should be imported after version overriding in dev mode
 import { autoUpdater } from 'electron-updater';
+
+import { TYPES } from '@di/types';
+import { IUiDirector } from '@core/components/ui';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 
 @injectable()
 export class AppUpdater {
   constructor(
     private prefsUseCase: PreferencesUseCase,
-    private uiDirector: UiDirector
+    @inject(TYPES.UiDirector) private uiDirector: IUiDirector
   ) {
     autoUpdater.logger = log;
     autoUpdater.autoDownload = false;

@@ -2,11 +2,12 @@
 /* eslint-disable import/prefer-default-export */
 
 import { injectable } from 'inversify';
+
 import { ICaptureContext } from '@core/entities/capture';
 import { IPreferences } from '@core/entities/preferences';
 
 @injectable()
-export class GlobalRegistry {
+export class StateManager {
   private curCaptureContext: ICaptureContext | undefined;
   private userPreferences: IPreferences | undefined;
 

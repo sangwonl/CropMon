@@ -17,8 +17,9 @@ import log from 'electron-log';
 
 import { TYPES } from '@di/types';
 import { IBounds, IScreenInfo } from '@core/entities/screen';
+import { IUiDirector } from '@core/components/ui';
 import { IAnalyticsTracker } from '@core/components/tracker';
-import { GlobalRegistry } from '@core/components/registry';
+import { StateManager } from '@core/components/state';
 import { assetPathResolver } from '@presenters/common/asset';
 import { AppTray } from '@presenters/ui/widgets/tray';
 import { CaptureOverlay } from '@presenters/ui/widgets/overlays';
@@ -106,22 +107,22 @@ class CaptureOverlayPool {
 }
 
 @injectable()
-export class UiDirector {
+export class UiDirector implements IUiDirector {
   private appTray!: AppTray;
   private preferencesModal?: PreferencesModal;
   private captureOverlays!: CaptureOverlayPool;
   private updateProgressDialog: ProgressDialog | undefined;
 
   constructor(
-    private globalRegistry: GlobalRegistry,
+    private stateManager: StateManager,
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
   ) {}
 
-  intialize() {
+  intialize(): void {
     const trayIconPath = assetPathResolver('icon.png');
     this.appTray = isMac()
-      ? AppTray.forMac(trayIconPath, this.globalRegistry)
-      : AppTray.forWindows(trayIconPath, this.globalRegistry);
+      ? AppTray.forMac(trayIconPath, this.stateManager)
+      : AppTray.forWindows(trayIconPath, this.stateManager);
 
     const screenInfos = this.populateScreenInfos();
     this.captureOverlays = new CaptureOverlayPool(screenInfos);
@@ -131,11 +132,11 @@ export class UiDirector {
     this.captureOverlays.hideAll();
   }
 
-  refreshAppTrayState() {
+  refreshAppTrayState(): void {
     this.appTray.refreshContextMenu();
   }
 
-  quitApplication(relaunch?: boolean) {
+  quitApplication(relaunch?: boolean): void {
     if (relaunch) {
       app.relaunch();
     }
@@ -143,8 +144,8 @@ export class UiDirector {
     this.tracker.event('app-lifecycle', 'quit');
   }
 
-  async openAboutPopup() {
-    const prefs = this.globalRegistry.getUserPreferences();
+  async openAboutPopup(): Promise<void> {
+    const prefs = this.stateManager.getUserPreferences();
     const shortcut = prefs?.shortcut ?? INITIAL_SHORTCUT;
 
     const aboutHtmlPath = assetPathResolver('about.html');
@@ -160,7 +161,7 @@ export class UiDirector {
     staticPopup.on('ready-to-show', () => staticPopup.show());
   }
 
-  async openReleaseNotes() {
+  async openReleaseNotes(): Promise<void> {
     const relNotePath = assetPathResolver('relnote.md');
     const content = await fs.promises.readFile(relNotePath, 'utf-8');
     const notePopup = new StaticPagePopup({
@@ -173,7 +174,7 @@ export class UiDirector {
     });
   }
 
-  openPreferencesModal() {
+  openPreferencesModal(): void {
     this.preferencesModal = new PreferencesModal();
     this.preferencesModal.on('ready-to-show', () => {
       this.preferencesModal?.show();
@@ -181,7 +182,7 @@ export class UiDirector {
     });
   }
 
-  closePreferencesModal() {
+  closePreferencesModal(): void {
     this.preferencesModal?.close();
     this.tracker.view('idle');
   }

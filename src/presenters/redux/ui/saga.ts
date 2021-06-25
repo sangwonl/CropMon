@@ -12,9 +12,12 @@ import { IPreferences } from '@core/entities/preferences';
 import { IScreenInfo } from '@core/entities/screen';
 import { CaptureStatus, ICaptureContext } from '@core/entities/capture';
 import { PreferencesUseCase } from '@core/usecases/preferences';
+import { IHookManager } from '@core/components/hook';
+import { IUiDirector } from '@core/components/ui';
+import { StateManager } from '@core/components/state';
 import { AppUpdater } from '@presenters/interactor/updater';
-import { UiDirector } from '@presenters/interactor/director';
-import store, { RootState } from '@presenters/redux/store';
+import { ActionDispatcher } from '@presenters/interactor/action';
+import { RootState } from '@presenters/redux/store';
 import {
   showAbout,
   loadPreferences,
@@ -32,24 +35,24 @@ import {
   didDisableAreaSelection,
   enableRecording,
   checkForUpdates,
-} from '@presenters/redux/ui/slice';
-import {
   didFinishCapture,
   finishCapture,
-} from '@presenters/redux/capture/slice';
+  startCapture,
+} from '@presenters/redux/ui/slice';
 import { IClosePreferencesPayload } from '@presenters/redux/ui/types';
-import { IHookManager } from '@core/components/hook';
 import { INITIAL_SHORTCUT, registerShortcut } from '@utils/shortcut';
-import { GlobalRegistry } from '@core/components/registry';
+
+import { IStartCapturePayload } from './types';
 
 const { put, select, takeLatest, takeLeading } = Effects;
 const call: any = Effects.call;
 
 const appUpdater = diContainer.get(AppUpdater);
-const uiDirector = diContainer.get(UiDirector);
 const prefsUseCase = diContainer.get(PreferencesUseCase);
-const globalRegistry = diContainer.get(GlobalRegistry);
+const globalRegistry = diContainer.get(StateManager);
+const actionDispatcher = diContainer.get(ActionDispatcher);
 const hookManager = diContainer.get<IHookManager>(TYPES.HookManager);
+const uiDirector = diContainer.get<IUiDirector>(TYPES.UiDirector);
 
 function handleShowAbout(_action: PayloadAction) {
   uiDirector.openAboutPopup();
@@ -161,9 +164,9 @@ function handleQuitApplication(_action: PayloadAction) {
 const handleCaptureShortcut = () => {
   const captCtx = globalRegistry.getCaptureContext();
   if (captCtx?.status === CaptureStatus.IN_PROGRESS) {
-    store.dispatch(finishCapture());
+    actionDispatcher.finishCapture();
   } else {
-    store.dispatch(enableAreaSelection());
+    uiDirector.enableCaptureSelectionMode();
   }
 };
 
@@ -172,6 +175,14 @@ const handlePrefsChanged = () => {
   const shortcut = prefs?.shortcut ?? INITIAL_SHORTCUT;
   registerShortcut(shortcut, handleCaptureShortcut);
 };
+
+function handleStartCapture(action: PayloadAction<IStartCapturePayload>) {
+  actionDispatcher.startCapture(action.payload.screenId, action.payload.bounds);
+}
+
+function handleFinishCapture(_action: PayloadAction) {
+  actionDispatcher.finishCapture();
+}
 
 function* sagaEntry() {
   yield takeLeading(loadPreferences.type, handleLoadPreferences);
@@ -185,6 +196,8 @@ function* sagaEntry() {
   yield takeLatest(enableRecording.type, handleEnableRecording);
   yield takeLatest(didFinishCapture.type, handleDidFinishCapture);
   yield takeLatest(quitApplication.type, handleQuitApplication);
+  yield takeLatest(startCapture.type, handleStartCapture);
+  yield takeLatest(finishCapture.type, handleFinishCapture);
 
   hookManager.on('after-preferences-loaded', handlePrefsChanged);
   hookManager.on('after-preferences-updated', handlePrefsChanged);

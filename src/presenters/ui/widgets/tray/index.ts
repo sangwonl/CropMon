@@ -16,7 +16,7 @@ import {
   MenuItemConstructorOptions,
 } from 'electron';
 
-import { GlobalRegistry } from '@core/components/registry';
+import { StateManager } from '@core/components/state';
 import { CaptureStatus } from '@core/entities/capture';
 import store from '@presenters/redux/store';
 import {
@@ -25,17 +25,14 @@ import {
   openPreferences,
   quitApplication,
   showAbout,
+  finishCapture,
 } from '@presenters/redux/ui/slice';
-import { finishCapture } from '@presenters/redux/capture/slice';
 import { iconizeShortcut, INITIAL_SHORTCUT } from '@utils/shortcut';
 
 export abstract class AppTray {
   tray: Tray;
 
-  constructor(
-    trayImage: NativeImage,
-    protected globalRegistry: GlobalRegistry
-  ) {
+  constructor(trayImage: NativeImage, protected stateManager: StateManager) {
     this.tray = new Tray(trayImage);
 
     this.refreshContextMenu();
@@ -70,7 +67,7 @@ export abstract class AppTray {
   }
 
   protected getShortcut(): string {
-    const prefs = this.globalRegistry.getUserPreferences();
+    const prefs = this.stateManager.getUserPreferences();
     return iconizeShortcut(prefs?.shortcut ?? INITIAL_SHORTCUT);
   }
 
@@ -88,7 +85,7 @@ export abstract class AppTray {
     menuStartCapt.label = menuStartCapt.label.replace('__shortcut__', shortcut);
     menuStopCapt.label = menuStopCapt.label.replace('__shortcut__', shortcut);
 
-    const captCtx = this.globalRegistry.getCaptureContext();
+    const captCtx = this.stateManager.getCaptureContext();
     const isRecording = captCtx?.status === CaptureStatus.IN_PROGRESS;
     menuStartCapt.visible = !isRecording;
     menuStopCapt.visible = isRecording;
@@ -96,15 +93,15 @@ export abstract class AppTray {
     this.tray.setContextMenu(Menu.buildFromTemplate(templ));
   }
 
-  static forWindows(iconPath: string, globalRegistry: GlobalRegistry): AppTray {
-    return new WinAppTray(nativeImage.createFromPath(iconPath), globalRegistry);
+  static forWindows(iconPath: string, stateManager: StateManager): AppTray {
+    return new WinAppTray(nativeImage.createFromPath(iconPath), stateManager);
   }
 
-  static forMac(iconPath: string, globalRegistry: GlobalRegistry): AppTray {
+  static forMac(iconPath: string, stateManager: StateManager): AppTray {
     const trayImage = nativeImage
       .createFromPath(iconPath)
       .resize({ width: 16, height: 16 });
-    return new MacAppTray(trayImage, globalRegistry);
+    return new MacAppTray(trayImage, stateManager);
   }
 }
 

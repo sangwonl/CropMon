@@ -17,14 +17,14 @@ import log from 'electron-log';
 import { TYPES } from '@di/types';
 import { diContainer } from '@di/container';
 import { IAnalyticsTracker } from '@core/components/tracker';
-import { UiDirector } from '@presenters/interactor/director';
+import { IUiDirector } from '@core/components/ui';
 import store, { initializeSaga } from '@presenters/redux/store-main';
 import { checkForUpdates, loadPreferences } from '@presenters/redux/ui/slice';
 import { getPlatform } from '@utils/process';
 
 import { initializeDevEnv } from './devenv';
 
-const uiDirector = diContainer.get(UiDirector);
+const uiDirector = diContainer.get<IUiDirector>(TYPES.UiDirector);
 const tracker = diContainer.get<IAnalyticsTracker>(TYPES.AnalyticsTracker);
 
 const initializeApp = async () => {
