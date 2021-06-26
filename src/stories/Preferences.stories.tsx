@@ -4,31 +4,31 @@ import React from 'react';
 import { Story, Meta } from '@storybook/react';
 
 import {
-  BasePreferences,
-  BasePreferencesProps,
-} from '@ui/components/stateless/BasePreferences';
+  Preferences,
+  PreferencesProps,
+} from '@ui/components/stateless/Preferences';
 
 export default {
-  title: 'Kropsaurus/BasePreferences',
-  component: BasePreferences,
+  title: 'Kropsaurus/Preferences',
+  component: Preferences,
   argTypes: {},
 } as Meta;
 
-const Template: Story<BasePreferencesProps> = (args) => (
+const Template: Story<PreferencesProps> = (args) => (
   <div style={{ width: 600, padding: 20, backgroundColor: '#f1f1f1' }}>
-    <BasePreferences {...args} />
+    <Preferences {...args} />
   </div>
 );
 
 export const Default = Template.bind({});
 Default.args = {
-  prefs: {
+  preferences: {
     version: '0.0.1',
     recordHome: '/home/pineple/kropsaurus',
     openRecordHomeWhenRecordCompleted: true,
     shortcut: 'Win + Shift + E',
   },
-  onChooseRecordHomeDir: () => {},
-  onToggleOpenRecordHomeDir: () => {},
+  onChooseRecordHome: () => {},
+  onToggleOpenRecordHome: () => {},
   onClose: () => {},
 };

@@ -10,6 +10,7 @@ import { IPreferences } from '@core/entities/preferences';
 import { IPreferencesStore } from '@core/interfaces/preferences';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
 import { IHookManager } from '@core/interfaces/hook';
+import { IUiDirector } from '@core/interfaces/director';
 
 @injectable()
 export class PreferencesUseCase {
@@ -17,9 +18,18 @@ export class PreferencesUseCase {
 
   public constructor(
     @inject(TYPES.PreferencesStore) private preferencesStore: IPreferencesStore,
+    @inject(TYPES.UiDirector) private uiDirector: IUiDirector,
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker,
     @inject(TYPES.HookManager) private hookManager: IHookManager
   ) {}
+
+  async openPreferencesModal(): Promise<void> {
+    const prefs = await this.fetchUserPreferences();
+    const updatedPrefs = await this.uiDirector.openPreferencesModal(prefs);
+    if (updatedPrefs !== undefined) {
+      this.updateUserPreference(updatedPrefs);
+    }
+  }
 
   async fetchUserPreferences(): Promise<IPreferences> {
     if (this.cachedUserPrefs === undefined) {

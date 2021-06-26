@@ -14,9 +14,9 @@ import { Widget } from '@ui/widgets/widget';
 
 import {
   ProgressDialogOptions,
-  IPC_EVENT_ON_ACTION_BTN_CLICK,
-  IPC_EVENT_SET_PROGRESS,
-  IPC_EVENT_ON_CANCEL_BTN_CLICK,
+  IPC_EVT_ON_ACTION,
+  IPC_EVT_SET_PROGRESS,
+  IPC_EVT_ON_CANCEL,
 } from './shared';
 
 export class ProgressDialog extends Widget {
@@ -35,7 +35,7 @@ export class ProgressDialog extends Widget {
   }
 
   setProgress(progress: number) {
-    this.webContents.send(IPC_EVENT_SET_PROGRESS, { progress });
+    this.webContents.send(IPC_EVT_SET_PROGRESS, { progress });
   }
 
   open(): Promise<boolean> {
@@ -58,13 +58,13 @@ export class ProgressDialog extends Widget {
       };
 
       const setupIpcListeners = () => {
-        ipcMain.on(IPC_EVENT_ON_ACTION_BTN_CLICK, onActionBtnClick);
-        ipcMain.on(IPC_EVENT_ON_CANCEL_BTN_CLICK, onCancelBtnClick);
+        ipcMain.on(IPC_EVT_ON_ACTION, onActionBtnClick);
+        ipcMain.on(IPC_EVT_ON_CANCEL, onCancelBtnClick);
       };
 
       const clearIpcListeners = () => {
-        ipcMain.off(IPC_EVENT_ON_ACTION_BTN_CLICK, onActionBtnClick);
-        ipcMain.off(IPC_EVENT_ON_CANCEL_BTN_CLICK, onCancelBtnClick);
+        ipcMain.off(IPC_EVT_ON_ACTION, onActionBtnClick);
+        ipcMain.off(IPC_EVT_ON_CANCEL, onCancelBtnClick);
       };
 
       setupIpcListeners();

@@ -1,7 +1,7 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable import/prefer-default-export */
 
-import React, { useState, KeyboardEvent } from 'react';
+import React, { useState, KeyboardEvent, useEffect } from 'react';
 
 import {
   Paper,
@@ -15,30 +15,35 @@ import {
 import { IPreferences } from '@core/entities/preferences';
 import { textifyShortcut } from '@utils/shortcut';
 
-import styles from './BasePreferences.css';
+import styles from './Preferences.css';
 
-export interface BasePreferencesProps {
-  prefs: IPreferences;
-  onChooseRecordHomeDir: () => void;
-  onToggleOpenRecordHomeDir: (shouldOpen: boolean) => void;
-  onChangeShortcut: (shortcut: string) => void;
-  onClose: (shouldSave?: boolean) => void;
+export interface PreferencesProps {
+  preferences: IPreferences;
+  onClose: (shouldSave: boolean) => void;
+  onChooseRecordHome: () => void;
+  onToggleOpenRecordHome: (shouldOpen: boolean) => void;
+  onShortcutChanged: (shortcut: string) => void;
 }
 
-export const BasePreferences = (props: BasePreferencesProps) => {
-  const { prefs } = props;
+export const Preferences = (props: PreferencesProps) => {
+  const { preferences } = props;
 
   const [openRecordHomeDir, setOpenRecordHomeDir] = useState<boolean>(
-    prefs.openRecordHomeWhenRecordCompleted
+    preferences.openRecordHomeWhenRecordCompleted
   );
 
-  const [shortcutKey, setShortcutKey] = useState<string>(prefs.shortcut);
+  const [shortcutKey, setShortcutKey] = useState<string>(preferences.shortcut);
 
   const onShortcutHandler = (e: KeyboardEvent<HTMLDivElement>) => {
     const shortcut = textifyShortcut(e);
     setShortcutKey(shortcut);
-    props.onChangeShortcut(shortcut);
+    props.onShortcutChanged(shortcut);
   };
+
+  useEffect(() => {
+    setOpenRecordHomeDir(preferences.openRecordHomeWhenRecordCompleted);
+    setShortcutKey(preferences.shortcut);
+  }, [preferences.openRecordHomeWhenRecordCompleted, preferences.shortcut]);
 
   return (
     <>
@@ -49,10 +54,10 @@ export const BasePreferences = (props: BasePreferencesProps) => {
             className={styles.itemRecordHome}
             label="Record files to:"
             variant="outlined"
-            value={prefs.recordHome}
+            value={preferences.recordHome}
             InputProps={{ readOnly: true }}
           />
-          <Button variant="outlined" onClick={props.onChooseRecordHomeDir}>
+          <Button variant="outlined" onClick={props.onChooseRecordHome}>
             ...
           </Button>
         </Grid>
@@ -66,7 +71,7 @@ export const BasePreferences = (props: BasePreferencesProps) => {
                 onChange={(event) => {
                   const { checked } = event.target;
                   setOpenRecordHomeDir(checked);
-                  props.onToggleOpenRecordHomeDir(checked);
+                  props.onToggleOpenRecordHome(checked);
                 }}
               />
             }
@@ -100,7 +105,7 @@ export const BasePreferences = (props: BasePreferencesProps) => {
           className={styles.button}
           color="default"
           variant="contained"
-          onClick={() => props.onClose()}
+          onClick={() => props.onClose(false)}
         >
           Close
         </Button>

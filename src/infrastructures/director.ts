@@ -143,6 +143,9 @@ export class UiDirector implements IUiDirector {
   }
 
   quitApplication(relaunch?: boolean): void {
+    this.captureOverlays.closeAll();
+    this.preferencesModal?.close();
+
     if (relaunch) {
       app.relaunch();
     }
@@ -177,26 +180,17 @@ export class UiDirector implements IUiDirector {
     });
   }
 
-  openPreferencesModal(): void {
-    this.preferencesModal = new PreferencesModal();
-    this.preferencesModal.on('ready-to-show', () => {
-      this.preferencesModal?.show();
-      this.tracker.view('preferences-modal');
-    });
-  }
+  async openPreferencesModal(
+    prefs: IPreferences
+  ): Promise<IPreferences | undefined> {
+    if (this.preferencesModal === undefined) {
+      this.preferencesModal = new PreferencesModal();
+    }
 
-  closePreferencesModal(): void {
-    this.preferencesModal?.close();
-    this.tracker.view('idle');
-  }
+    const updatedPrefs = await this.preferencesModal.open(prefs);
+    this.tracker.view('preferences-modal');
 
-  async openDialogForRecordHomeDir(path?: string): Promise<string> {
-    const { filePaths } = await dialog.showOpenDialog(this.preferencesModal!, {
-      defaultPath: path ?? app.getPath('videos'),
-      properties: ['openDirectory'],
-    });
-
-    return filePaths.length > 0 ? filePaths[0] : '';
+    return updatedPrefs;
   }
 
   enableCaptureSelectionMode(): Array<IScreenInfo> {

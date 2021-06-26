@@ -9,9 +9,7 @@ export interface IUiDirector {
   quitApplication(relaunch?: boolean): void;
   openAboutPopup(prefs: IPreferences): Promise<void>;
   openReleaseNotes(): Promise<void>;
-  openPreferencesModal(): void;
-  closePreferencesModal(): void;
-  openDialogForRecordHomeDir(path?: string): Promise<string>;
+  openPreferencesModal(prefs: IPreferences): Promise<IPreferences | undefined>;
   enableCaptureSelectionMode(): Array<IScreenInfo>;
   disableCaptureSelectionMode(): void;
   enableRecordingMode(): void;

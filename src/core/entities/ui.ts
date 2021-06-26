@@ -30,21 +30,11 @@ export interface IFinishAreaSelection {
 }
 
 export interface IUiState {
-  preferencesModal: IPreferencesModal;
   captureOverlays: ICaptureOverlays;
   captureArea: ICaptureArea;
 }
 
 export const initialUiState: IUiState = {
-  preferencesModal: {
-    show: false,
-    preferences: {
-      version: '',
-      recordHome: '',
-      openRecordHomeWhenRecordCompleted: true,
-      shortcut: '',
-    },
-  },
   captureOverlays: {},
   captureArea: {
     screenIdOnSelection: undefined,

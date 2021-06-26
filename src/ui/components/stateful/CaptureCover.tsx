@@ -57,11 +57,11 @@ export const CaptureCover = () => {
   const dispatch = useDispatch();
 
   const captureOverlays: ICaptureOverlays = useSelector(
-    (state: RootState) => state.ui.captureOverlays
+    (state: RootState) => state.ui.root.captureOverlays
   );
 
   const captureArea: ICaptureArea = useSelector(
-    (state: RootState) => state.ui.captureArea
+    (state: RootState) => state.ui.root.captureArea
   );
 
   const [coverActive, setCoverActive] = useState<boolean>(false);

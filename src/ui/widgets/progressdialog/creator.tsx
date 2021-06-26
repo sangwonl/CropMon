@@ -12,10 +12,10 @@ import { getCurWidgetCustomData } from '@utils/remote';
 
 import {
   ProgressDialogOptions,
-  IpcEventSetProgress,
-  IPC_EVENT_SET_PROGRESS,
-  IPC_EVENT_ON_ACTION_BTN_CLICK,
-  IPC_EVENT_ON_CANCEL_BTN_CLICK,
+  IpcEvtSetProgress,
+  IPC_EVT_SET_PROGRESS,
+  IPC_EVT_ON_ACTION,
+  IPC_EVT_ON_CANCEL,
 } from './shared';
 
 const options = getCurWidgetCustomData<ProgressDialogOptions>('options');
@@ -25,8 +25,8 @@ const Wrapper = () => {
 
   useEffect(() => {
     ipcRenderer.on(
-      IPC_EVENT_SET_PROGRESS,
-      (_event: any, data: IpcEventSetProgress) => setProgress(data.progress)
+      IPC_EVT_SET_PROGRESS,
+      (_event: any, data: IpcEvtSetProgress) => setProgress(data.progress)
     );
   }, []);
 
@@ -41,10 +41,10 @@ const Wrapper = () => {
       }}
       progress={progress}
       onActionClick={() => {
-        ipcRenderer.send(IPC_EVENT_ON_ACTION_BTN_CLICK, {});
+        ipcRenderer.send(IPC_EVT_ON_ACTION, {});
       }}
       onCancelClick={() => {
-        ipcRenderer.send(IPC_EVENT_ON_CANCEL_BTN_CLICK, {});
+        ipcRenderer.send(IPC_EVT_ON_CANCEL, {});
       }}
     />
   );
