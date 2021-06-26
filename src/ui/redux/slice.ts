@@ -9,20 +9,14 @@ import {
   IUiState,
 } from '@core/entities/ui';
 
-import {
-  IChooseRecordHomePayload,
-  IClosePreferencesPayload,
-  IStartCapturePayload,
-} from './types';
+import { IStartCapturePayload } from './types';
 
 const slice = createSlice({
   name: 'ui',
-  initialState: initialUiState,
+  initialState: { root: initialUiState },
   reducers: {
-    updateUiState: (s, { payload }: PayloadAction<IUiState>) => {
-      s.captureArea = payload.captureArea;
-      s.captureOverlays = payload.captureOverlays;
-      s.preferencesModal = payload.preferencesModal;
+    updateUiState: (s, a: PayloadAction<IUiState>) => {
+      s.root = a.payload;
     },
 
     // app
@@ -38,31 +32,8 @@ const slice = createSlice({
     startCapture: (_s, _a: PayloadAction<IStartCapturePayload>) => {},
     finishCapture: () => {},
 
-    // legacy
+    // preferences
     openPreferences: () => {},
-    didOpenPreferences: (s) => {
-      s.preferencesModal.show = true;
-    },
-    closePreferences: {
-      reducer: (_s, _a: PayloadAction<IClosePreferencesPayload>) => {},
-      prepare: (shouldSave?: boolean) => ({
-        payload: { shouldSave: shouldSave || false },
-      }),
-    },
-    didClosePreferences: (s) => {
-      s.preferencesModal.show = false;
-    },
-    chooseRecordHomeDir: () => {},
-    didChooseRecordHomeDir: (s, a: PayloadAction<IChooseRecordHomePayload>) => {
-      s.preferencesModal.preferences.recordHome = a.payload.recordHomeDir;
-    },
-    setFlagToOpenRecordHomeDir: (s, a: PayloadAction<boolean>) => {
-      s.preferencesModal.preferences.openRecordHomeWhenRecordCompleted =
-        a.payload;
-    },
-    setShortcut: (s, a: PayloadAction<string>) => {
-      s.preferencesModal.preferences.shortcut = a.payload;
-    },
   },
 });
 
@@ -78,13 +49,6 @@ export const {
   startCapture,
   finishCapture,
   openPreferences,
-  didOpenPreferences,
-  closePreferences,
-  didClosePreferences,
-  setFlagToOpenRecordHomeDir,
-  setShortcut,
-  chooseRecordHomeDir,
-  didChooseRecordHomeDir,
 } = slice.actions;
 
 export default slice.reducer;

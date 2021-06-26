@@ -15,10 +15,10 @@ export interface ProgressDialogOptions {
   height?: number;
 }
 
-export const IPC_EVENT_SET_PROGRESS = 'set-progress';
-export const IPC_EVENT_ON_ACTION_BTN_CLICK = 'on-action-btn-click';
-export const IPC_EVENT_ON_CANCEL_BTN_CLICK = 'on-cancel-btn-click';
+export const IPC_EVT_SET_PROGRESS = 'set-progress';
+export const IPC_EVT_ON_ACTION = 'on-action';
+export const IPC_EVT_ON_CANCEL = 'on-cancel';
 
-export interface IpcEventSetProgress {
+export interface IpcEvtSetProgress {
   progress: number;
 }
