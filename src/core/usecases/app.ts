@@ -9,6 +9,7 @@ import semver from 'semver';
 import { TYPES } from '@di/types';
 import { IUiDirector } from '@core/interfaces/director';
 import { IAppUpdater } from '@core/interfaces/updater';
+
 import { PreferencesUseCase } from './preferences';
 
 @injectable()

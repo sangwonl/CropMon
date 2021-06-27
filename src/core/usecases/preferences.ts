@@ -8,7 +8,6 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '@di/types';
 import { IPreferences } from '@core/entities/preferences';
 import { IPreferencesStore } from '@core/interfaces/preferences';
-import { IAnalyticsTracker } from '@core/interfaces/tracker';
 import { IHookManager } from '@core/interfaces/hook';
 import { IUiDirector } from '@core/interfaces/director';
 
@@ -19,7 +18,6 @@ export class PreferencesUseCase {
   public constructor(
     @inject(TYPES.PreferencesStore) private preferencesStore: IPreferencesStore,
     @inject(TYPES.UiDirector) private uiDirector: IUiDirector,
-    @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker,
     @inject(TYPES.HookManager) private hookManager: IHookManager
   ) {}
 
@@ -35,20 +33,21 @@ export class PreferencesUseCase {
     if (this.cachedUserPrefs === undefined) {
       // load pref from persistent storage
       // it returns new default one if no pref info in storage
-      this.cachedUserPrefs = await this.preferencesStore.loadPreferences();
-      this.hookManager.emit('after-preferences-loaded');
+      const loadedPrefs = await this.preferencesStore.loadPreferences();
+      this.cachedUserPrefs = loadedPrefs;
+
+      this.hookManager.emit('after-prefs-loaded', { loadedPrefs });
     }
 
     return this.cachedUserPrefs;
   }
 
-  async updateUserPreference(prefs: IPreferences): Promise<void> {
-    await this.preferencesStore.savePreferences(prefs);
+  async updateUserPreference(newPrefs: IPreferences): Promise<void> {
+    const prevPrefs = this.cachedUserPrefs;
 
-    this.cachedUserPrefs = prefs;
-    this.hookManager.emit('after-preferences-updated');
+    await this.preferencesStore.savePreferences(newPrefs);
+    this.cachedUserPrefs = newPrefs;
 
-    // TODO: Try to move this to hook
-    this.tracker.eventL('prefs', 'update-prefs', JSON.stringify(prefs));
+    this.hookManager.emit('after-prefs-updated', { prevPrefs, newPrefs });
   }
 }

@@ -16,14 +16,14 @@ describe('HookManager', () => {
     let prefsLoadedHookCalled = 0;
 
     hookMgr
-      .on('after-preferences-loaded', () => {
+      .on('after-prefs-loaded', () => {
         prefsLoadedHookCalled += 1;
       })
-      .on('after-preferences-loaded', () => {
+      .on('after-prefs-loaded', () => {
         prefsLoadedHookCalled += 1;
       });
 
-    hookMgr.emit('after-preferences-loaded');
+    hookMgr.emit('after-prefs-loaded', {});
 
     expect(prefsLoadedHookCalled).toEqual(2);
   });
@@ -33,24 +33,24 @@ describe('HookManager', () => {
     let prefsUpdatedHookCalled = 0;
 
     hookMgr
-      .on('after-preferences-loaded', () => {
+      .on('after-prefs-loaded', () => {
         prefsLoadedHookCalled += 1;
       })
-      .on('after-preferences-loaded', () => {
+      .on('after-prefs-loaded', () => {
         prefsLoadedHookCalled += 1;
       })
-      .on('after-preferences-updated', () => {
+      .on('after-prefs-updated', () => {
         prefsUpdatedHookCalled += 1;
       })
-      .on('after-preferences-updated', () => {
+      .on('after-prefs-updated', () => {
         prefsUpdatedHookCalled += 1;
       })
-      .on('after-preferences-updated', () => {
+      .on('after-prefs-updated', () => {
         prefsUpdatedHookCalled += 1;
       });
 
-    hookMgr.emit('after-preferences-loaded');
-    hookMgr.emit('after-preferences-updated');
+    hookMgr.emit('after-prefs-loaded', {});
+    hookMgr.emit('after-prefs-updated', {});
 
     expect(prefsLoadedHookCalled).toEqual(2);
     expect(prefsUpdatedHookCalled).toEqual(3);
@@ -62,11 +62,9 @@ describe('HookManager', () => {
       prefsLoadedHookCalled += 1;
     };
 
-    hookMgr
-      .on('after-preferences-loaded', handler)
-      .on('after-preferences-loaded', handler);
+    hookMgr.on('after-prefs-loaded', handler).on('after-prefs-loaded', handler);
 
-    hookMgr.emit('after-preferences-loaded');
+    hookMgr.emit('after-prefs-loaded', {});
 
     expect(prefsLoadedHookCalled).toEqual(1);
   });

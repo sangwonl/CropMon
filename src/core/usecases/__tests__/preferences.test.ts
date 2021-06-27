@@ -7,17 +7,17 @@ import { mock, instance, verify, when, anything, capture } from 'ts-mockito';
 
 import { IPreferences } from '@core/entities/preferences';
 import { IPreferencesStore } from '@core/interfaces/preferences';
-import { IAnalyticsTracker } from '@core/interfaces/tracker';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { IHookManager } from '@core/interfaces/hook';
 import { INITIAL_SHORTCUT } from '@utils/shortcut';
+import { IUiDirector } from '@core/interfaces/director';
 
 describe('PreferenceUseCase', () => {
   let mockedPreferencesStore: IPreferencesStore;
   let mockPrefsStore: IPreferencesStore;
 
-  let mockedAnalyticsTracker: IAnalyticsTracker;
-  let mockTracker: IAnalyticsTracker;
+  let mockedUiDirector: IUiDirector;
+  let mockUiDirector: IUiDirector;
 
   let mockedHookManager: IHookManager;
   let mockHookMgr: IHookManager;
@@ -26,14 +26,18 @@ describe('PreferenceUseCase', () => {
 
   beforeEach(() => {
     mockedPreferencesStore = mock<IPreferencesStore>();
-    mockedAnalyticsTracker = mock<IAnalyticsTracker>();
+    mockedUiDirector = mock<IUiDirector>();
     mockedHookManager = mock<IHookManager>();
 
     mockPrefsStore = instance(mockedPreferencesStore);
-    mockTracker = instance(mockedAnalyticsTracker);
+    mockUiDirector = instance(mockedUiDirector);
     mockHookMgr = instance(mockedHookManager);
 
-    useCase = new PreferencesUseCase(mockPrefsStore, mockTracker, mockHookMgr);
+    useCase = new PreferencesUseCase(
+      mockPrefsStore,
+      mockUiDirector,
+      mockHookMgr
+    );
   });
 
   describe('fetchUserPreferences', () => {

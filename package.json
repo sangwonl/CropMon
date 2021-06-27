@@ -42,27 +42,37 @@
       {
         "from": "ui/widgets/overlays",
         "to": "overlays",
-        "filter": ["*.html"]
+        "filter": [
+          "*.html"
+        ]
       },
       {
         "from": "ui/widgets/preferences",
         "to": "preferences",
-        "filter": ["*.html"]
+        "filter": [
+          "*.html"
+        ]
       },
       {
         "from": "ui/widgets/progressdialog",
         "to": "progressdialog",
-        "filter": ["*.html"]
+        "filter": [
+          "*.html"
+        ]
       },
       {
         "from": "ui/widgets/staticpage",
         "to": "staticpage",
-        "filter": ["*.html"]
+        "filter": [
+          "*.html"
+        ]
       },
       {
         "from": "infrastructures/recorder/rec-delegate",
         "to": "rec-delegate",
-        "filter": ["*.html"]
+        "filter": [
+          "*.html"
+        ]
       }
     ],
     "afterSign": ".erb/scripts/Notarize.js",
@@ -70,11 +80,15 @@
       "target": [
         {
           "target": "dmg",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         },
         {
           "target": "zip",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "type": "distribution",
@@ -101,7 +115,9 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ]
     },

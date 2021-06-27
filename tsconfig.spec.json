@@ -1,0 +1,5 @@
+{
+  "compilerOptions": {
+    "types": ["reflect-metadata", "dom-mediacapture-record"]
+  }
+}

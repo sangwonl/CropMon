@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint global-require: off, no-console: off */
 
 /**
@@ -19,15 +20,17 @@ import { diContainer } from '@di/container';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
 import { IUiDirector } from '@core/interfaces/director';
 import { PreferencesUseCase } from '@core/usecases/preferences';
+import { BuiltinHooks } from '@infrastructures/hook';
 import { checkForUpdates } from '@ui/redux/slice';
 import { getPlatform } from '@utils/process';
 
 import store, { initializeSaga } from './store-main';
 import { initializeDevEnv } from './devenv';
 
-const prefsUseCase = diContainer.get(PreferencesUseCase);
 const uiDirector = diContainer.get<IUiDirector>(TYPES.UiDirector);
 const tracker = diContainer.get<IAnalyticsTracker>(TYPES.AnalyticsTracker);
+const prefsUseCase = diContainer.get(PreferencesUseCase);
+const builtinHooks = diContainer.get(BuiltinHooks);
 
 const initializeApp = () => {
   store.dispatch(checkForUpdates());

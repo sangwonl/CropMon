@@ -41,6 +41,7 @@ export const {
   updateUiState,
   checkForUpdates,
   showAbout,
+  openPreferences,
   quitApplication,
   enableCaptureMode,
   disableCaptureMode,
@@ -48,7 +49,6 @@ export const {
   finishAreaSelection,
   startCapture,
   finishCapture,
-  openPreferences,
 } = slice.actions;
 
 export default slice.reducer;
