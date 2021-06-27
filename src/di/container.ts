@@ -18,7 +18,7 @@ import { PreferencesUseCase } from '@core/usecases/preferences';
 import { ElectronScreenRecorder } from '@infrastructures/recorder/recorder';
 import { PreferencesStore } from '@infrastructures/preferences';
 import { GoogleAnalyticsTracker } from '@infrastructures/tracker';
-import { HookManager } from '@infrastructures/hook';
+import { HookManager, BuiltinHooks } from '@infrastructures/hook';
 import { AppUpdater } from '@infrastructures/updater';
 import { UiDirector } from '@infrastructures/director';
 import { ActionDispatcher } from '@adapters/action';
@@ -70,6 +70,11 @@ diContainer
 
 diContainer
   .bind<ActionDispatcher>(ActionDispatcher)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<BuiltinHooks>(BuiltinHooks)
   .toSelf()
   .inSingletonScope();
 

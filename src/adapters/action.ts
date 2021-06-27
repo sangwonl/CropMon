@@ -2,7 +2,7 @@
 
 import { injectable } from 'inversify';
 
-import { CaptureMode } from '@core/entities/capture';
+import { CaptureMode, CaptureStatus } from '@core/entities/capture';
 import { IBounds } from '@core/entities/screen';
 import { AppUseCase } from '@core/usecases/app';
 import { PreferencesUseCase } from '@core/usecases/preferences';
@@ -59,4 +59,13 @@ export class ActionDispatcher {
   finishCapture() {
     this.captureUseCase.finishCapture();
   }
+
+  onCaptureToggleShortcut = () => {
+    const captCtx = this.captureUseCase.curCaptureContext();
+    if (captCtx?.status === CaptureStatus.IN_PROGRESS) {
+      this.finishCapture();
+    } else {
+      this.enableCaptureSelection();
+    }
+  };
 }

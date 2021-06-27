@@ -6,15 +6,9 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { takeLatest } from 'redux-saga/effects';
 
-import { TYPES } from '@di/types';
 import { diContainer } from '@di/container';
-import { CaptureStatus } from '@core/entities/capture';
 import { IFinishAreaSelection, IStartAreaSelection } from '@core/entities/ui';
-import { CaptureUseCase } from '@core/usecases/capture';
-import { PreferencesUseCase } from '@core/usecases/preferences';
-import { IHookManager } from '@core/interfaces/hook';
 import { ActionDispatcher } from '@adapters/action';
-import { INITIAL_SHORTCUT, registerShortcut } from '@utils/shortcut';
 
 import {
   checkForUpdates,
@@ -30,25 +24,7 @@ import {
 } from './slice';
 import { IStartCapturePayload } from './types';
 
-const captUseCase = diContainer.get(CaptureUseCase);
-const prefsUseCase = diContainer.get(PreferencesUseCase);
 const actionDispatcher = diContainer.get(ActionDispatcher);
-const hookManager = diContainer.get<IHookManager>(TYPES.HookManager);
-
-const onCaptureShortcut = () => {
-  const captCtx = captUseCase.curCaptureContext();
-  if (captCtx?.status === CaptureStatus.IN_PROGRESS) {
-    actionDispatcher.finishCapture();
-  } else {
-    actionDispatcher.enableCaptureSelection();
-  }
-};
-
-const onPrefsChanged = async () => {
-  const prefs = await prefsUseCase.fetchUserPreferences();
-  const shortcut = prefs.shortcut ?? INITIAL_SHORTCUT;
-  registerShortcut(shortcut, onCaptureShortcut);
-};
 
 function onCheckForUpdates() {
   actionDispatcher.checkForUpdates();
@@ -106,9 +82,6 @@ function* sagaEntry() {
   yield takeLatest(finishAreaSelection.type, onFinishAreaSelection);
   yield takeLatest(startCapture.type, onStartCapture);
   yield takeLatest(finishCapture.type, onFinishCapture);
-
-  hookManager.on('after-preferences-loaded', onPrefsChanged);
-  hookManager.on('after-preferences-updated', onPrefsChanged);
 }
 
 export default sagaEntry;
