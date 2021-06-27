@@ -109,9 +109,11 @@ class CaptureOverlayPool {
 @injectable()
 export class UiDirector implements IUiDirector {
   private appTray!: AppTray;
-  private preferencesModal?: PreferencesModal;
   private captureOverlays!: CaptureOverlayPool;
+  private preferencesModal: PreferencesModal | undefined;
   private updateProgressDialog: ProgressDialog | undefined;
+  private aboutPopup: StaticPagePopup | undefined;
+  private relNotePopup: StaticPagePopup | undefined;
 
   constructor(
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
@@ -154,30 +156,46 @@ export class UiDirector implements IUiDirector {
   }
 
   async openAboutPopup(prefs: IPreferences): Promise<void> {
+    if (this.aboutPopup !== undefined) {
+      this.aboutPopup.show();
+      this.aboutPopup.focus();
+      return;
+    }
+
     const aboutHtmlPath = assetPathResolver('about.html');
     const content = (await fs.promises.readFile(aboutHtmlPath, 'utf-8'))
       .replace('__shortcut__', iconizeShortcut(prefs.shortcut))
       .replace('__version__', curVersion);
 
-    const staticPopup = new StaticPagePopup({
+    this.aboutPopup = new StaticPagePopup({
       width: 300,
       height: 220,
       html: content,
     });
-    staticPopup.on('ready-to-show', () => staticPopup.show());
+    this.aboutPopup.on('close', () => {
+      this.aboutPopup = undefined;
+    });
+    this.aboutPopup.show();
   }
 
   async openReleaseNotes(): Promise<void> {
+    if (this.relNotePopup !== undefined) {
+      this.relNotePopup.show();
+      this.relNotePopup.focus();
+      return;
+    }
+
     const relNotePath = assetPathResolver('relnote.md');
     const content = await fs.promises.readFile(relNotePath, 'utf-8');
-    const notePopup = new StaticPagePopup({
+    this.relNotePopup = new StaticPagePopup({
       width: 440,
       height: 480,
       markdown: content,
     });
-    notePopup.on('ready-to-show', () => {
-      notePopup.show();
+    this.relNotePopup.on('close', () => {
+      this.relNotePopup = undefined;
     });
+    this.relNotePopup.show();
   }
 
   async openPreferencesModal(
