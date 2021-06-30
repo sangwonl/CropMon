@@ -1,3 +1,4 @@
+/* eslint-disable promise/always-return */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable import/first */
 /* eslint-disable import/order */
@@ -45,7 +46,10 @@ export class AppUpdater implements IAppUpdater {
     autoUpdater.on('download-progress', onDownloadProgress);
     autoUpdater.on('update-downloaded', onUpdateDownloaded);
 
-    await autoUpdater.checkForUpdates();
+    return autoUpdater
+      .checkForUpdates()
+      .then(() => {})
+      .catch(() => {});
   }
 
   cancelUpdate() {
