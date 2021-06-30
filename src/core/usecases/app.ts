@@ -39,7 +39,7 @@ export class AppUseCase {
     this.uiDirector.quitApplication();
   }
 
-  private async onUpdateAvailable() {
+  private onUpdateAvailable = async () => {
     const buttonId = await this.uiDirector.openUpdateAvailableDialog();
     if (buttonId === 0) {
       this.uiDirector.startDownloadUpdate(
@@ -48,11 +48,11 @@ export class AppUseCase {
         () => setImmediate(() => this.uiDirector.quitApplication(true))
       );
     }
-  }
+  };
 
-  private onUpdateNotAvailable() {}
+  private onUpdateNotAvailable = () => {};
 
-  private onDownloadProgress(progressInfo: any) {
+  private onDownloadProgress = (progressInfo: any) => {
     const maxPercentage = 0.95; // yield marking 100% to onUpdateDownloaded()
     let percent = 0;
     if (progressInfo.total > 0) {
@@ -61,11 +61,11 @@ export class AppUseCase {
       );
     }
     this.uiDirector.setUpdateDownloadProgress(percent);
-  }
+  };
 
-  private onUpdateDownloaded() {
+  private onUpdateDownloaded = () => {
     this.uiDirector.setUpdateDownloadProgress(100);
-  }
+  };
 
   private async openReleaseNotesIfUpdated() {
     const prefs = await this.prefsUseCase.fetchUserPreferences();
