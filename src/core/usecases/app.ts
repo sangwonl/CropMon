@@ -27,7 +27,6 @@ export class AppUseCase {
       this.onDownloadProgress,
       this.onUpdateDownloaded
     );
-
     this.openReleaseNotesIfUpdated();
   }
 
@@ -38,18 +37,6 @@ export class AppUseCase {
 
   quitApplication() {
     this.uiDirector.quitApplication();
-  }
-
-  private async openReleaseNotesIfUpdated() {
-    const prefs = await this.prefsUseCase.fetchUserPreferences();
-    const oldVersion = prefs.version;
-    const curVersion = this.appUpdater.getCurAppVersion();
-    if (semver.gt(curVersion, oldVersion)) {
-      await this.uiDirector.openReleaseNotes();
-
-      prefs.version = curVersion;
-      await this.prefsUseCase.updateUserPreference(prefs);
-    }
   }
 
   private async onUpdateAvailable() {
@@ -78,5 +65,17 @@ export class AppUseCase {
 
   private onUpdateDownloaded() {
     this.uiDirector.setUpdateDownloadProgress(100);
+  }
+
+  private async openReleaseNotesIfUpdated() {
+    const prefs = await this.prefsUseCase.fetchUserPreferences();
+    const oldVersion = prefs.version;
+    const curVersion = this.appUpdater.getCurAppVersion();
+    if (semver.gt(curVersion, oldVersion)) {
+      await this.uiDirector.openReleaseNotes();
+
+      prefs.version = curVersion;
+      await this.prefsUseCase.updateUserPreference(prefs);
+    }
   }
 }
