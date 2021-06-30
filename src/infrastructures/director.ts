@@ -256,18 +256,18 @@ export class UiDirector implements IUiDirector {
       height: 200,
     });
 
-    this.updateProgressDialog!.on('ready-to-show', () => {
+    this.updateProgressDialog?.on('ready-to-show', () => {
       onReady();
     });
 
-    const restart = await this.updateProgressDialog!.open();
+    const restart = await this.updateProgressDialog?.open();
     if (restart) {
       onQuit();
     } else {
       onCancel();
     }
 
-    this.updateProgressDialog!.destroy();
+    this.updateProgressDialog?.destroy();
     this.updateProgressDialog = undefined;
   }
 
