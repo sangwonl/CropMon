@@ -13,7 +13,6 @@ import 'reflect-metadata';
 import fs from 'fs';
 import { inject, injectable } from 'inversify';
 import { app, shell, dialog, screen, nativeImage } from 'electron';
-import log from 'electron-log';
 
 import { TYPES } from '@di/types';
 import { IBounds, IScreenInfo } from '@core/entities/screen';
@@ -115,10 +114,7 @@ export class UiDirector implements IUiDirector {
   ) {}
 
   initialize(prefs: IPreferences): void {
-    const trayIconPath = assetPathResolver('icon.png');
-    this.appTray = isMac()
-      ? AppTray.forMac(trayIconPath)
-      : AppTray.forWindows(trayIconPath);
+    this.appTray = isMac() ? AppTray.forMac() : AppTray.forWindows();
     this.refreshTrayState(prefs, false);
 
     const screenInfos = this.populateScreenInfos();

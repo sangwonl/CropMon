@@ -25,12 +25,22 @@ import {
   quitApplication,
   showAbout,
 } from '@ui/redux/slice';
+import { assetPathResolver } from '@utils/asset';
 
 export abstract class AppTray {
   tray: Tray;
+  isRecording = false;
 
-  constructor(trayImage: NativeImage) {
-    this.tray = new Tray(trayImage);
+  constructor(
+    private iconDefault: NativeImage,
+    private iconRecStop: NativeImage
+  ) {
+    this.tray = new Tray(this.iconDefault);
+    this.tray.on('click', () => {
+      if (this.isRecording) {
+        store.dispatch(finishCapture());
+      }
+    });
   }
 
   protected abstract buildMenuTempl(): Array<
@@ -66,34 +76,39 @@ export abstract class AppTray {
   }
 
   async refreshContextMenu(shortcut: string, isRecording?: boolean) {
+    this.isRecording = isRecording ?? false;
+
     const templ = this.buildMenuTempl();
 
     const menuStartCapt = this.getMenuItemTemplById(templ, 'start-capture');
-    const menuStopCapt = this.getMenuItemTemplById(templ, 'stop-capture');
-
     menuStartCapt.label = menuStartCapt.label.replace('__shortcut__', shortcut);
+    menuStartCapt.visible = !this.isRecording;
+
+    const menuStopCapt = this.getMenuItemTemplById(templ, 'stop-capture');
     menuStopCapt.label = menuStopCapt.label.replace('__shortcut__', shortcut);
+    menuStopCapt.visible = this.isRecording;
 
-    if (isRecording !== undefined) {
-      menuStartCapt.visible = !isRecording;
-      menuStopCapt.visible = isRecording;
-    }
-
+    this.tray.setImage(isRecording ? this.iconRecStop : this.iconDefault);
     this.tray.setContextMenu(Menu.buildFromTemplate(templ));
   }
 
-  static forWindows(iconPath: string): AppTray {
-    return new WinAppTray(nativeImage.createFromPath(iconPath));
+  static forWindows(): AppTray {
+    return new WinAppTray();
   }
 
-  static forMac(iconPath: string): AppTray {
-    return new MacAppTray(
-      nativeImage.createFromPath(iconPath).resize({ width: 16, height: 16 })
-    );
+  static forMac(): AppTray {
+    return new MacAppTray();
   }
 }
 
 class WinAppTray extends AppTray {
+  constructor() {
+    super(
+      nativeImage.createFromPath(assetPathResolver('icon.png')),
+      nativeImage.createFromPath(assetPathResolver('icon-rec-stop.png'))
+    );
+  }
+
   // eslint-disable-next-line class-methods-use-this
   protected buildMenuTempl(): Array<MenuItemConstructorOptions | MenuItem> {
     return [
@@ -138,6 +153,17 @@ class WinAppTray extends AppTray {
 }
 
 class MacAppTray extends AppTray {
+  constructor() {
+    super(
+      nativeImage
+        .createFromPath(assetPathResolver('icon.png'))
+        .resize({ width: 16, height: 16 }),
+      nativeImage
+        .createFromPath(assetPathResolver('icon-rec-stop.png'))
+        .resize({ width: 16, height: 16 })
+    );
+  }
+
   // eslint-disable-next-line class-methods-use-this
   protected buildMenuTempl(): Array<MenuItemConstructorOptions | MenuItem> {
     return [
