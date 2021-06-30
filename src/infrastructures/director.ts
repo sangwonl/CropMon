@@ -58,6 +58,7 @@ class CaptureOverlayPool {
 
   hideAll() {
     this.widgets?.forEach((w) => {
+      // should wait for react component rerender
       setTimeout(() => {
         w.hide();
       }, 300);
@@ -81,12 +82,6 @@ class CaptureOverlayPool {
     let w = this.widgets?.get(screenId);
     if (w === undefined) {
       w = new CaptureOverlay();
-      w.on('focus', () => {
-        log.info('focused...');
-      });
-      w.on('blur', () => {
-        log.info('blured...');
-      });
       setCustomData(w, 'screenId', screenId);
       this.widgets?.set(screenId, w);
     }

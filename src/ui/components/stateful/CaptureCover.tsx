@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-unused-prop-types */
@@ -89,7 +90,6 @@ export const CaptureCover = () => {
   const onRecordStart = () => {
     dispatch(
       startCapture({
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         screenId: captureArea.screenIdOnSelection!,
         bounds: captureArea.selectedBounds,
       })
