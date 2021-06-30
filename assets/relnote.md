@@ -4,6 +4,9 @@
 
 _7 July 2021_
 
+- Support recording stop by tray click
+- Added custom shortcut registration
+- Refactoring for code clean-up
 - Fixed relaunch fail bug after quit
 - Fixed timing issue at recording start
 
