@@ -12,8 +12,6 @@ import {
   IPC_EVT_ON_CLOSE,
   IPC_EVT_ON_PREFS_UPDATED,
   IPC_EVT_ON_RECORD_HOME_SELECTION,
-  IPC_EVT_ON_TOGGLE_OPEN_RECORD_HOME,
-  IPC_EVT_ON_SHORTCUT_CHANGED,
   IpcEvtOnPrefsUpdated,
 } from './shared';
 
@@ -36,17 +34,11 @@ const Wrapper = () => {
   return (
     <Preferences
       preferences={prefs}
-      onClose={(shouldSave: boolean) => {
-        ipcRenderer.send(IPC_EVT_ON_CLOSE, { shouldSave });
+      onClose={(preferences: IPreferences | undefined) => {
+        ipcRenderer.send(IPC_EVT_ON_CLOSE, { preferences });
       }}
       onChooseRecordHome={() => {
         ipcRenderer.send(IPC_EVT_ON_RECORD_HOME_SELECTION, {});
-      }}
-      onToggleOpenRecordHome={(shouldOpen: boolean) => {
-        ipcRenderer.send(IPC_EVT_ON_TOGGLE_OPEN_RECORD_HOME, { shouldOpen });
-      }}
-      onShortcutChanged={(shortcut: string) => {
-        ipcRenderer.send(IPC_EVT_ON_SHORTCUT_CHANGED, { shortcut });
       }}
     />
   );

@@ -3,8 +3,8 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  padding: 0px 20px 14px 20px;
-  margin: 0px 0px 16px 0px;
+  padding: 4px 20px 4px 20px;
+  margin: 4px;
   font-family: Roboto;
   font-weight: 500;
 }
@@ -17,6 +17,10 @@
   margin: 10px 0px;
 }
 
+.itemTitle {
+  text-decoration: underline;
+}
+
 .itemRecordHome {
   flex-grow: 1;
   margin-right: 10px !important;
@@ -26,12 +30,16 @@
   padding-top: 10px;
 }
 
+.itemShortcut {
+  flex-grow: 1;
+}
+
 .buttonRow {
   flex-direction: row;
   justify-content: flex-end;
   align-items: stretch;
-  margin-top: 15px;
   height: 40px;
+  margin-top: 10px;
 }
 
 .button {

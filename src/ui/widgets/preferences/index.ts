@@ -18,16 +18,12 @@ import {
   IPC_EVT_ON_RECORD_HOME_SELECTION,
   IPC_EVT_ON_CLOSE,
   IPC_EVT_ON_PREFS_UPDATED,
-  IPC_EVT_ON_TOGGLE_OPEN_RECORD_HOME,
-  IPC_EVT_ON_SHORTCUT_CHANGED,
-  IpcEvtOnToggleOpenRecordHome,
-  IpcEvtOnShortcutChanged,
   IpcEvtOnClose,
 } from './shared';
 
 export class PreferencesModal extends Widget {
   private forceClose = false;
-  private prefs?: IPreferences;
+  private prefs: IPreferences | undefined;
   private closeResolver: any | undefined;
 
   constructor() {
@@ -57,24 +53,8 @@ export class PreferencesModal extends Widget {
       }
     );
 
-    ipcMain.on(
-      IPC_EVT_ON_TOGGLE_OPEN_RECORD_HOME,
-      async (_event: any, data: IpcEvtOnToggleOpenRecordHome) => {
-        this.prefs!.openRecordHomeWhenRecordCompleted = data.shouldOpen;
-        this.notifyPrefsUpdated();
-      }
-    );
-
-    ipcMain.on(
-      IPC_EVT_ON_SHORTCUT_CHANGED,
-      async (_event: any, data: IpcEvtOnShortcutChanged) => {
-        this.prefs!.shortcut = data.shortcut;
-        this.notifyPrefsUpdated();
-      }
-    );
-
     ipcMain.on(IPC_EVT_ON_CLOSE, (_event: any, data: IpcEvtOnClose) => {
-      this.closeResolver?.(data.shouldSave ? this.prefs : undefined);
+      this.closeResolver?.(data.preferences);
     });
 
     this.on('close', (event) => {

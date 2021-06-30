@@ -108,8 +108,8 @@ class CaptureOverlayPool {
 
 @injectable()
 export class UiDirector implements IUiDirector {
-  private appTray!: AppTray;
-  private captureOverlays!: CaptureOverlayPool;
+  private appTray: AppTray | undefined;
+  private captureOverlays: CaptureOverlayPool | undefined;
   private preferencesModal: PreferencesModal | undefined;
   private updateProgressDialog: ProgressDialog | undefined;
   private aboutPopup: StaticPagePopup | undefined;
@@ -136,16 +136,16 @@ export class UiDirector implements IUiDirector {
 
   async refreshTrayState(
     prefs: IPreferences,
-    recording: boolean
+    recording?: boolean
   ): Promise<void> {
-    await this.appTray.refreshContextMenu(
-      recording,
-      iconizeShortcut(prefs.shortcut)
+    await this.appTray?.refreshContextMenu(
+      iconizeShortcut(prefs.shortcut),
+      recording
     );
   }
 
   quitApplication(relaunch?: boolean): void {
-    this.captureOverlays.closeAll();
+    this.captureOverlays?.closeAll();
     this.preferencesModal?.close();
 
     if (relaunch) {
@@ -213,18 +213,18 @@ export class UiDirector implements IUiDirector {
 
   enableCaptureSelectionMode(): Array<IScreenInfo> {
     const screenInfos = this.populateScreenInfos();
-    this.captureOverlays.showAll(screenInfos);
+    this.captureOverlays?.showAll(screenInfos);
     this.tracker.view('capture-area-selection');
     return screenInfos;
   }
 
   disableCaptureSelectionMode(): void {
-    this.captureOverlays.hideAll();
+    this.captureOverlays?.hideAll();
     this.tracker.view('idle');
   }
 
   enableRecordingMode(): void {
-    this.captureOverlays.ignoreMouseEvents();
+    this.captureOverlays?.ignoreMouseEvents();
     this.tracker.view('in-recording');
   }
 

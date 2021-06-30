@@ -5,12 +5,13 @@
 /* eslint-disable import/prefer-default-export */
 
 import { inject, injectable } from 'inversify';
+import { globalShortcut } from 'electron';
 
 import { TYPES } from '@di/types';
 import { HookType, IHookManager } from '@core/interfaces/hook';
-import { registerShortcut } from '@utils/shortcut';
 import { ActionDispatcher } from '@adapters/action';
 import { IPreferences } from '@core/entities/preferences';
+import { IUiDirector } from '@core/interfaces/director';
 
 type HookHandler = (args: any) => void;
 
@@ -53,27 +54,35 @@ interface HookArgsAfterPrefsUpdated {
 export class BuiltinHooks {
   constructor(
     private actionDispatcher: ActionDispatcher,
-    @inject(TYPES.HookManager) private hookManager: IHookManager
+    @inject(TYPES.HookManager) private hookManager: IHookManager,
+    @inject(TYPES.UiDirector) private uiDirector: IUiDirector
   ) {
     this.hookManager.on('after-prefs-loaded', this.onAfterPrefsLoaded);
     this.hookManager.on('after-prefs-updated', this.onAfterPrefsUpdated);
   }
 
-  onAfterPrefsUpdated = (args: HookArgsAfterPrefsUpdated) => {
-    const { prevPrefs, newPrefs } = args;
-    if (prevPrefs.shortcut !== newPrefs.shortcut) {
-      registerShortcut(
-        newPrefs.shortcut,
-        this.actionDispatcher.onCaptureToggleShortcut
-      );
-    }
-  };
-
-  onAfterPrefsLoaded = (args: HookArgsAfterPrefsLoaded) => {
+  onAfterPrefsLoaded = async (args: HookArgsAfterPrefsLoaded) => {
     const { loadedPrefs } = args;
-    registerShortcut(
+    this.registerShortcut(
       loadedPrefs.shortcut,
       this.actionDispatcher.onCaptureToggleShortcut
     );
+    await this.uiDirector.refreshTrayState(loadedPrefs);
+  };
+
+  onAfterPrefsUpdated = async (args: HookArgsAfterPrefsUpdated) => {
+    const { prevPrefs, newPrefs } = args;
+    if (prevPrefs.shortcut !== newPrefs.shortcut) {
+      this.registerShortcut(
+        newPrefs.shortcut,
+        this.actionDispatcher.onCaptureToggleShortcut
+      );
+      await this.uiDirector.refreshTrayState(newPrefs);
+    }
+  };
+
+  private registerShortcut = (shortcut: string, handler: () => void): void => {
+    globalShortcut.unregisterAll();
+    globalShortcut.register(shortcut.replace(/Win|Cmd/, 'Super'), handler);
   };
 }

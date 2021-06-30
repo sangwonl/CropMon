@@ -1,60 +1,71 @@
+/* eslint-disable no-alert */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable import/prefer-default-export */
 
-import React, { useState, KeyboardEvent, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
-  Paper,
   Grid,
   Button,
   Checkbox,
   FormControlLabel,
   TextField,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment,
+  IconButton,
 } from '@material-ui/core';
+import { Clear } from '@material-ui/icons';
 
 import { IPreferences } from '@core/entities/preferences';
-import { textifyShortcut } from '@utils/shortcut';
+import { textifyShortcut, validateShortcut } from '@utils/shortcut';
 
 import styles from './Preferences.css';
 
 export interface PreferencesProps {
   preferences: IPreferences;
-  onClose: (shouldSave: boolean) => void;
+  onClose: (preferences: IPreferences | undefined) => void;
   onChooseRecordHome: () => void;
-  onToggleOpenRecordHome: (shouldOpen: boolean) => void;
-  onShortcutChanged: (shortcut: string) => void;
 }
 
 export const Preferences = (props: PreferencesProps) => {
-  const { preferences } = props;
+  const { preferences: origPrefs } = props;
 
-  const [openRecordHomeDir, setOpenRecordHomeDir] = useState<boolean>(
-    preferences.openRecordHomeWhenRecordCompleted
+  const [shortcut, setShortcut] = useState<string>(origPrefs.shortcut);
+  const [shortcutValidated, setShortcutValidated] = useState<boolean>(true);
+  const [recordHome, setRecordHome] = useState<string>(origPrefs.recordHome);
+  const [openRecordHome, setOpenRecordHome] = useState<boolean>(
+    origPrefs.openRecordHomeWhenRecordCompleted
   );
 
-  const [shortcutKey, setShortcutKey] = useState<string>(preferences.shortcut);
+  const setShortcutKey = (s: string) => {
+    setShortcutValidated(validateShortcut(s));
+    setShortcut(s);
+  };
 
-  const onShortcutHandler = (e: KeyboardEvent<HTMLDivElement>) => {
-    const shortcut = textifyShortcut(e);
-    setShortcutKey(shortcut);
-    props.onShortcutChanged(shortcut);
+  const resetShortcut = () => {
+    setShortcutValidated(validateShortcut(origPrefs.shortcut));
+    setShortcut(origPrefs.shortcut);
   };
 
   useEffect(() => {
-    setOpenRecordHomeDir(preferences.openRecordHomeWhenRecordCompleted);
-    setShortcutKey(preferences.shortcut);
-  }, [preferences.openRecordHomeWhenRecordCompleted, preferences.shortcut]);
+    setShortcutKey(origPrefs.shortcut);
+    setRecordHome(origPrefs.recordHome);
+    setOpenRecordHome(origPrefs.openRecordHomeWhenRecordCompleted);
+  }, [origPrefs]);
 
   return (
     <>
-      <Paper className={styles.itemContainer}>
-        <p>General</p>
+      <div className={styles.itemContainer}>
+        <p className={styles.itemTitle}>General</p>
         <Grid container className={styles.itemRow}>
           <TextField
             className={styles.itemRecordHome}
             label="Record files to:"
             variant="outlined"
-            value={preferences.recordHome}
+            value={recordHome}
             InputProps={{ readOnly: true }}
           />
           <Button variant="outlined" onClick={props.onChooseRecordHome}>
@@ -67,49 +78,85 @@ export const Preferences = (props: PreferencesProps) => {
               <Checkbox
                 color="primary"
                 name="open-record-home-when-completed"
-                checked={openRecordHomeDir}
-                onChange={(event) => {
-                  const { checked } = event.target;
-                  setOpenRecordHomeDir(checked);
-                  props.onToggleOpenRecordHome(checked);
+                checked={openRecordHome}
+                onChange={({ target }) => {
+                  setOpenRecordHome(target.checked);
                 }}
               />
             }
             label="Open the folder when recording complete"
           />
         </Grid>
-      </Paper>
-      <Paper className={styles.itemContainer}>
-        <p>Shortcut</p>
+      </div>
+      <div className={styles.itemContainer}>
+        <p className={styles.itemTitle}>Shortcut</p>
         <Grid container className={styles.itemRow}>
-          <TextField
-            className={styles.itemRecordHome}
-            label="Shortcut to start or stop recording:"
-            variant="outlined"
-            value={shortcutKey}
-            onKeyDown={onShortcutHandler}
-            InputProps={{ readOnly: true }}
-          />
+          <FormControl className={styles.itemShortcut} variant="outlined">
+            <InputLabel htmlFor="outlined-adornment-password">
+              Shortcut to start or stop recording:
+            </InputLabel>
+            <OutlinedInput
+              id="outlined-adornment-password"
+              type="text"
+              readOnly
+              value={shortcut}
+              error={!shortcutValidated}
+              onKeyDown={(e: any) => {
+                if (e.key === 'Escape') {
+                  resetShortcut();
+                } else {
+                  setShortcutKey(textifyShortcut(e));
+                }
+              }}
+              endAdornment={
+                origPrefs.shortcut !== shortcut && (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="reset shortcut overriden"
+                      onClick={() => {
+                        resetShortcut();
+                      }}
+                      edge="end"
+                    >
+                      <Clear />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }
+              labelWidth={252}
+            />
+          </FormControl>
         </Grid>
-      </Paper>
-      <Grid container className={styles.buttonRow}>
-        <Button
-          className={styles.button}
-          color="secondary"
-          variant="contained"
-          onClick={() => props.onClose(true)}
-        >
-          Save
-        </Button>
-        <Button
-          className={styles.button}
-          color="default"
-          variant="contained"
-          onClick={() => props.onClose(false)}
-        >
-          Close
-        </Button>
-      </Grid>
+      </div>
+      <div className={styles.itemContainer}>
+        <Grid container className={styles.buttonRow}>
+          <Button
+            className={styles.button}
+            color="secondary"
+            variant="contained"
+            disabled={!shortcutValidated}
+            onClick={() => {
+              const newPrefs: IPreferences = {
+                version: origPrefs.version,
+                recordHome,
+                openRecordHomeWhenRecordCompleted: openRecordHome,
+                shortcut,
+              };
+              props.onClose(newPrefs);
+            }}
+          >
+            Save
+          </Button>
+          <Button
+            className={styles.button}
+            color="default"
+            variant="contained"
+            onClick={() => props.onClose(undefined)}
+          >
+            Close
+          </Button>
+        </Grid>
+      </div>
     </>
   );
 };
