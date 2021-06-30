@@ -1,17 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/prefer-default-export */
 
-import { globalShortcut } from 'electron';
 import { isMac } from './process';
 import { capitalize } from './strings';
-
-export const registerShortcut = (
-  shortcut: string,
-  handler: () => void
-): void => {
-  globalShortcut.unregisterAll();
-  globalShortcut.register(shortcut.replace(/Win|Cmd/, 'Super'), handler);
-};
 
 export const INITIAL_SHORTCUT = `${isMac() ? 'Cmd' : 'Win'} + Shift + E`;
 
@@ -51,4 +42,22 @@ export const textifyShortcut = (e: any) => {
   }
 
   return pressed.join(' + ');
+};
+
+export const validateShortcut = (s: string): boolean => {
+  const keys = s.split(' + ');
+  const modifiers = ['Cmd', 'Win', 'Shift', 'Alt', 'Ctrl'];
+
+  let validateModifier = false;
+  modifiers.forEach((m) => {
+    const idx = keys.indexOf(m, 0);
+    if (idx > -1) {
+      validateModifier = true;
+      keys.splice(idx, 1);
+    }
+  });
+
+  const validateKey = keys.length === 1;
+
+  return validateModifier && validateKey;
 };

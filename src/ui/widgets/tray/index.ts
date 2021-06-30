@@ -65,16 +65,19 @@ export abstract class AppTray {
     return contextMenuTempl.find((m: any) => m.id === id)!;
   }
 
-  async refreshContextMenu(isRecording: boolean, shortcut: string) {
+  async refreshContextMenu(shortcut: string, isRecording?: boolean) {
     const templ = this.buildMenuTempl();
 
     const menuStartCapt = this.getMenuItemTemplById(templ, 'start-capture');
-    menuStartCapt.label = menuStartCapt.label.replace('__shortcut__', shortcut);
-    menuStartCapt.visible = !isRecording;
-
     const menuStopCapt = this.getMenuItemTemplById(templ, 'stop-capture');
+
+    menuStartCapt.label = menuStartCapt.label.replace('__shortcut__', shortcut);
     menuStopCapt.label = menuStopCapt.label.replace('__shortcut__', shortcut);
-    menuStopCapt.visible = isRecording;
+
+    if (isRecording !== undefined) {
+      menuStartCapt.visible = !isRecording;
+      menuStopCapt.visible = isRecording;
+    }
 
     this.tray.setContextMenu(Menu.buildFromTemplate(templ));
   }

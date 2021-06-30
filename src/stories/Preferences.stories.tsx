@@ -29,6 +29,5 @@ Default.args = {
     shortcut: 'Win + Shift + E',
   },
   onChooseRecordHome: () => {},
-  onToggleOpenRecordHome: () => {},
   onClose: () => {},
 };
