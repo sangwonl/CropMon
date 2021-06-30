@@ -131,14 +131,14 @@ export class CaptureUseCase {
     if (isRecording) {
       this.uiDirector.enableRecordingMode();
     } else {
-      this.uiDirector.disableCaptureSelectionMode();
+      this.disableCaptureSelection();
     }
 
     await this.uiDirector.refreshTrayState(prefs, isRecording);
   }
 
   async finishCapture(): Promise<void> {
-    this.uiDirector.disableCaptureSelectionMode();
+    this.disableCaptureSelection();
 
     const curCtx = this.lastCaptureCtx;
     assert(curCtx !== undefined);
