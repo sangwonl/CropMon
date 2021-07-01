@@ -2,7 +2,7 @@
 
 ### v0.3.0
 
-_7 July 2021_
+_1 July 2021_
 
 - Support recording stop by tray click
 - Added custom shortcut registration
