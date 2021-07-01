@@ -225,5 +225,10 @@ class MacAppTray extends AppTray {
         this.tray.popUpContextMenu();
       }
     });
+
+    this.tray.on('right-click', () => {
+      this.tray.setContextMenu(this.menu!);
+      this.tray.popUpContextMenu();
+    });
   }
 }
