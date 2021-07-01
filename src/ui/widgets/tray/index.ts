@@ -29,6 +29,7 @@ import { assetPathResolver } from '@utils/asset';
 
 export abstract class AppTray {
   tray: Tray;
+  menu: Menu | undefined;
   isRecording = false;
 
   constructor(
@@ -36,16 +37,15 @@ export abstract class AppTray {
     private iconRecStop: NativeImage
   ) {
     this.tray = new Tray(this.iconDefault);
-    this.tray.on('click', () => {
-      if (this.isRecording) {
-        store.dispatch(finishCapture());
-      }
-    });
+
+    this.setupClickHandler();
   }
 
   protected abstract buildMenuTempl(): Array<
     MenuItemConstructorOptions | MenuItem
   >;
+
+  protected abstract setupClickHandler(): void;
 
   protected onAbout() {
     store.dispatch(showAbout());
@@ -88,8 +88,9 @@ export abstract class AppTray {
     menuStopCapt.label = menuStopCapt.label.replace('__shortcut__', shortcut);
     menuStopCapt.visible = this.isRecording;
 
+    this.menu = Menu.buildFromTemplate(templ);
+    this.tray.setContextMenu(this.menu);
     this.tray.setImage(isRecording ? this.iconRecStop : this.iconDefault);
-    this.tray.setContextMenu(Menu.buildFromTemplate(templ));
   }
 
   static forWindows(): AppTray {
@@ -150,6 +151,14 @@ class WinAppTray extends AppTray {
       },
     ];
   }
+
+  protected setupClickHandler(): void {
+    this.tray.on('click', () => {
+      if (this.isRecording) {
+        store.dispatch(finishCapture());
+      }
+    });
+  }
 }
 
 class MacAppTray extends AppTray {
@@ -204,5 +213,17 @@ class MacAppTray extends AppTray {
         click: super.onQuit,
       },
     ];
+  }
+
+  protected setupClickHandler(): void {
+    this.tray.on('click', () => {
+      if (this.isRecording) {
+        this.tray.setContextMenu(null);
+        store.dispatch(finishCapture());
+      } else {
+        this.tray.setContextMenu(this.menu!);
+        this.tray.popUpContextMenu();
+      }
+    });
   }
 }
