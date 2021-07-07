@@ -1,5 +1,11 @@
 ## Release Notes
 
+### v0.3.1
+
+_8 July 2021_
+
+- Fixed wrong displayed keycode in shortcut
+
 ### v0.3.0
 
 _1 July 2021_

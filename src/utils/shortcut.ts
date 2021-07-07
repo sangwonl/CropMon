@@ -23,6 +23,7 @@ export const iconizeShortcut = (shortcut: string) => {
 };
 
 export const textifyShortcut = (e: any) => {
+  const key = String.fromCharCode(e.keyCode);
   const modifiers = ['Meta', 'Shift', 'Alt', 'Control'];
   const pressed = [];
   if (e.metaKey) {
@@ -37,8 +38,8 @@ export const textifyShortcut = (e: any) => {
   if (e.ctrlKey) {
     pressed.push('Ctrl');
   }
-  if (e.key.length > 0 && !modifiers.includes(e.key)) {
-    pressed.push(iconizeShortcut(capitalize(e.key)));
+  if (key.length > 0 && !modifiers.includes(key)) {
+    pressed.push(iconizeShortcut(capitalize(key)));
   }
 
   return pressed.join(' + ');
