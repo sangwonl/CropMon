@@ -33,6 +33,8 @@ export interface WidgetOptions {
 }
 
 export class Widget extends BrowserWindow {
+  private contentReady: boolean;
+
   constructor(type: WidgetType, options?: WidgetOptions) {
     const bwOpts: BrowserWindowConstructorOptions = {
       show: options?.show ?? true,
@@ -57,9 +59,9 @@ export class Widget extends BrowserWindow {
     if (options?.icon) {
       bwOpts.icon = options.icon;
     }
-
     super(bwOpts);
 
+    this.contentReady = false;
     this.removeMenu();
 
     setCustomData(this, 'type', type);
@@ -68,6 +70,17 @@ export class Widget extends BrowserWindow {
     if (isDebugMode()) {
       localShortcut.register(this, 'Ctrl+F12', () => {
         this.webContents.openDevTools();
+      });
+    }
+  }
+
+  showOnReady(): void {
+    if (this.contentReady) {
+      this.show();
+    } else {
+      this.webContents.on('did-finish-load', () => {
+        this.contentReady = true;
+        this.show();
       });
     }
   }

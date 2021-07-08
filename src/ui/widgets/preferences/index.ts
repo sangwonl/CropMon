@@ -73,7 +73,7 @@ export class PreferencesModal extends Widget {
     }
 
     this.notifyPrefsUpdated();
-    this.show();
+    this.showOnReady();
 
     return new Promise((resolve, _) => {
       this.closeResolver = (result: any) => {

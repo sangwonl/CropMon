@@ -18,6 +18,7 @@ export class StaticPagePopup extends Widget {
   constructor(options: StaticPagePopupOptions) {
     super(WidgetType.STATIC_PAGE_POPUP, {
       icon: assetPathResolver('icon.png'),
+      show: false,
       width: options.width,
       height: options.height,
       resizable: false,
