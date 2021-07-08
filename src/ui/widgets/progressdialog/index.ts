@@ -25,6 +25,7 @@ export class ProgressDialog extends Widget {
   constructor(options: ProgressDialogOptions) {
     super(WidgetType.PROGRESS_DIALOG, {
       icon: assetPathResolver('icon.png'),
+      show: false,
       width: options.width,
       height: options.height,
       options,
@@ -39,7 +40,7 @@ export class ProgressDialog extends Widget {
   }
 
   open(): Promise<boolean> {
-    this.show();
+    this.showOnReady();
 
     return new Promise((resolve, reject) => {
       const timeout = this.options?.timeout || 300;

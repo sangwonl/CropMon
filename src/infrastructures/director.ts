@@ -148,7 +148,6 @@ export class UiDirector implements IUiDirector {
 
   async openAboutPopup(prefs: IPreferences): Promise<void> {
     if (this.aboutPopup !== undefined) {
-      this.aboutPopup.show();
       this.aboutPopup.focus();
       return;
     }
@@ -166,12 +165,11 @@ export class UiDirector implements IUiDirector {
     this.aboutPopup.on('close', () => {
       this.aboutPopup = undefined;
     });
-    this.aboutPopup.show();
+    this.aboutPopup.showOnReady();
   }
 
   async openReleaseNotes(): Promise<void> {
     if (this.relNotePopup !== undefined) {
-      this.relNotePopup.show();
       this.relNotePopup.focus();
       return;
     }
@@ -186,7 +184,7 @@ export class UiDirector implements IUiDirector {
     this.relNotePopup.on('close', () => {
       this.relNotePopup = undefined;
     });
-    this.relNotePopup.show();
+    this.relNotePopup.showOnReady();
   }
 
   async openPreferencesModal(
