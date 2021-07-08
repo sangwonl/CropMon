@@ -5,7 +5,7 @@
 /* eslint-disable import/prefer-default-export */
 
 import { inject, injectable } from 'inversify';
-import { globalShortcut } from 'electron';
+import { app, globalShortcut } from 'electron';
 
 import { TYPES } from '@di/types';
 import { HookType, IHookManager } from '@core/interfaces/hook';
@@ -62,27 +62,39 @@ export class BuiltinHooks {
   }
 
   onAfterPrefsLoaded = async (args: HookArgsAfterPrefsLoaded) => {
-    const { loadedPrefs } = args;
-    this.registerShortcut(
-      loadedPrefs.shortcut,
-      this.actionDispatcher.onCaptureToggleShortcut
-    );
-    await this.uiDirector.refreshTrayState(loadedPrefs);
+    await this.handlePrefsHook(args.loadedPrefs);
   };
 
   onAfterPrefsUpdated = async (args: HookArgsAfterPrefsUpdated) => {
-    const { prevPrefs, newPrefs } = args;
-    if (prevPrefs.shortcut !== newPrefs.shortcut) {
-      this.registerShortcut(
-        newPrefs.shortcut,
+    await this.handlePrefsHook(args.newPrefs, args.prevPrefs);
+  };
+
+  private handlePrefsHook = async (
+    newPrefs: IPreferences,
+    prevPrefs?: IPreferences
+  ): Promise<void> => {
+    this.setupShortcut(newPrefs, prevPrefs);
+    this.setupRunAtStartup(newPrefs);
+    await this.uiDirector.refreshTrayState(newPrefs);
+  };
+
+  private setupShortcut = (
+    newPrefs: IPreferences,
+    prevPrefs?: IPreferences
+  ): void => {
+    if (prevPrefs === undefined || prevPrefs.shortcut !== newPrefs.shortcut) {
+      globalShortcut.unregisterAll();
+      globalShortcut.register(
+        newPrefs.shortcut.replace(/Win|Cmd/, 'Super'),
         this.actionDispatcher.onCaptureToggleShortcut
       );
-      await this.uiDirector.refreshTrayState(newPrefs);
     }
   };
 
-  private registerShortcut = (shortcut: string, handler: () => void): void => {
-    globalShortcut.unregisterAll();
-    globalShortcut.register(shortcut.replace(/Win|Cmd/, 'Super'), handler);
+  private setupRunAtStartup = (prefs: IPreferences): void => {
+    app.setLoginItemSettings({
+      openAtLogin: prefs.runAtStartup,
+      path: app.getPath('exe'),
+    });
   };
 }

@@ -5,4 +5,5 @@ export interface IPreferences {
   openRecordHomeWhenRecordCompleted: boolean;
   recordHome: string;
   shortcut: string;
+  runAtStartup: boolean;
 }

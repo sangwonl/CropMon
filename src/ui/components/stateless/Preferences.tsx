@@ -39,6 +39,9 @@ export const Preferences = (props: PreferencesProps) => {
   const [openRecordHome, setOpenRecordHome] = useState<boolean>(
     origPrefs.openRecordHomeWhenRecordCompleted
   );
+  const [runAtStartup, setRunAtStartup] = useState<boolean>(
+    origPrefs.runAtStartup
+  );
 
   const setShortcutKey = (s: string) => {
     setShortcutValidated(validateShortcut(s));
@@ -60,6 +63,24 @@ export const Preferences = (props: PreferencesProps) => {
     <>
       <div className={styles.itemContainer}>
         <p className={styles.itemTitle}>General</p>
+        <Grid container>
+          <FormControlLabel
+            control={
+              <Checkbox
+                color="primary"
+                name="run-at-startup"
+                checked={runAtStartup}
+                onChange={({ target }) => {
+                  setRunAtStartup(target.checked);
+                }}
+              />
+            }
+            label="Run automatically at startup"
+          />
+        </Grid>
+      </div>
+      <div className={styles.itemContainer}>
+        <p className={styles.itemTitle}>Output</p>
         <Grid container className={styles.itemRow}>
           <TextField
             className={styles.itemRecordHome}
@@ -138,9 +159,10 @@ export const Preferences = (props: PreferencesProps) => {
             onClick={() => {
               const newPrefs: IPreferences = {
                 version: origPrefs.version,
-                recordHome,
                 openRecordHomeWhenRecordCompleted: openRecordHome,
+                recordHome,
                 shortcut,
+                runAtStartup,
               };
               props.onClose(newPrefs);
             }}
