@@ -22,7 +22,6 @@ import {
 } from './shared';
 
 export class PreferencesModal extends Widget {
-  private forceClose = false;
   private prefs: IPreferences | undefined;
   private closeResolver: any | undefined;
 
@@ -57,10 +56,7 @@ export class PreferencesModal extends Widget {
       this.closeResolver?.(data.preferences);
     });
 
-    this.on('close', (event) => {
-      if (!this.forceClose) {
-        event.preventDefault();
-      }
+    this.on('close', () => {
       this.closeResolver?.(undefined);
     });
   }
@@ -72,8 +68,8 @@ export class PreferencesModal extends Widget {
       setCustomData<IPreferences>(this, 'initialPrefs', this.prefs);
     }
 
+    this.lazyShow();
     this.notifyPrefsUpdated();
-    this.showOnReady();
 
     return new Promise((resolve, _) => {
       this.closeResolver = (result: any) => {
@@ -81,11 +77,6 @@ export class PreferencesModal extends Widget {
         this.hide();
       };
     });
-  }
-
-  close() {
-    this.forceClose = true;
-    super.close();
   }
 
   private notifyPrefsUpdated() {

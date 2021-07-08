@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable promise/param-names */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { BrowserWindow, NativeImage } from 'electron';
-import { BrowserWindowConstructorOptions } from 'electron/main';
 import localShortcut from 'electron-localshortcut';
 
 import { isDebugMode } from '@utils/process';
@@ -33,10 +36,12 @@ export interface WidgetOptions {
 }
 
 export class Widget extends BrowserWindow {
-  private contentReady: boolean;
+  private forceClose = false;
+  private contentReady = false;
 
   constructor(type: WidgetType, options?: WidgetOptions) {
-    const bwOpts: BrowserWindowConstructorOptions = {
+    super({
+      icon: options?.icon ?? undefined,
       show: options?.show ?? true,
       width: options?.width ?? 800,
       height: options?.height ?? 600,
@@ -55,17 +60,18 @@ export class Widget extends BrowserWindow {
         enableRemoteModule: true,
         contextIsolation: false,
       },
-    };
-    if (options?.icon) {
-      bwOpts.icon = options.icon;
-    }
-    super(bwOpts);
+    });
 
-    this.contentReady = false;
     this.removeMenu();
-
     setCustomData(this, 'type', type);
     setCustomData(this, 'options', options?.options);
+
+    this.on('close', (event) => {
+      if (!this.forceClose) {
+        event.preventDefault();
+      }
+      this.hide();
+    });
 
     if (isDebugMode()) {
       localShortcut.register(this, 'Ctrl+F12', () => {
@@ -74,14 +80,23 @@ export class Widget extends BrowserWindow {
     }
   }
 
-  showOnReady(): void {
-    if (this.contentReady) {
-      this.show();
-    } else {
-      this.webContents.on('did-finish-load', () => {
-        this.contentReady = true;
-        this.show();
-      });
-    }
+  close(): void {
+    this.forceClose = true;
+    super.close();
+  }
+
+  async lazyShow(): Promise<void> {
+    return new Promise((resolve, _) => {
+      if (this.contentReady) {
+        super.show();
+        resolve();
+      } else {
+        this.webContents.on('did-finish-load', () => {
+          this.contentReady = true;
+          super.show();
+          resolve();
+        });
+      }
+    });
   }
 }

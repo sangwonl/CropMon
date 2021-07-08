@@ -57,6 +57,7 @@ export const Preferences = (props: PreferencesProps) => {
     setShortcutKey(origPrefs.shortcut);
     setRecordHome(origPrefs.recordHome);
     setOpenRecordHome(origPrefs.openRecordHomeWhenRecordCompleted);
+    setRunAtStartup(origPrefs.runAtStartup);
   }, [origPrefs]);
 
   return (
