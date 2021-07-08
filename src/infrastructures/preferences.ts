@@ -12,6 +12,7 @@ import { IPreferences } from '@core/entities/preferences';
 import { IPreferencesStore } from '@core/interfaces/preferences';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
 import { getPlatform } from '@utils/process';
+import { INITIAL_SHORTCUT } from '@utils/shortcut';
 
 import { version as curVersion } from '../package.json';
 
@@ -47,6 +48,7 @@ export class PreferencesStore implements IPreferencesStore {
     this.store.set('openRecordHomeDirWhenRecordCompleted', prefs.openRecordHomeWhenRecordCompleted);
     this.store.set('recordHomeDir', prefs.recordHome);
     this.store.set('shortcut', prefs.shortcut);
+    this.store.set('runAtStartup', prefs.runAtStartup);
   }
 
   private initialPreferences(): IPreferences {
@@ -54,7 +56,8 @@ export class PreferencesStore implements IPreferencesStore {
       version: curVersion,
       openRecordHomeWhenRecordCompleted: true,
       recordHome: app.getPath('videos'),
-      shortcut: 'Super+Shift+E',
+      shortcut: INITIAL_SHORTCUT,
+      runAtStartup: true,
     };
   }
 
@@ -63,7 +66,8 @@ export class PreferencesStore implements IPreferencesStore {
       version: this.store.get('version') as string,
       openRecordHomeWhenRecordCompleted: this.store.get('openRecordHomeDirWhenRecordCompleted') as boolean,
       recordHome: this.store.get('recordHomeDir') as string,
-      shortcut: this.store.get('shortcut', 'Super+Shift+E') as string,
+      shortcut: this.store.get('shortcut', INITIAL_SHORTCUT) as string,
+      runAtStartup: this.store.get('runAtStartup', true) as boolean,
     };
   }
 }
