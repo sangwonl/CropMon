@@ -1,3 +1,4 @@
+/* eslint-disable new-cap */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable max-classes-per-file */
@@ -20,11 +21,13 @@ import { IPreferences } from '@core/entities/preferences';
 import { IUiDirector } from '@core/interfaces/director';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
 import { assetPathResolver } from '@utils/asset';
+import { CachedWidget } from '@ui/widgets/cached';
 import { AppTray } from '@ui/widgets/tray';
 import { CaptureOverlay } from '@ui/widgets/overlays';
 import { PreferencesModal } from '@ui/widgets/preferences';
 import { ProgressDialog } from '@ui/widgets/progressdialog';
 import { StaticPagePopup } from '@ui/widgets/staticpage';
+import { StaticPagePopupOptions } from '@ui/widgets/staticpage/shared';
 import { setCustomData } from '@utils/remote';
 import { SPARE_PIXELS } from '@utils/bounds';
 import { iconizeShortcut } from '@utils/shortcut';
@@ -100,14 +103,28 @@ class CaptureOverlayPool {
   }
 }
 
+class CachedStaticPagePopup extends CachedWidget<
+  StaticPagePopup,
+  StaticPagePopupOptions,
+  void
+> {}
+
+class CachedPreferencesModal extends CachedWidget<
+  PreferencesModal,
+  IPreferences,
+  IPreferences
+> {}
+
 @injectable()
 export class UiDirector implements IUiDirector {
   private appTray: AppTray | undefined;
   private captureOverlays: CaptureOverlayPool | undefined;
-  private preferencesModal: PreferencesModal | undefined;
   private updateProgressDialog: ProgressDialog | undefined;
-  private aboutPopup: StaticPagePopup | undefined;
-  private relNotePopup: StaticPagePopup | undefined;
+  private preferencesModal: CachedPreferencesModal | undefined;
+  private aboutPopup: CachedStaticPagePopup | undefined;
+  private aboutContent: string | undefined;
+  private relNotePopup: CachedStaticPagePopup | undefined;
+  private relNoteContent: string | undefined;
 
   constructor(
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
@@ -119,10 +136,13 @@ export class UiDirector implements IUiDirector {
 
     const screenInfos = this.populateScreenInfos();
     this.captureOverlays = new CaptureOverlayPool(screenInfos);
-
     // WORKAROUND to fix wrong position and bounds at the initial time
     this.captureOverlays.showAll(screenInfos);
     this.captureOverlays.hideAll();
+
+    this.preferencesModal = new CachedPreferencesModal(PreferencesModal, 30);
+    this.aboutPopup = new CachedStaticPagePopup(StaticPagePopup, 30);
+    this.relNotePopup = new CachedStaticPagePopup(StaticPagePopup, 30);
   }
 
   async refreshTrayState(
@@ -137,7 +157,6 @@ export class UiDirector implements IUiDirector {
 
   quitApplication(relaunch?: boolean): void {
     this.captureOverlays?.closeAll();
-    this.preferencesModal?.close();
 
     if (relaunch) {
       app.relaunch();
@@ -147,54 +166,37 @@ export class UiDirector implements IUiDirector {
   }
 
   async openAboutPopup(prefs: IPreferences): Promise<void> {
-    if (this.aboutPopup !== undefined) {
-      this.aboutPopup.focus();
-      return;
+    if (this.aboutContent === undefined) {
+      const aboutHtmlPath = assetPathResolver('about.html');
+      this.aboutContent = (await fs.promises.readFile(aboutHtmlPath, 'utf-8'))
+        .replace('__shortcut__', iconizeShortcut(prefs.shortcut))
+        .replace('__version__', curVersion);
     }
 
-    const aboutHtmlPath = assetPathResolver('about.html');
-    const content = (await fs.promises.readFile(aboutHtmlPath, 'utf-8'))
-      .replace('__shortcut__', iconizeShortcut(prefs.shortcut))
-      .replace('__version__', curVersion);
-
-    this.aboutPopup = new StaticPagePopup({
+    this.aboutPopup?.open({
       width: 300,
       height: 220,
-      html: content,
+      html: this.aboutContent,
     });
-    this.aboutPopup.on('close', () => {
-      this.aboutPopup = undefined;
-    });
-    this.aboutPopup.showOnReady();
   }
 
   async openReleaseNotes(): Promise<void> {
-    if (this.relNotePopup !== undefined) {
-      this.relNotePopup.focus();
-      return;
+    if (this.relNoteContent === undefined) {
+      const relNotePath = assetPathResolver('relnote.md');
+      this.relNoteContent = await fs.promises.readFile(relNotePath, 'utf-8');
     }
 
-    const relNotePath = assetPathResolver('relnote.md');
-    const content = await fs.promises.readFile(relNotePath, 'utf-8');
-    this.relNotePopup = new StaticPagePopup({
+    this.relNotePopup?.open({
       width: 440,
       height: 480,
-      markdown: content,
+      markdown: this.relNoteContent,
     });
-    this.relNotePopup.on('close', () => {
-      this.relNotePopup = undefined;
-    });
-    this.relNotePopup.showOnReady();
   }
 
   async openPreferencesModal(
     prefs: IPreferences
   ): Promise<IPreferences | undefined> {
-    if (this.preferencesModal === undefined) {
-      this.preferencesModal = new PreferencesModal();
-    }
-
-    const updatedPrefs = await this.preferencesModal.open(prefs);
+    const updatedPrefs = await this.preferencesModal?.openAsModal(prefs);
     this.tracker.view('preferences-modal');
 
     return updatedPrefs;

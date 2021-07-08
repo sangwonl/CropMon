@@ -40,7 +40,7 @@ export class ProgressDialog extends Widget {
   }
 
   open(): Promise<boolean> {
-    this.showOnReady();
+    this.show();
 
     return new Promise((resolve, reject) => {
       const timeout = this.options?.timeout || 300;

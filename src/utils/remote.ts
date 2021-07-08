@@ -14,7 +14,7 @@ export function getCustomData<T>(widget: Widget, name: string): T {
 }
 
 export function getCurWidgetCustomData<T>(name: string): T {
-  return getCustomData<T>(remote.getCurrentWindow(), name);
+  return getCustomData<T>(remote.getCurrentWindow() as Widget, name);
 }
 
 export function focusCurWidget() {
