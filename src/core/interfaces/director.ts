@@ -1,5 +1,3 @@
-import 'reflect-metadata';
-
 import { IBounds } from '@core/entities/screen';
 import { IPreferences } from '@core/entities/preferences';
 

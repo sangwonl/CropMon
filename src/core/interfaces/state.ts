@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/lines-between-class-members */
-/* eslint-disable import/prefer-default-export */
-
 import { inject, injectable } from 'inversify';
 
 import { TYPES } from '@di/types';

@@ -1,6 +1,3 @@
-/* eslint-disable max-classes-per-file */
-/* eslint-disable @typescript-eslint/lines-between-class-members */
-
 import path from 'path';
 import dayjs from 'dayjs';
 
