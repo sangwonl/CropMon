@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-
 import { ICaptureContext } from '@core/entities/capture';
 
 export interface IScreenRecorder {
