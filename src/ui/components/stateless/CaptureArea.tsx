@@ -202,15 +202,14 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
   useEffect(() => {
     if (selectedBounds === undefined) {
       setRecording(false);
+      setSelCtx(initialSelCtx);
+    } else {
+      setSelCtx({
+        ...selCtx,
+        recording,
+        selected: selectedBounds !== undefined,
+      });
     }
-  }, [selectedBounds]);
-
-  useEffect(() => {
-    setSelCtx({
-      ...selCtx,
-      recording,
-      selected: selectedBounds !== undefined,
-    });
   }, [recording, selectedBounds]);
 
   const onMouseDown = handleMouseDown(onStart, onCancel, selCtx, setSelCtx);

@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable @typescript-eslint/lines-between-class-members */
 
+import path from 'path';
 import dayjs from 'dayjs';
 
 import { IBounds } from './screen';
@@ -20,30 +21,31 @@ export enum CaptureStatus {
 
 export interface ICaptureTarget {
   mode: CaptureMode;
-  screenId: number;
-  bounds?: IBounds;
+  bounds: IBounds | undefined;
 }
 
 export interface ICaptureOption {
   mode: CaptureMode;
-  screenId: number;
-  bounds?: IBounds;
+  bounds: IBounds | undefined;
 }
 
 export interface ICaptureContext {
   target: ICaptureTarget;
   status: CaptureStatus;
   createdAt: number;
-  outputPath?: string;
+  outputPath: string | undefined;
 }
 
 export const createCaptureContext = (
-  option: ICaptureOption
+  option: ICaptureOption,
+  recordHome: string
 ): ICaptureContext => {
-  const { mode, screenId, bounds } = option;
+  const { mode, bounds } = option;
+  const fileName = dayjs().format('YYYYMMDDHHmmss');
   return {
-    target: { mode, screenId, bounds },
+    target: { mode, bounds },
     status: CaptureStatus.PREPARED,
     createdAt: dayjs().second(),
+    outputPath: path.join(recordHome, `${fileName}.mp4`),
   };
 };

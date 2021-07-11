@@ -1,4 +1,7 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable import/prefer-default-export */
+
+import { Display, screen } from 'electron';
 
 import { IBounds } from '@core/entities/screen';
 
@@ -24,4 +27,26 @@ export const isCapturableBounds = (bounds: IBounds): boolean => {
   return (
     bounds.width >= MIN_REQUIRED_SIZE && bounds.height >= MIN_REQUIRED_SIZE
   );
+};
+
+export const calcAllScreenBounds = (): IBounds => {
+  let left = Number.MAX_SAFE_INTEGER;
+  let top = Number.MAX_SAFE_INTEGER;
+  let right = Number.MIN_SAFE_INTEGER;
+  let bottom = Number.MIN_SAFE_INTEGER;
+
+  screen.getAllDisplays().forEach((d: Display) => {
+    const { bounds: b, scaleFactor: s } = d;
+    left = Math.min(left, b.x);
+    top = Math.min(top, b.y);
+    right = Math.floor(Math.max(right, b.x + b.width * s));
+    bottom = Math.floor(Math.max(bottom, b.y + b.height * s));
+  });
+
+  return {
+    x: left,
+    y: top,
+    width: right - left,
+    height: bottom - top,
+  };
 };

@@ -6,7 +6,7 @@
 import fs from 'fs';
 import path from 'path';
 import dayjs from 'dayjs';
-import { desktopCapturer, ipcRenderer } from 'electron';
+import { ipcRenderer } from 'electron';
 
 import { IBounds } from '@core/entities/screen';
 import { getApp } from '@utils/remote';
@@ -34,20 +34,12 @@ const ensureTempDirPathExists = (tempPath: string) => {
   }
 };
 
-const getTargetSource = async (screenId: number) => {
-  const inputSources = await desktopCapturer.getSources({
-    types: ['screen'],
-  });
-  return inputSources.find((s) => parseInt(s.display_id) === screenId);
-};
-
-const getMediaConstraint = (sourceId: string, screenBounds: IBounds): any => {
+const getMediaConstraint = (screenBounds: IBounds): any => {
   return {
     audio: false,
     video: {
       mandatory: {
         chromeMediaSource: 'desktop',
-        chromeMediaSourceId: sourceId,
         minWidth: screenBounds.width,
         minHeight: screenBounds.height,
         maxWidth: screenBounds.width,
@@ -59,13 +51,14 @@ const getMediaConstraint = (sourceId: string, screenBounds: IBounds): any => {
 
 const withCanvasProcess = (
   stream: MediaStream,
-  targetBounds: IBounds
+  targetBounds: IBounds,
+  frameRate: number
 ): MediaStream => {
-  const videoElem = document.getElementById('video') as HTMLVideoElement;
+  const videoElem = document.createElement('video') as HTMLVideoElement;
   videoElem.srcObject = stream;
   videoElem.play();
 
-  const canvasElem = document.getElementById('canvas') as HTMLCanvasElement;
+  const canvasElem = document.createElement('canvas') as HTMLCanvasElement;
   canvasElem.width = targetBounds.width;
   canvasElem.height = targetBounds.height;
 
@@ -83,9 +76,11 @@ const withCanvasProcess = (
       targetBounds.height
     );
   };
-  setInterval(render, 33);
 
-  return (canvasElem as any).captureStream(30);
+  // In electron browser window web content, we can't use renderFrame..
+  setInterval(render, Math.floor(1000 / frameRate));
+
+  return (canvasElem as any).captureStream(frameRate);
 };
 
 const handleStreamDataAvailable = (event: BlobEvent) => {
@@ -103,18 +98,37 @@ const handleRecordStop = async (_event: Event) => {
   ipcRenderer.send('recording-file-saved', { tempFilePath: tempPath });
 };
 
-ipcRenderer.on('start-record', async (_event, data) => {
-  const { screenId, screenBounds, targetBounds } = data;
+const shrinkBoundsIfTooLarge = (data: any): any => {
+  const { screenBounds, targetBounds } = data;
+  const baseShrinkRate = 1.0;
 
-  const targetSource = await getTargetSource(screenId);
-  if (targetSource === undefined) {
-    ipcRenderer.send('recording-failed', {
-      message: 'failed to find input source matched to screen id',
-    });
-    return;
+  const maxSize = 3840 * 2160; // 4K
+  const screenSize = screenBounds.width * screenBounds.height;
+  if (screenSize <= maxSize) {
+    return { screenBounds, targetBounds };
   }
 
-  const constraints = getMediaConstraint(targetSource.id, screenBounds);
+  const ratio = (1.0 - (screenSize - maxSize) / screenSize) * baseShrinkRate;
+  return {
+    screenBounds: {
+      x: Math.floor(screenBounds.x * ratio),
+      y: Math.floor(screenBounds.y * ratio),
+      width: Math.floor(screenBounds.width * ratio),
+      height: Math.floor(screenBounds.height * ratio),
+    },
+    targetBounds: {
+      x: Math.floor(targetBounds.x * ratio),
+      y: Math.floor(targetBounds.y * ratio),
+      width: Math.floor(targetBounds.width * ratio),
+      height: Math.floor(targetBounds.height * ratio),
+    },
+  };
+};
+
+ipcRenderer.on('start-record', async (_event, data) => {
+  const { screenBounds, targetBounds } = shrinkBoundsIfTooLarge(data);
+
+  const constraints = getMediaConstraint(screenBounds);
   const stream = await navigator.mediaDevices.getUserMedia(constraints);
   if (stream === undefined) {
     ipcRenderer.send('recording-failed', {
@@ -123,15 +137,14 @@ ipcRenderer.on('start-record', async (_event, data) => {
     return;
   }
 
-  const canvasStream = withCanvasProcess(stream, targetBounds);
+  const frameRate = 24;
+  const canvasStream = withCanvasProcess(stream, targetBounds, frameRate);
   const recorderOpts = { mimeType: MEDIA_MIME_TYPE };
   mediaRecorder = new MediaRecorder(canvasStream, recorderOpts);
   mediaRecorder.ondataavailable = handleStreamDataAvailable;
   mediaRecorder.onstop = handleRecordStop;
 
-  setTimeout(() => {
-    mediaRecorder.start(1000);
-  }, 100);
+  setTimeout(() => mediaRecorder.start(1000), 100);
   ipcRenderer.send('recording-started', {});
 });
 

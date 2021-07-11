@@ -13,10 +13,10 @@ import 'reflect-metadata';
 
 import fs from 'fs';
 import { inject, injectable } from 'inversify';
-import { app, shell, dialog, screen, nativeImage } from 'electron';
+import { app, shell, dialog, nativeImage } from 'electron';
 
 import { TYPES } from '@di/types';
-import { IBounds, IScreenInfo } from '@core/entities/screen';
+import { IBounds } from '@core/entities/screen';
 import { IPreferences } from '@core/entities/preferences';
 import { IUiDirector } from '@core/interfaces/director';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
@@ -28,66 +28,41 @@ import { PreferencesModal } from '@ui/widgets/preferences';
 import { ProgressDialog } from '@ui/widgets/progressdialog';
 import { StaticPagePopup } from '@ui/widgets/staticpage';
 import { StaticPagePopupOptions } from '@ui/widgets/staticpage/shared';
-import { setCustomData } from '@utils/remote';
-import { SPARE_PIXELS } from '@utils/bounds';
+import { calcAllScreenBounds, SPARE_PIXELS } from '@utils/bounds';
 import { iconizeShortcut } from '@utils/shortcut';
 import { isMac } from '@utils/process';
 
 import { version as curVersion } from '../package.json';
 
-class CaptureOverlayPool {
-  private widgets?: Map<number, CaptureOverlay>;
+class CaptureOverlayWrap {
+  private widget?: CaptureOverlay;
 
-  constructor(screenInfos: Array<IScreenInfo>) {
-    this.widgets = new Map<number, CaptureOverlay>();
-
-    // pre-create overlays pool
-    screenInfos.forEach(({ id: screenId }) => {
-      this.getOrBuild(screenId);
-    });
+  constructor() {
+    this.widget = new CaptureOverlay();
   }
 
-  showAll(screenInfos: Array<IScreenInfo>) {
-    screenInfos.forEach(({ id: screenId, bounds }) => {
-      const sparedBounds = this.addSparePixels(bounds);
-      const w = this.getOrBuild(screenId);
-      w.setIgnoreMouseEvents(false);
-      w.setPosition(sparedBounds.x, sparedBounds.y);
-      w.setBounds(sparedBounds);
-      w.show();
-    });
+  show(screenBounds: IBounds) {
+    const sparedBounds = this.addSparePixels(screenBounds);
+    this.widget?.setIgnoreMouseEvents(false);
+    this.widget?.setPosition(sparedBounds.x, sparedBounds.y);
+    this.widget?.setBounds(sparedBounds);
+    this.widget?.show();
   }
 
-  hideAll() {
-    this.widgets?.forEach((w) => {
-      // should wait for react component rerender
-      setTimeout(() => {
-        w.hide();
-      }, 300);
-    });
+  hide() {
+    // should wait for react component rerender
+    setTimeout(() => {
+      this.widget?.hide();
+    }, 300);
   }
 
-  closeAll() {
-    this.widgets?.forEach((w) => {
-      w.close();
-    });
+  close() {
+    this.widget?.close();
   }
 
   ignoreMouseEvents() {
-    this.widgets?.forEach((w) => {
-      w.setIgnoreMouseEvents(true);
-      w.blur();
-    });
-  }
-
-  private getOrBuild(screenId: number): CaptureOverlay {
-    let w = this.widgets?.get(screenId);
-    if (w === undefined) {
-      w = new CaptureOverlay();
-      setCustomData(w, 'screenId', screenId);
-      this.widgets?.set(screenId, w);
-    }
-    return w;
+    this.widget?.setIgnoreMouseEvents(true);
+    this.widget?.blur();
   }
 
   // WORKAROUND: to fix non-clickable area at the nearest borders
@@ -95,6 +70,7 @@ class CaptureOverlayPool {
   private addSparePixels(bounds: IBounds): IBounds {
     return {
       x: bounds.x - SPARE_PIXELS,
+      // x: bounds.x - SPARE_PIXELS + bounds.width / 2,
       y: bounds.y - SPARE_PIXELS,
       // width: (bounds.width + SPARE_PIXELS * 2) / 2,
       width: bounds.width + SPARE_PIXELS * 2,
@@ -117,32 +93,30 @@ class CachedPreferencesModal extends CachedWidget<
 
 @injectable()
 export class UiDirector implements IUiDirector {
-  private appTray: AppTray | undefined;
-  private captureOverlays: CaptureOverlayPool | undefined;
   private updateProgressDialog: ProgressDialog | undefined;
   private preferencesModal: CachedPreferencesModal | undefined;
   private aboutPopup: CachedStaticPagePopup | undefined;
   private aboutContent: string | undefined;
   private relNotePopup: CachedStaticPagePopup | undefined;
   private relNoteContent: string | undefined;
+  private appTray: AppTray | undefined;
+  private captureOverlay: CaptureOverlayWrap | undefined;
 
   constructor(
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
   ) {}
 
   initialize(prefs: IPreferences): void {
-    this.appTray = isMac() ? AppTray.forMac() : AppTray.forWindows();
-    this.refreshTrayState(prefs, false);
-
-    const screenInfos = this.populateScreenInfos();
-    this.captureOverlays = new CaptureOverlayPool(screenInfos);
-    // WORKAROUND to fix wrong position and bounds at the initial time
-    this.captureOverlays.showAll(screenInfos);
-    this.captureOverlays.hideAll();
+    this.captureOverlay = new CaptureOverlayWrap();
+    this.captureOverlay.show(calcAllScreenBounds());
+    this.captureOverlay.hide();
 
     this.preferencesModal = new CachedPreferencesModal(PreferencesModal, 30);
     this.aboutPopup = new CachedStaticPagePopup(StaticPagePopup, 30);
     this.relNotePopup = new CachedStaticPagePopup(StaticPagePopup, 30);
+
+    this.appTray = isMac() ? AppTray.forMac() : AppTray.forWindows();
+    this.refreshTrayState(prefs, false);
   }
 
   async refreshTrayState(
@@ -156,7 +130,7 @@ export class UiDirector implements IUiDirector {
   }
 
   quitApplication(relaunch?: boolean): void {
-    this.captureOverlays?.closeAll();
+    this.captureOverlay?.close();
 
     if (relaunch) {
       app.relaunch();
@@ -202,20 +176,20 @@ export class UiDirector implements IUiDirector {
     return updatedPrefs;
   }
 
-  enableCaptureSelectionMode(): Array<IScreenInfo> {
-    const screenInfos = this.populateScreenInfos();
-    this.captureOverlays?.showAll(screenInfos);
+  enableCaptureSelectionMode(): IBounds {
+    const screenBounds = calcAllScreenBounds();
+    this.captureOverlay?.show(screenBounds);
     this.tracker.view('capture-area-selection');
-    return screenInfos;
+    return screenBounds;
   }
 
   disableCaptureSelectionMode(): void {
-    this.captureOverlays?.hideAll();
+    this.captureOverlay?.hide();
     this.tracker.view('idle');
   }
 
   enableRecordingMode(): void {
-    this.captureOverlays?.ignoreMouseEvents();
+    this.captureOverlay?.ignoreMouseEvents();
     this.tracker.view('in-recording');
   }
 
@@ -273,11 +247,5 @@ export class UiDirector implements IUiDirector {
 
   setUpdateDownloadProgress(percent: number): void {
     this.updateProgressDialog?.setProgress(percent);
-  }
-
-  private populateScreenInfos(): Array<IScreenInfo> {
-    return screen.getAllDisplays().map((d) => {
-      return { id: d.id, bounds: d.bounds };
-    });
   }
 }
