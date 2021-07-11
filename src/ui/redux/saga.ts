@@ -19,10 +19,8 @@ import {
   disableCaptureMode,
   startAreaSelection,
   finishAreaSelection,
-  startCapture,
   finishCapture,
 } from './slice';
-import { IStartCapturePayload } from './types';
 
 const actionDispatcher = diContainer.get(ActionDispatcher);
 
@@ -58,10 +56,6 @@ function onFinishAreaSelection(action: PayloadAction<IFinishAreaSelection>) {
   actionDispatcher.finishAreaSelection(action.payload.bounds);
 }
 
-function onStartCapture(action: PayloadAction<IStartCapturePayload>) {
-  actionDispatcher.startCapture(action.payload.bounds);
-}
-
 function onFinishCapture() {
   actionDispatcher.finishCapture();
 }
@@ -80,7 +74,6 @@ function* sagaEntry() {
   yield takeLatest(disableCaptureMode.type, onDisableCaptureSelection);
   yield takeLatest(startAreaSelection.type, onStartAreaSelection);
   yield takeLatest(finishAreaSelection.type, onFinishAreaSelection);
-  yield takeLatest(startCapture.type, onStartCapture);
   yield takeLatest(finishCapture.type, onFinishCapture);
 }
 

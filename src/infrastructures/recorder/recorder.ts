@@ -13,7 +13,7 @@
 import fs from 'fs';
 import path from 'path';
 import log from 'electron-log';
-import { Display, screen, ipcMain, app } from 'electron';
+import { ipcMain, app } from 'electron';
 import { injectable } from 'inversify';
 import {
   createFFmpeg,
@@ -138,11 +138,6 @@ export class ElectronScreenRecorder implements IScreenRecorder {
 
     this.ffmpeg = createFFmpeg(ffmpegOptions);
     this.ffmpeg!.load();
-  }
-
-  private getDisplay(screenId: number): Display | undefined {
-    // return screen.getAllDisplays().find((d) => d.id === screenId);
-    return screen.getAllDisplays()[0];
   }
 
   private async postProcessWithFFmpeg(tempPath: string, outputPath: string) {

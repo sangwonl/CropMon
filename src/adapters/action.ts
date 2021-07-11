@@ -45,14 +45,7 @@ export class ActionDispatcher {
   }
 
   finishAreaSelection(bounds: IBounds) {
-    this.captureUseCase.finishAreaSelection(bounds);
-  }
-
-  startCapture(bounds?: IBounds | undefined) {
-    this.captureUseCase.startCapture({
-      mode: CaptureMode.AREA,
-      bounds,
-    });
+    this.captureUseCase.finishAreaSelectionAndStartCapture(bounds);
   }
 
   finishCapture() {
