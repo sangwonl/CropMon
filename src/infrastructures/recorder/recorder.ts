@@ -25,6 +25,7 @@ import {
 import { ICaptureContext } from '@core/entities/capture';
 import { IScreenRecorder } from '@core/interfaces/recorder';
 import { isProduction } from '@utils/process';
+import { calcAllScreenBounds, isEmptyBounds } from '@utils/bounds';
 
 import { RecorderDelegate } from './rec-delegate';
 
@@ -45,9 +46,13 @@ export class ElectronScreenRecorder implements IScreenRecorder {
   }
 
   async record(ctx: ICaptureContext): Promise<void> {
-    const { screenId, bounds: targetBounds } = ctx.target;
-    const targetDisplay = this.getDisplay(screenId);
-    if (targetDisplay === undefined || targetBounds === undefined) {
+    const { bounds: targetBounds } = ctx.target;
+    if (targetBounds === undefined || isEmptyBounds(targetBounds)) {
+      return Promise.reject();
+    }
+
+    const screenBounds = calcAllScreenBounds();
+    if (isEmptyBounds(screenBounds)) {
       return Promise.reject();
     }
 
@@ -74,12 +79,10 @@ export class ElectronScreenRecorder implements IScreenRecorder {
 
       setupIpcListeners();
 
-      const args = {
-        screenId,
-        screenBounds: targetDisplay.bounds,
+      this.delegate?.webContents.send('start-record', {
+        screenBounds,
         targetBounds,
-      };
-      this.delegate?.webContents.send('start-record', args);
+      });
     });
   }
 
@@ -138,7 +141,8 @@ export class ElectronScreenRecorder implements IScreenRecorder {
   }
 
   private getDisplay(screenId: number): Display | undefined {
-    return screen.getAllDisplays().find((d) => d.id === screenId);
+    // return screen.getAllDisplays().find((d) => d.id === screenId);
+    return screen.getAllDisplays()[0];
   }
 
   private async postProcessWithFFmpeg(tempPath: string, outputPath: string) {

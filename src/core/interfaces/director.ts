@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import { IScreenInfo } from '@core/entities/screen';
+import { IBounds } from '@core/entities/screen';
 import { IPreferences } from '@core/entities/preferences';
 
 export interface IUiDirector {
@@ -10,7 +10,7 @@ export interface IUiDirector {
   openAboutPopup(prefs: IPreferences): Promise<void>;
   openReleaseNotes(): Promise<void>;
   openPreferencesModal(prefs: IPreferences): Promise<IPreferences | undefined>;
-  enableCaptureSelectionMode(): Array<IScreenInfo>;
+  enableCaptureSelectionMode(): IBounds;
   disableCaptureSelectionMode(): void;
   enableRecordingMode(): void;
   showItemInFolder(path: string): void;

@@ -7,7 +7,7 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import { takeLatest } from 'redux-saga/effects';
 
 import { diContainer } from '@di/container';
-import { IFinishAreaSelection, IStartAreaSelection } from '@core/entities/ui';
+import { IFinishAreaSelection } from '@core/entities/ui';
 import { ActionDispatcher } from '@adapters/action';
 
 import {
@@ -50,8 +50,8 @@ function onDisableCaptureSelection() {
   actionDispatcher.disableCaptureSelection();
 }
 
-function onStartAreaSelection(action: PayloadAction<IStartAreaSelection>) {
-  actionDispatcher.startAreaSelection(action.payload.screenId);
+function onStartAreaSelection() {
+  actionDispatcher.startAreaSelection();
 }
 
 function onFinishAreaSelection(action: PayloadAction<IFinishAreaSelection>) {
@@ -59,7 +59,7 @@ function onFinishAreaSelection(action: PayloadAction<IFinishAreaSelection>) {
 }
 
 function onStartCapture(action: PayloadAction<IStartCapturePayload>) {
-  actionDispatcher.startCapture(action.payload.screenId, action.payload.bounds);
+  actionDispatcher.startCapture(action.payload.bounds);
 }
 
 function onFinishCapture() {

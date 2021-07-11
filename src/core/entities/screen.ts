@@ -6,8 +6,3 @@ export interface IBounds {
   width: number;
   height: number;
 }
-
-export interface IScreenInfo {
-  id: number;
-  bounds: IBounds;
-}

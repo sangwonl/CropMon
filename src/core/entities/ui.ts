@@ -1,5 +1,5 @@
 import { IPreferences } from './preferences';
-import { IBounds, IScreenInfo } from './screen';
+import { IBounds } from './screen';
 
 export interface IPreferencesModal {
   show: boolean;
@@ -8,21 +8,13 @@ export interface IPreferencesModal {
 
 export interface ICaptureOverlay {
   show: boolean;
-  screenInfo: IScreenInfo;
-}
-
-export interface ICaptureOverlays {
-  [screenId: number]: ICaptureOverlay;
+  bounds: IBounds | undefined;
 }
 
 export interface ICaptureArea {
-  screenIdOnSelection: number | undefined;
   selectedBounds: IBounds | undefined;
+  isSelecting: boolean;
   isRecording: boolean;
-}
-
-export interface IStartAreaSelection {
-  screenId: number;
 }
 
 export interface IFinishAreaSelection {
@@ -30,15 +22,18 @@ export interface IFinishAreaSelection {
 }
 
 export interface IUiState {
-  captureOverlays: ICaptureOverlays;
+  captureOverlay: ICaptureOverlay;
   captureArea: ICaptureArea;
 }
 
 export const initialUiState: IUiState = {
-  captureOverlays: {},
+  captureOverlay: {
+    show: false,
+    bounds: undefined,
+  },
   captureArea: {
-    screenIdOnSelection: undefined,
     selectedBounds: undefined,
+    isSelecting: false,
     isRecording: false,
   },
 };

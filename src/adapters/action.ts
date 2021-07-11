@@ -40,18 +40,17 @@ export class ActionDispatcher {
     this.captureUseCase.disableCaptureSelection();
   }
 
-  startAreaSelection(screenId: number) {
-    this.captureUseCase.startAreaSelection(screenId);
+  startAreaSelection() {
+    this.captureUseCase.startAreaSelection();
   }
 
   finishAreaSelection(bounds: IBounds) {
     this.captureUseCase.finishAreaSelection(bounds);
   }
 
-  startCapture(screenId: number, bounds?: IBounds | undefined) {
+  startCapture(bounds?: IBounds | undefined) {
     this.captureUseCase.startCapture({
       mode: CaptureMode.AREA,
-      screenId,
       bounds,
     });
   }

@@ -20,8 +20,8 @@ import { StateManager } from '@core/interfaces/state';
 import { IScreenRecorder } from '@core/interfaces/recorder';
 import { IUiDirector } from '@core/interfaces/director';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
-import { ICaptureOverlays, IUiState } from '@core/entities/ui';
-import { IBounds, IScreenInfo } from '@core/entities/screen';
+import { IUiState } from '@core/entities/ui';
+import { IBounds } from '@core/entities/screen';
 
 import { PreferencesUseCase } from './preferences';
 
@@ -42,21 +42,20 @@ export class CaptureUseCase {
   }
 
   enableCaptureSelection() {
-    const screenInfos = this.uiDirector.enableCaptureSelectionMode();
-    const captureOverlays: ICaptureOverlays = {};
-    screenInfos.forEach((si: IScreenInfo) => {
-      captureOverlays[si.id] = { show: true, screenInfo: si };
-    });
+    const screenBounds = this.uiDirector.enableCaptureSelectionMode();
 
     this.stateManager.updateUiState((state: IUiState): IUiState => {
       return {
         ...state,
         captureArea: {
-          ...state.captureArea,
-          screenIdOnSelection: undefined,
           selectedBounds: undefined,
+          isSelecting: true,
+          isRecording: false,
         },
-        captureOverlays,
+        captureOverlay: {
+          show: true,
+          bounds: screenBounds,
+        },
       };
     });
   }
@@ -65,33 +64,27 @@ export class CaptureUseCase {
     this.uiDirector.disableCaptureSelectionMode();
 
     this.stateManager.updateUiState((state: IUiState): IUiState => {
-      const captureOverlays: ICaptureOverlays = {};
-      Object.keys(state.captureOverlays).forEach((k) => {
-        // https://stackoverflow.com/questions/14667713/how-to-convert-a-string-to-number-in-typescript
-        const screenId: number = +k;
-        const overlay = state.captureOverlays[screenId];
-        captureOverlays[screenId] = { ...overlay, show: false };
-      });
-
       return {
         ...state,
         captureArea: {
-          screenIdOnSelection: undefined,
           selectedBounds: undefined,
+          isSelecting: false,
           isRecording: false,
         },
-        captureOverlays,
+        captureOverlay: {
+          ...state.captureOverlay,
+          show: false,
+        },
       };
     });
   }
 
-  startAreaSelection(screenId: number) {
+  startAreaSelection() {
     this.stateManager.updateUiState((state: IUiState): IUiState => {
       return {
         ...state,
         captureArea: {
           ...state.captureArea,
-          screenIdOnSelection: screenId,
           selectedBounds: undefined,
         },
       };
@@ -111,10 +104,8 @@ export class CaptureUseCase {
   }
 
   async startCapture(option: ICaptureOption): Promise<void> {
-    const newCtx = createCaptureContext(option);
-
     const prefs = await this.prefsUseCase.fetchUserPreferences();
-    newCtx.outputPath = await this.getOutputPath(prefs.recordHome);
+    const newCtx = createCaptureContext(option, prefs.recordHome);
 
     try {
       await this.screenRecorder.record(newCtx);
@@ -168,10 +159,5 @@ export class CaptureUseCase {
     }
 
     await this.uiDirector.refreshTrayState(prefs, false);
-  }
-
-  private getOutputPath(recordHome: string): string {
-    const fileName = dayjs().format('YYYYMMDDHHmmss');
-    return path.join(recordHome, `${fileName}.mp4`);
   }
 }

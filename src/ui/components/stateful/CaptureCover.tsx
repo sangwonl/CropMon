@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { debounce } from 'debounce';
 
 import { IBounds } from '@core/entities/screen';
-import { ICaptureArea, ICaptureOverlays } from '@core/entities/ui';
+import { ICaptureArea, ICaptureOverlay } from '@core/entities/ui';
 import { RootState } from '@ui/redux/store';
 import {
   startAreaSelection,
@@ -17,15 +17,11 @@ import {
   startCapture,
   disableCaptureMode,
 } from '@ui/redux/slice';
-import { focusCurWidget, getCurWidgetCustomData } from '@utils/remote';
+import { focusCurWidget } from '@utils/remote';
 import { isMac } from '@utils/process';
 
 import { CaptureArea } from '../stateless/CaptureArea';
 import styles from './CaptureCover.css';
-
-const getScreenId = () => {
-  return getCurWidgetCustomData<number>('screenId');
-};
 
 const stretchBodySize = (w: number, h: number) => {
   document.body.style.width = `${w}px`;
@@ -42,23 +38,20 @@ const focusCurWigetDebounced = (() => {
   return () => {};
 })();
 
-const adjustBodySize = (captureOverlays: ICaptureOverlays) => {
-  if (
-    captureOverlays === undefined ||
-    Object.keys(captureOverlays).length === 0
-  ) {
+const adjustBodySize = (captureOverlay: ICaptureOverlay) => {
+  if (captureOverlay === undefined || captureOverlay.bounds === undefined) {
     return;
   }
 
-  const { screenInfo } = captureOverlays[getScreenId()];
-  stretchBodySize(screenInfo.bounds.width, screenInfo.bounds.height);
+  const { bounds } = captureOverlay;
+  stretchBodySize(bounds.width, bounds.height);
 };
 
 export const CaptureCover = () => {
   const dispatch = useDispatch();
 
-  const captureOverlays: ICaptureOverlays = useSelector(
-    (state: RootState) => state.ui.root.captureOverlays
+  const captureOverlay: ICaptureOverlay = useSelector(
+    (state: RootState) => state.ui.root.captureOverlay
   );
 
   const captureArea: ICaptureArea = useSelector(
@@ -66,17 +59,20 @@ export const CaptureCover = () => {
   );
 
   const [coverActive, setCoverActive] = useState<boolean>(false);
+  const [selectedBounds, setSelectedBounds] =
+    useState<IBounds | undefined>(undefined);
 
   useLayoutEffect(() => {
-    adjustBodySize(captureOverlays);
-  }, [captureOverlays]);
+    adjustBodySize(captureOverlay);
+  }, [captureOverlay]);
 
   useLayoutEffect(() => {
-    setCoverActive(captureArea.screenIdOnSelection === getScreenId());
+    setCoverActive(captureArea.isSelecting);
+    setSelectedBounds(captureArea.selectedBounds);
   }, [captureArea]);
 
   const onSelectionStart = () => {
-    dispatch(startAreaSelection({ screenId: getScreenId() }));
+    dispatch(startAreaSelection());
   };
 
   const onSelectionFinish = (bounds: IBounds) => {
@@ -90,7 +86,6 @@ export const CaptureCover = () => {
   const onRecordStart = () => {
     dispatch(
       startCapture({
-        screenId: captureArea.screenIdOnSelection!,
         bounds: captureArea.selectedBounds,
       })
     );
@@ -100,7 +95,7 @@ export const CaptureCover = () => {
     <div className={styles.cover}>
       <CaptureArea
         active={coverActive}
-        selectedBounds={captureArea.selectedBounds}
+        selectedBounds={selectedBounds}
         onSelectionStart={onSelectionStart}
         onSelectionCancel={onSelectionCancel}
         onSelectionFinish={onSelectionFinish}
