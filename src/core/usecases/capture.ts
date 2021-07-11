@@ -4,7 +4,6 @@
 
 import 'reflect-metadata';
 
-import path from 'path';
 import assert from 'assert';
 import dayjs from 'dayjs';
 import { inject, injectable } from 'inversify';
@@ -15,6 +14,7 @@ import {
   ICaptureOption,
   createCaptureContext,
   ICaptureContext,
+  CaptureMode,
 } from '@core/entities/capture';
 import { StateManager } from '@core/interfaces/state';
 import { IScreenRecorder } from '@core/interfaces/recorder';
@@ -91,19 +91,11 @@ export class CaptureUseCase {
     });
   }
 
-  finishAreaSelection(bounds: IBounds) {
-    this.stateManager.updateUiState((state: IUiState): IUiState => {
-      return {
-        ...state,
-        captureArea: {
-          ...state.captureArea,
-          selectedBounds: bounds,
-        },
-      };
-    });
+  async finishAreaSelectionAndStartCapture(bounds: IBounds) {
+    await this.startCapture({ mode: CaptureMode.AREA, bounds });
   }
 
-  async startCapture(option: ICaptureOption): Promise<void> {
+  private async startCapture(option: ICaptureOption): Promise<void> {
     const prefs = await this.prefsUseCase.fetchUserPreferences();
     const newCtx = createCaptureContext(option, prefs.recordHome);
 
@@ -124,6 +116,17 @@ export class CaptureUseCase {
     } else {
       this.disableCaptureSelection();
     }
+
+    this.stateManager.updateUiState((state: IUiState): IUiState => {
+      return {
+        ...state,
+        captureArea: {
+          ...state.captureArea,
+          selectedBounds: option.bounds,
+          isRecording,
+        },
+      };
+    });
 
     await this.uiDirector.refreshTrayState(prefs, isRecording);
   }

@@ -8,8 +8,6 @@ import {
   IUiState,
 } from '@core/entities/ui';
 
-import { IStartCapturePayload } from './types';
-
 const slice = createSlice({
   name: 'ui',
   initialState: { root: initialUiState },
@@ -28,7 +26,6 @@ const slice = createSlice({
     disableCaptureMode: () => {},
     startAreaSelection: () => {},
     finishAreaSelection: (_s, _a: PayloadAction<IFinishAreaSelection>) => {},
-    startCapture: (_s, _a: PayloadAction<IStartCapturePayload>) => {},
     finishCapture: () => {},
 
     // preferences
@@ -46,7 +43,6 @@ export const {
   disableCaptureMode,
   startAreaSelection,
   finishAreaSelection,
-  startCapture,
   finishCapture,
 } = slice.actions;
 

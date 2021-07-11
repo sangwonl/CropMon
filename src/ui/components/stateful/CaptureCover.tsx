@@ -14,7 +14,6 @@ import { RootState } from '@ui/redux/store';
 import {
   startAreaSelection,
   finishAreaSelection,
-  startCapture,
   disableCaptureMode,
 } from '@ui/redux/slice';
 import { focusCurWidget } from '@utils/remote';
@@ -59,6 +58,7 @@ export const CaptureCover = () => {
   );
 
   const [coverActive, setCoverActive] = useState<boolean>(false);
+  const [recording, setRecording] = useState<boolean>(false);
   const [selectedBounds, setSelectedBounds] =
     useState<IBounds | undefined>(undefined);
 
@@ -68,6 +68,7 @@ export const CaptureCover = () => {
 
   useLayoutEffect(() => {
     setCoverActive(captureArea.isSelecting);
+    setRecording(captureArea.isRecording);
     setSelectedBounds(captureArea.selectedBounds);
   }, [captureArea]);
 
@@ -83,23 +84,15 @@ export const CaptureCover = () => {
     dispatch(disableCaptureMode());
   };
 
-  const onRecordStart = () => {
-    dispatch(
-      startCapture({
-        bounds: captureArea.selectedBounds,
-      })
-    );
-  };
-
   return (
     <div className={styles.cover}>
       <CaptureArea
         active={coverActive}
+        isRecording={recording}
         selectedBounds={selectedBounds}
         onSelectionStart={onSelectionStart}
         onSelectionCancel={onSelectionCancel}
         onSelectionFinish={onSelectionFinish}
-        onRecordStart={onRecordStart}
         onHovering={focusCurWigetDebounced}
       />
     </div>
