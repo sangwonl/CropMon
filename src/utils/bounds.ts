@@ -29,18 +29,19 @@ export const isCapturableBounds = (bounds: IBounds): boolean => {
   );
 };
 
-export const calcAllScreenBounds = (): IBounds => {
+export const getWholeScreenBounds = (): IBounds => {
   let left = Number.MAX_SAFE_INTEGER;
   let top = Number.MAX_SAFE_INTEGER;
   let right = Number.MIN_SAFE_INTEGER;
   let bottom = Number.MIN_SAFE_INTEGER;
 
+  const { scaleFactor: primScale } = screen.getPrimaryDisplay();
   screen.getAllDisplays().forEach((d: Display) => {
     const { bounds: b, scaleFactor: s } = d;
-    left = Math.min(left, b.x);
-    top = Math.min(top, b.y);
-    right = Math.floor(Math.max(right, b.x + b.width * s));
-    bottom = Math.floor(Math.max(bottom, b.y + b.height * s));
+    left = Math.min(left, Math.floor(b.x * (s / primScale)));
+    top = Math.min(top, Math.floor(b.y * (s / primScale)));
+    right = Math.max(right, Math.floor((b.x + b.width) * (s / primScale)));
+    bottom = Math.max(bottom, Math.floor((b.y + b.height) * (s / primScale)));
   });
 
   return {
@@ -48,5 +49,29 @@ export const calcAllScreenBounds = (): IBounds => {
     y: top,
     width: right - left,
     height: bottom - top,
+  };
+};
+
+export const adjustSelectionBounds = (bounds: IBounds): IBounds => {
+  const screenBounds = getWholeScreenBounds();
+  const { scaleFactor: primScale } = screen.getPrimaryDisplay();
+
+  let totalWidth = 0;
+  let totalHeight = 0;
+
+  screen.getAllDisplays().forEach((d: Display) => {
+    const { bounds: b, scaleFactor: s } = d;
+    totalWidth += Math.floor(b.width * (s / primScale));
+    totalHeight += Math.floor(b.height * (s / primScale));
+  });
+
+  const horzJoint = totalWidth - screenBounds.width;
+  const vertJoint = totalHeight - screenBounds.height;
+
+  return {
+    x: bounds.x - Math.floor(horzJoint / primScale),
+    y: bounds.y - Math.floor(vertJoint / primScale),
+    width: bounds.width,
+    height: bounds.height,
   };
 };
