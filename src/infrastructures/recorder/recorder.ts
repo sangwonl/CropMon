@@ -25,7 +25,7 @@ import {
 import { ICaptureContext } from '@core/entities/capture';
 import { IScreenRecorder } from '@core/interfaces/recorder';
 import { isProduction } from '@utils/process';
-import { calcAllScreenBounds, isEmptyBounds } from '@utils/bounds';
+import { getWholeScreenBounds, isEmptyBounds } from '@utils/bounds';
 
 import { RecorderDelegate } from './rec-delegate';
 
@@ -51,8 +51,8 @@ export class ElectronScreenRecorder implements IScreenRecorder {
       return Promise.reject();
     }
 
-    const screenBounds = calcAllScreenBounds();
-    if (isEmptyBounds(screenBounds)) {
+    const screenBounds = getWholeScreenBounds();
+    if (isEmptyBounds(screenBounds) || isEmptyBounds(targetBounds)) {
       return Promise.reject();
     }
 

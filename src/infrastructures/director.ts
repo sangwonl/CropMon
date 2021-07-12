@@ -28,7 +28,7 @@ import { PreferencesModal } from '@ui/widgets/preferences';
 import { ProgressDialog } from '@ui/widgets/progressdialog';
 import { StaticPagePopup } from '@ui/widgets/staticpage';
 import { StaticPagePopupOptions } from '@ui/widgets/staticpage/shared';
-import { calcAllScreenBounds, SPARE_PIXELS } from '@utils/bounds';
+import { getWholeScreenBounds, SPARE_PIXELS } from '@utils/bounds';
 import { iconizeShortcut } from '@utils/shortcut';
 import { isMac } from '@utils/process';
 
@@ -70,7 +70,6 @@ class CaptureOverlayWrap {
   private addSparePixels(bounds: IBounds): IBounds {
     return {
       x: bounds.x - SPARE_PIXELS,
-      // x: bounds.x - SPARE_PIXELS + bounds.width / 2,
       y: bounds.y - SPARE_PIXELS,
       // width: (bounds.width + SPARE_PIXELS * 2) / 2,
       width: bounds.width + SPARE_PIXELS * 2,
@@ -108,7 +107,7 @@ export class UiDirector implements IUiDirector {
 
   initialize(prefs: IPreferences): void {
     this.captureOverlay = new CaptureOverlayWrap();
-    this.captureOverlay.show(calcAllScreenBounds());
+    this.captureOverlay.show(getWholeScreenBounds());
     this.captureOverlay.hide();
 
     this.preferencesModal = new CachedPreferencesModal(PreferencesModal, 30);
@@ -177,7 +176,7 @@ export class UiDirector implements IUiDirector {
   }
 
   enableCaptureSelectionMode(): IBounds {
-    const screenBounds = calcAllScreenBounds();
+    const screenBounds = getWholeScreenBounds();
     this.captureOverlay?.show(screenBounds);
     this.tracker.view('capture-area-selection');
     return screenBounds;

@@ -9,6 +9,7 @@ import { takeLatest } from 'redux-saga/effects';
 import { diContainer } from '@di/container';
 import { IFinishAreaSelection } from '@core/entities/ui';
 import { ActionDispatcher } from '@adapters/action';
+import { adjustSelectionBounds } from '@utils/bounds';
 
 import {
   checkForUpdates,
@@ -53,7 +54,9 @@ function onStartAreaSelection() {
 }
 
 function onFinishAreaSelection(action: PayloadAction<IFinishAreaSelection>) {
-  actionDispatcher.finishAreaSelection(action.payload.bounds);
+  actionDispatcher.finishAreaSelection(
+    adjustSelectionBounds(action.payload.bounds)
+  );
 }
 
 function onFinishCapture() {

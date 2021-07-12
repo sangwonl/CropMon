@@ -98,35 +98,8 @@ const handleRecordStop = async (_event: Event) => {
   ipcRenderer.send('recording-file-saved', { tempFilePath: tempPath });
 };
 
-const shrinkBoundsIfTooLarge = (data: any): any => {
-  const { screenBounds, targetBounds } = data;
-  const baseShrinkRate = 1.0;
-
-  const maxSize = 3840 * 2160; // 4K
-  const screenSize = screenBounds.width * screenBounds.height;
-  if (screenSize <= maxSize) {
-    return { screenBounds, targetBounds };
-  }
-
-  const ratio = (1.0 - (screenSize - maxSize) / screenSize) * baseShrinkRate;
-  return {
-    screenBounds: {
-      x: Math.floor(screenBounds.x * ratio),
-      y: Math.floor(screenBounds.y * ratio),
-      width: Math.floor(screenBounds.width * ratio),
-      height: Math.floor(screenBounds.height * ratio),
-    },
-    targetBounds: {
-      x: Math.floor(targetBounds.x * ratio),
-      y: Math.floor(targetBounds.y * ratio),
-      width: Math.floor(targetBounds.width * ratio),
-      height: Math.floor(targetBounds.height * ratio),
-    },
-  };
-};
-
 ipcRenderer.on('start-record', async (_event, data) => {
-  const { screenBounds, targetBounds } = shrinkBoundsIfTooLarge(data);
+  const { screenBounds, targetBounds } = data;
 
   const constraints = getMediaConstraint(screenBounds);
   const stream = await navigator.mediaDevices.getUserMedia(constraints);
