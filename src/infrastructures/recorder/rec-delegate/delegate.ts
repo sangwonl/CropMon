@@ -6,10 +6,11 @@
 import fs from 'fs';
 import path from 'path';
 import dayjs from 'dayjs';
-import { ipcRenderer } from 'electron';
+import { desktopCapturer, ipcRenderer } from 'electron';
 
-import { IBounds } from '@core/entities/screen';
+import { IBounds, IScreen } from '@core/entities/screen';
 import { getApp } from '@utils/remote';
+import { calcWholeScreenBounds, getIntersection } from '@utils/bounds';
 
 // const MEDIA_MIME_TYPE = 'video/webm; codecs=vp9';
 const MEDIA_MIME_TYPE = 'video/webm; codecs=h264';
@@ -34,47 +35,89 @@ const ensureTempDirPathExists = (tempPath: string) => {
   }
 };
 
-const getMediaConstraint = (screenBounds: IBounds): any => {
+const intersectedScreens = (screens: IScreen[], target: IBounds): IScreen[] => {
+  return screens.filter((s) => getIntersection(s.bounds, target) !== undefined);
+};
+
+const getMediaConstraint = (srcId: string, bounds: IBounds): any => {
   return {
     audio: false,
     video: {
       mandatory: {
         chromeMediaSource: 'desktop',
-        minWidth: screenBounds.width,
-        minHeight: screenBounds.height,
-        maxWidth: screenBounds.width,
-        maxHeight: screenBounds.height,
+        chromeMediaSourceId: srcId,
+        minWidth: bounds.width,
+        minHeight: bounds.height,
+        maxWidth: bounds.width,
+        maxHeight: bounds.height,
       },
     },
   };
 };
 
+const getAllVideoStreams = async (
+  screens: IScreen[]
+): Promise<MediaStream[]> => {
+  const sources = await desktopCapturer.getSources({ types: ['screen'] });
+  return Promise.all(
+    screens.map((s: IScreen) => {
+      const source = sources.find((src) => src.display_id === s.id.toString());
+      const constraints = getMediaConstraint(source!.id, s.bounds);
+      return navigator.mediaDevices.getUserMedia(constraints);
+    })
+  );
+};
+
 const withCanvasProcess = (
-  stream: MediaStream,
   targetBounds: IBounds,
+  targetScreens: IScreen[],
+  streams: MediaStream[],
   frameRate: number
 ): MediaStream => {
-  const videoElem = document.createElement('video') as HTMLVideoElement;
-  videoElem.srcObject = stream;
-  videoElem.play();
-
   const canvasElem = document.createElement('canvas') as HTMLCanvasElement;
   canvasElem.width = targetBounds.width;
   canvasElem.height = targetBounds.height;
-
   const canvasCtx = canvasElem.getContext('2d');
-  const render = () => {
-    canvasCtx!.drawImage(
+
+  const drawCtx: any[] = targetScreens.map((s: IScreen, i: number) => {
+    const videoElem = document.createElement('video') as HTMLVideoElement;
+    videoElem.srcObject = streams[i];
+    videoElem.play();
+
+    const intersected = getIntersection(s.bounds, targetBounds)!;
+
+    const srcBounds: IBounds = {
+      ...intersected,
+      x: intersected.x - targetScreens[i].bounds.x,
+      y: intersected.y - targetScreens[i].bounds.y,
+    };
+    const dstBounds: IBounds = {
+      ...srcBounds,
+      x: targetScreens[i].bounds.x + srcBounds.x - targetBounds.x,
+      y: targetScreens[i].bounds.y + srcBounds.y - targetBounds.y,
+    };
+
+    return {
       videoElem,
-      targetBounds.x,
-      targetBounds.y,
-      targetBounds.width,
-      targetBounds.height,
-      0,
-      0,
-      targetBounds.width,
-      targetBounds.height
-    );
+      srcBounds,
+      dstBounds,
+    };
+  });
+
+  const render = () => {
+    drawCtx.forEach((ctx: any) => {
+      canvasCtx!.drawImage(
+        ctx.videoElem,
+        ctx.srcBounds.x,
+        ctx.srcBounds.y,
+        ctx.srcBounds.width,
+        ctx.srcBounds.height,
+        ctx.dstBounds.x,
+        ctx.dstBounds.y,
+        ctx.dstBounds.width,
+        ctx.dstBounds.height
+      );
+    });
   };
 
   // In electron browser window web content, we can't use renderFrame..
@@ -99,19 +142,36 @@ const handleRecordStop = async (_event: Event) => {
 };
 
 ipcRenderer.on('start-record', async (_event, data) => {
-  const { screenBounds, targetBounds } = data;
+  const { screens, targetBounds } = data;
 
-  const constraints = getMediaConstraint(screenBounds);
-  const stream = await navigator.mediaDevices.getUserMedia(constraints);
-  if (stream === undefined) {
+  const screenBounds = calcWholeScreenBounds(screens);
+  const screensFromZero = screens.map((s: IScreen): IScreen => {
+    return {
+      ...s,
+      bounds: {
+        ...s.bounds,
+        x: s.bounds.x - screenBounds.x,
+        y: s.bounds.y - screenBounds.y,
+      },
+    };
+  });
+
+  const targetScreens = intersectedScreens(screensFromZero, targetBounds);
+  const streams = await getAllVideoStreams(targetScreens);
+  if (streams === undefined || streams.length !== targetScreens.length) {
     ipcRenderer.send('recording-failed', {
-      message: 'fail to get user media',
+      message: 'fail to create streams',
     });
     return;
   }
 
   const frameRate = 24;
-  const canvasStream = withCanvasProcess(stream, targetBounds, frameRate);
+  const canvasStream = withCanvasProcess(
+    targetBounds,
+    targetScreens,
+    streams,
+    frameRate
+  );
   const recorderOpts = { mimeType: MEDIA_MIME_TYPE };
   mediaRecorder = new MediaRecorder(canvasStream, recorderOpts);
   mediaRecorder.ondataavailable = handleStreamDataAvailable;
