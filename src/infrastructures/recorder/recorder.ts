@@ -22,10 +22,11 @@ import {
   FFmpeg,
 } from '@ffmpeg/ffmpeg';
 
+import { IScreen } from '@core/entities/screen';
 import { ICaptureContext } from '@core/entities/capture';
 import { IScreenRecorder } from '@core/interfaces/recorder';
 import { isProduction } from '@utils/process';
-import { getWholeScreenBounds, isEmptyBounds } from '@utils/bounds';
+import { getAllScreens, isEmptyBounds } from '@utils/bounds';
 
 import { RecorderDelegate } from './rec-delegate';
 
@@ -43,6 +44,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
   renewBuildRenderer() {
     this.delegate?.destroy();
     this.delegate = new RecorderDelegate();
+    // this.delegate.webContents.openDevTools();
   }
 
   async record(ctx: ICaptureContext): Promise<void> {
@@ -51,8 +53,8 @@ export class ElectronScreenRecorder implements IScreenRecorder {
       return Promise.reject();
     }
 
-    const screenBounds = getWholeScreenBounds();
-    if (isEmptyBounds(screenBounds) || isEmptyBounds(targetBounds)) {
+    const screens: IScreen[] = getAllScreens();
+    if (screens.length === 0) {
       return Promise.reject();
     }
 
@@ -80,7 +82,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
       setupIpcListeners();
 
       this.delegate?.webContents.send('start-record', {
-        screenBounds,
+        screens,
         targetBounds,
       });
     });

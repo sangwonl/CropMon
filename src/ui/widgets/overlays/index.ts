@@ -21,10 +21,11 @@ export class CaptureOverlay extends Widget {
       skipTaskbar: true,
       transparent: true,
       titleBarStyle: 'customButtonsOnHover', // for MacOS, with frame: false
-      enableLargerThanScreen: true, // for MacOS, margin 5px workaround
+      enableLargerThanScreen: true, // for MacOS, margin workaround
     });
 
-    this.setAlwaysOnTop(true, 'main-menu', 1);
+    // this.setAlwaysOnTop(true, 'main-menu', 1);
+    this.setAlwaysOnTop(true, 'screen-saver', 1);
     this.setBounds(emptyBounds());
     // https://github.com/electron/electron/issues/25368
     this.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });

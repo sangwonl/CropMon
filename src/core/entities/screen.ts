@@ -4,3 +4,8 @@ export interface IBounds {
   width: number;
   height: number;
 }
+
+export interface IScreen {
+  id: number;
+  bounds: IBounds;
+}
