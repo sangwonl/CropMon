@@ -12,6 +12,8 @@ import { IBounds, IScreen } from '@core/entities/screen';
 import { getApp } from '@utils/remote';
 import { calcWholeScreenBounds, getIntersection } from '@utils/bounds';
 
+import { IRecordContext, ITargetSlice } from './types';
+
 // const MEDIA_MIME_TYPE = 'video/webm; codecs=vp9';
 const MEDIA_MIME_TYPE = 'video/webm; codecs=h264';
 
@@ -35,10 +37,6 @@ const ensureTempDirPathExists = (tempPath: string) => {
   }
 };
 
-const intersectedScreens = (screens: IScreen[], target: IBounds): IScreen[] => {
-  return screens.filter((s) => getIntersection(s.bounds, target) !== undefined);
-};
-
 const getMediaConstraint = (srcId: string, bounds: IBounds): any => {
   return {
     audio: false,
@@ -55,54 +53,45 @@ const getMediaConstraint = (srcId: string, bounds: IBounds): any => {
   };
 };
 
-const getAllVideoStreams = async (
-  screens: IScreen[]
-): Promise<MediaStream[]> => {
+const createDrawCtx = async (recordCtx: IRecordContext): Promise<any[]> => {
   const sources = await desktopCapturer.getSources({ types: ['screen'] });
   return Promise.all(
-    screens.map((s: IScreen) => {
+    recordCtx.targetSlices.map(async ({ screen: s, bounds }: ITargetSlice) => {
       const source = sources.find((src) => src.display_id === s.id.toString());
       const constraints = getMediaConstraint(source!.id, s.bounds);
-      return navigator.mediaDevices.getUserMedia(constraints);
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+      const videoElem = document.createElement('video') as HTMLVideoElement;
+      videoElem.srcObject = stream;
+      videoElem.play();
+
+      const srcBounds: IBounds = {
+        ...bounds,
+        x: bounds.x - s.bounds.x,
+        y: bounds.y - s.bounds.y,
+      };
+
+      const dstBounds: IBounds = {
+        ...srcBounds,
+        x: s.bounds.x + srcBounds.x - recordCtx.targetBounds.x,
+        y: s.bounds.y + srcBounds.y - recordCtx.targetBounds.y,
+      };
+
+      return { videoElem, srcBounds, dstBounds };
     })
   );
 };
 
 const withCanvasProcess = (
-  targetBounds: IBounds,
-  targetScreens: IScreen[],
-  streams: MediaStream[],
+  w: number,
+  h: number,
+  drawCtx: any[],
   frameRate: number
 ): MediaStream => {
   const canvasElem = document.createElement('canvas') as HTMLCanvasElement;
-  canvasElem.width = targetBounds.width;
-  canvasElem.height = targetBounds.height;
+  canvasElem.width = w;
+  canvasElem.height = h;
   const canvasCtx = canvasElem.getContext('2d');
-
-  const drawCtx: any[] = targetScreens.map((s: IScreen, i: number) => {
-    const videoElem = document.createElement('video') as HTMLVideoElement;
-    videoElem.srcObject = streams[i];
-    videoElem.play();
-
-    const intersected = getIntersection(s.bounds, targetBounds)!;
-
-    const srcBounds: IBounds = {
-      ...intersected,
-      x: intersected.x - targetScreens[i].bounds.x,
-      y: intersected.y - targetScreens[i].bounds.y,
-    };
-    const dstBounds: IBounds = {
-      ...srcBounds,
-      x: targetScreens[i].bounds.x + srcBounds.x - targetBounds.x,
-      y: targetScreens[i].bounds.y + srcBounds.y - targetBounds.y,
-    };
-
-    return {
-      videoElem,
-      srcBounds,
-      dstBounds,
-    };
-  });
 
   const render = () => {
     drawCtx.forEach((ctx: any) => {
@@ -142,36 +131,15 @@ const handleRecordStop = async (_event: Event) => {
 };
 
 ipcRenderer.on('start-record', async (_event, data) => {
-  const { screens, targetBounds } = data;
-
-  const screenBounds = calcWholeScreenBounds(screens);
-  const screensFromZero = screens.map((s: IScreen): IScreen => {
-    return {
-      ...s,
-      bounds: {
-        ...s.bounds,
-        x: s.bounds.x - screenBounds.x,
-        y: s.bounds.y - screenBounds.y,
-      },
-    };
-  });
-
-  const targetScreens = intersectedScreens(screensFromZero, targetBounds);
-  const streams = await getAllVideoStreams(targetScreens);
-  if (streams === undefined || streams.length !== targetScreens.length) {
-    ipcRenderer.send('recording-failed', {
-      message: 'fail to create streams',
-    });
-    return;
-  }
-
+  const recordCtx: IRecordContext = data.recordContext;
+  const {
+    targetBounds: { width, height },
+  } = recordCtx;
   const frameRate = 24;
-  const canvasStream = withCanvasProcess(
-    targetBounds,
-    targetScreens,
-    streams,
-    frameRate
-  );
+
+  const drawCtx = await createDrawCtx(recordCtx);
+  const canvasStream = withCanvasProcess(width, height, drawCtx, frameRate);
+
   const recorderOpts = { mimeType: MEDIA_MIME_TYPE };
   mediaRecorder = new MediaRecorder(canvasStream, recorderOpts);
   mediaRecorder.ondataavailable = handleStreamDataAvailable;
