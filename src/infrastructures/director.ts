@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable new-cap */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -28,7 +29,7 @@ import { PreferencesModal } from '@ui/widgets/preferences';
 import { ProgressDialog } from '@ui/widgets/progressdialog';
 import { StaticPagePopup } from '@ui/widgets/staticpage';
 import { StaticPagePopupOptions } from '@ui/widgets/staticpage/shared';
-import { getWholeScreenBounds, SPARE_PIXELS } from '@utils/bounds';
+import { getOverlayScreenBounds, SPARE_PIXELS } from '@utils/bounds';
 import { iconizeShortcut } from '@utils/shortcut';
 import { isMac } from '@utils/process';
 
@@ -44,9 +45,11 @@ class CaptureOverlayWrap {
   show(screenBounds: IBounds) {
     const sparedBounds = this.addSparePixels(screenBounds);
     this.widget?.setIgnoreMouseEvents(false);
-    this.widget?.setPosition(sparedBounds.x, sparedBounds.y);
-    this.widget?.setBounds(sparedBounds);
     this.widget?.show();
+    // WORKAROUND: https://github.com/electron/electron/issues/10862
+    for (let i = 0; i < 5; i++) {
+      this.widget?.setBounds(sparedBounds);
+    }
   }
 
   hide() {
@@ -107,7 +110,7 @@ export class UiDirector implements IUiDirector {
 
   initialize(prefs: IPreferences): void {
     this.captureOverlay = new CaptureOverlayWrap();
-    this.captureOverlay.show(getWholeScreenBounds());
+    this.captureOverlay.show(getOverlayScreenBounds());
     this.captureOverlay.hide();
 
     this.preferencesModal = new CachedPreferencesModal(PreferencesModal, 30);
@@ -176,7 +179,7 @@ export class UiDirector implements IUiDirector {
   }
 
   enableCaptureSelectionMode(): IBounds {
-    const screenBounds = getWholeScreenBounds();
+    const screenBounds = getOverlayScreenBounds();
     this.captureOverlay?.show(screenBounds);
     this.tracker.view('capture-area-selection');
     return screenBounds;

@@ -27,3 +27,7 @@ export function focusCurWidget() {
 export function getApp() {
   return remote.app;
 }
+
+export function getCursorScreenPoint() {
+  return remote.screen.getCursorScreenPoint();
+}

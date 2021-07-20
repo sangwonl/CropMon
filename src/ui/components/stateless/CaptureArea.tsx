@@ -13,7 +13,7 @@ import React, {
 } from 'react';
 import classNames from 'classnames';
 
-import { IBounds } from '@core/entities/screen';
+import { IBounds, IPoint } from '@core/entities/screen';
 import { SPARE_PIXELS, isEmptyBounds, isCapturableBounds } from '@utils/bounds';
 
 import styles from './CaptureArea.css';
@@ -21,7 +21,8 @@ import styles from './CaptureArea.css';
 interface PropTypes {
   active: boolean;
   isRecording: boolean;
-  selectedBounds?: IBounds | undefined;
+  boundsSelected: boolean;
+  getCursorScreenPoint: () => IPoint;
   onSelectionStart: () => void;
   onSelectionCancel: () => void;
   onSelectionFinish: (bounds: IBounds) => void;
@@ -32,34 +33,30 @@ interface AreaSelectionCtx {
   started: boolean;
   selected: boolean;
   recording: boolean;
-  startX: number;
-  startY: number;
-  endX: number;
-  endY: number;
-  curX: number;
-  curY: number;
+  startPt: IPoint;
+  endPt: IPoint;
+  curPt: IPoint;
+  screenPt: IPoint;
 }
 
 const initialSelCtx: AreaSelectionCtx = {
   started: false,
   selected: false,
   recording: false,
-  startX: 0,
-  startY: 0,
-  endX: 0,
-  endY: 0,
-  curX: 0,
-  curY: 0,
+  startPt: { x: 0, y: 0 },
+  endPt: { x: 0, y: 0 },
+  curPt: { x: 0, y: 0 },
+  screenPt: { x: 0, y: 0 },
 };
 
 const calcSelectedBounds = (selCtx: AreaSelectionCtx): IBounds => {
-  const endX = selCtx.selected ? selCtx.endX : selCtx.curX;
-  const endY = selCtx.selected ? selCtx.endY : selCtx.curY;
+  const endX = selCtx.selected ? selCtx.endPt.x : selCtx.curPt.x;
+  const endY = selCtx.selected ? selCtx.endPt.y : selCtx.curPt.y;
   return {
-    x: Math.min(selCtx.startX, endX) - SPARE_PIXELS,
-    y: Math.min(selCtx.startY, endY) - SPARE_PIXELS,
-    width: Math.abs(endX - selCtx.startX) + 1,
-    height: Math.abs(endY - selCtx.startY) + 1,
+    x: Math.min(selCtx.startPt.x, endX) - SPARE_PIXELS,
+    y: Math.min(selCtx.startPt.y, endY) - SPARE_PIXELS,
+    width: Math.abs(endX - selCtx.startPt.x) + 1,
+    height: Math.abs(endY - selCtx.startPt.y) + 1,
   };
 };
 
@@ -98,6 +95,7 @@ const getAreaLayout = (bounds: IBounds): any => {
 
 const handleMouseDown =
   (
+    getCursorScreenPoint: () => IPoint,
     onSelectionStart: () => void,
     onSelectionCancel: () => void,
     selCtx: AreaSelectionCtx,
@@ -118,10 +116,9 @@ const handleMouseDown =
     setSelCtx({
       ...selCtx,
       started: true,
-      startX: e.clientX,
-      startY: e.clientY,
-      curX: e.clientX,
-      curY: e.clientY,
+      startPt: { x: e.clientX, y: e.clientY },
+      curPt: { x: e.clientX, y: e.clientY },
+      screenPt: getCursorScreenPoint(),
     });
 
     onSelectionStart();
@@ -129,6 +126,7 @@ const handleMouseDown =
 
 const handleMouseUp =
   (
+    getCursorScreenPoint: () => IPoint,
     onSelectionCancel: () => void,
     onSelectionFinish: (bounds: IBounds) => void,
     selCtx: AreaSelectionCtx,
@@ -139,12 +137,17 @@ const handleMouseUp =
       return;
     }
 
+    // if click after already area settled or right click while selecting
+    if (selCtx.selected || e.button === 2) {
+      setSelCtx(initialSelCtx);
+      onSelectionCancel();
+      return;
+    }
+
     const updatedSelCtx = {
       ...selCtx,
-      endX: e.clientX,
-      endY: e.clientY,
-      curX: e.clientX,
-      curY: e.clientY,
+      endPt: { x: e.clientX, y: e.clientY },
+      curPt: { x: e.clientX, y: e.clientY },
     };
 
     const bounds = calcSelectedBounds(updatedSelCtx);
@@ -157,7 +160,14 @@ const handleMouseUp =
     updatedSelCtx.started = false;
     updatedSelCtx.selected = true;
     setSelCtx(updatedSelCtx);
-    onSelectionFinish(bounds);
+
+    const curScreenPt = getCursorScreenPoint();
+    onSelectionFinish({
+      x: Math.min(updatedSelCtx.screenPt.x, curScreenPt.x),
+      y: Math.min(updatedSelCtx.screenPt.y, curScreenPt.y),
+      width: Math.abs(curScreenPt.x - updatedSelCtx.screenPt.x),
+      height: Math.abs(curScreenPt.y - updatedSelCtx.screenPt.y),
+    });
   };
 
 const handleMouseMove =
@@ -178,8 +188,7 @@ const handleMouseMove =
 
     setSelCtx({
       ...selCtx,
-      curX: e.clientX,
-      curY: e.clientY,
+      curPt: { x: e.clientX, y: e.clientY },
     });
   };
 
@@ -187,7 +196,8 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
   const {
     active,
     isRecording,
-    selectedBounds,
+    boundsSelected,
+    getCursorScreenPoint: getCursorPt,
     onSelectionStart: onStart,
     onSelectionFinish: onFinish,
     onSelectionCancel: onCancel,
@@ -197,19 +207,31 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
   const [selCtx, setSelCtx] = useState<AreaSelectionCtx>(initialSelCtx);
 
   useEffect(() => {
-    if (selectedBounds === undefined) {
+    if (!boundsSelected) {
       setSelCtx(initialSelCtx);
     } else {
       setSelCtx({
         ...selCtx,
         recording: isRecording,
-        selected: selectedBounds !== undefined,
+        selected: boundsSelected,
       });
     }
-  }, [isRecording, selectedBounds]);
+  }, [isRecording, boundsSelected]);
 
-  const onMouseDown = handleMouseDown(onStart, onCancel, selCtx, setSelCtx);
-  const onMouseUp = handleMouseUp(onCancel, onFinish, selCtx, setSelCtx);
+  const onMouseDown = handleMouseDown(
+    getCursorPt,
+    onStart,
+    onCancel,
+    selCtx,
+    setSelCtx
+  );
+  const onMouseUp = handleMouseUp(
+    getCursorPt,
+    onCancel,
+    onFinish,
+    selCtx,
+    setSelCtx
+  );
   const onMouseMove = handleMouseMove(onHovering, selCtx, setSelCtx);
   const calcBounds = calcSelectedBounds(selCtx);
 
@@ -233,8 +255,4 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
       )}
     </div>
   );
-};
-
-CaptureArea.defaultProps = {
-  selectedBounds: undefined,
 };
