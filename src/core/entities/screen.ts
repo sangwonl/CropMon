@@ -1,3 +1,8 @@
+export interface IPoint {
+  x: number;
+  y: number;
+}
+
 export interface IBounds {
   x: number;
   y: number;
@@ -8,4 +13,5 @@ export interface IBounds {
 export interface IScreen {
   id: number;
   bounds: IBounds;
+  scaleFactor: number;
 }

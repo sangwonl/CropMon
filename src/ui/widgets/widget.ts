@@ -18,6 +18,7 @@ export interface WidgetOptions {
   width?: number | undefined;
   height?: number | undefined;
   frame?: boolean | undefined;
+  movable?: boolean | undefined;
   focusable?: boolean | undefined;
   resizable?: boolean | undefined;
   maximizable?: boolean | undefined;
@@ -46,6 +47,7 @@ export class Widget extends BrowserWindow {
       width: options?.width ?? 800,
       height: options?.height ?? 600,
       frame: options?.frame ?? true,
+      movable: options?.movable ?? true,
       focusable: options?.focusable ?? true,
       resizable: options?.resizable ?? true,
       maximizable: options?.maximizable ?? true,

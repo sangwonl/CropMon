@@ -14,6 +14,7 @@ export class CaptureOverlay extends Widget {
       icon: assetPathResolver('icon.png'),
       show: false,
       frame: false,
+      movable: true,
       resizable: false,
       maximizable: false,
       minimizable: false,

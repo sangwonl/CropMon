@@ -16,7 +16,8 @@ import {
   finishAreaSelection,
   disableCaptureMode,
 } from '@ui/redux/slice';
-import { focusCurWidget } from '@utils/remote';
+import { focusCurWidget, getCursorScreenPoint } from '@utils/remote';
+import { isEmptyBounds } from '@utils/bounds';
 import { isMac } from '@utils/process';
 
 import { CaptureArea } from '../stateless/CaptureArea';
@@ -59,8 +60,7 @@ export const CaptureCover = () => {
 
   const [coverActive, setCoverActive] = useState<boolean>(false);
   const [recording, setRecording] = useState<boolean>(false);
-  const [selectedBounds, setSelectedBounds] =
-    useState<IBounds | undefined>(undefined);
+  const [boundsSelected, setBoundsSelected] = useState<boolean>(false);
 
   useLayoutEffect(() => {
     adjustBodySize(captureOverlay);
@@ -69,7 +69,7 @@ export const CaptureCover = () => {
   useLayoutEffect(() => {
     setCoverActive(captureArea.isSelecting);
     setRecording(captureArea.isRecording);
-    setSelectedBounds(captureArea.selectedBounds);
+    setBoundsSelected(!isEmptyBounds(captureArea.selectedBounds));
   }, [captureArea]);
 
   const onSelectionStart = () => {
@@ -89,7 +89,8 @@ export const CaptureCover = () => {
       <CaptureArea
         active={coverActive}
         isRecording={recording}
-        selectedBounds={selectedBounds}
+        boundsSelected={boundsSelected}
+        getCursorScreenPoint={getCursorScreenPoint}
         onSelectionStart={onSelectionStart}
         onSelectionCancel={onSelectionCancel}
         onSelectionFinish={onSelectionFinish}

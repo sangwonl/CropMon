@@ -22,13 +22,12 @@ import {
   FFmpeg,
 } from '@ffmpeg/ffmpeg';
 
-import { IBounds, IScreen } from '@core/entities/screen';
+import { IBounds } from '@core/entities/screen';
 import { ICaptureContext } from '@core/entities/capture';
 import { IScreenRecorder } from '@core/interfaces/recorder';
 import { isProduction } from '@utils/process';
 import {
-  calcWholeScreenBounds,
-  getAllScreens,
+  getAllScreensFromLeftTop,
   getIntersection,
   isEmptyBounds,
 } from '@utils/bounds';
@@ -51,29 +50,6 @@ export class ElectronScreenRecorder implements IScreenRecorder {
     this.delegate?.destroy();
     this.delegate = new RecorderDelegate();
     // this.delegate.webContents.openDevTools();
-  }
-
-  private createRecordContext(targetBounds: IBounds): IRecordContext {
-    const screens: IScreen[] = getAllScreens();
-    const screenBounds = calcWholeScreenBounds(screens);
-    const screensOriginBased = screens.map((s: IScreen): IScreen => {
-      return {
-        ...s,
-        bounds: {
-          ...s.bounds,
-          x: s.bounds.x - screenBounds.x,
-          y: s.bounds.y - screenBounds.y,
-        },
-      };
-    });
-
-    const targetSlices = screensOriginBased
-      .filter((s) => !isEmptyBounds(getIntersection(s.bounds, targetBounds)))
-      .map((s): ITargetSlice => {
-        return { screen: s, bounds: getIntersection(s.bounds, targetBounds)! };
-      });
-
-    return { targetSlices, targetBounds };
   }
 
   async record(ctx: ICaptureContext): Promise<void> {
@@ -149,6 +125,17 @@ export class ElectronScreenRecorder implements IScreenRecorder {
         outputPath: outPath,
       });
     });
+  }
+
+  private createRecordContext(targetBounds: IBounds): IRecordContext {
+    const screens = getAllScreensFromLeftTop();
+    const targetSlices = screens
+      .filter((s) => !isEmptyBounds(getIntersection(s.bounds, targetBounds)))
+      .map((s): ITargetSlice => {
+        return { screen: s, bounds: getIntersection(s.bounds, targetBounds)! };
+      });
+
+    return { targetSlices, targetBounds };
   }
 
   private initializeFFmpeg() {

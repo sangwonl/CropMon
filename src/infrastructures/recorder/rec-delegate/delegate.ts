@@ -8,9 +8,8 @@ import path from 'path';
 import dayjs from 'dayjs';
 import { desktopCapturer, ipcRenderer } from 'electron';
 
-import { IBounds, IScreen } from '@core/entities/screen';
+import { IBounds } from '@core/entities/screen';
 import { getApp } from '@utils/remote';
-import { calcWholeScreenBounds, getIntersection } from '@utils/bounds';
 
 import { IRecordContext, ITargetSlice } from './types';
 
@@ -91,11 +90,11 @@ const withCanvasProcess = (
   const canvasElem = document.createElement('canvas') as HTMLCanvasElement;
   canvasElem.width = w;
   canvasElem.height = h;
-  const canvasCtx = canvasElem.getContext('2d');
 
   const render = () => {
+    const canvasCtx = canvasElem.getContext('2d')!;
     drawCtx.forEach((ctx: any) => {
-      canvasCtx!.drawImage(
+      canvasCtx.drawImage(
         ctx.videoElem,
         ctx.srcBounds.x,
         ctx.srcBounds.y,

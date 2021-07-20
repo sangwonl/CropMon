@@ -58,5 +58,7 @@ const instanceLock = app.requestSingleInstanceLock();
 if (!instanceLock) {
   app.quit();
 } else {
+  // app.commandLine.appendSwitch('high-dpi-support', 'true');
+  // app.commandLine.appendSwitch('force-device-scale-factor', '2');
   app.whenReady().then(start).catch(log.error);
 }
