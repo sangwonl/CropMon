@@ -11,7 +11,7 @@ import { isMac } from './process';
 
 // WORKAROUND: to fix non-clickable area at the nearest borders
 // Same issue here: https://github.com/electron/electron/issues/21929
-export const SPARE_PIXELS = 0;
+export const SPARE_PIXELS = 40;
 export const MIN_REQUIRED_SIZE = 200;
 
 export const emptyBounds = (): IBounds => {
