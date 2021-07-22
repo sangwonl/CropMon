@@ -13,6 +13,7 @@ import { setCustomData } from '@utils/remote';
 import { WidgetType } from './types';
 
 export interface WidgetOptions {
+  hideWhenClose?: boolean | undefined;
   icon?: NativeImage | string | undefined;
   show?: boolean | undefined;
   width?: number | undefined;
@@ -72,7 +73,9 @@ export class Widget extends BrowserWindow {
       if (!this.forceClose) {
         event.preventDefault();
       }
-      this.hide();
+      if (options?.hideWhenClose ?? true) {
+        this.hide();
+      }
     });
 
     if (isDebugMode()) {
