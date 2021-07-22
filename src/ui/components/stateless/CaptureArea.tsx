@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -75,9 +76,7 @@ const getAreaClasses = (
 
   if (recording) {
     return classNames(styles.area, styles.areaRecording);
-  }
-
-  if (selCtx.selected) {
+  } else if (selCtx.selected) {
     return classNames(styles.area, styles.areaSelected);
   }
 
@@ -86,10 +85,10 @@ const getAreaClasses = (
 
 const getAreaLayout = (bounds: IBounds): any => {
   return {
-    left: bounds.x + SPARE_PIXELS,
-    top: bounds.y + SPARE_PIXELS,
-    width: bounds.width,
-    height: bounds.height,
+    left: bounds.x + SPARE_PIXELS - 1,
+    top: bounds.y + SPARE_PIXELS - 1,
+    width: bounds.width + 2,
+    height: bounds.height + 2,
   };
 };
 
@@ -165,8 +164,8 @@ const handleMouseUp =
     onSelectionFinish({
       x: Math.min(updatedSelCtx.screenPt.x, curScreenPt.x),
       y: Math.min(updatedSelCtx.screenPt.y, curScreenPt.y),
-      width: Math.abs(curScreenPt.x - updatedSelCtx.screenPt.x),
-      height: Math.abs(curScreenPt.y - updatedSelCtx.screenPt.y),
+      width: Math.abs(curScreenPt.x - updatedSelCtx.screenPt.x) + 1,
+      height: Math.abs(curScreenPt.y - updatedSelCtx.screenPt.y) + 1,
     });
   };
 

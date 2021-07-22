@@ -38,19 +38,19 @@
 
 .areaRecording {
   background-color: transparent;
-  animation: recordingBorder 2s infinite;
+  animation: recordingBorder 4s infinite;
 }
 
 @keyframes recordingBorder {
   0% {
-    outline: 4px solid rgba(255, 0, 0, 0.2);
+    outline: 2px solid rgba(255, 0, 0, 0.2);
   }
 
   50% {
-    outline: 4px solid rgba(255, 0, 0, 0.8);
+    outline: 2px solid rgba(255, 0, 0, 0.8);
   }
 
   100% {
-    outline: 4px solid rgba(255, 0, 0, 0.2);
+    outline: 2px solid rgba(255, 0, 0, 0.2);
   }
 }
