@@ -1,4 +1,5 @@
 export interface IPreferences {
+  initialLoaded: boolean;
   version: string;
   openRecordHomeWhenRecordCompleted: boolean;
   recordHome: string;

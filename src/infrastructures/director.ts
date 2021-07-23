@@ -108,7 +108,7 @@ export class UiDirector implements IUiDirector {
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
   ) {}
 
-  initialize(prefs: IPreferences): void {
+  initialize(): void {
     this.captureOverlay = new CaptureOverlayWrap();
     this.captureOverlay.show(getOverlayScreenBounds());
     this.captureOverlay.hide();
@@ -118,7 +118,6 @@ export class UiDirector implements IUiDirector {
     this.relNotePopup = new CachedStaticPagePopup(StaticPagePopup, 30);
 
     this.appTray = isMac() ? AppTray.forMac() : AppTray.forWindows();
-    this.refreshTrayState(prefs, false);
   }
 
   async refreshTrayState(

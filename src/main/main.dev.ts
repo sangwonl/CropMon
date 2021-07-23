@@ -31,14 +31,14 @@ const tracker = diContainer.get<IAnalyticsTracker>(TYPES.AnalyticsTracker);
 const prefsUseCase = diContainer.get(PreferencesUseCase);
 const builtinHooks = diContainer.get(BuiltinHooks);
 
-const initializeApp = () => {
+const initializeApp = async () => {
   store.dispatch(checkForUpdates());
 
-  app.on('will-quit', () => {});
-};
+  uiDirector.initialize();
 
-const initializeWidgets = async () => {
-  uiDirector.initialize(await prefsUseCase.fetchUserPreferences());
+  uiDirector.refreshTrayState(await prefsUseCase.fetchUserPreferences(), false);
+
+  app.on('will-quit', () => {});
 };
 
 const start = async () => {
@@ -46,9 +46,7 @@ const start = async () => {
 
   initializeSaga();
 
-  initializeApp();
-
-  await initializeWidgets();
+  await initializeApp();
 
   tracker.eventL('app-lifecycle', 'launch', getPlatform());
   tracker.view('idle');
@@ -58,7 +56,5 @@ const instanceLock = app.requestSingleInstanceLock();
 if (!instanceLock) {
   app.quit();
 } else {
-  // app.commandLine.appendSwitch('high-dpi-support', 'true');
-  // app.commandLine.appendSwitch('force-device-scale-factor', '2');
   app.whenReady().then(start).catch(log.error);
 }
