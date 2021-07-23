@@ -9,6 +9,7 @@ import semver from 'semver';
 import { TYPES } from '@di/types';
 import { IUiDirector } from '@core/interfaces/director';
 import { IAppUpdater } from '@core/interfaces/updater';
+import { IHookManager } from '@core/interfaces/hook';
 
 import { PreferencesUseCase } from './preferences';
 
@@ -17,7 +18,8 @@ export class AppUseCase {
   constructor(
     private prefsUseCase: PreferencesUseCase,
     @inject(TYPES.UiDirector) private uiDirector: IUiDirector,
-    @inject(TYPES.AppUpdater) private appUpdater: IAppUpdater
+    @inject(TYPES.AppUpdater) private appUpdater: IAppUpdater,
+    @inject(TYPES.HookManager) private hookManager: IHookManager
   ) {}
 
   async checkForUpdates() {
@@ -72,10 +74,10 @@ export class AppUseCase {
     const oldVersion = prefs.version;
     const curVersion = this.appUpdater.getCurAppVersion();
     if (semver.gt(curVersion, oldVersion)) {
-      await this.uiDirector.openReleaseNotes();
-
       prefs.version = curVersion;
       await this.prefsUseCase.updateUserPreference(prefs);
+
+      this.hookManager.emit('app-updated', { oldVersion, curVersion });
     }
   }
 }

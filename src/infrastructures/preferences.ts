@@ -53,6 +53,7 @@ export class PreferencesStore implements IPreferencesStore {
 
   private initialPreferences(): IPreferences {
     return {
+      initialLoaded: true,
       version: curVersion,
       openRecordHomeWhenRecordCompleted: true,
       recordHome: app.getPath('videos'),
@@ -63,6 +64,7 @@ export class PreferencesStore implements IPreferencesStore {
 
   private mapStoreToPreferences(): IPreferences {
     return {
+      initialLoaded: false,
       version: this.store.get('version') as string,
       openRecordHomeWhenRecordCompleted: this.store.get('openRecordHomeDirWhenRecordCompleted') as boolean,
       recordHome: this.store.get('recordHomeDir') as string,

@@ -37,6 +37,7 @@ export abstract class AppTray {
     private iconRecStop: NativeImage
   ) {
     this.tray = new Tray(this.iconDefault);
+    this.tray.setToolTip("Roar! I'm here to help you record the screen");
 
     this.setupClickHandler();
   }

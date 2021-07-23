@@ -36,6 +36,9 @@ export class PreferencesUseCase {
       const loadedPrefs = await this.preferencesStore.loadPreferences();
       this.cachedUserPrefs = loadedPrefs;
 
+      if (loadedPrefs.initialLoaded) {
+        this.hookManager.emit('initial-prefs-loaded', { loadedPrefs });
+      }
       this.hookManager.emit('after-prefs-loaded', { loadedPrefs });
     }
 

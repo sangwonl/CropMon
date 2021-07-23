@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable max-classes-per-file */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-useless-constructor */
@@ -41,6 +42,15 @@ export class HookManager implements IHookManager {
   }
 }
 
+interface HookArgsAppUpdated {
+  oldVersion: string;
+  curVersion: string;
+}
+
+interface HookArgsInitialPrefsLoaded {
+  loadedPrefs: IPreferences;
+}
+
 interface HookArgsAfterPrefsLoaded {
   loadedPrefs: IPreferences;
 }
@@ -57,9 +67,15 @@ export class BuiltinHooks {
     @inject(TYPES.HookManager) private hookManager: IHookManager,
     @inject(TYPES.UiDirector) private uiDirector: IUiDirector
   ) {
+    this.hookManager.on('app-updated', this.onAppUpdated);
+    this.hookManager.on('initial-prefs-loaded', this.onInitialPrefsLoaded);
     this.hookManager.on('after-prefs-loaded', this.onAfterPrefsLoaded);
     this.hookManager.on('after-prefs-updated', this.onAfterPrefsUpdated);
   }
+
+  onAppUpdated = async (_args: HookArgsAppUpdated) => {};
+
+  onInitialPrefsLoaded = async (_args: HookArgsInitialPrefsLoaded) => {};
 
   onAfterPrefsLoaded = async (args: HookArgsAfterPrefsLoaded) => {
     await this.handlePrefsHook(args.loadedPrefs);
