@@ -24,6 +24,10 @@ export class ActionDispatcher {
     this.appUseCase.showAboutPopup();
   }
 
+  showHelp() {
+    this.appUseCase.showHelpPopup();
+  }
+
   quitApplication() {
     this.appUseCase.quitApplication();
   }

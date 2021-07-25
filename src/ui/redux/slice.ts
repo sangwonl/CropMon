@@ -19,6 +19,7 @@ const slice = createSlice({
     // app
     checkForUpdates: () => {},
     showAbout: () => {},
+    showHelp: () => {},
     quitApplication: () => {},
 
     // capture
@@ -37,6 +38,7 @@ export const {
   updateUiState,
   checkForUpdates,
   showAbout,
+  showHelp,
   openPreferences,
   quitApplication,
   enableCaptureMode,
