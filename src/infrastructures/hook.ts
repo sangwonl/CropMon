@@ -73,7 +73,9 @@ export class BuiltinHooks {
     this.hookManager.on('after-prefs-updated', this.onAfterPrefsUpdated);
   }
 
-  onAppUpdated = async (_args: HookArgsAppUpdated) => {};
+  onAppUpdated = async (_args: HookArgsAppUpdated) => {
+    await this.uiDirector.openReleaseNotes();
+  };
 
   onInitialPrefsLoaded = async (_args: HookArgsInitialPrefsLoaded) => {};
 
