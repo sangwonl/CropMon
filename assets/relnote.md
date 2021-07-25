@@ -1,5 +1,13 @@
 ## Release Notes
 
+### v0.4.0
+
+_26 July 2021_
+
+- Support multiple display capture
+- Change capture usecase to 'Record first, discard after'
+- Improve minor UI issues
+
 ### v0.3.1
 
 _8 July 2021_

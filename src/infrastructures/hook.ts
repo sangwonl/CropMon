@@ -74,10 +74,12 @@ export class BuiltinHooks {
   }
 
   onAppUpdated = async (_args: HookArgsAppUpdated) => {
-    await this.uiDirector.openReleaseNotes();
+    await this.uiDirector.openReleaseNotesPopup();
   };
 
-  onInitialPrefsLoaded = async (_args: HookArgsInitialPrefsLoaded) => {};
+  onInitialPrefsLoaded = async (_args: HookArgsInitialPrefsLoaded) => {
+    await this.uiDirector.openHelpPagePopup();
+  };
 
   onAfterPrefsLoaded = async (args: HookArgsAfterPrefsLoaded) => {
     await this.handlePrefsHook(args.loadedPrefs);

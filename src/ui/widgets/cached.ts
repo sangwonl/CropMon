@@ -11,7 +11,10 @@ export class CachedWidget<W extends Widget, C, R> {
   private widget: W | undefined = undefined;
   private timeoutHandle: any | undefined;
 
-  constructor(private widgetClass: new (args: C) => W, private ttl: number) {}
+  constructor(
+    private widgetClass: new (args: C) => W,
+    private ttlInSecs: number
+  ) {}
 
   open(args: C): void {
     if (this.timeoutHandle !== undefined) {
@@ -31,7 +34,7 @@ export class CachedWidget<W extends Widget, C, R> {
         this.widget?.destroy();
         this.widget = undefined;
         this.timeoutHandle = undefined;
-      }, this.ttl * 1000);
+      }, this.ttlInSecs * 1000);
     });
     this.widget.lazyShow();
   }
@@ -51,7 +54,7 @@ export class CachedWidget<W extends Widget, C, R> {
       this.widget?.destroy();
       this.widget = undefined;
       this.timeoutHandle = undefined;
-    }, this.ttl * 1000);
+    }, this.ttlInSecs * 1000);
 
     return result;
   }

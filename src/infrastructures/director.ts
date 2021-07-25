@@ -95,29 +95,28 @@ class CachedPreferencesModal extends CachedWidget<
 
 @injectable()
 export class UiDirector implements IUiDirector {
+  private appTray: AppTray | undefined;
+  private captureOverlay: CaptureOverlayWrap | undefined;
   private updateProgressDialog: ProgressDialog | undefined;
   private preferencesModal: CachedPreferencesModal | undefined;
   private aboutPopup: CachedStaticPagePopup | undefined;
   private aboutContent: string | undefined;
   private relNotePopup: CachedStaticPagePopup | undefined;
   private relNoteContent: string | undefined;
-  private appTray: AppTray | undefined;
-  private captureOverlay: CaptureOverlayWrap | undefined;
+  private helpPopup: CachedStaticPagePopup | undefined;
+  private helpContent: string | undefined;
 
   constructor(
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
   ) {}
 
   initialize(): void {
+    this.appTray = isMac() ? AppTray.forMac() : AppTray.forWindows();
     this.captureOverlay = new CaptureOverlayWrap();
-    this.captureOverlay.show(getOverlayScreenBounds());
-    this.captureOverlay.hide();
-
     this.preferencesModal = new CachedPreferencesModal(PreferencesModal, 30);
     this.aboutPopup = new CachedStaticPagePopup(StaticPagePopup, 30);
     this.relNotePopup = new CachedStaticPagePopup(StaticPagePopup, 30);
-
-    this.appTray = isMac() ? AppTray.forMac() : AppTray.forWindows();
+    this.helpPopup = new CachedStaticPagePopup(StaticPagePopup, 30);
   }
 
   async refreshTrayState(
@@ -140,7 +139,7 @@ export class UiDirector implements IUiDirector {
     this.tracker.event('app-lifecycle', 'quit');
   }
 
-  async openAboutPopup(prefs: IPreferences): Promise<void> {
+  async openAboutPagePopup(prefs: IPreferences): Promise<void> {
     if (this.aboutContent === undefined) {
       const aboutHtmlPath = assetPathResolver('about.html');
       this.aboutContent = (await fs.promises.readFile(aboutHtmlPath, 'utf-8'))
@@ -155,7 +154,7 @@ export class UiDirector implements IUiDirector {
     });
   }
 
-  async openReleaseNotes(): Promise<void> {
+  async openReleaseNotesPopup(): Promise<void> {
     if (this.relNoteContent === undefined) {
       const relNotePath = assetPathResolver('relnote.md');
       this.relNoteContent = await fs.promises.readFile(relNotePath, 'utf-8');
@@ -165,6 +164,19 @@ export class UiDirector implements IUiDirector {
       width: 440,
       height: 480,
       markdown: this.relNoteContent,
+    });
+  }
+
+  async openHelpPagePopup(): Promise<void> {
+    if (this.helpContent === undefined) {
+      const helpHtmlPath = assetPathResolver('help.html');
+      this.helpContent = await fs.promises.readFile(helpHtmlPath, 'utf-8');
+    }
+
+    this.helpPopup?.open({
+      width: 300,
+      height: 220,
+      html: this.helpContent,
     });
   }
 

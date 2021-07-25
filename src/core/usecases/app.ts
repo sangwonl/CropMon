@@ -34,7 +34,7 @@ export class AppUseCase {
 
   async showAboutPopup() {
     const prefs = await this.prefsUseCase.fetchUserPreferences();
-    await this.uiDirector.openAboutPopup(prefs);
+    await this.uiDirector.openAboutPagePopup(prefs);
   }
 
   quitApplication() {

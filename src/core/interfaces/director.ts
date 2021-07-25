@@ -5,8 +5,9 @@ export interface IUiDirector {
   initialize(): void;
   refreshTrayState(prefs: IPreferences, recording?: boolean): Promise<void>;
   quitApplication(relaunch?: boolean): void;
-  openAboutPopup(prefs: IPreferences): Promise<void>;
-  openReleaseNotes(): Promise<void>;
+  openAboutPagePopup(prefs: IPreferences): Promise<void>;
+  openReleaseNotesPopup(): Promise<void>;
+  openHelpPagePopup(): Promise<void>;
   openPreferencesModal(prefs: IPreferences): Promise<IPreferences | undefined>;
   enableCaptureSelectionMode(): IBounds;
   disableCaptureSelectionMode(): void;
