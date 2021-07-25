@@ -14,6 +14,7 @@ import { adjustSelectionBounds } from '@utils/bounds';
 import {
   checkForUpdates,
   showAbout,
+  showHelp,
   openPreferences,
   quitApplication,
   enableCaptureMode,
@@ -31,6 +32,10 @@ function onCheckForUpdates() {
 
 function onShowAbout() {
   actionDispatcher.showAbout();
+}
+
+function onShowHelp() {
+  actionDispatcher.showHelp();
 }
 
 function onQuitApplication() {
@@ -67,6 +72,7 @@ function* sagaEntry() {
   // app related usecase
   yield takeLatest(checkForUpdates.type, onCheckForUpdates);
   yield takeLatest(showAbout.type, onShowAbout);
+  yield takeLatest(showHelp.type, onShowHelp);
   yield takeLatest(quitApplication.type, onQuitApplication);
 
   // preferences usecase

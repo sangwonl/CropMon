@@ -37,6 +37,10 @@ export class AppUseCase {
     await this.uiDirector.openAboutPagePopup(prefs);
   }
 
+  async showHelpPopup() {
+    await this.uiDirector.openHelpPagePopup();
+  }
+
   quitApplication() {
     this.uiDirector.quitApplication();
   }

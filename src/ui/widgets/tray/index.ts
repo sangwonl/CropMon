@@ -24,6 +24,7 @@ import {
   openPreferences,
   quitApplication,
   showAbout,
+  showHelp,
 } from '@ui/redux/slice';
 import { assetPathResolver } from '@utils/asset';
 
@@ -50,6 +51,10 @@ export abstract class AppTray {
 
   protected onAbout() {
     store.dispatch(showAbout());
+  }
+
+  protected onHelp() {
+    store.dispatch(showHelp());
   }
 
   protected onCheckForUpdates() {
@@ -126,6 +131,10 @@ class WinAppTray extends AppTray {
         click: super.onAbout,
       },
       {
+        label: '&Help',
+        click: super.onHelp,
+      },
+      {
         label: '&Preferences',
         click: super.onPreferences,
       },
@@ -187,6 +196,10 @@ class MacAppTray extends AppTray {
       {
         label: 'About',
         click: super.onAbout,
+      },
+      {
+        label: 'Help',
+        click: super.onHelp,
       },
       {
         label: 'Preferences',
