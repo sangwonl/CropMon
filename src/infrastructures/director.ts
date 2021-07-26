@@ -141,7 +141,7 @@ export class UiDirector implements IUiDirector {
 
   async openAboutPagePopup(prefs: IPreferences): Promise<void> {
     if (this.aboutContent === undefined) {
-      const aboutHtmlPath = assetPathResolver('about.html');
+      const aboutHtmlPath = assetPathResolver('docs/about.html');
       this.aboutContent = (await fs.promises.readFile(aboutHtmlPath, 'utf-8'))
         .replace('__shortcut__', iconizeShortcut(prefs.shortcut))
         .replace('__version__', curVersion);
@@ -156,7 +156,7 @@ export class UiDirector implements IUiDirector {
 
   async openReleaseNotesPopup(): Promise<void> {
     if (this.relNoteContent === undefined) {
-      const relNotePath = assetPathResolver('relnote.md');
+      const relNotePath = assetPathResolver('docs/relnote.md');
       this.relNoteContent = await fs.promises.readFile(relNotePath, 'utf-8');
     }
 
@@ -169,13 +169,15 @@ export class UiDirector implements IUiDirector {
 
   async openHelpPagePopup(): Promise<void> {
     if (this.helpContent === undefined) {
-      const helpHtmlPath = assetPathResolver('help.html');
-      this.helpContent = await fs.promises.readFile(helpHtmlPath, 'utf-8');
+      const helpHtmlPath = assetPathResolver('docs/help.html');
+      this.helpContent = (
+        await fs.promises.readFile(helpHtmlPath, 'utf-8')
+      ).replace('__assets__', assetPathResolver(''));
     }
 
     this.helpPopup?.open({
-      width: 300,
-      height: 220,
+      width: 600,
+      height: 800,
       html: this.helpContent,
     });
   }
