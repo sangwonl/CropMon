@@ -15,8 +15,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@ffmpeg/core": "^0.10.0",
-    "@ffmpeg/ffmpeg": "^0.10.0",
     "dayjs": "^1.10.4"
   },
   "devDependencies": {}
