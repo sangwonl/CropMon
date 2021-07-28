@@ -16,7 +16,8 @@ import { IRecordContext, ITargetSlice } from './types';
 // const MEDIA_MIME_TYPE = 'video/webm; codecs=vp9';
 const MEDIA_MIME_TYPE = 'video/webm; codecs=h264';
 
-const recordedChunks: Array<Blob> = [];
+let numRecordedChunks = 0;
+let tempFilePath: string;
 let mediaRecorder: MediaRecorder;
 
 const getTempOutputPath = () => {
@@ -114,19 +115,15 @@ const withCanvasProcess = (
   return (canvasElem as any).captureStream(frameRate);
 };
 
-const handleStreamDataAvailable = (event: BlobEvent) => {
-  recordedChunks.push(event.data);
+const handleStreamDataAvailable = async (event: BlobEvent) => {
+  const buffer = Buffer.from(await event.data.arrayBuffer());
+  await fs.promises.appendFile(tempFilePath, buffer);
+
+  numRecordedChunks += 1;
 };
 
 const handleRecordStop = async (_event: Event) => {
-  const tempPath = getTempOutputPath();
-  ensureTempDirPathExists(tempPath);
-
-  const blob = new Blob(recordedChunks, { type: MEDIA_MIME_TYPE });
-  const buffer = Buffer.from(await blob.arrayBuffer());
-  fs.writeFileSync(tempPath, buffer);
-
-  ipcRenderer.send('recording-file-saved', { tempFilePath: tempPath });
+  ipcRenderer.send('recording-file-saved', { tempFilePath });
 };
 
 ipcRenderer.on('start-record', async (_event, data) => {
@@ -144,6 +141,9 @@ ipcRenderer.on('start-record', async (_event, data) => {
   mediaRecorder.ondataavailable = handleStreamDataAvailable;
   mediaRecorder.onstop = handleRecordStop;
 
+  tempFilePath = getTempOutputPath();
+  ensureTempDirPathExists(tempFilePath);
+
   setTimeout(() => mediaRecorder.start(1000), 100);
   ipcRenderer.send('recording-started', {});
 });
@@ -156,7 +156,7 @@ ipcRenderer.on('stop-record', async (_event, _data) => {
     return;
   }
 
-  if (recordedChunks.length === 0) {
+  if (numRecordedChunks === 0) {
     ipcRenderer.send('recording-failed', {
       message: 'empty recorded chunks',
     });
