@@ -98,7 +98,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
     return new Promise((resolve, reject) => {
       const onRecordingFileSaved = async (_event: any, data: any) => {
         clearIpcListeners();
-        await this.postProcessWithFFmpeg(data.tempFilePath, outPath);
+        await this.postProcess(data.tempFilePath, outPath);
         this.renewBuildRenderer();
         resolve();
       };
@@ -155,6 +155,11 @@ export class ElectronScreenRecorder implements IScreenRecorder {
 
     this.ffmpeg = createFFmpeg(ffmpegOptions);
     this.ffmpeg!.load();
+  }
+
+  private async postProcess(tempPath: string, outputPath: string) {
+    fs.renameSync(tempPath, outputPath);
+    // await this.postProcessWithFFmpeg(tempPath, outputPath);
   }
 
   private async postProcessWithFFmpeg(tempPath: string, outputPath: string) {

@@ -43,6 +43,6 @@ export const createCaptureContext = (
     target: { mode, bounds },
     status: CaptureStatus.PREPARED,
     createdAt: dayjs().second(),
-    outputPath: path.join(recordHome, `${fileName}.mp4`),
+    outputPath: path.join(recordHome, `${fileName}.webm`),
   };
 };
