@@ -1,7 +1,7 @@
 {
   "name": "kropsaurus",
   "productName": "Kropsaurus",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Simple Screen Recorder",
   "main": "./dist/main.prod.js",
   "author": {
@@ -15,6 +15,8 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@ffmpeg/core": "^0.10.0",
+    "@ffmpeg/ffmpeg": "^0.10.0",
     "dayjs": "^1.10.4"
   },
   "devDependencies": {}

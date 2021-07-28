@@ -13,7 +13,7 @@ import { getApp } from '@utils/remote';
 
 import { IRecordContext, ITargetSlice } from './types';
 
-const MEDIA_MIME_TYPE = 'video/webm; codecs=vp9';
+const MEDIA_MIME_TYPE = 'video/webm; codecs=h264';
 
 let numRecordedChunks = 0;
 let tempFilePath: string;

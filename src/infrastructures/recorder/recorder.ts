@@ -11,12 +11,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import fs from 'fs';
+import path from 'path';
+import log from 'electron-log';
 import { ipcMain, app } from 'electron';
 import { injectable } from 'inversify';
+import {
+  createFFmpeg,
+  CreateFFmpegOptions,
+  fetchFile,
+  FFmpeg,
+} from '@ffmpeg/ffmpeg';
 
 import { IBounds } from '@core/entities/screen';
 import { ICaptureContext } from '@core/entities/capture';
 import { IScreenRecorder } from '@core/interfaces/recorder';
+import { isProduction } from '@utils/process';
 import {
   getAllScreensFromLeftTop,
   getIntersection,
@@ -28,9 +37,12 @@ import { IRecordContext, ITargetSlice } from './rec-delegate/types';
 
 @injectable()
 export class ElectronScreenRecorder implements IScreenRecorder {
+  ffmpeg?: FFmpeg;
   delegate?: RecorderDelegate;
 
   constructor() {
+    this.initializeFFmpeg();
+
     app.whenReady().then(() => this.renewBuildRenderer());
   }
 
@@ -126,7 +138,55 @@ export class ElectronScreenRecorder implements IScreenRecorder {
     return { targetSlices, targetBounds };
   }
 
+  private initializeFFmpeg() {
+    const ffmpegOptions: CreateFFmpegOptions = {
+      log: true,
+      logger: ({ message }) => log.debug(message),
+    };
+
+    if (isProduction()) {
+      ffmpegOptions.corePath = path.join(
+        app.getAppPath(),
+        '..',
+        'ffmpegwasm-core',
+        'ffmpeg-core.js'
+      );
+    }
+
+    this.ffmpeg = createFFmpeg(ffmpegOptions);
+    this.ffmpeg!.load();
+  }
+
   private async postProcess(tempPath: string, outputPath: string) {
-    fs.renameSync(tempPath, outputPath);
+    // fs.renameSync(tempPath, outputPath);
+    await this.postProcessWithFFmpeg(tempPath, outputPath);
+  }
+
+  private async postProcessWithFFmpeg(tempPath: string, outputPath: string) {
+    const memInputName = path.basename(tempPath);
+    const memOutputName = path.basename(outputPath);
+
+    try {
+      this.ffmpeg!.FS('writeFile', memInputName, await fetchFile(tempPath));
+
+      await this.ffmpeg!.run(
+        '-i',
+        memInputName,
+        '-c',
+        'copy',
+        '-r',
+        '30',
+        memOutputName
+      );
+
+      await fs.promises.writeFile(
+        outputPath,
+        this.ffmpeg!.FS('readFile', memOutputName)
+      );
+    } catch (e) {
+      log.error(e);
+    } finally {
+      fs.unlink(tempPath, () => {});
+    }
   }
 }
