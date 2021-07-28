@@ -1,5 +1,13 @@
 ## Release Notes
 
+### v0.4.1
+
+_28 July 2021_
+
+- Support long time recording
+- Optimize memory usage while recording
+- Improve video quality by using VP9 codec
+
 ### v0.4.0
 
 _26 July 2021_
