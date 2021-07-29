@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -15,9 +16,10 @@ import { IRecordContext, ITargetSlice } from './types';
 
 const MEDIA_MIME_TYPE = 'video/webm; codecs=h264';
 
-let numRecordedChunks = 0;
-let tempFilePath: string;
 let mediaRecorder: MediaRecorder;
+let tempFilePath: string;
+let numRecordedChunks = 0;
+let recordState: 'initial' | 'recording' | 'will-stop' | 'stopped' = 'initial';
 
 const getTempOutputPath = () => {
   const fileName = dayjs().format('YYYYMMDDHHmmss');
@@ -115,14 +117,22 @@ const withCanvasProcess = (
 };
 
 const handleStreamDataAvailable = async (event: BlobEvent) => {
+  if (recordState === 'stopped') {
+    return;
+  }
+
   const buffer = Buffer.from(await event.data.arrayBuffer());
   await fs.promises.appendFile(tempFilePath, buffer);
-
   numRecordedChunks += 1;
+
+  if (recordState === 'will-stop') {
+    recordState = 'stopped';
+    ipcRenderer.send('recording-file-saved', { tempFilePath });
+  }
 };
 
 const handleRecordStop = async (_event: Event) => {
-  ipcRenderer.send('recording-file-saved', { tempFilePath });
+  recordState = 'will-stop';
 };
 
 ipcRenderer.on('start-record', async (_event, data) => {
@@ -143,7 +153,8 @@ ipcRenderer.on('start-record', async (_event, data) => {
   tempFilePath = getTempOutputPath();
   ensureTempDirPathExists(tempFilePath);
 
-  setTimeout(() => mediaRecorder.start(1000), 100);
+  mediaRecorder.start(1000);
+  recordState = 'recording';
   ipcRenderer.send('recording-started', {});
 });
 

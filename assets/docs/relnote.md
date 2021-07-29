@@ -2,6 +2,12 @@
 
 ### v0.4.2
 
+_29 July 2021_
+
+- Fix recorded file broken sometimes
+
+### v0.4.1
+
 _28 July 2021_
 
 - Support long time recording
