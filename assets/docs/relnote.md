@@ -1,16 +1,12 @@
 ## Release Notes
 
-### v0.4.3
-
-_30 July 2021_
-
-- Fix invalid recording area for multiple displays
-
-### v0.4.2
+### v0.4.4
 
 _29 July 2021_
 
 - Fix recorded file broken sometimes
+- Fix invalid recording area for multiple displays
+- Improve buffering performance
 
 ### v0.4.1
 

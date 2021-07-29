@@ -32,6 +32,7 @@ export function getApp() {
 
 export function getCursorScreenPoint() {
   if (isMac()) {
+    // because mac doesn't support dipToScreenPoint
     return remote.screen.getCursorScreenPoint();
   }
   return remote.screen.dipToScreenPoint(remote.screen.getCursorScreenPoint());

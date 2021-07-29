@@ -9,4 +9,5 @@ export interface IRecordContext {
   targetSlices: ITargetSlice[];
   targetBounds: IBounds;
   projectionRate: number;
+  frameRate: number;
 }

@@ -15,11 +15,13 @@ import { getApp } from '@utils/remote';
 import { IRecordContext, ITargetSlice } from './types';
 
 const MEDIA_MIME_TYPE = 'video/webm; codecs=h264';
+const NUM_CHUNKS_TO_FLUSH = 200;
 
 let mediaRecorder: MediaRecorder;
-let tempFilePath: string;
-let numRecordedChunks = 0;
 let recordState: 'initial' | 'recording' | 'will-stop' | 'stopped' = 'initial';
+let tempFilePath: string;
+let recordedChunks: Blob[] = [];
+let totalRecordedChunks = 0;
 
 const getTempOutputPath = () => {
   const fileName = dayjs().format('YYYYMMDDHHmmss');
@@ -122,18 +124,29 @@ const handleStreamDataAvailable = async (event: BlobEvent) => {
     return;
   }
 
-  const buffer = Buffer.from(await event.data.arrayBuffer());
-  await fs.promises.appendFile(tempFilePath, buffer);
-  numRecordedChunks += 1;
+  recordedChunks.push(event.data);
+  totalRecordedChunks += 1;
+
+  if (
+    recordedChunks.length >= NUM_CHUNKS_TO_FLUSH ||
+    recordState === 'will-stop'
+  ) {
+    const chunks = recordedChunks;
+    recordedChunks = [];
+
+    const blob = new Blob(chunks, { type: MEDIA_MIME_TYPE });
+    const buffer = Buffer.from(await blob.arrayBuffer());
+    await fs.promises.appendFile(tempFilePath, buffer);
+  }
 
   if (recordState === 'will-stop') {
-    recordState = 'stopped';
-    ipcRenderer.send('recording-file-saved', { tempFilePath });
+    mediaRecorder.stop();
   }
 };
 
 const handleRecordStop = async (_event: Event) => {
-  recordState = 'will-stop';
+  recordState = 'stopped';
+  ipcRenderer.send('recording-file-saved', { tempFilePath });
 };
 
 ipcRenderer.on('start-record', async (_event, data) => {
@@ -141,8 +154,8 @@ ipcRenderer.on('start-record', async (_event, data) => {
   const {
     targetBounds: { width, height },
     projectionRate,
+    frameRate,
   } = recordCtx;
-  const frameRate = 24;
 
   const drawCtx = await createDrawCtx(recordCtx);
   const canvasStream = withCanvasProcess(
@@ -174,12 +187,12 @@ ipcRenderer.on('stop-record', async (_event, _data) => {
     return;
   }
 
-  if (numRecordedChunks === 0) {
+  if (totalRecordedChunks === 0) {
     ipcRenderer.send('recording-failed', {
       message: 'empty recorded chunks',
     });
     return;
   }
 
-  mediaRecorder.stop();
+  recordState = 'will-stop';
 });

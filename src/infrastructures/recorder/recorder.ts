@@ -38,6 +38,8 @@ import { IRecordContext, ITargetSlice } from './rec-delegate/types';
 
 type ScreenAndBoundsTuple = [IScreen, IBounds | undefined];
 
+const FRAMERATE = 24;
+
 @injectable()
 export class ElectronScreenRecorder implements IScreenRecorder {
   ffmpeg?: FFmpeg;
@@ -164,7 +166,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
     //     ? 0.7
     //     : 1.0;
 
-    return { targetSlices, targetBounds, projectionRate };
+    return { targetSlices, targetBounds, projectionRate, frameRate: FRAMERATE };
   }
 
   private initializeFFmpeg() {
@@ -204,7 +206,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
         '-c',
         'copy',
         '-r',
-        '30',
+        `${FRAMERATE}`,
         memOutputName
       );
 
