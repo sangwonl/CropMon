@@ -72,10 +72,6 @@ export const getOverlayScreenBounds = (): IBounds => {
 };
 
 export const adjustSelectionBounds = (bounds: IBounds): IBounds => {
-  if (isMac()) {
-    return bounds;
-  }
-
   const screens = getAllScreens();
   const screenBounds = calcScreenBounds(screens);
   return {
