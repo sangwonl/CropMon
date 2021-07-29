@@ -64,8 +64,13 @@ class CaptureOverlayWrap {
   }
 
   ignoreMouseEvents() {
+    // WORKAROUND: for sure those ops work
     this.widget?.setIgnoreMouseEvents(true);
     this.widget?.blur();
+    setTimeout(() => {
+      this.widget?.setIgnoreMouseEvents(true);
+      this.widget?.blur();
+    });
   }
 
   // WORKAROUND: to fix non-clickable area at the nearest borders

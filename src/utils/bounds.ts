@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable import/prefer-default-export */
 
-import { Display, screen } from 'electron';
+import { Display, Rectangle, screen } from 'electron';
 
 import { IBounds, IScreen } from '@core/entities/screen';
 
@@ -52,13 +52,9 @@ export const getIntersection = (
   };
 };
 
-export const getAllScreens = (): IScreen[] => {
-  return screen.getAllDisplays().map(mapDisplayToScreen);
-};
-
 export const getAllScreensFromLeftTop = (): IScreen[] => {
   const screens = getAllScreens();
-  const screenBounds = unscaledScreenBounds(screens);
+  const screenBounds = calcScreenBounds(screens);
   return screens.map((s: IScreen): IScreen => {
     return {
       ...s,
@@ -72,22 +68,34 @@ export const getAllScreensFromLeftTop = (): IScreen[] => {
 };
 
 export const getOverlayScreenBounds = (): IBounds => {
-  if (isMac()) {
-    return unscaledScreenBounds(getAllScreens());
-  }
-  return scaledScreenBounds(getAllScreens());
+  return calcScreenBounds(getAllScreens());
 };
 
 export const adjustSelectionBounds = (bounds: IBounds): IBounds => {
   if (isMac()) {
     return bounds;
   }
-  const screenBounds = unscaledScreenBounds(getAllScreens());
+
+  const screens = getAllScreens();
+  const screenBounds = calcScreenBounds(screens);
   return {
     ...bounds,
     x: bounds.x - screenBounds.x,
     y: bounds.y - screenBounds.y,
   };
+};
+
+const getAllScreens = (): IScreen[] => {
+  const screens = screen.getAllDisplays().map(mapDisplayToScreen);
+  if (isMac()) {
+    return screens;
+  }
+  return screens.map((s: IScreen) => {
+    return {
+      ...s,
+      bounds: screen.dipToScreenRect(null, s.bounds as Rectangle) as IBounds,
+    };
+  });
 };
 
 const mapDisplayToScreen = (d: Display): IScreen => {
@@ -98,7 +106,7 @@ const mapDisplayToScreen = (d: Display): IScreen => {
   };
 };
 
-export const unscaledScreenBounds = (screens: IScreen[]): IBounds => {
+const calcScreenBounds = (screens: IScreen[]): IBounds => {
   let left = Number.MAX_SAFE_INTEGER;
   let top = Number.MAX_SAFE_INTEGER;
   let right = Number.MIN_SAFE_INTEGER;
@@ -109,35 +117,6 @@ export const unscaledScreenBounds = (screens: IScreen[]): IBounds => {
     top = Math.min(top, bounds.y);
     right = Math.max(right, bounds.x + bounds.width);
     bottom = Math.max(bottom, bounds.y + bounds.height);
-  });
-
-  return {
-    x: left,
-    y: top,
-    width: right - left,
-    height: bottom - top,
-  };
-};
-
-const scaledScreenBounds = (screens: IScreen[]): IBounds => {
-  const leftToRight = screens.sort((a: IScreen, b: IScreen) => {
-    return a.bounds.x - b.bounds.x;
-  });
-
-  const left = leftToRight[0].bounds.x;
-  let right = left;
-  leftToRight.forEach((s: IScreen) => {
-    right += Math.floor(s.bounds.width * s.scaleFactor);
-  });
-
-  const topToBottom = screens.sort((a: IScreen, b: IScreen) => {
-    return a.bounds.y - b.bounds.y;
-  });
-
-  const top = topToBottom[0].bounds.y;
-  let bottom = top;
-  topToBottom.forEach((s: IScreen) => {
-    bottom += Math.floor(s.bounds.height * s.scaleFactor);
   });
 
   return {

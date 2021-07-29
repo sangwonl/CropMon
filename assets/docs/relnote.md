@@ -1,5 +1,11 @@
 ## Release Notes
 
+### v0.4.3
+
+_30 July 2021_
+
+- Fix invalid recording area for multiple displays
+
 ### v0.4.2
 
 _29 July 2021_

@@ -5,6 +5,8 @@ import { remote } from 'electron';
 
 import { Widget } from '@ui/widgets/widget';
 
+import { isMac } from './process';
+
 export function setCustomData<T>(widget: Widget, name: string, value: T) {
   (widget as any)[name] = value;
 }
@@ -29,5 +31,8 @@ export function getApp() {
 }
 
 export function getCursorScreenPoint() {
-  return remote.screen.getCursorScreenPoint();
+  if (isMac()) {
+    return remote.screen.getCursorScreenPoint();
+  }
+  return remote.screen.dipToScreenPoint(remote.screen.getCursorScreenPoint());
 }

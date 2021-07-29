@@ -87,11 +87,12 @@ const withCanvasProcess = (
   w: number,
   h: number,
   drawCtx: any[],
-  frameRate: number
+  frameRate: number,
+  projectionRate: number
 ): MediaStream => {
   const canvasElem = document.createElement('canvas') as HTMLCanvasElement;
-  canvasElem.width = w;
-  canvasElem.height = h;
+  canvasElem.width = Math.floor(w * projectionRate);
+  canvasElem.height = Math.floor(h * projectionRate);
 
   const render = () => {
     const canvasCtx = canvasElem.getContext('2d')!;
@@ -102,10 +103,10 @@ const withCanvasProcess = (
         ctx.srcBounds.y,
         ctx.srcBounds.width,
         ctx.srcBounds.height,
-        ctx.dstBounds.x,
-        ctx.dstBounds.y,
-        ctx.dstBounds.width,
-        ctx.dstBounds.height
+        Math.floor(ctx.dstBounds.x * projectionRate),
+        Math.floor(ctx.dstBounds.y * projectionRate),
+        Math.floor(ctx.dstBounds.width * projectionRate),
+        Math.floor(ctx.dstBounds.height * projectionRate)
       );
     });
   };
@@ -139,11 +140,18 @@ ipcRenderer.on('start-record', async (_event, data) => {
   const recordCtx: IRecordContext = data.recordContext;
   const {
     targetBounds: { width, height },
+    projectionRate,
   } = recordCtx;
   const frameRate = 24;
 
   const drawCtx = await createDrawCtx(recordCtx);
-  const canvasStream = withCanvasProcess(width, height, drawCtx, frameRate);
+  const canvasStream = withCanvasProcess(
+    width,
+    height,
+    drawCtx,
+    frameRate,
+    projectionRate
+  );
 
   const recorderOpts = { mimeType: MEDIA_MIME_TYPE };
   mediaRecorder = new MediaRecorder(canvasStream, recorderOpts);

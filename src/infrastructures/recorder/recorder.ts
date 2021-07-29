@@ -22,18 +22,21 @@ import {
   FFmpeg,
 } from '@ffmpeg/ffmpeg';
 
-import { IBounds } from '@core/entities/screen';
+import { IBounds, IScreen } from '@core/entities/screen';
 import { ICaptureContext } from '@core/entities/capture';
 import { IScreenRecorder } from '@core/interfaces/recorder';
 import { isProduction } from '@utils/process';
 import {
   getAllScreensFromLeftTop,
   getIntersection,
+  getOverlayScreenBounds,
   isEmptyBounds,
 } from '@utils/bounds';
 
 import { RecorderDelegate } from './rec-delegate';
 import { IRecordContext, ITargetSlice } from './rec-delegate/types';
+
+type ScreenAndBoundsTuple = [IScreen, IBounds | undefined];
 
 @injectable()
 export class ElectronScreenRecorder implements IScreenRecorder {
@@ -127,15 +130,41 @@ export class ElectronScreenRecorder implements IScreenRecorder {
     });
   }
 
-  private createRecordContext(targetBounds: IBounds): IRecordContext {
+  private createRecordContext(
+    targetBounds: IBounds
+  ): IRecordContext | undefined {
     const screens = getAllScreensFromLeftTop();
     const targetSlices = screens
-      .filter((s) => !isEmptyBounds(getIntersection(s.bounds, targetBounds)))
-      .map((s): ITargetSlice => {
-        return { screen: s, bounds: getIntersection(s.bounds, targetBounds)! };
+      .map(
+        (s): ScreenAndBoundsTuple => [
+          s,
+          getIntersection(s.bounds, targetBounds),
+        ]
+      )
+      .filter(([_, bounds]: ScreenAndBoundsTuple) => !isEmptyBounds(bounds))
+      .map(([screen, bounds]: ScreenAndBoundsTuple): ITargetSlice => {
+        return { screen, bounds: bounds! };
       });
 
-    return { targetSlices, targetBounds };
+    if (targetSlices.length === 0) {
+      return undefined;
+    }
+
+    // WORKAROUND: For browser large pixels canvas issue
+    // https://stackoverflow.com/a/11585939
+    const screenBounds = getOverlayScreenBounds();
+    const screenArea = screenBounds.width * screenBounds.height;
+    const targetArea = targetBounds.width * targetBounds.height;
+    const targetAreaRate = targetArea / screenArea;
+    const projectionRate = targetAreaRate < 0.5 ? 1.0 : 0.7;
+    // const projectionRate =
+    //   targetBounds.width >= 32767 ||
+    //   targetBounds.height >= 32767 ||
+    //   targetArea >= 16384 * 16384
+    //     ? 0.7
+    //     : 1.0;
+
+    return { targetSlices, targetBounds, projectionRate };
   }
 
   private initializeFFmpeg() {
