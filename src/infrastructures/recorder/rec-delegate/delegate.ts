@@ -14,11 +14,12 @@ import { getApp } from '@utils/remote';
 
 import { IRecordContext, ITargetSlice } from './types';
 
-const MEDIA_MIME_TYPE = 'video/webm; codecs=h264';
+// const MEDIA_MIME_TYPE = 'video/webm; codecs=h264';
+const MEDIA_MIME_TYPE = 'video/webm; codecs=h264,opus';
 const NUM_CHUNKS_TO_FLUSH = 200;
 
 let mediaRecorder: MediaRecorder;
-let recordState: 'initial' | 'recording' | 'will-stop' | 'stopped' = 'initial';
+let recordState: 'initial' | 'recording' | 'stopped' = 'initial';
 let tempFilePath: string;
 let recordedChunks: Blob[] = [];
 let totalRecordedChunks = 0;
@@ -40,7 +41,13 @@ const ensureTempDirPathExists = (tempPath: string) => {
   }
 };
 
-const getMediaConstraint = (srcId: string, bounds: IBounds): any => {
+const getAudioConstraint = (): any => {
+  return {
+    audio: true,
+  };
+};
+
+const getVideoConstraint = (srcId: string, bounds: IBounds): any => {
   return {
     audio: false,
     video: {
@@ -61,7 +68,7 @@ const createDrawCtx = async (recordCtx: IRecordContext): Promise<any[]> => {
   return Promise.all(
     recordCtx.targetSlices.map(async ({ screen: s, bounds }: ITargetSlice) => {
       const source = sources.find((src) => src.display_id === s.id.toString());
-      const constraints = getMediaConstraint(source!.id, s.bounds);
+      const constraints = getVideoConstraint(source!.id, s.bounds);
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
       const videoElem = document.createElement('video') as HTMLVideoElement;
@@ -96,8 +103,12 @@ const withCanvasProcess = (
   canvasElem.width = Math.floor(w * projectionRate);
   canvasElem.height = Math.floor(h * projectionRate);
 
+  const canvasCtx = canvasElem.getContext('2d')!;
   const render = () => {
-    const canvasCtx = canvasElem.getContext('2d')!;
+    if (recordState !== 'recording') {
+      return;
+    }
+
     drawCtx.forEach((ctx: any) => {
       canvasCtx.drawImage(
         ctx.videoElem,
@@ -119,33 +130,43 @@ const withCanvasProcess = (
   return (canvasElem as any).captureStream(frameRate);
 };
 
+const attachAudioStreamForMic = async (stream: MediaStream) => {
+  const audioStream = await navigator.mediaDevices.getUserMedia(
+    getAudioConstraint()
+  );
+
+  const tracks = audioStream.getAudioTracks();
+  if (tracks.length > 0) {
+    tracks.forEach((t: MediaStreamTrack) => stream.addTrack(t));
+  }
+
+  return stream;
+};
+
+const flushChunksToFile = async (chunks: Blob[]) => {
+  const blob = new Blob(chunks, { type: MEDIA_MIME_TYPE });
+  const buffer = Buffer.from(await blob.arrayBuffer());
+  await fs.promises.appendFile(tempFilePath, buffer);
+};
+
 const handleStreamDataAvailable = async (event: BlobEvent) => {
-  if (recordState === 'stopped') {
+  if (recordState !== 'recording') {
     return;
   }
 
   recordedChunks.push(event.data);
   totalRecordedChunks += 1;
 
-  if (
-    recordedChunks.length >= NUM_CHUNKS_TO_FLUSH ||
-    recordState === 'will-stop'
-  ) {
+  if (recordedChunks.length >= NUM_CHUNKS_TO_FLUSH) {
     const chunks = recordedChunks;
     recordedChunks = [];
-
-    const blob = new Blob(chunks, { type: MEDIA_MIME_TYPE });
-    const buffer = Buffer.from(await blob.arrayBuffer());
-    await fs.promises.appendFile(tempFilePath, buffer);
-  }
-
-  if (recordState === 'will-stop') {
-    mediaRecorder.stop();
+    await flushChunksToFile(chunks);
   }
 };
 
 const handleRecordStop = async (_event: Event) => {
   recordState = 'stopped';
+  await flushChunksToFile(recordedChunks);
   ipcRenderer.send('recording-file-saved', { tempFilePath });
 };
 
@@ -155,6 +176,7 @@ ipcRenderer.on('start-record', async (_event, data) => {
     targetBounds: { width, height },
     projectionRate,
     frameRate,
+    enableMic,
   } = recordCtx;
 
   const drawCtx = await createDrawCtx(recordCtx);
@@ -165,6 +187,10 @@ ipcRenderer.on('start-record', async (_event, data) => {
     frameRate,
     projectionRate
   );
+
+  if (enableMic) {
+    await attachAudioStreamForMic(canvasStream);
+  }
 
   const recorderOpts = { mimeType: MEDIA_MIME_TYPE };
   mediaRecorder = new MediaRecorder(canvasStream, recorderOpts);
@@ -194,5 +220,5 @@ ipcRenderer.on('stop-record', async (_event, _data) => {
     return;
   }
 
-  recordState = 'will-stop';
+  mediaRecorder.stop();
 });

@@ -166,7 +166,13 @@ export class ElectronScreenRecorder implements IScreenRecorder {
     //     ? 0.7
     //     : 1.0;
 
-    return { targetSlices, targetBounds, projectionRate, frameRate: FRAMERATE };
+    return {
+      targetSlices,
+      targetBounds,
+      projectionRate,
+      frameRate: FRAMERATE,
+      enableMic: true,
+    };
   }
 
   private initializeFFmpeg() {
