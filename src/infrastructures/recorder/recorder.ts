@@ -209,8 +209,10 @@ export class ElectronScreenRecorder implements IScreenRecorder {
       await this.ffmpeg!.run(
         '-i',
         memInputName,
-        '-c',
+        '-c:v',
         'copy',
+        '-c:a',
+        'aac',
         '-r',
         `${FRAMERATE}`,
         memOutputName
