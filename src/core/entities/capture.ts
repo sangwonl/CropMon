@@ -28,6 +28,7 @@ export interface ICaptureOption {
 
 export interface ICaptureContext {
   target: ICaptureTarget;
+  enableMic: boolean;
   status: CaptureStatus;
   createdAt: number;
   outputPath: string | undefined;
@@ -41,6 +42,7 @@ export const createCaptureContext = (
   const fileName = dayjs().format('YYYYMMDDHHmmss');
   return {
     target: { mode, bounds },
+    enableMic: true,
     status: CaptureStatus.PREPARED,
     createdAt: dayjs().second(),
     outputPath: path.join(recordHome, `${fileName}.mp4`),
