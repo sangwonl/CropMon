@@ -63,7 +63,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
       return Promise.reject();
     }
 
-    const recordCtx = this.createRecordContext(targetBounds);
+    const recordCtx = this.createRecordContext(targetBounds, ctx.enableMic);
     if (recordCtx === undefined) {
       return Promise.reject();
     }
@@ -98,12 +98,12 @@ export class ElectronScreenRecorder implements IScreenRecorder {
   }
 
   async finish(ctx: ICaptureContext): Promise<void> {
-    const outPath = ctx.outputPath!;
+    const { outputPath, enableMic } = ctx;
 
     return new Promise((resolve, reject) => {
       const onRecordingFileSaved = async (_event: any, data: any) => {
         clearIpcListeners();
-        await this.postProcess(data.tempFilePath, outPath);
+        await this.postProcess(data.tempFilePath, outputPath!, enableMic);
         this.renewBuildRenderer();
         resolve();
       };
@@ -126,14 +126,13 @@ export class ElectronScreenRecorder implements IScreenRecorder {
 
       setupIpcListeners();
 
-      this.delegate?.webContents.send('stop-record', {
-        outputPath: outPath,
-      });
+      this.delegate?.webContents.send('stop-record', { outputPath });
     });
   }
 
   private createRecordContext(
-    targetBounds: IBounds
+    targetBounds: IBounds,
+    enableMic: boolean
   ): IRecordContext | undefined {
     const screens = getAllScreensFromLeftTop();
     const targetSlices = screens
@@ -170,8 +169,8 @@ export class ElectronScreenRecorder implements IScreenRecorder {
       targetSlices,
       targetBounds,
       projectionRate,
+      enableMic,
       frameRate: FRAMERATE,
-      enableMic: true,
     };
   }
 
@@ -194,12 +193,20 @@ export class ElectronScreenRecorder implements IScreenRecorder {
     this.ffmpeg!.load();
   }
 
-  private async postProcess(tempPath: string, outputPath: string) {
+  private async postProcess(
+    tempPath: string,
+    outputPath: string,
+    enableMic: boolean
+  ) {
     // fs.renameSync(tempPath, outputPath);
-    await this.postProcessWithFFmpeg(tempPath, outputPath);
+    await this.postProcessWithFFmpeg(tempPath, outputPath, enableMic);
   }
 
-  private async postProcessWithFFmpeg(tempPath: string, outputPath: string) {
+  private async postProcessWithFFmpeg(
+    tempPath: string,
+    outputPath: string,
+    enableMic: boolean
+  ) {
     const memInputName = path.basename(tempPath);
     const memOutputName = path.basename(outputPath);
 
@@ -211,8 +218,8 @@ export class ElectronScreenRecorder implements IScreenRecorder {
         memInputName,
         '-c:v',
         'copy',
-        '-c:a',
-        'aac',
+        enableMic ? '-c:a' : '',
+        enableMic ? 'aac' : '',
         '-r',
         `${FRAMERATE}`,
         memOutputName
