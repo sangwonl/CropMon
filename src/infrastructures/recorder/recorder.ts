@@ -58,12 +58,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
   }
 
   async record(ctx: ICaptureContext): Promise<void> {
-    const { bounds: targetBounds } = ctx.target;
-    if (targetBounds === undefined || isEmptyBounds(targetBounds)) {
-      return Promise.reject();
-    }
-
-    const recordCtx = this.createRecordContext(targetBounds, ctx.enableMic);
+    const recordCtx = this.createRecordContext(ctx);
     if (recordCtx === undefined) {
       return Promise.reject();
     }
@@ -98,7 +93,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
   }
 
   async finish(ctx: ICaptureContext): Promise<void> {
-    const { outputPath, enableMic } = ctx;
+    const { outputPath, recordMicrophone: enableMic } = ctx;
 
     return new Promise((resolve, reject) => {
       const onRecordingFileSaved = async (_event: any, data: any) => {
@@ -131,9 +126,13 @@ export class ElectronScreenRecorder implements IScreenRecorder {
   }
 
   private createRecordContext(
-    targetBounds: IBounds,
-    enableMic: boolean
+    ctx: ICaptureContext
   ): IRecordContext | undefined {
+    const { bounds: targetBounds } = ctx.target;
+    if (targetBounds === undefined || isEmptyBounds(targetBounds)) {
+      return undefined;
+    }
+
     const screens = getAllScreensFromLeftTop();
     const targetSlices = screens
       .map(
@@ -169,8 +168,8 @@ export class ElectronScreenRecorder implements IScreenRecorder {
       targetSlices,
       targetBounds,
       projectionRate,
-      enableMic,
       frameRate: FRAMERATE,
+      recordMicrophone: ctx.recordMicrophone,
     };
   }
 

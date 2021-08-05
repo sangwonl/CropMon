@@ -97,7 +97,7 @@ export class CaptureUseCase {
 
   private async startCapture(option: ICaptureOption): Promise<void> {
     const prefs = await this.prefsUseCase.fetchUserPreferences();
-    const newCtx = createCaptureContext(option, prefs.recordHome);
+    const newCtx = createCaptureContext(option, prefs);
 
     try {
       await this.screenRecorder.record(newCtx);

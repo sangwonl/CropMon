@@ -10,5 +10,5 @@ export interface IRecordContext {
   targetBounds: IBounds;
   projectionRate: number;
   frameRate: number;
-  enableMic: boolean;
+  recordMicrophone: boolean;
 }

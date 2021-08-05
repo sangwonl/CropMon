@@ -16,7 +16,7 @@ import { IRecordContext, ITargetSlice } from './types';
 
 // const MEDIA_MIME_TYPE = 'video/webm; codecs=h264';
 const MEDIA_MIME_TYPE = 'video/webm; codecs=h264,opus';
-const NUM_CHUNKS_TO_FLUSH = 200;
+const NUM_CHUNKS_TO_FLUSH = 100;
 
 let mediaRecorder: MediaRecorder;
 let recordState: 'initial' | 'recording' | 'stopped' = 'initial';
@@ -176,7 +176,7 @@ ipcRenderer.on('start-record', async (_event, data) => {
     targetBounds: { width, height },
     projectionRate,
     frameRate,
-    enableMic,
+    recordMicrophone: enableMic,
   } = recordCtx;
 
   const drawCtx = await createDrawCtx(recordCtx);
