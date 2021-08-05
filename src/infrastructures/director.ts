@@ -130,7 +130,8 @@ export class UiDirector implements IUiDirector {
   ): Promise<void> {
     await this.appTray?.refreshContextMenu(
       iconizeShortcut(prefs.shortcut),
-      recording
+      recording,
+      prefs.recordMicrophone
     );
   }
 

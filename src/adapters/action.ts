@@ -36,6 +36,10 @@ export class ActionDispatcher {
     this.prefsUseCase.openPreferencesModal();
   }
 
+  toggleRecordingMic(recordMicrophone: boolean) {
+    this.captureUseCase.toggleRecordingMic(recordMicrophone);
+  }
+
   enableCaptureSelection() {
     this.captureUseCase.enableCaptureSelection();
   }

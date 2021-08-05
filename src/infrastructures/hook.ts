@@ -13,6 +13,7 @@ import { HookType, IHookManager } from '@core/interfaces/hook';
 import { ActionDispatcher } from '@adapters/action';
 import { IPreferences } from '@core/entities/preferences';
 import { IUiDirector } from '@core/interfaces/director';
+import { isDebugMode } from '@utils/process';
 
 type HookHandler = (args: any) => void;
 
@@ -112,6 +113,10 @@ export class BuiltinHooks {
   };
 
   private setupRunAtStartup = (prefs: IPreferences): void => {
+    if (isDebugMode()) {
+      return;
+    }
+
     app.setLoginItemSettings({
       openAtLogin: prefs.runAtStartup,
       path: app.getPath('exe'),
