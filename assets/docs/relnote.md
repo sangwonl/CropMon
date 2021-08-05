@@ -1,5 +1,12 @@
 ## Release Notes
 
+### v0.5.0
+
+_9 Aug 2021_
+
+- Support recording of microphone input
+- Fix minor bugs
+
 ### v0.4.4
 
 _29 July 2021_
