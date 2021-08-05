@@ -49,6 +49,7 @@ export class PreferencesStore implements IPreferencesStore {
     this.store.set('recordHomeDir', prefs.recordHome);
     this.store.set('shortcut', prefs.shortcut);
     this.store.set('runAtStartup', prefs.runAtStartup);
+    this.store.set('recordMicrophone', prefs.recordMicrophone);
   }
 
   private initialPreferences(): IPreferences {
@@ -59,6 +60,7 @@ export class PreferencesStore implements IPreferencesStore {
       recordHome: app.getPath('videos'),
       shortcut: INITIAL_SHORTCUT,
       runAtStartup: true,
+      recordMicrophone: false,
     };
   }
 
@@ -70,6 +72,7 @@ export class PreferencesStore implements IPreferencesStore {
       recordHome: this.store.get('recordHomeDir') as string,
       shortcut: this.store.get('shortcut', INITIAL_SHORTCUT) as string,
       runAtStartup: this.store.get('runAtStartup', true) as boolean,
+      recordMicrophone: this.store.get('recordMicrophone', false) as boolean,
     };
   }
 }

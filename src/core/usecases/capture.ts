@@ -163,4 +163,11 @@ export class CaptureUseCase {
 
     await this.uiDirector.refreshTrayState(prefs, false);
   }
+
+  async toggleRecordingMic(recordMicrophone: boolean): Promise<void> {
+    const prefs = await this.prefsUseCase.fetchUserPreferences();
+    prefs.recordMicrophone = recordMicrophone;
+
+    await this.prefsUseCase.updateUserPreference(prefs);
+  }
 }

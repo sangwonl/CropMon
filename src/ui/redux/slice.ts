@@ -6,6 +6,7 @@ import {
   initialUiState,
   IFinishAreaSelection,
   IUiState,
+  IRecordingOptions,
 } from '@core/entities/ui';
 
 const slice = createSlice({
@@ -31,6 +32,7 @@ const slice = createSlice({
 
     // preferences
     openPreferences: () => {},
+    toggleRecordingMic: (_s, _a: PayloadAction<IRecordingOptions>) => {},
   },
 });
 
@@ -40,6 +42,7 @@ export const {
   showAbout,
   showHelp,
   openPreferences,
+  toggleRecordingMic,
   quitApplication,
   enableCaptureMode,
   disableCaptureMode,

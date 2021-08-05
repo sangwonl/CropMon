@@ -5,4 +5,5 @@ export interface IPreferences {
   recordHome: string;
   shortcut: string;
   runAtStartup: boolean;
+  recordMicrophone: boolean;
 }

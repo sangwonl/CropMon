@@ -7,7 +7,7 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import { takeLatest } from 'redux-saga/effects';
 
 import { diContainer } from '@di/container';
-import { IFinishAreaSelection } from '@core/entities/ui';
+import { IFinishAreaSelection, IRecordingOptions } from '@core/entities/ui';
 import { ActionDispatcher } from '@adapters/action';
 import { adjustSelectionBounds } from '@utils/bounds';
 
@@ -22,6 +22,7 @@ import {
   startAreaSelection,
   finishAreaSelection,
   finishCapture,
+  toggleRecordingMic,
 } from './slice';
 
 const actionDispatcher = diContainer.get(ActionDispatcher);
@@ -44,6 +45,10 @@ function onQuitApplication() {
 
 function onOpenPreferences() {
   actionDispatcher.openPreferences();
+}
+
+function onToggleRecordingMic(action: PayloadAction<IRecordingOptions>) {
+  actionDispatcher.toggleRecordingMic(action.payload.enableMicrophone);
 }
 
 function onEnableCaptureSelection() {
@@ -77,6 +82,7 @@ function* sagaEntry() {
 
   // preferences usecase
   yield takeLatest(openPreferences.type, onOpenPreferences);
+  yield takeLatest(toggleRecordingMic.type, onToggleRecordingMic);
 
   // capture related usecase
   yield takeLatest(enableCaptureMode.type, onEnableCaptureSelection);

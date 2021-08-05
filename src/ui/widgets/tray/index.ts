@@ -22,6 +22,7 @@ import {
   finishCapture,
   checkForUpdates,
   openPreferences,
+  toggleRecordingMic,
   quitApplication,
   showAbout,
   showHelp,
@@ -73,6 +74,10 @@ export abstract class AppTray {
     store.dispatch(openPreferences());
   }
 
+  protected onToggleMic(m: MenuItem) {
+    store.dispatch(toggleRecordingMic({ enableMicrophone: m.checked }));
+  }
+
   protected onQuit() {
     store.dispatch(quitApplication());
   }
@@ -81,7 +86,11 @@ export abstract class AppTray {
     return contextMenuTempl.find((m: any) => m.id === id)!;
   }
 
-  async refreshContextMenu(shortcut: string, isRecording?: boolean) {
+  async refreshContextMenu(
+    shortcut: string,
+    isRecording?: boolean,
+    enableMic?: boolean
+  ) {
     this.isRecording = isRecording ?? false;
 
     const templ = this.buildMenuTempl();
@@ -93,6 +102,10 @@ export abstract class AppTray {
     const menuStopCapt = this.getMenuItemTemplById(templ, 'stop-capture');
     menuStopCapt.label = menuStopCapt.label.replace('__shortcut__', shortcut);
     menuStopCapt.visible = this.isRecording;
+
+    const recOpts = this.getMenuItemTemplById(templ, 'recording-options');
+    const micOpt = this.getMenuItemTemplById(recOpts.submenu, 'record-mic');
+    micOpt.checked = enableMic ?? false;
 
     this.menu = Menu.buildFromTemplate(templ);
     this.tray.setContextMenu(this.menu);
@@ -151,6 +164,18 @@ class WinAppTray extends AppTray {
         label: 'Stop &Recording  __shortcut__',
         click: super.onStopRecording,
         visible: false,
+      },
+      {
+        id: 'recording-options',
+        label: 'Options',
+        submenu: [
+          {
+            id: 'record-mic',
+            type: 'checkbox',
+            label: 'Record Microphone',
+            click: super.onToggleMic,
+          },
+        ],
       },
       {
         type: 'separator',
@@ -218,6 +243,18 @@ class MacAppTray extends AppTray {
         label: 'Stop Recording  __shortcut__',
         click: super.onStopRecording,
         visible: false,
+      },
+      {
+        id: 'recording-options',
+        label: 'Options',
+        submenu: [
+          {
+            id: 'record-mic',
+            type: 'checkbox',
+            label: 'Record Microphone',
+            click: super.onToggleMic,
+          },
+        ],
       },
       {
         type: 'separator',

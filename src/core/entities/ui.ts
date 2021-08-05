@@ -21,6 +21,10 @@ export interface IFinishAreaSelection {
   bounds: IBounds;
 }
 
+export interface IRecordingOptions {
+  enableMicrophone: boolean;
+}
+
 export interface IUiState {
   captureOverlay: ICaptureOverlay;
   captureArea: ICaptureArea;
