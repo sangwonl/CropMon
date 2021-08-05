@@ -2,6 +2,7 @@ import path from 'path';
 import dayjs from 'dayjs';
 
 import { IBounds } from './screen';
+import { IPreferences } from './preferences';
 
 export enum CaptureMode {
   AREA = 1,
@@ -28,23 +29,23 @@ export interface ICaptureOption {
 
 export interface ICaptureContext {
   target: ICaptureTarget;
-  enableMic: boolean;
   status: CaptureStatus;
   createdAt: number;
   outputPath: string | undefined;
+  recordMicrophone: boolean;
 }
 
 export const createCaptureContext = (
   option: ICaptureOption,
-  recordHome: string
+  prefs: IPreferences
 ): ICaptureContext => {
   const { mode, bounds } = option;
   const fileName = dayjs().format('YYYYMMDDHHmmss');
   return {
     target: { mode, bounds },
-    enableMic: true,
     status: CaptureStatus.PREPARED,
     createdAt: dayjs().second(),
-    outputPath: path.join(recordHome, `${fileName}.mp4`),
+    outputPath: path.join(prefs.recordHome, `${fileName}.mp4`),
+    recordMicrophone: prefs.recordMicrophone,
   };
 };
