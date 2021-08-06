@@ -6,14 +6,14 @@
 /* eslint-disable import/prefer-default-export */
 
 import { inject, injectable } from 'inversify';
-import { app, globalShortcut } from 'electron';
+import { app, globalShortcut, systemPreferences } from 'electron';
 
 import { TYPES } from '@di/types';
 import { HookType, IHookManager } from '@core/interfaces/hook';
 import { ActionDispatcher } from '@adapters/action';
 import { IPreferences } from '@core/entities/preferences';
 import { IUiDirector } from '@core/interfaces/director';
-import { isDebugMode } from '@utils/process';
+import { isDebugMode, isMac } from '@utils/process';
 
 type HookHandler = (args: any) => void;
 
@@ -96,6 +96,7 @@ export class BuiltinHooks {
   ): Promise<void> => {
     this.setupShortcut(newPrefs, prevPrefs);
     this.setupRunAtStartup(newPrefs);
+    this.askMediaAccess(newPrefs);
     await this.uiDirector.refreshTrayState(newPrefs);
   };
 
@@ -121,5 +122,11 @@ export class BuiltinHooks {
       openAtLogin: prefs.runAtStartup,
       path: app.getPath('exe'),
     });
+  };
+
+  private askMediaAccess = (prefs: IPreferences): void => {
+    if (prefs.recordMicrophone && isMac()) {
+      systemPreferences.askForMediaAccess('microphone');
+    }
   };
 }

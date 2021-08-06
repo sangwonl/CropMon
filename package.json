@@ -95,6 +95,9 @@
       "hardenedRuntime": true,
       "entitlements": "assets/entitlements.mac.plist",
       "entitlementsInherit": "assets/entitlements.mac.plist",
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "This app requires microphone access to record audio."
+      },
       "gatekeeperAssess": false
     },
     "dmg": {

@@ -13,7 +13,7 @@
 import fs from 'fs';
 import path from 'path';
 import log from 'electron-log';
-import { ipcMain, app } from 'electron';
+import { app, ipcMain, systemPreferences } from 'electron';
 import { injectable } from 'inversify';
 import {
   createFFmpeg,
@@ -25,7 +25,7 @@ import {
 import { IBounds, IScreen } from '@core/entities/screen';
 import { ICaptureContext } from '@core/entities/capture';
 import { IScreenRecorder } from '@core/interfaces/recorder';
-import { isProduction } from '@utils/process';
+import { isMac, isProduction } from '@utils/process';
 import {
   getAllScreensFromLeftTop,
   getIntersection,
@@ -61,6 +61,11 @@ export class ElectronScreenRecorder implements IScreenRecorder {
     const recordCtx = this.createRecordContext(ctx);
     if (recordCtx === undefined) {
       return Promise.reject();
+    }
+
+    if (recordCtx.recordMicrophone) {
+      recordCtx.recordMicrophone =
+        systemPreferences.getMediaAccessStatus('microphone') === 'granted';
     }
 
     return new Promise((resolve, reject) => {
