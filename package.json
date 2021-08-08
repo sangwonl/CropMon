@@ -11,7 +11,7 @@
     "release": "electron-builder --publish always",
     "postinstall": "node -r @babel/register .erb/scripts/CheckNativeDep.js && electron-builder install-app-deps && npx cross-env NODE_ENV=development webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.babel.js && opencollective-postinstall",
     "start": "node -r @babel/register ./.erb/scripts/CheckPortInUse.js && cross-env npm run start:renderer",
-    "start:main": "cross-env NODE_ENV=development electron -r ./.erb/scripts/FixDevAppName.js -r ./.erb/scripts/BabelRegister ./src/main/main.dev.ts",
+    "start:main": "cross-env NODE_ENV=development electron -r ./.erb/scripts/FixDevAppName.js -r ./.erb/scripts/BabelRegister ./src/main/main.dev.ts --inspect=5858 --remote-debugging-port=9223",
     "start:renderer": "cross-env NODE_ENV=development webpack serve --config ./.erb/configs/webpack.config.renderer.dev.babel.js",
     "test": "jest",
     "storybook": "start-storybook -p 6006",
