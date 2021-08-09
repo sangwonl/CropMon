@@ -104,6 +104,11 @@ const withCanvasProcess = (
   canvasElem.height = Math.floor(h * projectionRate);
 
   const canvasCtx = canvasElem.getContext('2d')!;
+  // canvasCtx.filter = 'contrast(1.04)';
+  // canvasCtx.imageSmoothingEnabled = false;
+  // canvasCtx.globalCompositeOperation = 'copy';
+  // canvasCtx.clearRect(0, 0, canvasElem.width, canvasElem.height);
+
   const render = () => {
     if (recordState !== 'recording') {
       return;
@@ -121,6 +126,8 @@ const withCanvasProcess = (
         Math.floor(ctx.dstBounds.width * projectionRate),
         Math.floor(ctx.dstBounds.height * projectionRate)
       );
+
+      console.log(canvasCtx.getImageData(3, 3, 1, 1).data);
     });
   };
 
