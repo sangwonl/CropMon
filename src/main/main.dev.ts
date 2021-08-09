@@ -56,5 +56,6 @@ const instanceLock = app.requestSingleInstanceLock();
 if (!instanceLock) {
   app.quit();
 } else {
+  app.commandLine.appendSwitch('force-color-profile', 'srgb');
   app.whenReady().then(start).catch(log.error);
 }
