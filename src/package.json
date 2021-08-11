@@ -1,7 +1,7 @@
 {
   "name": "kropsaurus",
   "productName": "Kropsaurus",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Simple Screen Recorder",
   "main": "./dist/main.prod.js",
   "author": {

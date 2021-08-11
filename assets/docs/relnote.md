@@ -1,5 +1,11 @@
 ## Release Notes
 
+### v0.5.1
+
+_12 Aug 2021_
+
+- Fix to prevent recording initial veil
+
 ### v0.5.0
 
 _9 Aug 2021_
