@@ -107,7 +107,7 @@ export class BuiltinHooks {
     if (prevPrefs === undefined || prevPrefs.shortcut !== newPrefs.shortcut) {
       globalShortcut.unregisterAll();
       globalShortcut.register(
-        newPrefs.shortcut.replace(/Win|Cmd/, 'Super'),
+        newPrefs.shortcut.replace(/Win|Cmd/, 'Meta'),
         this.actionDispatcher.onCaptureToggleShortcut
       );
     }

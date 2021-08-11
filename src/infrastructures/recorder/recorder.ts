@@ -25,7 +25,7 @@ import {
 import { IBounds, IScreen } from '@core/entities/screen';
 import { ICaptureContext } from '@core/entities/capture';
 import { IScreenRecorder } from '@core/interfaces/recorder';
-import { isMac, isProduction } from '@utils/process';
+import { isProduction } from '@utils/process';
 import {
   getAllScreensFromLeftTop,
   getIntersection,

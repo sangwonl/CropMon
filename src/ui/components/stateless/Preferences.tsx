@@ -20,7 +20,11 @@ import {
 import { Clear } from '@material-ui/icons';
 
 import { IPreferences } from '@core/entities/preferences';
-import { textifyShortcut, validateShortcut } from '@utils/shortcut';
+import {
+  extractShortcut,
+  validateShortcut,
+  shortcutForDisplay,
+} from '@utils/shortcut';
 
 import styles from './Preferences.css';
 
@@ -114,20 +118,20 @@ export const Preferences = (props: PreferencesProps) => {
         <p className={styles.itemTitle}>Shortcut</p>
         <Grid container className={styles.itemRow}>
           <FormControl className={styles.itemShortcut} variant="outlined">
-            <InputLabel htmlFor="outlined-adornment-password">
+            <InputLabel htmlFor="shortcut">
               Shortcut to start or stop recording:
             </InputLabel>
             <OutlinedInput
-              id="outlined-adornment-password"
+              id="shortcut"
               type="text"
               readOnly
-              value={shortcut}
+              value={shortcutForDisplay(shortcut)}
               error={!shortcutValidated}
               onKeyDown={(e: any) => {
                 if (e.key === 'Escape') {
                   resetShortcut();
                 } else {
-                  setShortcutKey(textifyShortcut(e));
+                  setShortcutKey(extractShortcut(e));
                 }
               }}
               endAdornment={
