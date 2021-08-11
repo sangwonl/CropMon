@@ -8,18 +8,18 @@ export const INITIAL_SHORTCUT = `${isMac() ? 'Cmd' : 'Win'} + Shift + E`;
 
 export const iconizeShortcut = (shortcut: string) => {
   return shortcut
-    .replace('Win', '❖')
-    .replace('Cmd', '⌘')
-    .replace('Shift', '⇧')
-    .replace('Alt', '⌥')
-    .replace('Ctrl', '⌃')
     .replace('Enter', '↩')
     .replace('Backspace', '⌫')
-    .replace('Tab', '⇥')
     .replace('ArrowLeft', '←')
     .replace('ArrowRight', '→')
     .replace('ArrowUp', '↑')
     .replace('ArrowDown', '↓');
+  // .replace('Win', '❖')
+  // .replace('Cmd', '⌘')
+  // .replace('Shift', '⇧')
+  // .replace('Alt', '⌥')
+  // .replace('Ctrl', '⌃')
+  // .replace('Tab', '⇥')
 };
 
 export const textifyShortcut = (e: any) => {

@@ -82,7 +82,10 @@ export abstract class AppTray {
     store.dispatch(quitApplication());
   }
 
-  private getMenuItemTemplById(contextMenuTempl: any, id: string): any {
+  private getMenuItemTemplById(
+    contextMenuTempl: any,
+    id: string
+  ): MenuItemConstructorOptions | MenuItem {
     return contextMenuTempl.find((m: any) => m.id === id)!;
   }
 
@@ -96,11 +99,11 @@ export abstract class AppTray {
     const templ = this.buildMenuTempl();
 
     const menuStartCapt = this.getMenuItemTemplById(templ, 'start-capture');
-    menuStartCapt.label = menuStartCapt.label.replace('__shortcut__', shortcut);
+    menuStartCapt.accelerator = shortcut;
     menuStartCapt.visible = !this.isRecording;
 
     const menuStopCapt = this.getMenuItemTemplById(templ, 'stop-capture');
-    menuStopCapt.label = menuStopCapt.label.replace('__shortcut__', shortcut);
+    menuStopCapt.accelerator = shortcut;
     menuStopCapt.visible = this.isRecording;
 
     const recOpts = this.getMenuItemTemplById(templ, 'recording-options');
@@ -156,12 +159,12 @@ class WinAppTray extends AppTray {
       },
       {
         id: 'start-capture',
-        label: 'Start &Recording  __shortcut__',
+        label: 'Start &Recording',
         click: super.onStartRecording,
       },
       {
         id: 'stop-capture',
-        label: 'Stop &Recording  __shortcut__',
+        label: 'Stop &Recording',
         click: super.onStopRecording,
         visible: false,
       },
@@ -235,12 +238,12 @@ class MacAppTray extends AppTray {
       },
       {
         id: 'start-capture',
-        label: 'Start Recording  __shortcut__',
+        label: 'Start Recording',
         click: super.onStartRecording,
       },
       {
         id: 'stop-capture',
-        label: 'Stop Recording  __shortcut__',
+        label: 'Stop Recording',
         click: super.onStopRecording,
         visible: false,
       },
