@@ -159,7 +159,7 @@ export const Preferences = (props: PreferencesProps) => {
             disabled={!shortcutValidated}
             onClick={() => {
               const newPrefs: IPreferences = {
-                version: origPrefs.version,
+                ...origPrefs,
                 openRecordHomeWhenRecordCompleted: openRecordHome,
                 recordHome,
                 shortcut,
