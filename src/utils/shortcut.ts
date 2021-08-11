@@ -4,30 +4,13 @@
 import { isMac } from './process';
 import { capitalize } from './strings';
 
-export const INITIAL_SHORTCUT = `${isMac() ? 'Cmd' : 'Win'} + Shift + E`;
+export const INITIAL_SHORTCUT = `Meta + Shift + E`;
 
-export const iconizeShortcut = (shortcut: string) => {
-  return shortcut
-    .replace('Enter', '↩')
-    .replace('Backspace', '⌫')
-    .replace('ArrowLeft', '←')
-    .replace('ArrowRight', '→')
-    .replace('ArrowUp', '↑')
-    .replace('ArrowDown', '↓');
-  // .replace('Win', '❖')
-  // .replace('Cmd', '⌘')
-  // .replace('Shift', '⇧')
-  // .replace('Alt', '⌥')
-  // .replace('Ctrl', '⌃')
-  // .replace('Tab', '⇥')
-};
-
-export const textifyShortcut = (e: any) => {
-  const key = String.fromCharCode(e.keyCode);
-  const modifiers = ['Meta', 'Shift', 'Alt', 'Control'];
+export const extractShortcut = (e: any) => {
+  const modifierCodes = [16, 17, 18, 91]; // Shift, Ctrl, Alt, Meta
   const pressed = [];
   if (e.metaKey) {
-    pressed.push(isMac() ? 'Cmd' : 'Win');
+    pressed.push('Meta');
   }
   if (e.shiftKey) {
     pressed.push('Shift');
@@ -38,8 +21,9 @@ export const textifyShortcut = (e: any) => {
   if (e.ctrlKey) {
     pressed.push('Ctrl');
   }
-  if (key.length > 0 && !modifiers.includes(key)) {
-    pressed.push(iconizeShortcut(capitalize(key)));
+  if (!modifierCodes.includes(e.keyCode)) {
+    const key = String.fromCharCode(e.keyCode);
+    pressed.push(capitalize(key));
   }
 
   return pressed.join(' + ');
@@ -47,7 +31,7 @@ export const textifyShortcut = (e: any) => {
 
 export const validateShortcut = (s: string): boolean => {
   const keys = s.split(' + ');
-  const modifiers = ['Cmd', 'Win', 'Shift', 'Alt', 'Ctrl'];
+  const modifiers = ['Meta', 'Shift', 'Alt', 'Ctrl'];
 
   let validateModifier = false;
   modifiers.forEach((m) => {
@@ -61,4 +45,8 @@ export const validateShortcut = (s: string): boolean => {
   const validateKey = keys.length === 1;
 
   return validateModifier && validateKey;
+};
+
+export const shortcutForDisplay = (s: string): string => {
+  return s.replace('Meta', isMac() ? 'Cmd' : 'Win');
 };

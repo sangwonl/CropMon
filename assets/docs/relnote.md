@@ -6,6 +6,7 @@ _12 Aug 2021_
 
 - Fix to prevent recording initial veil
 - Fix crash when closing preferences
+- Improve shortcut readability
 
 ### v0.5.0
 

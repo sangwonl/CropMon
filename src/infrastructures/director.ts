@@ -30,8 +30,8 @@ import { ProgressDialog } from '@ui/widgets/progressdialog';
 import { StaticPagePopup } from '@ui/widgets/staticpage';
 import { StaticPagePopupOptions } from '@ui/widgets/staticpage/shared';
 import { getOverlayScreenBounds, SPARE_PIXELS } from '@utils/bounds';
-import { iconizeShortcut } from '@utils/shortcut';
 import { isMac } from '@utils/process';
+import { shortcutForDisplay } from '@utils/shortcut';
 
 import { version as curVersion } from '../package.json';
 
@@ -129,7 +129,7 @@ export class UiDirector implements IUiDirector {
     recording?: boolean
   ): Promise<void> {
     await this.appTray?.refreshContextMenu(
-      iconizeShortcut(prefs.shortcut),
+      prefs.shortcut,
       recording,
       prefs.recordMicrophone
     );
@@ -149,7 +149,7 @@ export class UiDirector implements IUiDirector {
     if (this.aboutContent === undefined) {
       const aboutHtmlPath = assetPathResolver('docs/about.html');
       this.aboutContent = (await fs.promises.readFile(aboutHtmlPath, 'utf-8'))
-        .replace('__shortcut__', iconizeShortcut(prefs.shortcut))
+        .replace('__shortcut__', shortcutForDisplay(prefs.shortcut))
         .replace('__version__', curVersion);
     }
 
