@@ -72,6 +72,7 @@ export const Preferences = (props: PreferencesProps) => {
           <FormControlLabel
             control={
               <Checkbox
+                tabIndex={-1}
                 color="primary"
                 name="run-at-startup"
                 checked={runAtStartup}
@@ -92,9 +93,13 @@ export const Preferences = (props: PreferencesProps) => {
             label="Record files to:"
             variant="outlined"
             value={recordHome}
-            InputProps={{ readOnly: true }}
+            inputProps={{ readOnly: true, tabIndex: -1 }}
           />
-          <Button variant="outlined" onClick={props.onChooseRecordHome}>
+          <Button
+            tabIndex={-1}
+            variant="outlined"
+            onClick={props.onChooseRecordHome}
+          >
             ...
           </Button>
         </Grid>
@@ -102,6 +107,7 @@ export const Preferences = (props: PreferencesProps) => {
           <FormControlLabel
             control={
               <Checkbox
+                tabIndex={-1}
                 color="primary"
                 name="open-record-home-when-completed"
                 checked={openRecordHome}
@@ -150,6 +156,7 @@ export const Preferences = (props: PreferencesProps) => {
                 )
               }
               labelWidth={252}
+              inputProps={{ tabIndex: -1 }}
             />
           </FormControl>
         </Grid>
@@ -157,6 +164,7 @@ export const Preferences = (props: PreferencesProps) => {
       <div className={styles.itemContainer}>
         <Grid container className={styles.buttonRow}>
           <Button
+            tabIndex={-1}
             className={styles.button}
             color="secondary"
             variant="contained"
@@ -175,6 +183,7 @@ export const Preferences = (props: PreferencesProps) => {
             Save
           </Button>
           <Button
+            tabIndex={-1}
             className={styles.button}
             color="default"
             variant="contained"
