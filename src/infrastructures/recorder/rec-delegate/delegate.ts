@@ -104,28 +104,34 @@ const withCanvasProcess = (
   canvasElem.height = Math.floor(h * projectionRate);
 
   const canvasCtx = canvasElem.getContext('2d')!;
+  const interval = Math.floor(1000 / frameRate);
+
   const render = () => {
-    if (recordState !== 'recording') {
+    if (recordState === 'stopped') {
       return;
     }
 
-    drawCtx.forEach((ctx: any) => {
-      canvasCtx.drawImage(
-        ctx.videoElem,
-        ctx.srcBounds.x,
-        ctx.srcBounds.y,
-        ctx.srcBounds.width,
-        ctx.srcBounds.height,
-        Math.floor(ctx.dstBounds.x * projectionRate),
-        Math.floor(ctx.dstBounds.y * projectionRate),
-        Math.floor(ctx.dstBounds.width * projectionRate),
-        Math.floor(ctx.dstBounds.height * projectionRate)
-      );
-    });
+    if (recordState === 'recording') {
+      drawCtx.forEach((ctx: any) => {
+        canvasCtx.drawImage(
+          ctx.videoElem,
+          ctx.srcBounds.x,
+          ctx.srcBounds.y,
+          ctx.srcBounds.width,
+          ctx.srcBounds.height,
+          Math.floor(ctx.dstBounds.x * projectionRate),
+          Math.floor(ctx.dstBounds.y * projectionRate),
+          Math.floor(ctx.dstBounds.width * projectionRate),
+          Math.floor(ctx.dstBounds.height * projectionRate)
+        );
+      });
+    }
+
+    setTimeout(render, interval);
   };
 
   // In electron browser window web content, we can't use renderFrame..
-  setInterval(render, Math.floor(1000 / frameRate));
+  setTimeout(render);
 
   return (canvasElem as any).captureStream(frameRate);
 };
@@ -201,7 +207,7 @@ ipcRenderer.on('start-record', async (_event, data) => {
   ensureTempDirPathExists(tempFilePath);
 
   setTimeout(() => {
-    mediaRecorder.start(1000);
+    mediaRecorder.start(500);
     recordState = 'recording';
   }, 500);
 
