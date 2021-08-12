@@ -106,7 +106,7 @@ const withCanvasProcess = (
   const canvasCtx = canvasElem.getContext('2d')!;
   const interval = Math.floor(1000 / frameRate);
 
-  const render = () => {
+  const renderCapturedToCanvas = () => {
     if (recordState === 'stopped') {
       return;
     }
@@ -127,11 +127,11 @@ const withCanvasProcess = (
       });
     }
 
-    setTimeout(render, interval);
+    setTimeout(renderCapturedToCanvas, interval);
   };
 
   // In electron browser window web content, we can't use renderFrame..
-  setTimeout(render);
+  setTimeout(renderCapturedToCanvas);
 
   return (canvasElem as any).captureStream(frameRate);
 };

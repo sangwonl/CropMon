@@ -1,12 +1,13 @@
 ## Release Notes
 
-### v0.5.1
+### v0.5.2
 
-_12 Aug 2021_
+_13 Aug 2021_
 
 - Fix to prevent recording initial veil
 - Fix crash when closing preferences
 - Improve shortcut readability
+- Improve recording performance slightly
 
 ### v0.5.0
 
