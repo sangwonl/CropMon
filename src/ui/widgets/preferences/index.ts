@@ -40,24 +40,29 @@ export class PreferencesModal extends Widget {
 
     this.loadURL(`file://${__dirname}/../preferences/index.html`);
 
-    ipcMain.on(
-      IPC_EVT_ON_RECORD_HOME_SELECTION,
-      async (_event: any, _data: any) => {
-        const { filePaths } = await dialog.showOpenDialog(this, {
-          defaultPath: this.prefs!.recordHome ?? app.getPath('videos'),
-          properties: ['openDirectory'],
-        });
-        this.prefs!.recordHome = filePaths.length > 0 ? filePaths[0] : '';
-        this.notifyPrefsUpdated();
-      }
-    );
+    const onRecordHomeSel = async (_event: any, _data: any) => {
+      const { filePaths } = await dialog.showOpenDialog(this, {
+        defaultPath: this.prefs!.recordHome ?? app.getPath('videos'),
+        properties: ['openDirectory'],
+      });
+      this.prefs!.recordHome = filePaths.length > 0 ? filePaths[0] : '';
+      this.notifyPrefsUpdated();
+    };
 
-    ipcMain.on(IPC_EVT_ON_CLOSE, (_event: any, data: IpcEvtOnClose) => {
+    const onClose = (_event: any, data: IpcEvtOnClose) => {
       this.closeResolver?.(data.preferences);
-    });
+    };
+
+    ipcMain.on(IPC_EVT_ON_RECORD_HOME_SELECTION, onRecordHomeSel);
+    ipcMain.on(IPC_EVT_ON_CLOSE, onClose);
 
     this.on('close', () => {
       this.closeResolver?.(undefined);
+    });
+
+    this.on('closed', () => {
+      ipcMain.off(IPC_EVT_ON_RECORD_HOME_SELECTION, onRecordHomeSel);
+      ipcMain.off(IPC_EVT_ON_CLOSE, onClose);
     });
   }
 

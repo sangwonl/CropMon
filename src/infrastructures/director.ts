@@ -119,9 +119,9 @@ export class UiDirector implements IUiDirector {
     this.appTray = isMac() ? AppTray.forMac() : AppTray.forWindows();
     this.captureOverlay = new CaptureOverlayWrap();
     this.preferencesModal = new CachedPreferencesModal(PreferencesModal, 30);
-    this.aboutPopup = new CachedStaticPagePopup(StaticPagePopup, 30);
-    this.relNotePopup = new CachedStaticPagePopup(StaticPagePopup, 30);
-    this.helpPopup = new CachedStaticPagePopup(StaticPagePopup, 30);
+    this.aboutPopup = new CachedStaticPagePopup(StaticPagePopup, 10);
+    this.relNotePopup = new CachedStaticPagePopup(StaticPagePopup, 10);
+    this.helpPopup = new CachedStaticPagePopup(StaticPagePopup, 10);
   }
 
   async refreshTrayState(

@@ -2,7 +2,7 @@
 
 ### v0.5.3
 
-_13 Aug 2021_
+_12 Aug 2021_
 
 - Fix to prevent recording initial veil
 - Fix crash when closing preferences
