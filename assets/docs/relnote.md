@@ -5,6 +5,8 @@
 _15 Aug 2021_
 
 - Fix relaunch fail after auto update
+- Improve minor UI (capture area, tooltip)
+- Long live the Korean independence
 
 ### v0.5.3
 

@@ -29,6 +29,9 @@ import {
 } from '@ui/redux/slice';
 import { assetPathResolver } from '@utils/asset';
 
+const TOOLTIP_GREETING = "Roar! I'm here to help you record the screen";
+const TOOLTIP_RECORDING = 'Now recording.. Click to stop';
+
 export abstract class AppTray {
   tray: Tray;
   menu: Menu | undefined;
@@ -39,7 +42,7 @@ export abstract class AppTray {
     private iconRecStop: NativeImage
   ) {
     this.tray = new Tray(this.iconDefault);
-    this.tray.setToolTip("Roar! I'm here to help you record the screen");
+    this.tray.setToolTip(TOOLTIP_GREETING);
 
     this.setupClickHandler();
   }
@@ -113,6 +116,7 @@ export abstract class AppTray {
     this.menu = Menu.buildFromTemplate(templ);
     this.tray.setContextMenu(this.menu);
     this.tray.setImage(isRecording ? this.iconRecStop : this.iconDefault);
+    this.tray.setToolTip(isRecording ? TOOLTIP_RECORDING : TOOLTIP_GREETING);
   }
 
   static forWindows(): AppTray {
