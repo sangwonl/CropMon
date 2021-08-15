@@ -38,7 +38,9 @@ const initializeApp = async () => {
 
   uiDirector.refreshTrayState(await prefsUseCase.fetchUserPreferences(), false);
 
-  app.on('will-quit', () => {});
+  app.on('will-quit', () => {
+    log.info('app will quit... bye!');
+  });
 };
 
 const start = async () => {

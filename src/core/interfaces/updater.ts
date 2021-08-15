@@ -12,4 +12,5 @@ export interface IAppUpdater {
 
   cancelUpdate(): void;
   downloadUpdate(): void;
+  quitAndInstall(): void;
 }

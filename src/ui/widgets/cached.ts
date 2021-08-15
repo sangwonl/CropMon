@@ -58,4 +58,8 @@ export class CachedWidget<W extends Widget, C, R> {
 
     return result;
   }
+
+  close() {
+    this.widget?.destroy();
+  }
 }

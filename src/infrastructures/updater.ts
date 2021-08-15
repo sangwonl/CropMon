@@ -41,6 +41,8 @@ export class AppUpdater implements IAppUpdater {
     onDownloadProgress: (progressInfo: any) => void,
     onUpdateDownloaded: () => void
   ): Promise<void> {
+    this.clearListeners();
+
     autoUpdater.on('update-available', onUpdateAvailable);
     autoUpdater.on('update-not-available', onUpdateNotAvailable);
     autoUpdater.on('download-progress', onDownloadProgress);
@@ -58,5 +60,21 @@ export class AppUpdater implements IAppUpdater {
 
   downloadUpdate() {
     autoUpdater.downloadUpdate();
+  }
+
+  quitAndInstall() {
+    autoUpdater.quitAndInstall(true, true);
+  }
+
+  private clearListeners() {
+    const offListener = (eventName: string) => {
+      autoUpdater.listeners(eventName).forEach((l: any) => {
+        autoUpdater.off(eventName, l);
+      });
+    };
+    offListener('update-available');
+    offListener('update-not-available');
+    offListener('download-progress');
+    offListener('update-downloaded');
   }
 }
