@@ -59,4 +59,8 @@ export class AppUpdater implements IAppUpdater {
   downloadUpdate() {
     autoUpdater.downloadUpdate();
   }
+
+  quitAndInstall() {
+    autoUpdater.quitAndInstall(true, true);
+  }
 }

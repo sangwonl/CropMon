@@ -1,5 +1,11 @@
 ## Release Notes
 
+### v0.5.4
+
+_15 Aug 2021_
+
+- Fix relaunch fail after auto update
+
 ### v0.5.3
 
 _12 Aug 2021_

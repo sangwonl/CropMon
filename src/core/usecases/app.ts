@@ -51,7 +51,7 @@ export class AppUseCase {
       this.uiDirector.startDownloadUpdate(
         () => this.appUpdater.downloadUpdate(),
         () => this.appUpdater.cancelUpdate(),
-        () => setImmediate(() => this.uiDirector.quitApplication(true))
+        () => this.appUpdater.quitAndInstall()
       );
     }
   };

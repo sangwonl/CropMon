@@ -4,7 +4,7 @@ import { IPreferences } from '@core/entities/preferences';
 export interface IUiDirector {
   initialize(): void;
   refreshTrayState(prefs: IPreferences, recording?: boolean): Promise<void>;
-  quitApplication(relaunch?: boolean): void;
+  quitApplication(): void;
   openAboutPagePopup(prefs: IPreferences): Promise<void>;
   openReleaseNotesPopup(): Promise<void>;
   openHelpPagePopup(): Promise<void>;

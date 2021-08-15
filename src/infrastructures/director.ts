@@ -56,7 +56,7 @@ class CaptureOverlayWrap {
     // should wait for react component rerender
     setTimeout(() => {
       this.widget?.hide();
-    }, 300);
+    }, 500);
   }
 
   close() {
@@ -135,13 +135,15 @@ export class UiDirector implements IUiDirector {
     );
   }
 
-  quitApplication(relaunch?: boolean): void {
+  quitApplication(): void {
     this.captureOverlay?.close();
+    this.preferencesModal?.close();
+    this.aboutPopup?.close();
+    this.relNotePopup?.close();
+    this.helpPopup?.close();
 
-    if (relaunch) {
-      app.relaunch();
-    }
     app.quit();
+
     this.tracker.event('app-lifecycle', 'quit');
   }
 
@@ -236,7 +238,7 @@ export class UiDirector implements IUiDirector {
   async startDownloadUpdate(
     onReady: () => void,
     onCancel: () => void,
-    onQuit: () => void
+    onQuitAndInstall: () => void
   ): Promise<void> {
     this.updateProgressDialog = new ProgressDialog({
       title: 'Update Download',
@@ -255,15 +257,17 @@ export class UiDirector implements IUiDirector {
       onReady();
     });
 
-    const restart = await this.updateProgressDialog?.open();
-    if (restart) {
-      onQuit();
+    const shouldUpdate = await this.updateProgressDialog?.open();
+    this.updateProgressDialog?.destroy();
+    this.updateProgressDialog = undefined;
+
+    if (shouldUpdate) {
+      onQuitAndInstall();
+      // WORKAROUND: to make sure app quits completely
+      setTimeout(() => this.quitApplication(), 500);
     } else {
       onCancel();
     }
-
-    this.updateProgressDialog?.destroy();
-    this.updateProgressDialog = undefined;
   }
 
   setUpdateDownloadProgress(percent: number): void {
