@@ -3,7 +3,6 @@
 /* eslint-disable max-classes-per-file */
 
 import { emptyBounds } from '@utils/bounds';
-import { isMac } from '@utils/process';
 import { assetPathResolver } from '@utils/asset';
 import { WidgetType } from '@ui/widgets/types';
 import { Widget } from '@ui/widgets/widget';
@@ -18,7 +17,7 @@ export class CaptureOverlay extends Widget {
       resizable: false,
       maximizable: false,
       minimizable: false,
-      focusable: isMac(),
+      focusable: true,
       skipTaskbar: true,
       transparent: true,
       hideWhenClose: false,

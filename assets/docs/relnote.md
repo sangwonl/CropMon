@@ -1,5 +1,11 @@
 ## Release Notes
 
+### v0.5.5
+
+_16 Aug 2021_
+
+- Bugfix and improve area selection canceling
+
 ### v0.5.4
 
 _15 Aug 2021_

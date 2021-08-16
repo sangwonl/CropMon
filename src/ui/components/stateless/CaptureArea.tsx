@@ -5,11 +5,11 @@
 /* eslint-disable import/prefer-default-export */
 
 import React, {
-  useState,
   MouseEvent,
   Dispatch,
   SetStateAction,
   FC,
+  useState,
   useEffect,
 } from 'react';
 import classNames from 'classnames';
@@ -137,7 +137,7 @@ const handleMouseUp =
     }
 
     // if click after already area settled or right click while selecting
-    if (selCtx.selected || e.button === 2) {
+    if (!selCtx.started || selCtx.selected || e.button === 2) {
       setSelCtx(initialSelCtx);
       onSelectionCancel();
       return;
@@ -217,21 +217,19 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     }
   }, [isRecording, boundsSelected]);
 
-  const onMouseDown = handleMouseDown(
-    getCursorPt,
-    onStart,
-    onCancel,
-    selCtx,
-    setSelCtx
-  );
-  const onMouseUp = handleMouseUp(
-    getCursorPt,
-    onCancel,
-    onFinish,
-    selCtx,
-    setSelCtx
-  );
-  const onMouseMove = handleMouseMove(onHovering, selCtx, setSelCtx);
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Escape') {
+        setSelCtx(initialSelCtx);
+        onCancel();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, []);
+
   const calcBounds = calcSelectedBounds(selCtx);
 
   return (
@@ -242,9 +240,21 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
         [styles.wrapperHack]: !isRecording,
         [styles.crosshair]: !selCtx.selected,
       })}
-      onMouseDown={onMouseDown}
-      onMouseUp={onMouseUp}
-      onMouseMove={onMouseMove}
+      onMouseDown={handleMouseDown(
+        getCursorPt,
+        onStart,
+        onCancel,
+        selCtx,
+        setSelCtx
+      )}
+      onMouseUp={handleMouseUp(
+        getCursorPt,
+        onCancel,
+        onFinish,
+        selCtx,
+        setSelCtx
+      )}
+      onMouseMove={handleMouseMove(onHovering, selCtx, setSelCtx)}
     >
       {active && (
         <div
