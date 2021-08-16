@@ -1,10 +1,11 @@
 ## Release Notes
 
-### v0.5.5
+### v0.5.6
 
 _16 Aug 2021_
 
 - Bugfix and improve area selection canceling
+- Fix record fail when device does not support audio
 
 ### v0.5.4
 
