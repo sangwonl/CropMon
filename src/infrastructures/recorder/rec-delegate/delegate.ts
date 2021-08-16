@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
@@ -137,13 +138,17 @@ const withCanvasProcess = (
 };
 
 const attachAudioStreamForMic = async (stream: MediaStream) => {
-  const audioStream = await navigator.mediaDevices.getUserMedia(
-    getAudioConstraint()
-  );
+  try {
+    const audioStream = await navigator.mediaDevices.getUserMedia(
+      getAudioConstraint()
+    );
 
-  const tracks = audioStream.getAudioTracks();
-  if (tracks.length > 0) {
-    tracks.forEach((t: MediaStreamTrack) => stream.addTrack(t));
+    const tracks = audioStream.getAudioTracks();
+    if (tracks.length > 0) {
+      tracks.forEach((t: MediaStreamTrack) => stream.addTrack(t));
+    }
+  } catch (error) {
+    console.error('no available audio stream found', error);
   }
 
   return stream;
