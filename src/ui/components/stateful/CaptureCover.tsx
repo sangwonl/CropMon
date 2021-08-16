@@ -1,10 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-unused-prop-types */
 /* eslint-disable import/prefer-default-export */
 
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { debounce } from 'debounce';
 
@@ -62,6 +63,18 @@ export const CaptureCover = () => {
   const [recording, setRecording] = useState<boolean>(false);
   const [boundsSelected, setBoundsSelected] = useState<boolean>(false);
 
+  const onSelectionStart = useCallback(() => {
+    dispatch(startAreaSelection());
+  }, []);
+
+  const onSelectionFinish = useCallback((bounds: IBounds) => {
+    dispatch(finishAreaSelection({ bounds }));
+  }, []);
+
+  const onSelectionCancel = useCallback(() => {
+    dispatch(disableCaptureMode());
+  }, []);
+
   useLayoutEffect(() => {
     adjustBodySize(captureOverlay);
   }, [captureOverlay]);
@@ -71,18 +84,6 @@ export const CaptureCover = () => {
     setRecording(captureArea.isRecording);
     setBoundsSelected(!isEmptyBounds(captureArea.selectedBounds));
   }, [captureArea]);
-
-  const onSelectionStart = () => {
-    dispatch(startAreaSelection());
-  };
-
-  const onSelectionFinish = (bounds: IBounds) => {
-    dispatch(finishAreaSelection({ bounds }));
-  };
-
-  const onSelectionCancel = () => {
-    dispatch(disableCaptureMode());
-  };
 
   return (
     <div className={styles.cover}>
