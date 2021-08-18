@@ -1,5 +1,11 @@
 ## Release Notes
 
+### v0.6.0
+
+_26 Aug 2021_
+
+- Support low quality mode for reducing file size
+
 ### v0.5.6
 
 _16 Aug 2021_

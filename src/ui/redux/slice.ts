@@ -32,7 +32,7 @@ const slice = createSlice({
 
     // preferences
     openPreferences: () => {},
-    toggleRecordingMic: (_s, _a: PayloadAction<IRecordingOptions>) => {},
+    toggleRecOptions: (_s, _a: PayloadAction<IRecordingOptions>) => {},
   },
 });
 
@@ -42,7 +42,7 @@ export const {
   showAbout,
   showHelp,
   openPreferences,
-  toggleRecordingMic,
+  toggleRecOptions,
   quitApplication,
   enableCaptureMode,
   disableCaptureMode,

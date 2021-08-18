@@ -8,7 +8,7 @@ import { app } from 'electron';
 import Store from 'electron-store';
 
 import { TYPES } from '@di/types';
-import { IPreferences } from '@core/entities/preferences';
+import { IPreferences, RecordQualityMode } from '@core/entities/preferences';
 import { IPreferencesStore } from '@core/interfaces/preferences';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
 import { getPlatform } from '@utils/process';
@@ -50,6 +50,7 @@ export class PreferencesStore implements IPreferencesStore {
     this.store.set('shortcut', prefs.shortcut);
     this.store.set('runAtStartup', prefs.runAtStartup);
     this.store.set('recordMicrophone', prefs.recordMicrophone);
+    this.store.set('recordQualityMode', prefs.recordQualityMode);
   }
 
   private initialPreferences(): IPreferences {
@@ -61,6 +62,7 @@ export class PreferencesStore implements IPreferencesStore {
       shortcut: INITIAL_SHORTCUT,
       runAtStartup: true,
       recordMicrophone: false,
+      recordQualityMode: 'normal',
     };
   }
 
@@ -73,6 +75,7 @@ export class PreferencesStore implements IPreferencesStore {
       shortcut: this.store.get('shortcut', INITIAL_SHORTCUT) as string,
       runAtStartup: this.store.get('runAtStartup', true) as boolean,
       recordMicrophone: this.store.get('recordMicrophone', false) as boolean,
+      recordQualityMode: this.store.get('recordQualityMode', 'normal') as RecordQualityMode,
     };
   }
 }

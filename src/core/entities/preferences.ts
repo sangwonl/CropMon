@@ -1,3 +1,5 @@
+export type RecordQualityMode = 'low' | 'normal';
+
 export interface IPreferences {
   initialLoaded: boolean;
   version: string;
@@ -6,4 +8,5 @@ export interface IPreferences {
   shortcut: string;
   runAtStartup: boolean;
   recordMicrophone: boolean;
+  recordQualityMode: RecordQualityMode;
 }

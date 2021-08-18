@@ -8,7 +8,8 @@ export interface ITargetSlice {
 export interface IRecordContext {
   targetSlices: ITargetSlice[];
   targetBounds: IBounds;
-  projectionRate: number;
   frameRate: number;
+  scaleDownFactor: number;
+  videoBitrates?: number;
   recordMicrophone: boolean;
 }
