@@ -7,6 +7,7 @@ import { IBounds } from '@core/entities/screen';
 import { AppUseCase } from '@core/usecases/app';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { CaptureUseCase } from '@core/usecases/capture';
+import { IRecordingOptions } from '@core/entities/ui';
 
 @injectable()
 export class ActionDispatcher {
@@ -36,8 +37,8 @@ export class ActionDispatcher {
     this.prefsUseCase.openPreferencesModal();
   }
 
-  toggleRecordingMic(recordMicrophone: boolean) {
-    this.captureUseCase.toggleRecordingMic(recordMicrophone);
+  toggleRecordingOptions(recOptions: IRecordingOptions) {
+    this.captureUseCase.toggleRecordingOptions(recOptions);
   }
 
   enableCaptureSelection() {

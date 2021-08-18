@@ -19,6 +19,16 @@ import { IRecordContext, ITargetSlice } from './types';
 const MEDIA_MIME_TYPE = 'video/webm; codecs=h264,opus';
 const NUM_CHUNKS_TO_FLUSH = 100;
 
+const recorderOpts = (mimeType?: string, videoBitrates?: number) => {
+  if (videoBitrates !== undefined) {
+    return {
+      mimeType: mimeType ?? MEDIA_MIME_TYPE,
+      videoBitsPerSecond: videoBitrates,
+    };
+  }
+  return { mimeType };
+};
+
 let mediaRecorder: MediaRecorder;
 let recordState: 'initial' | 'recording' | 'stopped' = 'initial';
 let tempFilePath: string;
@@ -98,11 +108,11 @@ const withCanvasProcess = (
   h: number,
   drawCtx: any[],
   frameRate: number,
-  projectionRate: number
+  scaleDownFactor: number
 ): MediaStream => {
   const canvasElem = document.createElement('canvas') as HTMLCanvasElement;
-  canvasElem.width = Math.floor(w * projectionRate);
-  canvasElem.height = Math.floor(h * projectionRate);
+  canvasElem.width = Math.floor(w * scaleDownFactor);
+  canvasElem.height = Math.floor(h * scaleDownFactor);
 
   const canvasCtx = canvasElem.getContext('2d')!;
   const interval = Math.floor(1000 / frameRate);
@@ -120,10 +130,10 @@ const withCanvasProcess = (
           ctx.srcBounds.y,
           ctx.srcBounds.width,
           ctx.srcBounds.height,
-          Math.floor(ctx.dstBounds.x * projectionRate),
-          Math.floor(ctx.dstBounds.y * projectionRate),
-          Math.floor(ctx.dstBounds.width * projectionRate),
-          Math.floor(ctx.dstBounds.height * projectionRate)
+          Math.floor(ctx.dstBounds.x * scaleDownFactor),
+          Math.floor(ctx.dstBounds.y * scaleDownFactor),
+          Math.floor(ctx.dstBounds.width * scaleDownFactor),
+          Math.floor(ctx.dstBounds.height * scaleDownFactor)
         );
       });
     }
@@ -185,9 +195,10 @@ ipcRenderer.on('start-record', async (_event, data) => {
   const recordCtx: IRecordContext = data.recordContext;
   const {
     targetBounds: { width, height },
-    projectionRate,
+    scaleDownFactor,
     frameRate,
-    recordMicrophone: enableMic,
+    videoBitrates,
+    recordMicrophone,
   } = recordCtx;
 
   const drawCtx = await createDrawCtx(recordCtx);
@@ -196,15 +207,15 @@ ipcRenderer.on('start-record', async (_event, data) => {
     height,
     drawCtx,
     frameRate,
-    projectionRate
+    scaleDownFactor
   );
 
-  if (enableMic) {
+  if (recordMicrophone) {
     await attachAudioStreamForMic(canvasStream);
   }
 
-  const recorderOpts = { mimeType: MEDIA_MIME_TYPE };
-  mediaRecorder = new MediaRecorder(canvasStream, recorderOpts);
+  const recOpts = recorderOpts(MEDIA_MIME_TYPE, videoBitrates);
+  mediaRecorder = new MediaRecorder(canvasStream, recOpts);
   mediaRecorder.ondataavailable = handleStreamDataAvailable;
   mediaRecorder.onstop = handleRecordStop;
 

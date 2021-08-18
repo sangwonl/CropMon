@@ -22,12 +22,13 @@ import {
   finishCapture,
   checkForUpdates,
   openPreferences,
-  toggleRecordingMic,
+  toggleRecOptions,
   quitApplication,
   showAbout,
   showHelp,
 } from '@ui/redux/slice';
 import { assetPathResolver } from '@utils/asset';
+import { IRecordingOptions } from '@core/entities/ui';
 
 const TOOLTIP_GREETING = "Roar! I'm here to help you record the screen";
 const TOOLTIP_RECORDING = 'Now recording.. Click to stop';
@@ -77,8 +78,12 @@ export abstract class AppTray {
     store.dispatch(openPreferences());
   }
 
+  protected onToggleLowQual(m: MenuItem) {
+    store.dispatch(toggleRecOptions({ enableLowQualityMode: m.checked }));
+  }
+
   protected onToggleMic(m: MenuItem) {
-    store.dispatch(toggleRecordingMic({ enableMicrophone: m.checked }));
+    store.dispatch(toggleRecOptions({ enableRecordMicrophone: m.checked }));
   }
 
   protected onQuit() {
@@ -95,12 +100,13 @@ export abstract class AppTray {
   async refreshContextMenu(
     shortcut: string,
     isRecording?: boolean,
-    enableMic?: boolean
+    recOptions?: IRecordingOptions
   ) {
     this.isRecording = isRecording ?? false;
 
     const templ = this.buildMenuTempl();
 
+    // update recording operation
     const menuStartCapt = this.getMenuItemTemplById(templ, 'start-capture');
     menuStartCapt.accelerator = shortcut;
     menuStartCapt.visible = !this.isRecording;
@@ -109,10 +115,15 @@ export abstract class AppTray {
     menuStopCapt.accelerator = shortcut;
     menuStopCapt.visible = this.isRecording;
 
+    // update recording options
     const recOpts = this.getMenuItemTemplById(templ, 'recording-options');
     const micOpt = this.getMenuItemTemplById(recOpts.submenu, 'record-mic');
-    micOpt.checked = enableMic ?? false;
+    micOpt.checked = recOptions?.enableRecordMicrophone ?? false;
 
+    const reduceOpt = this.getMenuItemTemplById(recOpts.submenu, 'low-qual');
+    reduceOpt.checked = recOptions?.enableLowQualityMode ?? false;
+
+    // update tray properties
     this.menu = Menu.buildFromTemplate(templ);
     this.tray.setContextMenu(this.menu);
     this.tray.setImage(isRecording ? this.iconRecStop : this.iconDefault);
@@ -176,6 +187,12 @@ class WinAppTray extends AppTray {
         id: 'recording-options',
         label: 'Options',
         submenu: [
+          {
+            id: 'low-qual',
+            type: 'checkbox',
+            label: 'Low Quality Mode',
+            click: super.onToggleLowQual,
+          },
           {
             id: 'record-mic',
             type: 'checkbox',
@@ -255,6 +272,12 @@ class MacAppTray extends AppTray {
         id: 'recording-options',
         label: 'Options',
         submenu: [
+          {
+            id: 'low-qual',
+            type: 'checkbox',
+            label: 'Low Quality Mode',
+            click: super.onToggleLowQual,
+          },
           {
             id: 'record-mic',
             type: 'checkbox',

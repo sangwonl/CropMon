@@ -20,7 +20,7 @@ import { StateManager } from '@core/interfaces/state';
 import { IScreenRecorder } from '@core/interfaces/recorder';
 import { IUiDirector } from '@core/interfaces/director';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
-import { IUiState } from '@core/entities/ui';
+import { IRecordingOptions, IUiState } from '@core/entities/ui';
 import { IBounds } from '@core/entities/screen';
 
 import { PreferencesUseCase } from './preferences';
@@ -164,9 +164,18 @@ export class CaptureUseCase {
     await this.uiDirector.refreshTrayState(prefs, false);
   }
 
-  async toggleRecordingMic(recordMicrophone: boolean): Promise<void> {
+  async toggleRecordingOptions(recOptions: IRecordingOptions): Promise<void> {
     const prefs = await this.prefsUseCase.fetchUserPreferences();
-    prefs.recordMicrophone = recordMicrophone;
+
+    if (recOptions.enableLowQualityMode !== undefined) {
+      prefs.recordQualityMode = recOptions.enableLowQualityMode
+        ? 'low'
+        : 'normal';
+    }
+
+    if (recOptions.enableRecordMicrophone !== undefined) {
+      prefs.recordMicrophone = recOptions.enableRecordMicrophone;
+    }
 
     await this.prefsUseCase.updateUserPreference(prefs);
   }

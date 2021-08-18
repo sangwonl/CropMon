@@ -22,7 +22,7 @@ import {
   startAreaSelection,
   finishAreaSelection,
   finishCapture,
-  toggleRecordingMic,
+  toggleRecOptions,
 } from './slice';
 
 const actionDispatcher = diContainer.get(ActionDispatcher);
@@ -47,8 +47,8 @@ function onOpenPreferences() {
   actionDispatcher.openPreferences();
 }
 
-function onToggleRecordingMic(action: PayloadAction<IRecordingOptions>) {
-  actionDispatcher.toggleRecordingMic(action.payload.enableMicrophone);
+function onToggleRecOptions(action: PayloadAction<IRecordingOptions>) {
+  actionDispatcher.toggleRecordingOptions(action.payload);
 }
 
 function onEnableCaptureSelection() {
@@ -82,7 +82,7 @@ function* sagaEntry() {
 
   // preferences usecase
   yield takeLatest(openPreferences.type, onOpenPreferences);
-  yield takeLatest(toggleRecordingMic.type, onToggleRecordingMic);
+  yield takeLatest(toggleRecOptions.type, onToggleRecOptions);
 
   // capture related usecase
   yield takeLatest(enableCaptureMode.type, onEnableCaptureSelection);

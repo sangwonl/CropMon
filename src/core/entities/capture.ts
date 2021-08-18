@@ -32,6 +32,7 @@ export interface ICaptureContext {
   status: CaptureStatus;
   createdAt: number;
   outputPath: string | undefined;
+  lowQualityMode: boolean;
   recordMicrophone: boolean;
 }
 
@@ -46,6 +47,7 @@ export const createCaptureContext = (
     status: CaptureStatus.PREPARED,
     createdAt: dayjs().second(),
     outputPath: path.join(prefs.recordHome, `${fileName}.mp4`),
+    lowQualityMode: prefs.recordQualityMode === 'low',
     recordMicrophone: prefs.recordMicrophone,
   };
 };

@@ -128,11 +128,10 @@ export class UiDirector implements IUiDirector {
     prefs: IPreferences,
     recording?: boolean
   ): Promise<void> {
-    await this.appTray?.refreshContextMenu(
-      prefs.shortcut,
-      recording,
-      prefs.recordMicrophone
-    );
+    await this.appTray?.refreshContextMenu(prefs.shortcut, recording, {
+      enableLowQualityMode: prefs.recordQualityMode === 'low',
+      enableRecordMicrophone: prefs.recordMicrophone,
+    });
   }
 
   quitApplication(): void {

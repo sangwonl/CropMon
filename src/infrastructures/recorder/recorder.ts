@@ -39,6 +39,9 @@ import { IRecordContext, ITargetSlice } from './rec-delegate/types';
 type ScreenAndBoundsTuple = [IScreen, IBounds | undefined];
 
 const FRAMERATE = 20;
+const FRAMERATE_LOW = 17;
+const VIDEO_BITRATES_LOW = 800000;
+const SCALE_DOWN_FACTOR_LOW = 0.5;
 
 @injectable()
 export class ElectronScreenRecorder implements IScreenRecorder {
@@ -161,8 +164,8 @@ export class ElectronScreenRecorder implements IScreenRecorder {
     const screenArea = screenBounds.width * screenBounds.height;
     const targetArea = targetBounds.width * targetBounds.height;
     const targetAreaRate = targetArea / screenArea;
-    const projectionRate = targetAreaRate < 0.5 ? 1.0 : 0.7;
-    // const projectionRate =
+    const scaleDownFactor = targetAreaRate < 0.5 ? 1.0 : 0.7;
+    // const scaleDownFactor =
     //   targetBounds.width >= 32767 ||
     //   targetBounds.height >= 32767 ||
     //   targetArea >= 16384 * 16384
@@ -172,8 +175,11 @@ export class ElectronScreenRecorder implements IScreenRecorder {
     return {
       targetSlices,
       targetBounds,
-      projectionRate,
-      frameRate: FRAMERATE,
+      frameRate: ctx.lowQualityMode ? FRAMERATE_LOW : FRAMERATE,
+      scaleDownFactor: ctx.lowQualityMode
+        ? scaleDownFactor * SCALE_DOWN_FACTOR_LOW
+        : scaleDownFactor,
+      videoBitrates: ctx.lowQualityMode ? VIDEO_BITRATES_LOW : undefined,
       recordMicrophone: ctx.recordMicrophone,
     };
   }
