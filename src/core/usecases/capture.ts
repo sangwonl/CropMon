@@ -173,6 +173,10 @@ export class CaptureUseCase {
         : 'normal';
     }
 
+    if (recOptions.enableOutputAsGif !== undefined) {
+      prefs.outputFormat = recOptions.enableOutputAsGif ? 'gif' : 'mp4';
+    }
+
     if (recOptions.enableRecordMicrophone !== undefined) {
       prefs.recordMicrophone = recOptions.enableRecordMicrophone;
     }

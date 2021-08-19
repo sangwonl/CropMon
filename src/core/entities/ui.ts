@@ -24,6 +24,7 @@ export interface IFinishAreaSelection {
 export interface IRecordingOptions {
   enableLowQualityMode?: boolean;
   enableRecordMicrophone?: boolean;
+  enableOutputAsGif?: boolean;
 }
 
 export interface IUiState {

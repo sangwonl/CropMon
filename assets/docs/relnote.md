@@ -5,6 +5,7 @@
 _26 Aug 2021_
 
 - Support low quality mode for reducing file size
+- Support GIF animation image as outuput
 
 ### v0.5.6
 
