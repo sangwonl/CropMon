@@ -24,6 +24,7 @@ import {
 
 import { IBounds, IScreen } from '@core/entities/screen';
 import { ICaptureContext } from '@core/entities/capture';
+import { OutputFormat } from '@core/entities/preferences';
 import { IScreenRecorder } from '@core/interfaces/recorder';
 import { isProduction } from '@utils/process';
 import {
@@ -101,20 +102,26 @@ export class ElectronScreenRecorder implements IScreenRecorder {
   }
 
   async finish(ctx: ICaptureContext): Promise<void> {
-    const { outputPath, recordMicrophone: enableMic } = ctx;
+    const { outputPath, outputFormat, recordMicrophone: enableMic } = ctx;
 
     return new Promise((resolve, reject) => {
       const onRecordingFileSaved = async (_event: any, data: any) => {
+        await this.postProcess(
+          data.tempFilePath,
+          outputPath!,
+          outputFormat,
+          enableMic
+        );
+
         clearIpcListeners();
-        await this.postProcess(data.tempFilePath, outputPath!, enableMic);
-        this.renewBuildRenderer();
         resolve();
+        this.renewBuildRenderer();
       };
 
       const onRecordingFailed = (_event: any, _data: any) => {
         clearIpcListeners();
-        this.renewBuildRenderer();
         reject();
+        this.renewBuildRenderer();
       };
 
       const setupIpcListeners = () => {
@@ -175,12 +182,13 @@ export class ElectronScreenRecorder implements IScreenRecorder {
     return {
       targetSlices,
       targetBounds,
+      outputFormat: ctx.outputFormat,
+      recordMicrophone: ctx.recordMicrophone,
       frameRate: ctx.lowQualityMode ? FRAMERATE_LOW : FRAMERATE,
       scaleDownFactor: ctx.lowQualityMode
         ? scaleDownFactor * SCALE_DOWN_FACTOR_LOW
         : scaleDownFactor,
       videoBitrates: ctx.lowQualityMode ? VIDEO_BITRATES_LOW : undefined,
-      recordMicrophone: ctx.recordMicrophone,
     };
   }
 
@@ -206,15 +214,21 @@ export class ElectronScreenRecorder implements IScreenRecorder {
   private async postProcess(
     tempPath: string,
     outputPath: string,
+    outputFormat: OutputFormat,
     enableMic: boolean
   ) {
-    // fs.renameSync(tempPath, outputPath);
-    await this.postProcessWithFFmpeg(tempPath, outputPath, enableMic);
+    await this.postProcessWithFFmpeg(
+      tempPath,
+      outputPath,
+      outputFormat,
+      enableMic
+    );
   }
 
   private async postProcessWithFFmpeg(
     tempPath: string,
     outputPath: string,
+    outputFormat: OutputFormat,
     enableMic: boolean
   ) {
     const memInputName = path.basename(tempPath);
@@ -224,15 +238,12 @@ export class ElectronScreenRecorder implements IScreenRecorder {
       this.ffmpeg!.FS('writeFile', memInputName, await fetchFile(tempPath));
 
       await this.ffmpeg!.run(
-        '-i',
-        memInputName,
-        '-c:v',
-        'copy',
-        enableMic ? '-c:a' : '',
-        enableMic ? 'aac' : '',
-        '-r',
-        `${FRAMERATE}`,
-        memOutputName
+        ...this.chooseFFmpegArgs(
+          outputFormat,
+          enableMic,
+          memInputName,
+          memOutputName
+        )
       );
 
       await fs.promises.writeFile(
@@ -245,4 +256,48 @@ export class ElectronScreenRecorder implements IScreenRecorder {
       fs.unlink(tempPath, () => {});
     }
   }
+
+  private chooseFFmpegArgs = (
+    outFmt: OutputFormat,
+    mic: boolean,
+    input: string,
+    output: string
+  ): string[] => {
+    if (outFmt === 'gif') {
+      return this.ffmpegArgsForGif(input, output);
+    }
+    if (mic) {
+      return this.ffmpegArgsForMic(input, output);
+    }
+    return this.ffmpegArgsForNoMic(input, output);
+  };
+
+  private ffmpegArgsForNoMic = (input: string, output: string): string[] => [
+    '-i',
+    input,
+    '-c:v',
+    'copy',
+    output,
+  ];
+
+  private ffmpegArgsForMic = (input: string, output: string): string[] => [
+    '-i',
+    input,
+    '-c:v',
+    'copy',
+    '-c:a',
+    'aac',
+    output,
+  ];
+
+  // https://superuser.com/questions/556029/how-do-i-convert-a-video-to-gif-using-ffmpeg-with-reasonable-quality
+  private ffmpegArgsForGif = (input: string, output: string): string[] => [
+    '-i',
+    input,
+    '-vf',
+    'fps=10,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse',
+    '-f',
+    'gif',
+    output,
+  ];
 }

@@ -130,6 +130,7 @@ export class UiDirector implements IUiDirector {
   ): Promise<void> {
     await this.appTray?.refreshContextMenu(prefs.shortcut, recording, {
       enableLowQualityMode: prefs.recordQualityMode === 'low',
+      enableOutputAsGif: prefs.outputFormat === 'gif',
       enableRecordMicrophone: prefs.recordMicrophone,
     });
   }

@@ -82,6 +82,10 @@ export abstract class AppTray {
     store.dispatch(toggleRecOptions({ enableLowQualityMode: m.checked }));
   }
 
+  protected onToggleOutGif(m: MenuItem) {
+    store.dispatch(toggleRecOptions({ enableOutputAsGif: m.checked }));
+  }
+
   protected onToggleMic(m: MenuItem) {
     store.dispatch(toggleRecOptions({ enableRecordMicrophone: m.checked }));
   }
@@ -119,6 +123,9 @@ export abstract class AppTray {
     const recOpts = this.getMenuItemTemplById(templ, 'recording-options');
     const micOpt = this.getMenuItemTemplById(recOpts.submenu, 'record-mic');
     micOpt.checked = recOptions?.enableRecordMicrophone ?? false;
+
+    const gifOpt = this.getMenuItemTemplById(recOpts.submenu, 'out-gif');
+    gifOpt.checked = recOptions?.enableOutputAsGif ?? false;
 
     const reduceOpt = this.getMenuItemTemplById(recOpts.submenu, 'low-qual');
     reduceOpt.checked = recOptions?.enableLowQualityMode ?? false;
@@ -192,6 +199,12 @@ class WinAppTray extends AppTray {
             type: 'checkbox',
             label: 'Low Quality Mode',
             click: super.onToggleLowQual,
+          },
+          {
+            id: 'out-gif',
+            type: 'checkbox',
+            label: 'Output as GIF',
+            click: super.onToggleOutGif,
           },
           {
             id: 'record-mic',
@@ -277,6 +290,12 @@ class MacAppTray extends AppTray {
             type: 'checkbox',
             label: 'Low Quality Mode',
             click: super.onToggleLowQual,
+          },
+          {
+            id: 'out-gif',
+            type: 'checkbox',
+            label: 'Output as GIF',
+            click: super.onToggleOutGif,
           },
           {
             id: 'record-mic',

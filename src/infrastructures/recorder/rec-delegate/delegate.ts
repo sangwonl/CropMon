@@ -195,10 +195,11 @@ ipcRenderer.on('start-record', async (_event, data) => {
   const recordCtx: IRecordContext = data.recordContext;
   const {
     targetBounds: { width, height },
+    outputFormat,
+    recordMicrophone,
     scaleDownFactor,
     frameRate,
     videoBitrates,
-    recordMicrophone,
   } = recordCtx;
 
   const drawCtx = await createDrawCtx(recordCtx);
@@ -210,7 +211,7 @@ ipcRenderer.on('start-record', async (_event, data) => {
     scaleDownFactor
   );
 
-  if (recordMicrophone) {
+  if (recordMicrophone && outputFormat !== 'gif') {
     await attachAudioStreamForMic(canvasStream);
   }
 

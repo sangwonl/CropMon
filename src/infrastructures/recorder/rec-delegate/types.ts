@@ -1,3 +1,4 @@
+import { OutputFormat } from '@core/entities/preferences';
 import { IBounds, IScreen } from '@core/entities/screen';
 
 export interface ITargetSlice {
@@ -8,8 +9,9 @@ export interface ITargetSlice {
 export interface IRecordContext {
   targetSlices: ITargetSlice[];
   targetBounds: IBounds;
+  outputFormat: OutputFormat;
+  recordMicrophone: boolean;
   frameRate: number;
   scaleDownFactor: number;
   videoBitrates?: number;
-  recordMicrophone: boolean;
 }
