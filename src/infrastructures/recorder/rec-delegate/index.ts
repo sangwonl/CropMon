@@ -18,7 +18,8 @@ export class RecorderDelegate extends BrowserWindow {
         nodeIntegration: true,
         enableRemoteModule: true,
         contextIsolation: false,
-        // preload: path.join(__dirname, '..', 'recorder-delegate', 'preload.js'),
+        backgroundThrottling: false,
+        offscreen: true,
       },
     });
     this.loadURL(`file://${__dirname}/../rec-delegate/index.html`);
