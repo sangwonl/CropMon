@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable max-classes-per-file */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -9,11 +10,14 @@ import { inject, injectable } from 'inversify';
 import { app, globalShortcut, systemPreferences } from 'electron';
 
 import { TYPES } from '@di/types';
-import { HookType, IHookManager } from '@core/interfaces/hook';
-import { ActionDispatcher } from '@adapters/action';
+import { CaptureStatus, ICaptureContext } from '@core/entities/capture';
 import { IPreferences } from '@core/entities/preferences';
+import { HookType, IHookManager } from '@core/interfaces/hook';
+import { IAnalyticsTracker } from '@core/interfaces/tracker';
+import { PreferencesUseCase } from '@core/usecases/preferences';
 import { IUiDirector } from '@core/interfaces/director';
-import { isDebugMode, isMac } from '@utils/process';
+import { ActionDispatcher } from '@adapters/action';
+import { getPlatform, isDebugMode, isMac } from '@utils/process';
 
 type HookHandler = (args: any) => void;
 
@@ -52,42 +56,86 @@ interface HookArgsInitialPrefsLoaded {
   loadedPrefs: IPreferences;
 }
 
-interface HookArgsAfterPrefsLoaded {
+interface HookArgsPrefsLoaded {
   loadedPrefs: IPreferences;
 }
 
-interface HookArgsAfterPrefsUpdated {
+interface HookArgsPrefsUpdated {
   prevPrefs: IPreferences;
   newPrefs: IPreferences;
+}
+
+interface HookArgsCaptureStarting {
+  captureContext: ICaptureContext;
+}
+
+interface HookArgsCaptureFinished {
+  captureContext: ICaptureContext;
 }
 
 @injectable()
 export class BuiltinHooks {
   constructor(
-    private actionDispatcher: ActionDispatcher,
     @inject(TYPES.HookManager) private hookManager: IHookManager,
-    @inject(TYPES.UiDirector) private uiDirector: IUiDirector
+    @inject(TYPES.UiDirector) private uiDirector: IUiDirector,
+    @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker,
+    private prefsUseCase: PreferencesUseCase,
+    private actionDispatcher: ActionDispatcher
   ) {
     this.hookManager.on('app-updated', this.onAppUpdated);
+    this.hookManager.on('app-launched', this.onAppLaunched);
     this.hookManager.on('initial-prefs-loaded', this.onInitialPrefsLoaded);
-    this.hookManager.on('after-prefs-loaded', this.onAfterPrefsLoaded);
-    this.hookManager.on('after-prefs-updated', this.onAfterPrefsUpdated);
+    this.hookManager.on('prefs-loaded', this.onAfterPrefsLoaded);
+    this.hookManager.on('prefs-updated', this.onAfterPrefsUpdated);
+    this.hookManager.on('capture-starting', this.onCaptureStarting);
+    this.hookManager.on('capture-finished', this.onCaptureFinished);
   }
 
   onAppUpdated = async (_args: HookArgsAppUpdated) => {
     await this.uiDirector.openReleaseNotesPopup();
   };
 
-  onInitialPrefsLoaded = async (_args: HookArgsInitialPrefsLoaded) => {
-    await this.uiDirector.openHelpPagePopup();
+  onAppLaunched = async () => {
+    this.uiDirector.refreshTrayState(
+      await this.prefsUseCase.fetchUserPreferences(),
+      false
+    );
+
+    this.tracker.eventL('app-lifecycle', 'launch', getPlatform());
+    this.tracker.view('idle');
   };
 
-  onAfterPrefsLoaded = async (args: HookArgsAfterPrefsLoaded) => {
+  onInitialPrefsLoaded = async (_args: HookArgsInitialPrefsLoaded) => {
+    await this.uiDirector.openHelpPagePopup();
+
+    this.tracker.eventL('app-lifecycle', 'initial-launch', getPlatform());
+  };
+
+  onAfterPrefsLoaded = async (args: HookArgsPrefsLoaded) => {
     await this.handlePrefsHook(args.loadedPrefs);
   };
 
-  onAfterPrefsUpdated = async (args: HookArgsAfterPrefsUpdated) => {
+  onAfterPrefsUpdated = async (args: HookArgsPrefsUpdated) => {
     await this.handlePrefsHook(args.newPrefs, args.prevPrefs);
+  };
+
+  onCaptureStarting = (args: HookArgsCaptureStarting) => {
+    const { status } = args.captureContext;
+    if (status === CaptureStatus.IN_PROGRESS) {
+      this.tracker.eventL('capture', 'start-capture', 'success');
+    } else if (status === CaptureStatus.ERROR) {
+      this.tracker.eventL('capture', 'start-capture', 'fail');
+    }
+  };
+
+  onCaptureFinished = (args: HookArgsCaptureFinished) => {
+    const { status, createdAt, finishedAt } = args.captureContext;
+    if (status === CaptureStatus.FINISHED) {
+      const duration = finishedAt! - createdAt;
+      this.tracker.eventLV('capture', 'finish-capture', 'duration', duration);
+    } else if (status === CaptureStatus.ERROR) {
+      this.tracker.eventL('capture', 'finish-capture', 'fail');
+    }
   };
 
   private handlePrefsHook = async (

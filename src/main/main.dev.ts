@@ -16,27 +16,20 @@ import log from 'electron-log';
 
 import { TYPES } from '@di/types';
 import { diContainer } from '@di/container';
-import { IAnalyticsTracker } from '@core/interfaces/tracker';
+import { IHookManager } from '@core/interfaces/hook';
 import { IUiDirector } from '@core/interfaces/director';
-import { PreferencesUseCase } from '@core/usecases/preferences';
 import { BuiltinHooks } from '@infrastructures/hook';
-import { checkForUpdates } from '@ui/redux/slice';
-import { getPlatform } from '@utils/process';
 
-import store, { initializeSaga } from './store-main';
+import { initializeSaga } from './store-main';
 import { initializeDevEnv } from './devenv';
 
 const uiDirector = diContainer.get<IUiDirector>(TYPES.UiDirector);
-const tracker = diContainer.get<IAnalyticsTracker>(TYPES.AnalyticsTracker);
-const prefsUseCase = diContainer.get(PreferencesUseCase);
-const builtinHooks = diContainer.get(BuiltinHooks);
+const hookManager = diContainer.get<IHookManager>(TYPES.HookManager);
+
+diContainer.get(BuiltinHooks);
 
 const initializeApp = async () => {
-  store.dispatch(checkForUpdates());
-
   uiDirector.initialize();
-
-  uiDirector.refreshTrayState(await prefsUseCase.fetchUserPreferences(), false);
 
   app.on('will-quit', () => {
     log.info('app will quit... bye!');
@@ -50,8 +43,7 @@ const start = async () => {
 
   await initializeApp();
 
-  tracker.eventL('app-lifecycle', 'launch', getPlatform());
-  tracker.view('idle');
+  hookManager.emit('app-launched', {});
 };
 
 const instanceLock = app.requestSingleInstanceLock();

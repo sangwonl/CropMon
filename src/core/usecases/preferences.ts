@@ -39,7 +39,7 @@ export class PreferencesUseCase {
       if (loadedPrefs.initialLoaded) {
         this.hookManager.emit('initial-prefs-loaded', { loadedPrefs });
       }
-      this.hookManager.emit('after-prefs-loaded', { loadedPrefs });
+      this.hookManager.emit('prefs-loaded', { loadedPrefs });
     }
 
     return this.cachedUserPrefs;
@@ -51,6 +51,6 @@ export class PreferencesUseCase {
     await this.preferencesStore.savePreferences(newPrefs);
     this.cachedUserPrefs = newPrefs;
 
-    this.hookManager.emit('after-prefs-updated', { prevPrefs, newPrefs });
+    this.hookManager.emit('prefs-updated', { prevPrefs, newPrefs });
   }
 }
