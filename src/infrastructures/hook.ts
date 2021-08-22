@@ -6,6 +6,7 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable import/prefer-default-export */
 
+import dayjs from 'dayjs';
 import { inject, injectable } from 'inversify';
 import { app, globalShortcut, systemPreferences } from 'electron';
 
@@ -78,8 +79,13 @@ interface HookArgsCaptureFinished {
   captureContext: ICaptureContext;
 }
 
+const UPDATE_CHECK_DELAY = 5 * 60 * 1000;
+const UPDATE_CHECK_INTERVAL = 4 * 60 * 60 * 1000;
+
 @injectable()
 export class BuiltinHooks {
+  private lastUpdateCheckedAt?: number;
+
   constructor(
     @inject(TYPES.HookManager) private hookManager: IHookManager,
     @inject(TYPES.UiDirector) private uiDirector: IUiDirector,
@@ -103,6 +109,8 @@ export class BuiltinHooks {
       await this.prefsUseCase.fetchUserPreferences(),
       args.updateAvailable
     );
+
+    this.lastUpdateCheckedAt = dayjs().second();
   };
 
   onAppUpdated = async (_args: HookArgsAppUpdated) => {
@@ -110,7 +118,9 @@ export class BuiltinHooks {
   };
 
   onAppLaunched = async () => {
-    this.appUseCase.checkForUpdates();
+    this.uiDirector.refreshTrayState(
+      await this.prefsUseCase.fetchUserPreferences()
+    );
 
     this.tracker.eventL('app-lifecycle', 'launch', getPlatform());
     this.tracker.view('idle');
@@ -160,6 +170,16 @@ export class BuiltinHooks {
       this.tracker.eventLV('capture', 'finish-capture', 'duration', duration);
     } else if (status === CaptureStatus.ERROR) {
       this.tracker.eventL('capture', 'finish-capture', 'fail');
+    }
+
+    const now = dayjs().second();
+    if (
+      this.lastUpdateCheckedAt === undefined ||
+      now - this.lastUpdateCheckedAt > UPDATE_CHECK_INTERVAL
+    ) {
+      setTimeout(() => {
+        this.appUseCase.checkForUpdates();
+      }, UPDATE_CHECK_DELAY);
     }
   };
 
