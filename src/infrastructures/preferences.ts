@@ -3,15 +3,12 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable import/prefer-default-export */
 
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 import { app } from 'electron';
 import Store from 'electron-store';
 
-import { TYPES } from '@di/types';
 import { IPreferences, OutputFormat, RecordQualityMode } from '@core/entities/preferences';
 import { IPreferencesStore } from '@core/interfaces/preferences';
-import { IAnalyticsTracker } from '@core/interfaces/tracker';
-import { getPlatform } from '@utils/process';
 import { INITIAL_SHORTCUT } from '@utils/shortcut';
 
 import { version as curVersion } from '../package.json';
@@ -20,9 +17,7 @@ import { version as curVersion } from '../package.json';
 export class PreferencesStore implements IPreferencesStore {
   store!: Store;
 
-  constructor(
-    @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
-  ) {
+  constructor() {
     this.store = new Store({
       name: 'config',
       fileExtension: 'json',
@@ -38,7 +33,6 @@ export class PreferencesStore implements IPreferencesStore {
 
     const newPrefs = this.initialPreferences();
     await this.savePreferences(newPrefs);
-    this.tracker.eventL('app-lifecycle', 'initial-launch', getPlatform());
 
     return newPrefs;
   }
