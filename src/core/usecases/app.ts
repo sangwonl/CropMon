@@ -45,18 +45,21 @@ export class AppUseCase {
     this.uiDirector.quitApplication();
   }
 
+  downloadAndInstall() {
+    this.uiDirector.startDownloadAndInstall(
+      () => this.appUpdater.downloadUpdate(),
+      () => this.appUpdater.cancelUpdate(),
+      () => this.appUpdater.quitAndInstall()
+    );
+  }
+
   private onUpdateAvailable = async () => {
-    const buttonId = await this.uiDirector.openUpdateAvailableDialog();
-    if (buttonId === 0) {
-      this.uiDirector.startDownloadUpdate(
-        () => this.appUpdater.downloadUpdate(),
-        () => this.appUpdater.cancelUpdate(),
-        () => this.appUpdater.quitAndInstall()
-      );
-    }
+    this.hookManager.emit('app-update-checked', { updateAvailable: true });
   };
 
-  private onUpdateNotAvailable = () => {};
+  private onUpdateNotAvailable = () => {
+    this.hookManager.emit('app-update-checked', { updateAvailable: false });
+  };
 
   private onDownloadProgress = (progressInfo: any) => {
     const maxPercentage = 0.95; // yield marking 100% to onUpdateDownloaded()

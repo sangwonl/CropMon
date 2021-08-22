@@ -13,6 +13,7 @@ import { adjustSelectionBounds } from '@utils/bounds';
 
 import {
   checkForUpdates,
+  downloadAndInstall,
   showAbout,
   showHelp,
   openPreferences,
@@ -29,6 +30,10 @@ const actionDispatcher = diContainer.get(ActionDispatcher);
 
 function onCheckForUpdates() {
   actionDispatcher.checkForUpdates();
+}
+
+function onDownloadAndInstall() {
+  actionDispatcher.downloadAndInstall();
 }
 
 function onShowAbout() {
@@ -76,6 +81,7 @@ function onFinishCapture() {
 function* sagaEntry() {
   // app related usecase
   yield takeLatest(checkForUpdates.type, onCheckForUpdates);
+  yield takeLatest(downloadAndInstall.type, onDownloadAndInstall);
   yield takeLatest(showAbout.type, onShowAbout);
   yield takeLatest(showHelp.type, onShowHelp);
   yield takeLatest(quitApplication.type, onQuitApplication);
