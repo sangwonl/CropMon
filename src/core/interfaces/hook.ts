@@ -2,6 +2,7 @@
 
 export type HookType =
   | 'app-launched'
+  | 'app-update-checked'
   | 'app-updated'
   | 'initial-prefs-loaded'
   | 'prefs-loaded'

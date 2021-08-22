@@ -14,6 +14,7 @@ import { CaptureStatus, ICaptureContext } from '@core/entities/capture';
 import { IPreferences } from '@core/entities/preferences';
 import { HookType, IHookManager } from '@core/interfaces/hook';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
+import { AppUseCase } from '@core/usecases/app';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { IUiDirector } from '@core/interfaces/director';
 import { ActionDispatcher } from '@adapters/action';
@@ -45,6 +46,10 @@ export class HookManager implements IHookManager {
       handlers.forEach((h) => h(args));
     }
   }
+}
+
+interface HookArgsAppUpdateChecked {
+  updateAvailable: boolean;
 }
 
 interface HookArgsAppUpdated {
@@ -79,27 +84,33 @@ export class BuiltinHooks {
     @inject(TYPES.HookManager) private hookManager: IHookManager,
     @inject(TYPES.UiDirector) private uiDirector: IUiDirector,
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker,
+    private appUseCase: AppUseCase,
     private prefsUseCase: PreferencesUseCase,
     private actionDispatcher: ActionDispatcher
   ) {
+    this.hookManager.on('app-update-checked', this.onAppUpdateChecked);
     this.hookManager.on('app-updated', this.onAppUpdated);
     this.hookManager.on('app-launched', this.onAppLaunched);
     this.hookManager.on('initial-prefs-loaded', this.onInitialPrefsLoaded);
-    this.hookManager.on('prefs-loaded', this.onAfterPrefsLoaded);
-    this.hookManager.on('prefs-updated', this.onAfterPrefsUpdated);
+    this.hookManager.on('prefs-loaded', this.onPrefsLoaded);
+    this.hookManager.on('prefs-updated', this.onPrefsUpdated);
     this.hookManager.on('capture-starting', this.onCaptureStarting);
     this.hookManager.on('capture-finished', this.onCaptureFinished);
   }
+
+  onAppUpdateChecked = async (args: HookArgsAppUpdateChecked) => {
+    this.uiDirector.refreshTrayState(
+      await this.prefsUseCase.fetchUserPreferences(),
+      args.updateAvailable
+    );
+  };
 
   onAppUpdated = async (_args: HookArgsAppUpdated) => {
     await this.uiDirector.openReleaseNotesPopup();
   };
 
   onAppLaunched = async () => {
-    this.uiDirector.refreshTrayState(
-      await this.prefsUseCase.fetchUserPreferences(),
-      false
-    );
+    this.appUseCase.checkForUpdates();
 
     this.tracker.eventL('app-lifecycle', 'launch', getPlatform());
     this.tracker.view('idle');
@@ -111,16 +122,23 @@ export class BuiltinHooks {
     this.tracker.eventL('app-lifecycle', 'initial-launch', getPlatform());
   };
 
-  onAfterPrefsLoaded = async (args: HookArgsPrefsLoaded) => {
+  onPrefsLoaded = async (args: HookArgsPrefsLoaded) => {
     await this.handlePrefsHook(args.loadedPrefs);
   };
 
-  onAfterPrefsUpdated = async (args: HookArgsPrefsUpdated) => {
+  onPrefsUpdated = async (args: HookArgsPrefsUpdated) => {
     await this.handlePrefsHook(args.newPrefs, args.prevPrefs);
   };
 
-  onCaptureStarting = (args: HookArgsCaptureStarting) => {
+  onCaptureStarting = async (args: HookArgsCaptureStarting) => {
     const { status } = args.captureContext;
+
+    await this.uiDirector.refreshTrayState(
+      await this.prefsUseCase.fetchUserPreferences(),
+      undefined,
+      status === CaptureStatus.IN_PROGRESS
+    );
+
     if (status === CaptureStatus.IN_PROGRESS) {
       this.tracker.eventL('capture', 'start-capture', 'success');
     } else if (status === CaptureStatus.ERROR) {
@@ -128,8 +146,15 @@ export class BuiltinHooks {
     }
   };
 
-  onCaptureFinished = (args: HookArgsCaptureFinished) => {
+  onCaptureFinished = async (args: HookArgsCaptureFinished) => {
     const { status, createdAt, finishedAt } = args.captureContext;
+
+    await this.uiDirector.refreshTrayState(
+      await this.prefsUseCase.fetchUserPreferences(),
+      undefined,
+      false
+    );
+
     if (status === CaptureStatus.FINISHED) {
       const duration = finishedAt! - createdAt;
       this.tracker.eventLV('capture', 'finish-capture', 'duration', duration);

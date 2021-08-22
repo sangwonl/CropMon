@@ -21,6 +21,7 @@ import {
   enableCaptureMode,
   finishCapture,
   checkForUpdates,
+  downloadAndInstall,
   openPreferences,
   toggleRecOptions,
   quitApplication,
@@ -31,15 +32,18 @@ import { assetPathResolver } from '@utils/asset';
 import { IRecordingOptions } from '@core/entities/ui';
 
 const TOOLTIP_GREETING = "Roar! I'm here to help you record the screen";
+const TOOLTIP_UPDATE = 'New update available, please make me stronger!';
 const TOOLTIP_RECORDING = 'Now recording.. Click to stop';
 
 export abstract class AppTray {
   tray: Tray;
   menu: Menu | undefined;
   isRecording = false;
+  isUpdatable = false;
 
   constructor(
     private iconDefault: NativeImage,
+    private iconUpdatable: NativeImage,
     private iconRecStop: NativeImage
   ) {
     this.tray = new Tray(this.iconDefault);
@@ -64,6 +68,10 @@ export abstract class AppTray {
 
   protected onCheckForUpdates() {
     store.dispatch(checkForUpdates());
+  }
+
+  protected onDownloadAndInstall() {
+    store.dispatch(downloadAndInstall());
   }
 
   protected onStartRecording() {
@@ -102,13 +110,26 @@ export abstract class AppTray {
   }
 
   async refreshContextMenu(
-    shortcut: string,
+    shortcut?: string,
+    isUpdatable?: boolean,
     isRecording?: boolean,
     recOptions?: IRecordingOptions
   ) {
-    this.isRecording = isRecording ?? false;
+    if (isRecording !== undefined) {
+      this.isRecording = isRecording;
+    }
+    if (isUpdatable !== undefined) {
+      this.isUpdatable = isUpdatable;
+    }
 
     const templ = this.buildMenuTempl();
+
+    // update app update or install menu items
+    const menuCheckUpdate = this.getMenuItemTemplById(templ, 'check-update');
+    menuCheckUpdate.visible = !this.isUpdatable;
+
+    const menuUpdate = this.getMenuItemTemplById(templ, 'update');
+    menuUpdate.visible = this.isUpdatable;
 
     // update recording operation
     const menuStartCapt = this.getMenuItemTemplById(templ, 'start-capture');
@@ -133,9 +154,29 @@ export abstract class AppTray {
     // update tray properties
     this.menu = Menu.buildFromTemplate(templ);
     this.tray.setContextMenu(this.menu);
-    this.tray.setImage(isRecording ? this.iconRecStop : this.iconDefault);
-    this.tray.setToolTip(isRecording ? TOOLTIP_RECORDING : TOOLTIP_GREETING);
+    this.tray.setImage(this.chooseTrayIcon());
+    this.tray.setToolTip(this.chooseTrayTooltip());
   }
+
+  private chooseTrayIcon = (): NativeImage => {
+    if (this.isRecording) {
+      return this.iconRecStop;
+    }
+    if (this.isUpdatable) {
+      return this.iconUpdatable;
+    }
+    return this.iconDefault;
+  };
+
+  private chooseTrayTooltip = (): string => {
+    if (this.isRecording) {
+      return TOOLTIP_RECORDING;
+    }
+    if (this.isUpdatable) {
+      return TOOLTIP_UPDATE;
+    }
+    return TOOLTIP_GREETING;
+  };
 
   static forWindows(): AppTray {
     return new WinAppTray();
@@ -150,6 +191,7 @@ class WinAppTray extends AppTray {
   constructor() {
     super(
       nativeImage.createFromPath(assetPathResolver('icon.png')),
+      nativeImage.createFromPath(assetPathResolver('icon-app-updatable.png')),
       nativeImage.createFromPath(assetPathResolver('icon-rec-stop.png'))
     );
   }
@@ -158,8 +200,14 @@ class WinAppTray extends AppTray {
   protected buildMenuTempl(): Array<MenuItemConstructorOptions | MenuItem> {
     return [
       {
+        id: 'check-update',
         label: 'Check for &Updates',
         click: super.onCheckForUpdates,
+      },
+      {
+        id: 'update',
+        label: 'Download and Install',
+        click: super.onDownloadAndInstall,
       },
       {
         type: 'separator',
@@ -240,6 +288,9 @@ class MacAppTray extends AppTray {
         .createFromPath(assetPathResolver('icon.png'))
         .resize({ width: 16, height: 16 }),
       nativeImage
+        .createFromPath(assetPathResolver('icon-app-updatable.png'))
+        .resize({ width: 16, height: 16 }),
+      nativeImage
         .createFromPath(assetPathResolver('icon-rec-stop.png'))
         .resize({ width: 16, height: 16 })
     );
@@ -249,8 +300,14 @@ class MacAppTray extends AppTray {
   protected buildMenuTempl(): Array<MenuItemConstructorOptions | MenuItem> {
     return [
       {
+        id: 'check-update',
         label: 'Check for Updates',
         click: super.onCheckForUpdates,
+      },
+      {
+        id: 'update',
+        label: 'Download and Install',
+        click: super.onDownloadAndInstall,
       },
       {
         type: 'separator',

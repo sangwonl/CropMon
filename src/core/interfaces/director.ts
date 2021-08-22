@@ -3,7 +3,11 @@ import { IPreferences } from '@core/entities/preferences';
 
 export interface IUiDirector {
   initialize(): void;
-  refreshTrayState(prefs: IPreferences, recording?: boolean): Promise<void>;
+  refreshTrayState(
+    prefs: IPreferences,
+    updatable?: boolean,
+    recording?: boolean
+  ): Promise<void>;
   quitApplication(): void;
   openAboutPagePopup(prefs: IPreferences): Promise<void>;
   openReleaseNotesPopup(): Promise<void>;
@@ -13,8 +17,7 @@ export interface IUiDirector {
   disableCaptureSelectionMode(): void;
   enableRecordingMode(): void;
   showItemInFolder(path: string): void;
-  openUpdateAvailableDialog(): Promise<number>;
-  startDownloadUpdate(
+  startDownloadAndInstall(
     onReady: () => void,
     onCancel: () => void,
     onQuit: () => void

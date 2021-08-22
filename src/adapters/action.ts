@@ -21,6 +21,10 @@ export class ActionDispatcher {
     this.appUseCase.checkForUpdates();
   }
 
+  downloadAndInstall() {
+    this.appUseCase.downloadAndInstall();
+  }
+
   showAbout() {
     this.appUseCase.showAboutPopup();
   }

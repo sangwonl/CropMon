@@ -131,8 +131,6 @@ export class CaptureUseCase {
       };
     });
 
-    await this.uiDirector.refreshTrayState(prefs, isRecording);
-
     // hook
     this.hookManager.emit('capture-starting', { captureContext: newCtx });
   }
@@ -190,8 +188,6 @@ export class CaptureUseCase {
     ) {
       this.uiDirector.showItemInFolder(newCtx.outputPath);
     }
-
-    await this.uiDirector.refreshTrayState(prefs, false);
 
     // hook
     this.hookManager.emit('capture-finished', { captureContext: newCtx });

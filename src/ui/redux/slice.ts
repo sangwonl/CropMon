@@ -19,6 +19,7 @@ const slice = createSlice({
 
     // app
     checkForUpdates: () => {},
+    downloadAndInstall: () => {},
     showAbout: () => {},
     showHelp: () => {},
     quitApplication: () => {},
@@ -39,6 +40,7 @@ const slice = createSlice({
 export const {
   updateUiState,
   checkForUpdates,
+  downloadAndInstall,
   showAbout,
   showHelp,
   openPreferences,

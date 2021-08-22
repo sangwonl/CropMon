@@ -14,7 +14,7 @@ import 'reflect-metadata';
 
 import fs from 'fs';
 import { inject, injectable } from 'inversify';
-import { app, shell, dialog, nativeImage } from 'electron';
+import { app, shell } from 'electron';
 
 import { TYPES } from '@di/types';
 import { IBounds } from '@core/entities/screen';
@@ -126,13 +126,19 @@ export class UiDirector implements IUiDirector {
 
   async refreshTrayState(
     prefs: IPreferences,
+    updatable?: boolean,
     recording?: boolean
   ): Promise<void> {
-    await this.appTray?.refreshContextMenu(prefs.shortcut, recording, {
-      enableLowQualityMode: prefs.recordQualityMode === 'low',
-      enableOutputAsGif: prefs.outputFormat === 'gif',
-      enableRecordMicrophone: prefs.recordMicrophone,
-    });
+    await this.appTray?.refreshContextMenu(
+      prefs.shortcut,
+      updatable,
+      recording,
+      {
+        enableLowQualityMode: prefs.recordQualityMode === 'low',
+        enableOutputAsGif: prefs.outputFormat === 'gif',
+        enableRecordMicrophone: prefs.recordMicrophone,
+      }
+    );
   }
 
   quitApplication(): void {
@@ -220,22 +226,7 @@ export class UiDirector implements IUiDirector {
     shell.showItemInFolder(path);
   }
 
-  async openUpdateAvailableDialog(): Promise<number> {
-    const appIcon = nativeImage.createFromPath(assetPathResolver('icon.png'));
-    const { response: buttonId } = await dialog.showMessageBox({
-      icon: appIcon,
-      title: 'Update Available',
-      message:
-        'An update is available. Do you want to download and install it now?',
-      defaultId: 0,
-      cancelId: 1,
-      buttons: ['Download and Install', 'Update Later'],
-    });
-
-    return buttonId;
-  }
-
-  async startDownloadUpdate(
+  async startDownloadAndInstall(
     onReady: () => void,
     onCancel: () => void,
     onQuitAndInstall: () => void
