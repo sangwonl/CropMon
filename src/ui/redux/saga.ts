@@ -1,7 +1,4 @@
-/* eslint-disable prefer-destructuring */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable require-yield */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable prettier/prettier */
 
 import { PayloadAction } from '@reduxjs/toolkit';
 import { takeLatest } from 'redux-saga/effects';
@@ -9,7 +6,6 @@ import { takeLatest } from 'redux-saga/effects';
 import { diContainer } from '@di/container';
 import { IFinishAreaSelection, IRecordingOptions } from '@core/entities/ui';
 import { ActionDispatcher } from '@adapters/action';
-import { adjustSelectionBounds } from '@utils/bounds';
 
 import {
   checkForUpdates,
@@ -28,74 +24,24 @@ import {
 
 const actionDispatcher = diContainer.get(ActionDispatcher);
 
-function onCheckForUpdates() {
-  actionDispatcher.checkForUpdates();
-}
-
-function onDownloadAndInstall() {
-  actionDispatcher.downloadAndInstall();
-}
-
-function onShowAbout() {
-  actionDispatcher.showAbout();
-}
-
-function onShowHelp() {
-  actionDispatcher.showHelp();
-}
-
-function onQuitApplication() {
-  actionDispatcher.quitApplication();
-}
-
-function onOpenPreferences() {
-  actionDispatcher.openPreferences();
-}
-
-function onToggleRecOptions(action: PayloadAction<IRecordingOptions>) {
-  actionDispatcher.toggleRecordingOptions(action.payload);
-}
-
-function onEnableCaptureSelection() {
-  actionDispatcher.enableCaptureSelection();
-}
-
-function onDisableCaptureSelection() {
-  actionDispatcher.disableCaptureSelection();
-}
-
-function onStartAreaSelection() {
-  actionDispatcher.startAreaSelection();
-}
-
-function onFinishAreaSelection(action: PayloadAction<IFinishAreaSelection>) {
-  actionDispatcher.finishAreaSelection(
-    adjustSelectionBounds(action.payload.bounds)
-  );
-}
-
-function onFinishCapture() {
-  actionDispatcher.finishCapture();
-}
-
 function* sagaEntry() {
   // app related usecase
-  yield takeLatest(checkForUpdates.type, onCheckForUpdates);
-  yield takeLatest(downloadAndInstall.type, onDownloadAndInstall);
-  yield takeLatest(showAbout.type, onShowAbout);
-  yield takeLatest(showHelp.type, onShowHelp);
-  yield takeLatest(quitApplication.type, onQuitApplication);
+  yield takeLatest(checkForUpdates.type, () => actionDispatcher.checkForUpdates());
+  yield takeLatest(downloadAndInstall.type, () => actionDispatcher.downloadAndInstall());
+  yield takeLatest(showAbout.type, () => actionDispatcher.showAbout());
+  yield takeLatest(showHelp.type, () => actionDispatcher.showHelp());
+  yield takeLatest(quitApplication.type, () => actionDispatcher.quitApplication());
 
   // preferences usecase
-  yield takeLatest(openPreferences.type, onOpenPreferences);
-  yield takeLatest(toggleRecOptions.type, onToggleRecOptions);
+  yield takeLatest(openPreferences.type, () => actionDispatcher.openPreferences());
+  yield takeLatest(toggleRecOptions.type, ({ payload }: PayloadAction<IRecordingOptions>) => actionDispatcher.toggleRecordingOptions(payload));
 
   // capture related usecase
-  yield takeLatest(enableCaptureMode.type, onEnableCaptureSelection);
-  yield takeLatest(disableCaptureMode.type, onDisableCaptureSelection);
-  yield takeLatest(startAreaSelection.type, onStartAreaSelection);
-  yield takeLatest(finishAreaSelection.type, onFinishAreaSelection);
-  yield takeLatest(finishCapture.type, onFinishCapture);
+  yield takeLatest(enableCaptureMode.type, () => actionDispatcher.enableCaptureSelection());
+  yield takeLatest(disableCaptureMode.type, () => actionDispatcher.disableCaptureSelection());
+  yield takeLatest(startAreaSelection.type, () => actionDispatcher.startAreaSelection());
+  yield takeLatest(finishAreaSelection.type, ({ payload }: PayloadAction<IFinishAreaSelection>) => actionDispatcher.finishAreaSelection(payload.bounds));
+  yield takeLatest(finishCapture.type, () => actionDispatcher.finishCapture());
 }
 
 export default sagaEntry;

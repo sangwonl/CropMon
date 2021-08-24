@@ -30,7 +30,6 @@ import { ProgressDialog } from '@ui/widgets/progressdialog';
 import { StaticPagePopup } from '@ui/widgets/staticpage';
 import { StaticPagePopupOptions } from '@ui/widgets/staticpage/shared';
 import { getOverlayScreenBounds, SPARE_PIXELS } from '@utils/bounds';
-import { isMac } from '@utils/process';
 import { shortcutForDisplay } from '@utils/shortcut';
 
 import { version as curVersion } from '../package.json';
@@ -116,7 +115,7 @@ export class UiDirector implements IUiDirector {
   ) {}
 
   initialize(): void {
-    this.appTray = isMac() ? AppTray.forMac() : AppTray.forWindows();
+    this.appTray = AppTray.create();
     this.captureOverlay = new CaptureOverlayWrap();
     this.preferencesModal = new CachedPreferencesModal(PreferencesModal, 30);
     this.aboutPopup = new CachedStaticPagePopup(StaticPagePopup, 10);

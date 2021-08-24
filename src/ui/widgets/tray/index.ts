@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-useless-constructor */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable class-methods-use-this */
 /* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable class-methods-use-this */
 /* eslint-disable @typescript-eslint/lines-between-class-members */
-/* eslint-disable max-classes-per-file */
 /* eslint-disable import/prefer-default-export */
+/* eslint-disable max-classes-per-file */
 
 import {
   Tray,
@@ -18,18 +16,19 @@ import {
 
 import store from '@ui/redux/store';
 import {
-  enableCaptureMode,
-  finishCapture,
-  checkForUpdates,
-  downloadAndInstall,
-  openPreferences,
-  toggleRecOptions,
-  quitApplication,
   showAbout,
   showHelp,
+  openPreferences,
+  quitApplication,
+  checkForUpdates,
+  downloadAndInstall,
+  enableCaptureMode,
+  finishCapture,
+  toggleRecOptions,
 } from '@ui/redux/slice';
 import { assetPathResolver } from '@utils/asset';
 import { IRecordingOptions } from '@core/entities/ui';
+import { isMac } from '@utils/process';
 
 const TOOLTIP_GREETING = "Roar! I'm here to help you record the screen";
 const TOOLTIP_UPDATE = 'New update available, please make me stronger!';
@@ -37,7 +36,7 @@ const TOOLTIP_RECORDING = 'Now recording.. Click to stop';
 
 export abstract class AppTray {
   tray: Tray;
-  menu: Menu | undefined;
+  menu: Menu | null = null;
   isRecording = false;
   isUpdatable = false;
 
@@ -106,7 +105,7 @@ export abstract class AppTray {
     contextMenuTempl: any,
     id: string
   ): MenuItemConstructorOptions | MenuItem {
-    return contextMenuTempl.find((m: any) => m.id === id)!;
+    return contextMenuTempl.find((m: any) => m.id === id);
   }
 
   async refreshContextMenu(
@@ -178,12 +177,8 @@ export abstract class AppTray {
     return TOOLTIP_GREETING;
   };
 
-  static forWindows(): AppTray {
-    return new WinAppTray();
-  }
-
-  static forMac(): AppTray {
-    return new MacAppTray();
+  static create(): AppTray {
+    return isMac() ? new MacAppTray() : new WinAppTray();
   }
 }
 
@@ -378,13 +373,13 @@ class MacAppTray extends AppTray {
         this.tray.setContextMenu(null);
         store.dispatch(finishCapture());
       } else {
-        this.tray.setContextMenu(this.menu!);
+        this.tray.setContextMenu(this.menu);
         this.tray.popUpContextMenu();
       }
     });
 
     this.tray.on('right-click', () => {
-      this.tray.setContextMenu(this.menu!);
+      this.tray.setContextMenu(this.menu);
       this.tray.popUpContextMenu();
     });
   }

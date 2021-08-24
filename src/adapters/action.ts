@@ -8,6 +8,7 @@ import { AppUseCase } from '@core/usecases/app';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { CaptureUseCase } from '@core/usecases/capture';
 import { IRecordingOptions } from '@core/entities/ui';
+import { adjustSelectionBounds } from '@utils/bounds';
 
 @injectable()
 export class ActionDispatcher {
@@ -58,7 +59,9 @@ export class ActionDispatcher {
   }
 
   finishAreaSelection(bounds: IBounds) {
-    this.captureUseCase.finishAreaSelectionAndStartCapture(bounds);
+    this.captureUseCase.finishAreaSelectionAndStartCapture(
+      adjustSelectionBounds(bounds)
+    );
   }
 
   finishCapture() {

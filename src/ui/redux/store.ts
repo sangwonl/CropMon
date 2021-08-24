@@ -1,18 +1,42 @@
-import { applyMiddleware } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
 
 import createSagaMiddleware from 'redux-saga';
-import { composeWithStateSync } from 'electron-redux';
+import {
+  getInitialStateRenderer,
+  triggerAlias,
+  forwardToMain,
+  forwardToRenderer,
+  replayActionMain,
+  replayActionRenderer,
+} from 'electron-redux';
+
+import { isMain } from '@utils/process';
 
 import uiReducer from './slice';
 
+const reducer = { ui: uiReducer };
 const sagaMiddleware = createSagaMiddleware();
-const composedEnhancer = composeWithStateSync(applyMiddleware(sagaMiddleware));
 
-const store = configureStore({
-  reducer: { ui: uiReducer },
-  enhancers: [composedEnhancer],
-});
+const createStore = () => {
+  let s;
+  if (isMain()) {
+    s = configureStore({
+      reducer,
+      middleware: [triggerAlias, sagaMiddleware, forwardToRenderer],
+    });
+    replayActionMain(s);
+  } else {
+    s = configureStore({
+      reducer,
+      preloadedState: getInitialStateRenderer(),
+      middleware: [forwardToMain, sagaMiddleware],
+    });
+    replayActionRenderer(s);
+  }
+  return s;
+};
+
+const store = createStore();
 
 export type RootState = ReturnType<typeof store.getState>;
 
