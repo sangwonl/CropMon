@@ -44,7 +44,7 @@ export class HookManager implements IHookManager {
   emit(hook: HookType, args: any): void {
     const handlers = this.hooks.get(hook);
     if (handlers !== undefined) {
-      handlers.forEach((h) => h(args));
+      handlers.forEach((h) => setTimeout(() => h(args), 0));
     }
   }
 }
@@ -75,6 +75,10 @@ interface HookArgsCaptureStarting {
   captureContext: ICaptureContext;
 }
 
+interface HookArgsCaptureFinishing {
+  captureContext: ICaptureContext;
+}
+
 interface HookArgsCaptureFinished {
   captureContext: ICaptureContext;
 }
@@ -101,8 +105,20 @@ export class BuiltinHooks {
     this.hookManager.on('prefs-loaded', this.onPrefsLoaded);
     this.hookManager.on('prefs-updated', this.onPrefsUpdated);
     this.hookManager.on('capture-starting', this.onCaptureStarting);
+    this.hookManager.on('capture-finishing', this.onCaptureFinishing);
     this.hookManager.on('capture-finished', this.onCaptureFinished);
   }
+
+  onAppLaunched = async () => {
+    await this.appUseCase.checkAppVersions();
+
+    this.uiDirector.refreshTrayState(
+      await this.prefsUseCase.fetchUserPreferences()
+    );
+
+    this.tracker.eventL('app-lifecycle', 'launch', getPlatform());
+    this.tracker.view('idle');
+  };
 
   onAppUpdateChecked = async (args: HookArgsAppUpdateChecked) => {
     this.uiDirector.refreshTrayState(
@@ -115,15 +131,6 @@ export class BuiltinHooks {
 
   onAppUpdated = async (_args: HookArgsAppUpdated) => {
     await this.uiDirector.openReleaseNotesPopup();
-  };
-
-  onAppLaunched = async () => {
-    this.uiDirector.refreshTrayState(
-      await this.prefsUseCase.fetchUserPreferences()
-    );
-
-    this.tracker.eventL('app-lifecycle', 'launch', getPlatform());
-    this.tracker.view('idle');
   };
 
   onInitialPrefsLoaded = async (_args: HookArgsInitialPrefsLoaded) => {
@@ -156,14 +163,16 @@ export class BuiltinHooks {
     }
   };
 
-  onCaptureFinished = async (args: HookArgsCaptureFinished) => {
-    const { status, createdAt, finishedAt } = args.captureContext;
-
+  onCaptureFinishing = async (_args: HookArgsCaptureFinishing) => {
     await this.uiDirector.refreshTrayState(
       await this.prefsUseCase.fetchUserPreferences(),
       undefined,
       false
     );
+  };
+
+  onCaptureFinished = async (args: HookArgsCaptureFinished) => {
+    const { status, createdAt, finishedAt } = args.captureContext;
 
     if (status === CaptureStatus.FINISHED) {
       const duration = finishedAt! - createdAt;

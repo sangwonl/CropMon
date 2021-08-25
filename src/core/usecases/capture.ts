@@ -4,7 +4,6 @@
 
 import 'reflect-metadata';
 
-import assert from 'assert';
 import path from 'path';
 import dayjs from 'dayjs';
 import { inject, injectable } from 'inversify';
@@ -23,7 +22,6 @@ import { StateManager } from '@core/interfaces/state';
 import { IScreenRecorder } from '@core/interfaces/recorder';
 import { IHookManager } from '@core/interfaces/hook';
 import { IUiDirector } from '@core/interfaces/director';
-import { IAnalyticsTracker } from '@core/interfaces/tracker';
 
 import { PreferencesUseCase } from './preferences';
 
@@ -36,8 +34,7 @@ export class CaptureUseCase {
     private stateManager: StateManager,
     @inject(TYPES.ScreenRecorder) private screenRecorder: IScreenRecorder,
     @inject(TYPES.UiDirector) private uiDirector: IUiDirector,
-    @inject(TYPES.HookManager) private hookManager: IHookManager,
-    @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
+    @inject(TYPES.HookManager) private hookManager: IHookManager
   ) {}
 
   curCaptureContext(): ICaptureContext | undefined {
@@ -114,22 +111,21 @@ export class CaptureUseCase {
 
     // handle ui state
     const isRecording = newCtx.status === CaptureStatus.IN_PROGRESS;
-    if (isRecording) {
-      this.uiDirector.enableRecordingMode();
-    } else {
+    if (!isRecording) {
       this.disableCaptureSelection();
+    } else {
+      this.uiDirector.enableRecordingMode();
+      this.stateManager.updateUiState((state: IUiState): IUiState => {
+        return {
+          ...state,
+          captureArea: {
+            ...state.captureArea,
+            selectedBounds: option.bounds,
+            isRecording,
+          },
+        };
+      });
     }
-
-    this.stateManager.updateUiState((state: IUiState): IUiState => {
-      return {
-        ...state,
-        captureArea: {
-          ...state.captureArea,
-          selectedBounds: option.bounds,
-          isRecording,
-        },
-      };
-    });
 
     // hook
     this.hookManager.emit('capture-starting', { captureContext: newCtx });
@@ -160,10 +156,14 @@ export class CaptureUseCase {
   async finishCapture(): Promise<void> {
     this.disableCaptureSelection();
 
-    // stop recording
+    if (this.lastCaptureCtx === undefined) {
+      return;
+    }
     const curCtx = this.lastCaptureCtx;
-    assert(curCtx !== undefined);
 
+    this.hookManager.emit('capture-finishing', { captureContext: curCtx });
+
+    // stop recording
     let newStatus = curCtx.status;
     try {
       await this.screenRecorder.finish(curCtx);
@@ -189,7 +189,6 @@ export class CaptureUseCase {
       this.uiDirector.showItemInFolder(newCtx.outputPath);
     }
 
-    // hook
     this.hookManager.emit('capture-finished', { captureContext: newCtx });
   }
 

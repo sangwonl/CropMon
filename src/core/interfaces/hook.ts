@@ -8,6 +8,7 @@ export type HookType =
   | 'prefs-loaded'
   | 'prefs-updated'
   | 'capture-starting'
+  | 'capture-finishing'
   | 'capture-finished';
 
 export interface IHookManager {

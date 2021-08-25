@@ -22,6 +22,21 @@ export class AppUseCase {
     @inject(TYPES.HookManager) private hookManager: IHookManager
   ) {}
 
+  async checkAppVersions() {
+    const prefs = await this.prefsUseCase.fetchUserPreferences();
+    const oldVersion = prefs.version;
+    const curVersion = this.appUpdater.getCurAppVersion();
+
+    if (curVersion !== oldVersion) {
+      prefs.version = curVersion;
+      await this.prefsUseCase.updateUserPreference(prefs);
+    }
+
+    if (semver.gt(curVersion, oldVersion)) {
+      this.hookManager.emit('app-updated', { oldVersion, curVersion });
+    }
+  }
+
   async checkForUpdates() {
     await this.appUpdater.checkForUpdates(
       this.onUpdateAvailable,
@@ -29,7 +44,6 @@ export class AppUseCase {
       this.onDownloadProgress,
       this.onUpdateDownloaded
     );
-    this.handleUpdatePostProcess();
   }
 
   async showAboutPopup() {
@@ -75,17 +89,4 @@ export class AppUseCase {
   private onUpdateDownloaded = () => {
     this.uiDirector.setUpdateDownloadProgress(100);
   };
-
-  private async handleUpdatePostProcess() {
-    const prefs = await this.prefsUseCase.fetchUserPreferences();
-    const oldVersion = prefs.version;
-    const curVersion = this.appUpdater.getCurAppVersion();
-
-    prefs.version = curVersion;
-    await this.prefsUseCase.updateUserPreference(prefs);
-
-    if (semver.gt(curVersion, oldVersion)) {
-      this.hookManager.emit('app-updated', { oldVersion, curVersion });
-    }
-  }
 }
