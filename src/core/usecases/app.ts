@@ -29,7 +29,7 @@ export class AppUseCase {
       this.onDownloadProgress,
       this.onUpdateDownloaded
     );
-    this.openReleaseNotesIfUpdated();
+    this.handleUpdatePostProcess();
   }
 
   async showAboutPopup() {
@@ -76,14 +76,15 @@ export class AppUseCase {
     this.uiDirector.setUpdateDownloadProgress(100);
   };
 
-  private async openReleaseNotesIfUpdated() {
+  private async handleUpdatePostProcess() {
     const prefs = await this.prefsUseCase.fetchUserPreferences();
     const oldVersion = prefs.version;
     const curVersion = this.appUpdater.getCurAppVersion();
-    if (semver.gt(curVersion, oldVersion)) {
-      prefs.version = curVersion;
-      await this.prefsUseCase.updateUserPreference(prefs);
 
+    prefs.version = curVersion;
+    await this.prefsUseCase.updateUserPreference(prefs);
+
+    if (semver.gt(curVersion, oldVersion)) {
       this.hookManager.emit('app-updated', { oldVersion, curVersion });
     }
   }
