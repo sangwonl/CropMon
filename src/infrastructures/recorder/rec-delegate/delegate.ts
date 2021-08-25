@@ -165,6 +165,10 @@ const attachAudioStreamForMic = async (stream: MediaStream) => {
 };
 
 const flushChunksToFile = async (chunks: Blob[]) => {
+  if (chunks === undefined || chunks.length === 0) {
+    return;
+  }
+
   const blob = new Blob(chunks, { type: MEDIA_MIME_TYPE });
   const buffer = Buffer.from(await blob.arrayBuffer());
   await fs.promises.appendFile(tempFilePath, buffer);
