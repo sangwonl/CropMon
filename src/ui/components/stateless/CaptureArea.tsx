@@ -1,4 +1,3 @@
-/* eslint-disable no-else-return */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -61,11 +60,7 @@ const calcSelectedBounds = (selCtx: AreaSelectionCtx): IBounds => {
   };
 };
 
-const getAreaClasses = (
-  recording: boolean,
-  bounds: IBounds,
-  selCtx: AreaSelectionCtx
-): string => {
+const getAreaClasses = (recording: boolean, bounds: IBounds): string => {
   if (isEmptyBounds(bounds)) {
     return styles.areaHidden;
   }
@@ -76,8 +71,6 @@ const getAreaClasses = (
 
   if (recording) {
     return classNames(styles.area, styles.areaRecording);
-  } else if (selCtx.selected) {
-    return classNames(styles.area, styles.areaSelected);
   }
 
   return classNames(styles.area, styles.areaSelecting);
@@ -92,104 +85,101 @@ const getAreaLayout = (bounds: IBounds): any => {
   };
 };
 
-const handleMouseDown =
-  (
-    getCursorScreenPoint: () => IPoint,
-    onSelectionStart: () => void,
-    onSelectionCancel: () => void,
-    selCtx: AreaSelectionCtx,
-    setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
-  ) =>
-  (e: MouseEvent<HTMLDivElement>) => {
-    if (selCtx.recording) {
-      return;
-    }
+const handleMouseDown = (
+  e: MouseEvent<HTMLDivElement>,
+  getCursorScreenPoint: () => IPoint,
+  onSelectionStart: () => void,
+  onSelectionCancel: () => void,
+  selCtx: AreaSelectionCtx,
+  setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
+) => {
+  if (selCtx.recording) {
+    return;
+  }
 
-    // if click after already area settled or right click while selecting
-    if (selCtx.selected || e.button === 2) {
-      setSelCtx(initialSelCtx);
-      onSelectionCancel();
-      return;
-    }
+  // if click after already area settled or right click while selecting
+  if (selCtx.selected || e.button === 2) {
+    setSelCtx(initialSelCtx);
+    onSelectionCancel();
+    return;
+  }
 
-    setSelCtx({
-      ...selCtx,
-      started: true,
-      startPt: { x: e.clientX, y: e.clientY },
-      curPt: { x: e.clientX, y: e.clientY },
-      screenPt: getCursorScreenPoint(),
-    });
+  setSelCtx({
+    ...selCtx,
+    started: true,
+    startPt: { x: e.clientX, y: e.clientY },
+    curPt: { x: e.clientX, y: e.clientY },
+    screenPt: getCursorScreenPoint(),
+  });
 
-    onSelectionStart();
+  onSelectionStart();
+};
+
+const handleMouseUp = (
+  e: MouseEvent<HTMLDivElement>,
+  getCursorScreenPoint: () => IPoint,
+  onSelectionCancel: () => void,
+  onSelectionFinish: (bounds: IBounds) => void,
+  selCtx: AreaSelectionCtx,
+  setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
+) => {
+  if (selCtx.recording) {
+    return;
+  }
+
+  // if click after already area settled or right click while selecting
+  if (!selCtx.started || selCtx.selected || e.button === 2) {
+    setSelCtx(initialSelCtx);
+    onSelectionCancel();
+    return;
+  }
+
+  const updatedSelCtx = {
+    ...selCtx,
+    endPt: { x: e.clientX, y: e.clientY },
+    curPt: { x: e.clientX, y: e.clientY },
   };
 
-const handleMouseUp =
-  (
-    getCursorScreenPoint: () => IPoint,
-    onSelectionCancel: () => void,
-    onSelectionFinish: (bounds: IBounds) => void,
-    selCtx: AreaSelectionCtx,
-    setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
-  ) =>
-  (e: MouseEvent<HTMLDivElement>) => {
-    if (selCtx.recording) {
-      return;
-    }
+  const bounds = calcSelectedBounds(updatedSelCtx);
+  if (selCtx.started && !isCapturableBounds(bounds)) {
+    setSelCtx(initialSelCtx);
+    onSelectionCancel();
+    return;
+  }
 
-    // if click after already area settled or right click while selecting
-    if (!selCtx.started || selCtx.selected || e.button === 2) {
-      setSelCtx(initialSelCtx);
-      onSelectionCancel();
-      return;
-    }
+  updatedSelCtx.started = false;
+  updatedSelCtx.selected = true;
+  setSelCtx(updatedSelCtx);
 
-    const updatedSelCtx = {
-      ...selCtx,
-      endPt: { x: e.clientX, y: e.clientY },
-      curPt: { x: e.clientX, y: e.clientY },
-    };
+  const curScreenPt = getCursorScreenPoint();
+  onSelectionFinish({
+    x: Math.min(updatedSelCtx.screenPt.x, curScreenPt.x),
+    y: Math.min(updatedSelCtx.screenPt.y, curScreenPt.y),
+    width: Math.abs(curScreenPt.x - updatedSelCtx.screenPt.x) + 1,
+    height: Math.abs(curScreenPt.y - updatedSelCtx.screenPt.y) + 1,
+  });
+};
 
-    const bounds = calcSelectedBounds(updatedSelCtx);
-    if (selCtx.started && !isCapturableBounds(bounds)) {
-      setSelCtx(initialSelCtx);
-      onSelectionCancel();
-      return;
-    }
+const handleMouseMove = (
+  e: MouseEvent<HTMLDivElement>,
+  onHovering: () => void,
+  selCtx: AreaSelectionCtx,
+  setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
+) => {
+  if (selCtx.recording) {
+    return;
+  }
 
-    updatedSelCtx.started = false;
-    updatedSelCtx.selected = true;
-    setSelCtx(updatedSelCtx);
+  if (!selCtx.started) {
+    onHovering();
+    return;
+  }
 
-    const curScreenPt = getCursorScreenPoint();
-    onSelectionFinish({
-      x: Math.min(updatedSelCtx.screenPt.x, curScreenPt.x),
-      y: Math.min(updatedSelCtx.screenPt.y, curScreenPt.y),
-      width: Math.abs(curScreenPt.x - updatedSelCtx.screenPt.x) + 1,
-      height: Math.abs(curScreenPt.y - updatedSelCtx.screenPt.y) + 1,
-    });
-  };
-
-const handleMouseMove =
-  (
-    onHovering: () => void,
-    selCtx: AreaSelectionCtx,
-    setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
-  ) =>
-  (e: MouseEvent<HTMLDivElement>) => {
-    if (selCtx.recording) {
-      return;
-    }
-
-    if (!selCtx.started) {
-      onHovering();
-      return;
-    }
-
-    setSelCtx({
-      ...selCtx,
-      curPt: { x: e.clientX, y: e.clientY },
-    });
-  };
+  setSelCtx({
+    ...selCtx,
+    curPt: { x: e.clientX, y: e.clientY },
+  });
+};
 
 export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
   const {
@@ -233,32 +223,25 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
   const calcBounds = calcSelectedBounds(selCtx);
 
   return (
-    // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
     <div
       className={classNames({
         [styles.wrapper]: true,
         [styles.wrapperHack]: !isRecording,
         [styles.crosshair]: !selCtx.selected,
       })}
-      onMouseDown={handleMouseDown(
-        getCursorPt,
-        onStart,
-        onCancel,
-        selCtx,
-        setSelCtx
-      )}
-      onMouseUp={handleMouseUp(
-        getCursorPt,
-        onCancel,
-        onFinish,
-        selCtx,
-        setSelCtx
-      )}
-      onMouseMove={handleMouseMove(onHovering, selCtx, setSelCtx)}
+      onMouseDown={(e: MouseEvent<HTMLDivElement>) =>
+        handleMouseDown(e, getCursorPt, onStart, onCancel, selCtx, setSelCtx)
+      }
+      onMouseUp={(e: MouseEvent<HTMLDivElement>) =>
+        handleMouseUp(e, getCursorPt, onCancel, onFinish, selCtx, setSelCtx)
+      }
+      onMouseMove={(e: MouseEvent<HTMLDivElement>) =>
+        handleMouseMove(e, onHovering, selCtx, setSelCtx)
+      }
     >
       {active && (
         <div
-          className={getAreaClasses(isRecording, calcBounds, selCtx)}
+          className={getAreaClasses(isRecording, calcBounds)}
           style={getAreaLayout(calcBounds)}
         />
       )}
