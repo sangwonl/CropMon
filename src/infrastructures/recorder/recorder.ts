@@ -143,6 +143,8 @@ export class ElectronScreenRecorder implements IScreenRecorder {
   private createRecordContext(
     ctx: ICaptureContext
   ): IRecordContext | undefined {
+    const { outputFormat, recordMicrophone } = ctx;
+
     const { bounds: targetBounds } = ctx.target;
     if (targetBounds === undefined || isEmptyBounds(targetBounds)) {
       return undefined;
@@ -151,9 +153,9 @@ export class ElectronScreenRecorder implements IScreenRecorder {
     const screens = getAllScreensFromLeftTop();
     const targetSlices = screens
       .map(
-        (s): ScreenAndBoundsTuple => [
-          s,
-          getIntersection(s.bounds, targetBounds),
+        (screen): ScreenAndBoundsTuple => [
+          screen,
+          getIntersection(screen.bounds, targetBounds),
         ]
       )
       .filter(([_, bounds]: ScreenAndBoundsTuple) => !isEmptyBounds(bounds))
@@ -171,24 +173,25 @@ export class ElectronScreenRecorder implements IScreenRecorder {
     const screenArea = screenBounds.width * screenBounds.height;
     const targetArea = targetBounds.width * targetBounds.height;
     const targetAreaRate = targetArea / screenArea;
-    const scaleDownFactor = targetAreaRate < 0.5 ? 1.0 : 0.7;
-    // const scaleDownFactor =
-    //   targetBounds.width >= 32767 ||
-    //   targetBounds.height >= 32767 ||
-    //   targetArea >= 16384 * 16384
-    //     ? 0.7
-    //     : 1.0;
+
+    let scaleDownFactor = targetAreaRate < 0.5 ? 1.0 : 0.7;
+    let frameRate = FRAMERATE;
+    let videoBitrates;
+
+    if (ctx.lowQualityMode) {
+      scaleDownFactor *= SCALE_DOWN_FACTOR_LOW;
+      frameRate = FRAMERATE_LOW;
+      videoBitrates = VIDEO_BITRATES_LOW;
+    }
 
     return {
       targetSlices,
       targetBounds,
-      outputFormat: ctx.outputFormat,
-      recordMicrophone: ctx.recordMicrophone,
-      frameRate: ctx.lowQualityMode ? FRAMERATE_LOW : FRAMERATE,
-      scaleDownFactor: ctx.lowQualityMode
-        ? scaleDownFactor * SCALE_DOWN_FACTOR_LOW
-        : scaleDownFactor,
-      videoBitrates: ctx.lowQualityMode ? VIDEO_BITRATES_LOW : undefined,
+      outputFormat,
+      recordMicrophone,
+      frameRate,
+      scaleDownFactor,
+      videoBitrates,
     };
   }
 

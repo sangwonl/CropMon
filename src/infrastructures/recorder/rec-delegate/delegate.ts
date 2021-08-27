@@ -19,6 +19,24 @@ import { IRecordContext, ITargetSlice } from './types';
 const MEDIA_MIME_TYPE = 'video/webm; codecs=h264,opus';
 const NUM_CHUNKS_TO_FLUSH = 100;
 
+let mediaRecorder: MediaRecorder;
+let recordState: 'initial' | 'recording' | 'stopped' = 'initial';
+let tempFilePath: string;
+let recordedChunks: Blob[] = [];
+let totalRecordedChunks = 0;
+
+interface IDrawable {
+  videoElem: HTMLVideoElement;
+  srcBounds: IBounds;
+  dstBounds: IBounds;
+}
+
+interface IDrawContext {
+  targetBounds: IBounds;
+  frameRate: number;
+  drawables: IDrawable[];
+}
+
 const recorderOpts = (mimeType?: string, videoBitrates?: number) => {
   if (videoBitrates !== undefined) {
     return {
@@ -28,12 +46,6 @@ const recorderOpts = (mimeType?: string, videoBitrates?: number) => {
   }
   return { mimeType };
 };
-
-let mediaRecorder: MediaRecorder;
-let recordState: 'initial' | 'recording' | 'stopped' = 'initial';
-let tempFilePath: string;
-let recordedChunks: Blob[] = [];
-let totalRecordedChunks = 0;
 
 const getTempOutputPath = () => {
   const fileName = dayjs().format('YYYYMMDDHHmmss');
@@ -74,45 +86,69 @@ const getVideoConstraint = (srcId: string, bounds: IBounds): any => {
   };
 };
 
-const createDrawCtx = async (recordCtx: IRecordContext): Promise<any[]> => {
+const createDrawContext = async (
+  recordCtx: IRecordContext
+): Promise<IDrawContext> => {
+  const { targetBounds, scaleDownFactor, frameRate, targetSlices } = recordCtx;
+
+  const scaledTargetBounds = {
+    x: 0,
+    y: 0,
+    width: targetBounds.width * scaleDownFactor,
+    height: targetBounds.height * scaleDownFactor,
+  };
+
   const sources = await desktopCapturer.getSources({ types: ['screen'] });
-  return Promise.all(
-    recordCtx.targetSlices.map(async ({ screen: s, bounds }: ITargetSlice) => {
-      const source = sources.find((src) => src.display_id === s.id.toString());
-      const constraints = getVideoConstraint(source!.id, s.bounds);
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+  const drawables = await Promise.all(
+    targetSlices.map(
+      async ({ screen, bounds }: ITargetSlice): Promise<IDrawable> => {
+        const source = sources.find(
+          (src) => src.display_id === screen.id.toString()
+        );
+        const constraints = getVideoConstraint(source!.id, screen.bounds);
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
-      const videoElem = document.createElement('video') as HTMLVideoElement;
-      videoElem.srcObject = stream;
-      videoElem.play();
+        const videoElem = document.createElement('video') as HTMLVideoElement;
+        videoElem.srcObject = stream;
+        videoElem.play();
 
-      const srcBounds: IBounds = {
-        ...bounds,
-        x: bounds.x - s.bounds.x,
-        y: bounds.y - s.bounds.y,
-      };
+        const srcBounds: IBounds = {
+          ...bounds,
+          x: bounds.x - screen.bounds.x,
+          y: bounds.y - screen.bounds.y,
+        };
 
-      const dstBounds: IBounds = {
-        ...srcBounds,
-        x: s.bounds.x + srcBounds.x - recordCtx.targetBounds.x,
-        y: s.bounds.y + srcBounds.y - recordCtx.targetBounds.y,
-      };
+        const dstBounds: IBounds = {
+          x: Math.floor(
+            (screen.bounds.x + srcBounds.x - recordCtx.targetBounds.x) *
+              recordCtx.scaleDownFactor
+          ),
+          y: Math.floor(
+            (screen.bounds.y + srcBounds.y - recordCtx.targetBounds.y) *
+              recordCtx.scaleDownFactor
+          ),
+          width: Math.floor(srcBounds.width * recordCtx.scaleDownFactor),
+          height: Math.floor(srcBounds.height * recordCtx.scaleDownFactor),
+        };
 
-      return { videoElem, srcBounds, dstBounds };
-    })
+        return { videoElem, srcBounds, dstBounds };
+      }
+    )
   );
+
+  return {
+    targetBounds: scaledTargetBounds,
+    frameRate,
+    drawables,
+  };
 };
 
-const withCanvasProcess = (
-  w: number,
-  h: number,
-  drawCtx: any[],
-  frameRate: number,
-  scaleDownFactor: number
-): MediaStream => {
+const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
+  const { targetBounds, frameRate, drawables } = drawContext;
+
   const canvasElem = document.createElement('canvas') as HTMLCanvasElement;
-  canvasElem.width = Math.floor(w * scaleDownFactor);
-  canvasElem.height = Math.floor(h * scaleDownFactor);
+  canvasElem.width = targetBounds.width;
+  canvasElem.height = targetBounds.height;
 
   const canvasCtx = canvasElem.getContext('2d')!;
   const interval = Math.floor(1000 / frameRate);
@@ -123,17 +159,17 @@ const withCanvasProcess = (
     }
 
     if (recordState === 'recording') {
-      drawCtx.forEach((ctx: any) => {
+      drawables.forEach((d: any) => {
         canvasCtx.drawImage(
-          ctx.videoElem,
-          ctx.srcBounds.x,
-          ctx.srcBounds.y,
-          ctx.srcBounds.width,
-          ctx.srcBounds.height,
-          Math.floor(ctx.dstBounds.x * scaleDownFactor),
-          Math.floor(ctx.dstBounds.y * scaleDownFactor),
-          Math.floor(ctx.dstBounds.width * scaleDownFactor),
-          Math.floor(ctx.dstBounds.height * scaleDownFactor)
+          d.videoElem,
+          d.srcBounds.x,
+          d.srcBounds.y,
+          d.srcBounds.width,
+          d.srcBounds.height,
+          d.dstBounds.x,
+          d.dstBounds.y,
+          d.dstBounds.width,
+          d.dstBounds.height
         );
       });
     }
@@ -197,23 +233,10 @@ const handleRecordStop = async (_event: Event) => {
 
 ipcRenderer.on('start-record', async (_event, data) => {
   const recordCtx: IRecordContext = data.recordContext;
-  const {
-    targetBounds: { width, height },
-    outputFormat,
-    recordMicrophone,
-    scaleDownFactor,
-    frameRate,
-    videoBitrates,
-  } = recordCtx;
+  const { outputFormat, recordMicrophone, videoBitrates } = recordCtx;
 
-  const drawCtx = await createDrawCtx(recordCtx);
-  const canvasStream = withCanvasProcess(
-    width,
-    height,
-    drawCtx,
-    frameRate,
-    scaleDownFactor
-  );
+  const drawContext = await createDrawContext(recordCtx);
+  const canvasStream = withCanvasProcess(drawContext);
 
   if (recordMicrophone && outputFormat !== 'gif') {
     await attachAudioStreamForMic(canvasStream);
