@@ -1,5 +1,11 @@
 ## Release Notes
 
+### v0.6.1
+
+_9 Sep 2021_
+
+- Improve selection cursor (with optimizing selection routine)
+
 ### v0.6.0
 
 _26 Aug 2021_
