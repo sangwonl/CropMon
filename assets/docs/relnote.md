@@ -4,7 +4,7 @@
 
 _9 Sep 2021_
 
-- Improve selection cursor (with optimizing selection routine)
+- Update selection cursor with area size hint
 
 ### v0.6.0
 
