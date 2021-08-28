@@ -26,30 +26,29 @@ interface PropTypes {
   onSelectionStart: () => void;
   onSelectionCancel: () => void;
   onSelectionFinish: (bounds: IBounds) => void;
-  onHovering: () => void;
 }
 
-interface AreaSelectionCtx {
+interface IAreaSelectionCtx {
   started: boolean;
   selected: boolean;
   recording: boolean;
   startPt: IPoint;
   endPt: IPoint;
   curPt: IPoint;
-  screenPt: IPoint;
+  curScreenPt: IPoint;
 }
 
-const initialSelCtx: AreaSelectionCtx = {
+const initialSelCtx: IAreaSelectionCtx = {
   started: false,
   selected: false,
   recording: false,
   startPt: { x: 0, y: 0 },
   endPt: { x: 0, y: 0 },
   curPt: { x: 0, y: 0 },
-  screenPt: { x: 0, y: 0 },
+  curScreenPt: { x: 0, y: 0 },
 };
 
-const calcSelectedBounds = (selCtx: AreaSelectionCtx): IBounds => {
+const calcSelectedBounds = (selCtx: IAreaSelectionCtx): IBounds => {
   const endX = selCtx.selected ? selCtx.endPt.x : selCtx.curPt.x;
   const endY = selCtx.selected ? selCtx.endPt.y : selCtx.curPt.y;
   return {
@@ -76,12 +75,57 @@ const getAreaClasses = (recording: boolean, bounds: IBounds): string => {
   return classNames(styles.area, styles.areaSelecting);
 };
 
-const getAreaLayout = (bounds: IBounds): any => {
+const getAreaLayout = (curBounds: IBounds): any => {
   return {
-    left: bounds.x + SPARE_PIXELS - 1,
-    top: bounds.y + SPARE_PIXELS - 1,
-    width: bounds.width + 2,
-    height: bounds.height + 2,
+    left: curBounds.x + SPARE_PIXELS - 1,
+    top: curBounds.y + SPARE_PIXELS - 1,
+    width: curBounds.width + 2,
+    height: curBounds.height + 2,
+  };
+};
+
+const CURSOR_HINT_BOX_SIZE = { width: 60, height: 10 };
+const CURSOR_HINT_BOX_PAD = 4;
+const getCursorHintLayout = (selCtx: IAreaSelectionCtx): any => {
+  const { startPt, curPt } = selCtx;
+
+  if (curPt.x > startPt.x) {
+    // right-bottom
+    if (curPt.y > startPt.y) {
+      return {
+        left: curPt.x - (CURSOR_HINT_BOX_SIZE.width + CURSOR_HINT_BOX_PAD),
+        top: curPt.y - (CURSOR_HINT_BOX_SIZE.height + CURSOR_HINT_BOX_PAD),
+        width: CURSOR_HINT_BOX_SIZE.width,
+        height: CURSOR_HINT_BOX_SIZE.height,
+        textAlign: 'right',
+      };
+    }
+    // right-top
+    return {
+      left: curPt.x - (CURSOR_HINT_BOX_SIZE.width + CURSOR_HINT_BOX_PAD),
+      top: curPt.y + CURSOR_HINT_BOX_PAD,
+      width: CURSOR_HINT_BOX_SIZE.width,
+      height: CURSOR_HINT_BOX_SIZE.height,
+      textAlign: 'right',
+    };
+  }
+
+  // left-bottom
+  if (curPt.y > startPt.y) {
+    return {
+      left: curPt.x + CURSOR_HINT_BOX_PAD,
+      top: curPt.y - (CURSOR_HINT_BOX_SIZE.height + CURSOR_HINT_BOX_PAD),
+      width: CURSOR_HINT_BOX_SIZE.width,
+      height: CURSOR_HINT_BOX_SIZE.height,
+    };
+  }
+
+  // left-top
+  return {
+    left: curPt.x + CURSOR_HINT_BOX_PAD,
+    top: curPt.y + CURSOR_HINT_BOX_PAD,
+    width: CURSOR_HINT_BOX_SIZE.width,
+    height: CURSOR_HINT_BOX_SIZE.height,
   };
 };
 
@@ -90,8 +134,8 @@ const handleMouseDown = (
   getCursorScreenPoint: () => IPoint,
   onSelectionStart: () => void,
   onSelectionCancel: () => void,
-  selCtx: AreaSelectionCtx,
-  setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
+  selCtx: IAreaSelectionCtx,
+  setSelCtx: Dispatch<SetStateAction<IAreaSelectionCtx>>
 ) => {
   if (selCtx.recording) {
     return;
@@ -109,7 +153,7 @@ const handleMouseDown = (
     started: true,
     startPt: { x: e.clientX, y: e.clientY },
     curPt: { x: e.clientX, y: e.clientY },
-    screenPt: getCursorScreenPoint(),
+    curScreenPt: getCursorScreenPoint(),
   });
 
   onSelectionStart();
@@ -120,8 +164,8 @@ const handleMouseUp = (
   getCursorScreenPoint: () => IPoint,
   onSelectionCancel: () => void,
   onSelectionFinish: (bounds: IBounds) => void,
-  selCtx: AreaSelectionCtx,
-  setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
+  selCtx: IAreaSelectionCtx,
+  setSelCtx: Dispatch<SetStateAction<IAreaSelectionCtx>>
 ) => {
   if (selCtx.recording) {
     return;
@@ -153,25 +197,19 @@ const handleMouseUp = (
 
   const curScreenPt = getCursorScreenPoint();
   onSelectionFinish({
-    x: Math.min(updatedSelCtx.screenPt.x, curScreenPt.x),
-    y: Math.min(updatedSelCtx.screenPt.y, curScreenPt.y),
-    width: Math.abs(curScreenPt.x - updatedSelCtx.screenPt.x) + 1,
-    height: Math.abs(curScreenPt.y - updatedSelCtx.screenPt.y) + 1,
+    x: Math.min(updatedSelCtx.curScreenPt.x, curScreenPt.x),
+    y: Math.min(updatedSelCtx.curScreenPt.y, curScreenPt.y),
+    width: Math.abs(curScreenPt.x - updatedSelCtx.curScreenPt.x) + 1,
+    height: Math.abs(curScreenPt.y - updatedSelCtx.curScreenPt.y) + 1,
   });
 };
 
 const handleMouseMove = (
   e: MouseEvent<HTMLDivElement>,
-  onHovering: () => void,
-  selCtx: AreaSelectionCtx,
-  setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
+  selCtx: IAreaSelectionCtx,
+  setSelCtx: Dispatch<SetStateAction<IAreaSelectionCtx>>
 ) => {
-  if (selCtx.recording) {
-    return;
-  }
-
-  if (!selCtx.started) {
-    onHovering();
+  if (selCtx.recording || !selCtx.started) {
     return;
   }
 
@@ -190,10 +228,9 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     onSelectionStart: onStart,
     onSelectionFinish: onFinish,
     onSelectionCancel: onCancel,
-    onHovering,
   } = props;
 
-  const [selCtx, setSelCtx] = useState<AreaSelectionCtx>(initialSelCtx);
+  const [selCtx, setSelCtx] = useState<IAreaSelectionCtx>(initialSelCtx);
 
   useEffect(() => {
     if (!boundsSelected) {
@@ -227,7 +264,7 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
       className={classNames({
         [styles.wrapper]: true,
         [styles.wrapperHack]: !isRecording,
-        [styles.crosshair]: !selCtx.selected,
+        [styles.cursorSelecting]: !selCtx.selected,
       })}
       onMouseDown={(e: MouseEvent<HTMLDivElement>) =>
         handleMouseDown(e, getCursorPt, onStart, onCancel, selCtx, setSelCtx)
@@ -236,14 +273,24 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
         handleMouseUp(e, getCursorPt, onCancel, onFinish, selCtx, setSelCtx)
       }
       onMouseMove={(e: MouseEvent<HTMLDivElement>) =>
-        handleMouseMove(e, onHovering, selCtx, setSelCtx)
+        handleMouseMove(e, selCtx, setSelCtx)
       }
     >
       {active && (
-        <div
-          className={getAreaClasses(isRecording, calcBounds)}
-          style={getAreaLayout(calcBounds)}
-        />
+        <>
+          <div
+            className={getAreaClasses(isRecording, calcBounds)}
+            style={getAreaLayout(calcBounds)}
+          />
+          <div
+            className={classNames({
+              [styles.cursorSizeHint]: !selCtx.selected,
+            })}
+            style={getCursorHintLayout(selCtx)}
+          >
+            {calcBounds.width}x{calcBounds.height}
+          </div>
+        </>
       )}
     </div>
   );

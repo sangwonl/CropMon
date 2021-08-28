@@ -7,7 +7,6 @@
 
 import React, { useLayoutEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { debounce } from 'debounce';
 
 import { IBounds } from '@core/entities/screen';
 import { ICaptureArea, ICaptureOverlay } from '@core/entities/ui';
@@ -17,9 +16,8 @@ import {
   finishAreaSelection,
   disableCaptureMode,
 } from '@ui/redux/slice';
-import { focusCurWidget, getCursorScreenPoint } from '@utils/remote';
+import { getCursorScreenPoint } from '@utils/remote';
 import { isEmptyBounds } from '@utils/bounds';
-import { isMac } from '@utils/process';
 
 import { CaptureArea } from '../stateless/CaptureArea';
 import styles from './CaptureCover.css';
@@ -28,16 +26,6 @@ const stretchBodySize = (w: number, h: number) => {
   document.body.style.width = `${w}px`;
   document.body.style.height = `${h}px`;
 };
-
-// WORKAROUND: for MacOS to fix missing focus on second screen overlays
-const focusCurWigetDebounced = (() => {
-  if (isMac()) {
-    return debounce(() => {
-      focusCurWidget();
-    }, 50);
-  }
-  return () => {};
-})();
 
 const adjustBodySize = (captureOverlay: ICaptureOverlay) => {
   if (captureOverlay === undefined || captureOverlay.bounds === undefined) {
@@ -95,7 +83,6 @@ export const CaptureCover = () => {
         onSelectionStart={onSelectionStart}
         onSelectionCancel={onSelectionCancel}
         onSelectionFinish={onSelectionFinish}
-        onHovering={focusCurWigetDebounced}
       />
     </div>
   );
