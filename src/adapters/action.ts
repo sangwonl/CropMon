@@ -18,6 +18,10 @@ export class ActionDispatcher {
     private captureUseCase: CaptureUseCase
   ) {}
 
+  initializeApp() {
+    this.appUseCase.initializeApp();
+  }
+
   checkForUpdates() {
     this.appUseCase.checkForUpdates();
   }

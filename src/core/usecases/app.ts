@@ -22,6 +22,12 @@ export class AppUseCase {
     @inject(TYPES.HookManager) private hookManager: IHookManager
   ) {}
 
+  async initializeApp() {
+    this.uiDirector.initialize();
+
+    this.hookManager.emit('app-launched', {});
+  }
+
   async checkAppVersions() {
     const prefs = await this.prefsUseCase.fetchUserPreferences();
     const oldVersion = prefs.version;

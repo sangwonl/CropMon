@@ -14,36 +14,24 @@ import 'regenerator-runtime/runtime';
 import { app } from 'electron';
 import log from 'electron-log';
 
-import { TYPES } from '@di/types';
 import { diContainer } from '@di/container';
-import { IHookManager } from '@core/interfaces/hook';
-import { IUiDirector } from '@core/interfaces/director';
-import { BuiltinHooks } from '@infrastructures/hook';
+import { ActionDispatcher } from '@adapters/action';
 
 import { initializeSaga } from './store-main';
 import { initializeDevEnv } from './devenv';
 
-const uiDirector = diContainer.get<IUiDirector>(TYPES.UiDirector);
-const hookManager = diContainer.get<IHookManager>(TYPES.HookManager);
-
-diContainer.get(BuiltinHooks);
-
-const initializeApp = async () => {
-  uiDirector.initialize();
-
-  app.on('will-quit', () => {
-    log.info('app will quit... bye!');
-  });
-};
+const actionDispatcher = diContainer.get(ActionDispatcher);
 
 const start = async () => {
   await initializeDevEnv();
 
-  initializeSaga();
+  await initializeSaga();
 
-  await initializeApp();
+  await actionDispatcher.initializeApp();
 
-  hookManager.emit('app-launched', {});
+  app.on('will-quit', () => {
+    log.info('app will quit... bye!');
+  });
 };
 
 const instanceLock = app.requestSingleInstanceLock();

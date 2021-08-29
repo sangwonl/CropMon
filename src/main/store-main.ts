@@ -4,7 +4,7 @@
 import store, { RootState, sagaMiddleware } from '@ui/redux/store';
 import uiSaga from '@ui/redux/saga';
 
-export const initializeSaga = () => {
+export const initializeSaga = async () => {
   sagaMiddleware.run(uiSaga);
 };
 

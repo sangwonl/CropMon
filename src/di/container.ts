@@ -93,4 +93,7 @@ diContainer
   .toSelf()
   .inSingletonScope();
 
+diContainer
+  .get(BuiltinHooks);
+
 export { diContainer };
