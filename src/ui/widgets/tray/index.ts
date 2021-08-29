@@ -157,6 +157,19 @@ export abstract class AppTray {
     this.tray.setToolTip(this.chooseTrayTooltip());
   }
 
+  refreshRecTime(elapsedTimeInSec: number | undefined) {
+    if (elapsedTimeInSec === undefined) {
+      this.tray.setTitle('');
+    } else {
+      const h = Math.floor(elapsedTimeInSec / 3600);
+      const m = Math.floor(elapsedTimeInSec / 60);
+      const s = elapsedTimeInSec % 60;
+      this.tray.setTitle(this.makeAsTimeString(h, m, s), {
+        fontType: 'monospacedDigit',
+      });
+    }
+  }
+
   private chooseTrayIcon = (): NativeImage => {
     if (this.isRecording) {
       return this.iconRecStop;
@@ -175,6 +188,13 @@ export abstract class AppTray {
       return TOOLTIP_UPDATE;
     }
     return TOOLTIP_GREETING;
+  };
+
+  private makeAsTimeString = (h: number, m: number, s: number): string => {
+    const hh = `${h}`.padStart(2, '0');
+    const mm = `${m}`.padStart(2, '0');
+    const ss = `${s}`.padStart(2, '0');
+    return h > 0 ? `${hh}:${mm}:${ss}` : `${mm}:${ss}`;
   };
 
   static create(): AppTray {

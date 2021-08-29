@@ -251,9 +251,9 @@ ipcRenderer.on('start-record', async (_event, data) => {
   ensureTempDirPathExists(tempFilePath);
 
   setTimeout(() => {
-    mediaRecorder.start(500);
+    mediaRecorder.start(300);
     recordState = 'recording';
-  }, 500);
+  }, 100);
 
   ipcRenderer.send('recording-started', {});
 });

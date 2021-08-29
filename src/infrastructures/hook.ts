@@ -169,12 +169,18 @@ export class BuiltinHooks {
   onCaptureStarting = async (args: HookArgsCaptureStarting) => {
     const { status } = args.captureContext;
 
+    // refresh tray
     await this.uiDirector.refreshTrayState(
       await this.prefsUseCase.fetchUserPreferences(),
       undefined,
       status === CaptureStatus.IN_PROGRESS
     );
 
+    if (status === CaptureStatus.IN_PROGRESS) {
+      this.uiDirector.toggleRecordingTime(true);
+    }
+
+    // tracking
     if (status === CaptureStatus.IN_PROGRESS) {
       this.tracker.view('in-recording');
       this.tracker.eventL('capture', 'start-capture', 'success');
@@ -189,6 +195,8 @@ export class BuiltinHooks {
       undefined,
       false
     );
+
+    this.uiDirector.toggleRecordingTime(false);
   };
 
   onCaptureFinished = async (args: HookArgsCaptureFinished) => {

@@ -5,6 +5,7 @@
 _9 Sep 2021_
 
 - Update selection cursor with area size hint
+- Display elapsed recording time on tray (only Mac)
 
 ### v0.6.0
 
