@@ -39,7 +39,7 @@ import { IRecordContext, ITargetSlice } from './rec-delegate/types';
 
 type ScreenAndBoundsTuple = [IScreen, IBounds | undefined];
 
-const FRAMERATE = 21;
+const FRAMERATE = 25;
 const FRAMERATE_LOW = 17;
 const VIDEO_BITRATES_LOW = 700000;
 const SCALE_DOWN_FACTOR_LOW = 0.7;
