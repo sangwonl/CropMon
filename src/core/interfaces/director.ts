@@ -8,6 +8,7 @@ export interface IUiDirector {
     updatable?: boolean,
     recording?: boolean
   ): Promise<void>;
+  toggleRecordingTime(activate: boolean): void;
   quitApplication(): void;
   openAboutPagePopup(prefs: IPreferences): Promise<void>;
   openReleaseNotesPopup(): Promise<void>;

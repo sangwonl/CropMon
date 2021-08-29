@@ -30,6 +30,7 @@ import { StaticPagePopup } from '@ui/widgets/staticpage';
 import { StaticPagePopupOptions } from '@ui/widgets/staticpage/shared';
 import { getOverlayScreenBounds, SPARE_PIXELS } from '@utils/bounds';
 import { shortcutForDisplay } from '@utils/shortcut';
+import { isMac } from '@utils/process';
 
 import { version as curVersion } from '../package.json';
 
@@ -108,6 +109,8 @@ export class UiDirector implements IUiDirector {
   private relNoteContent: string | undefined;
   private helpPopup: CachedStaticPagePopup | undefined;
   private helpContent: string | undefined;
+  private recTimeHandle: NodeJS.Timer | undefined;
+  private recTimeStart: number | undefined;
 
   initialize(): void {
     this.appTray = AppTray.create();
@@ -133,6 +136,30 @@ export class UiDirector implements IUiDirector {
         enableRecordMicrophone: prefs.recordMicrophone,
       }
     );
+  }
+
+  toggleRecordingTime(activate: boolean): void {
+    if (!isMac()) {
+      return;
+    }
+
+    if (activate) {
+      this.recTimeStart = new Date().getTime();
+      this.recTimeHandle = setInterval(() => {
+        if (this.recTimeStart !== undefined) {
+          const now = new Date().getTime();
+          this.appTray?.refreshRecTime(
+            Math.floor((now - this.recTimeStart) / 1000)
+          );
+        }
+      }, 1000);
+      this.appTray?.refreshRecTime(0);
+    } else if (this.recTimeHandle) {
+      clearInterval(this.recTimeHandle);
+      this.recTimeHandle = undefined;
+      this.recTimeStart = undefined;
+      this.appTray?.refreshRecTime(undefined);
+    }
   }
 
   quitApplication(): void {
