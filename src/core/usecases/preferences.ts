@@ -22,6 +22,8 @@ export class PreferencesUseCase {
   ) {}
 
   async openPreferencesModal(): Promise<void> {
+    this.hookManager.emit('prefs-modal-opening', {});
+
     const prefs = await this.fetchUserPreferences();
     const updatedPrefs = await this.uiDirector.openPreferencesModal(prefs);
     if (updatedPrefs !== undefined) {

@@ -106,6 +106,7 @@ export class BuiltinHooks {
     this.hookManager.on('initial-prefs-loaded', this.onInitialPrefsLoaded);
     this.hookManager.on('prefs-loaded', this.onPrefsLoaded);
     this.hookManager.on('prefs-updated', this.onPrefsUpdated);
+    this.hookManager.on('prefs-modal-opening', this.onPrefsModalOpening);
     this.hookManager.on('capture-selection-starting', this.onCaptureSelectionStarting);
     this.hookManager.on('capture-selection-finished', this.onCaptureSelectionFinished);
     this.hookManager.on('capture-starting', this.onCaptureStarting);
@@ -154,6 +155,10 @@ export class BuiltinHooks {
   onPrefsUpdated = async (args: HookArgsPrefsUpdated) => {
     await this.handlePrefsHook(args.newPrefs, args.prevPrefs);
   };
+
+  onPrefsModalOpening = async () => {
+    this.tracker.view('preferences-modal');
+  }
 
   onCaptureSelectionStarting = async () => {
     this.tracker.view('capture-area-selection');

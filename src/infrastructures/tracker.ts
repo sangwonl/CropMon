@@ -1,14 +1,17 @@
+/* eslint-disable promise/always-return */
+/* eslint-disable promise/catch-or-return */
 /* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable import/prefer-default-export */
 
+import { app, session } from 'electron';
+import Store from 'electron-store';
 import ua from 'universal-analytics';
 import { injectable } from 'inversify';
-import Store from 'electron-store';
 import { v4 as uuidv4 } from 'uuid';
 
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
 
-import { version as curVersion, productName } from '../package.json';
+import { version as curVersion, productName, appId } from '../package.json';
 
 @injectable()
 export class GoogleAnalyticsTracker implements IAnalyticsTracker {
@@ -23,6 +26,13 @@ export class GoogleAnalyticsTracker implements IAnalyticsTracker {
     });
 
     this.tracker = ua('UA-197078322-1', this.getTrackUid());
+    this.tracker.set('aid', appId);
+    this.tracker.set('an', productName);
+    this.tracker.set('av', curVersion);
+    app.whenReady().then(() => {
+      this.tracker.set('ua', session.defaultSession.getUserAgent());
+      this.tracker.set('ul', app.getLocale());
+    });
   }
 
   private getTrackUid(): string {
@@ -36,7 +46,9 @@ export class GoogleAnalyticsTracker implements IAnalyticsTracker {
 
   view(name: string): void {
     this.tracker.pageview(`/views/${name}`).send();
-    this.tracker.screenview(`/views/${name}`, productName, curVersion).send();
+    this.tracker
+      .screenview(`/views/${name}`, productName, curVersion, appId)
+      .send();
   }
 
   event(category: string, action: string, cb?: () => void): void {
