@@ -8,6 +8,7 @@ export type HookType =
   | 'initial-prefs-loaded'
   | 'prefs-loaded'
   | 'prefs-updated'
+  | 'prefs-modal-opening'
   | 'capture-selection-starting'
   | 'capture-selection-finished'
   | 'capture-starting'
