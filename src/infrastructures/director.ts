@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/return-await */
 /* eslint-disable no-plusplus */
 /* eslint-disable new-cap */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
@@ -13,14 +14,12 @@
 import 'reflect-metadata';
 
 import fs from 'fs';
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 import { app, shell } from 'electron';
 
-import { TYPES } from '@di/types';
 import { IBounds } from '@core/entities/screen';
 import { IPreferences } from '@core/entities/preferences';
 import { IUiDirector } from '@core/interfaces/director';
-import { IAnalyticsTracker } from '@core/interfaces/tracker';
 import { assetPathResolver } from '@utils/asset';
 import { CachedWidget } from '@ui/widgets/cached';
 import { AppTray } from '@ui/widgets/tray';
@@ -110,10 +109,6 @@ export class UiDirector implements IUiDirector {
   private helpPopup: CachedStaticPagePopup | undefined;
   private helpContent: string | undefined;
 
-  constructor(
-    @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker
-  ) {}
-
   initialize(): void {
     this.appTray = AppTray.create();
     this.captureOverlay = new CaptureOverlayWrap();
@@ -148,8 +143,6 @@ export class UiDirector implements IUiDirector {
     this.helpPopup?.close();
 
     app.quit();
-
-    this.tracker.event('app-lifecycle', 'quit');
   }
 
   async openAboutPagePopup(prefs: IPreferences): Promise<void> {
@@ -198,27 +191,21 @@ export class UiDirector implements IUiDirector {
   async openPreferencesModal(
     prefs: IPreferences
   ): Promise<IPreferences | undefined> {
-    const updatedPrefs = await this.preferencesModal?.openAsModal(prefs);
-    this.tracker.view('preferences-modal');
-
-    return updatedPrefs;
+    return await this.preferencesModal?.openAsModal(prefs);
   }
 
   enableCaptureSelectionMode(): IBounds {
     const screenBounds = getOverlayScreenBounds();
     this.captureOverlay?.show(screenBounds);
-    this.tracker.view('capture-area-selection');
     return screenBounds;
   }
 
   disableCaptureSelectionMode(): void {
     this.captureOverlay?.hide();
-    this.tracker.view('idle');
   }
 
   enableRecordingMode(): void {
     this.captureOverlay?.ignoreMouseEvents();
-    this.tracker.view('in-recording');
   }
 
   showItemInFolder(path: string): void {

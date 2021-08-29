@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable max-classes-per-file */
@@ -98,12 +99,15 @@ export class BuiltinHooks {
     private prefsUseCase: PreferencesUseCase,
     private actionDispatcher: ActionDispatcher
   ) {
+    this.hookManager.on('app-launched', this.onAppLaunched);
+    this.hookManager.on('app-quit', this.onAppQuit);
     this.hookManager.on('app-update-checked', this.onAppUpdateChecked);
     this.hookManager.on('app-updated', this.onAppUpdated);
-    this.hookManager.on('app-launched', this.onAppLaunched);
     this.hookManager.on('initial-prefs-loaded', this.onInitialPrefsLoaded);
     this.hookManager.on('prefs-loaded', this.onPrefsLoaded);
     this.hookManager.on('prefs-updated', this.onPrefsUpdated);
+    this.hookManager.on('capture-selection-starting', this.onCaptureSelectionStarting);
+    this.hookManager.on('capture-selection-finished', this.onCaptureSelectionFinished);
     this.hookManager.on('capture-starting', this.onCaptureStarting);
     this.hookManager.on('capture-finishing', this.onCaptureFinishing);
     this.hookManager.on('capture-finished', this.onCaptureFinished);
@@ -118,6 +122,10 @@ export class BuiltinHooks {
 
     this.tracker.eventL('app-lifecycle', 'launch', getPlatform());
     this.tracker.view('idle');
+  };
+
+  onAppQuit = async () => {
+    this.tracker.event('app-lifecycle', 'quit');
   };
 
   onAppUpdateChecked = async (args: HookArgsAppUpdateChecked) => {
@@ -147,6 +155,12 @@ export class BuiltinHooks {
     await this.handlePrefsHook(args.newPrefs, args.prevPrefs);
   };
 
+  onCaptureSelectionStarting = async () => {
+    this.tracker.view('capture-area-selection');
+  };
+
+  onCaptureSelectionFinished = async () => {};
+
   onCaptureStarting = async (args: HookArgsCaptureStarting) => {
     const { status } = args.captureContext;
 
@@ -157,6 +171,7 @@ export class BuiltinHooks {
     );
 
     if (status === CaptureStatus.IN_PROGRESS) {
+      this.tracker.view('in-recording');
       this.tracker.eventL('capture', 'start-capture', 'success');
     } else if (status === CaptureStatus.ERROR) {
       this.tracker.eventL('capture', 'start-capture', 'fail');
@@ -172,15 +187,6 @@ export class BuiltinHooks {
   };
 
   onCaptureFinished = async (args: HookArgsCaptureFinished) => {
-    const { status, createdAt, finishedAt } = args.captureContext;
-
-    if (status === CaptureStatus.FINISHED) {
-      const duration = finishedAt! - createdAt;
-      this.tracker.eventLV('capture', 'finish-capture', 'duration', duration);
-    } else if (status === CaptureStatus.ERROR) {
-      this.tracker.eventL('capture', 'finish-capture', 'fail');
-    }
-
     const now = dayjs().second();
     if (
       this.lastUpdateCheckedAt === undefined ||
@@ -190,6 +196,15 @@ export class BuiltinHooks {
         this.appUseCase.checkForUpdates();
       }, UPDATE_CHECK_DELAY);
     }
+
+    const { status, createdAt, finishedAt } = args.captureContext;
+    if (status === CaptureStatus.FINISHED) {
+      const duration = finishedAt! - createdAt;
+      this.tracker.eventLV('capture', 'finish-capture', 'duration', duration);
+    } else if (status === CaptureStatus.ERROR) {
+      this.tracker.eventL('capture', 'finish-capture', 'fail');
+    }
+    this.tracker.view('idle');
   };
 
   private handlePrefsHook = async (
