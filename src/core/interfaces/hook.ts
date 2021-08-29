@@ -2,11 +2,14 @@
 
 export type HookType =
   | 'app-launched'
+  | 'app-quit'
   | 'app-update-checked'
   | 'app-updated'
   | 'initial-prefs-loaded'
   | 'prefs-loaded'
   | 'prefs-updated'
+  | 'capture-selection-starting'
+  | 'capture-selection-finished'
   | 'capture-starting'
   | 'capture-finishing'
   | 'capture-finished';

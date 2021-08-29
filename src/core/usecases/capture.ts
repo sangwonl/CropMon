@@ -58,6 +58,8 @@ export class CaptureUseCase {
         },
       };
     });
+
+    this.hookManager.emit('capture-selection-starting', {});
   }
 
   disableCaptureSelection() {
@@ -77,6 +79,8 @@ export class CaptureUseCase {
         },
       };
     });
+
+    this.hookManager.emit('capture-selection-finished', {});
   }
 
   startAreaSelection() {

@@ -63,6 +63,7 @@ export class AppUseCase {
 
   quitApplication() {
     this.uiDirector.quitApplication();
+    this.hookManager.emit('app-quit', {});
   }
 
   downloadAndInstall() {
