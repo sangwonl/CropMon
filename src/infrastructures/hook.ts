@@ -182,8 +182,13 @@ export class BuiltinHooks {
 
     // tracking
     if (status === CaptureStatus.IN_PROGRESS) {
+      const { target, outputFormat, recordMicrophone, lowQualityMode } = args.captureContext;
+      const { width, height } = target.bounds!;
+      this.tracker.eventL('capture', 'start-capture', `area:${width}x${height}`);
+      this.tracker.eventL('capture', 'start-capture', `outfmt:${outputFormat}`);
+      this.tracker.eventL('capture', 'start-capture', `mic:${String(recordMicrophone)}`);
+      this.tracker.eventL('capture', 'start-capture', `lowqual:${String(lowQualityMode)}`);
       this.tracker.view('in-recording');
-      this.tracker.eventL('capture', 'start-capture', 'success');
     } else if (status === CaptureStatus.ERROR) {
       this.tracker.eventL('capture', 'start-capture', 'fail');
     }
@@ -212,7 +217,7 @@ export class BuiltinHooks {
 
     const { status, createdAt, finishedAt } = args.captureContext;
     if (status === CaptureStatus.FINISHED) {
-      const duration = finishedAt! - createdAt;
+      const duration = Math.floor((finishedAt! - createdAt) / 1000);
       this.tracker.eventLV('capture', 'finish-capture', 'duration', duration);
     } else if (status === CaptureStatus.ERROR) {
       this.tracker.eventL('capture', 'finish-capture', 'fail');
