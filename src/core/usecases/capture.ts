@@ -149,7 +149,7 @@ export class CaptureUseCase {
     return {
       target: { mode, bounds },
       status: CaptureStatus.PREPARED,
-      createdAt: dayjs().second(),
+      createdAt: new Date().getTime(),
       outputPath: output,
       outputFormat: prefs.outputFormat,
       lowQualityMode: prefs.recordQualityMode === 'low',
@@ -179,7 +179,7 @@ export class CaptureUseCase {
     const newCtx = {
       ...curCtx,
       status: newStatus,
-      finishedAt: dayjs().second(),
+      finishedAt: new Date().getTime(),
     };
     this.lastCaptureCtx = newCtx;
 

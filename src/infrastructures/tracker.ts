@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable import/prefer-default-export */
 
-import { app, session } from 'electron';
+import { app, session, screen } from 'electron';
 import Store from 'electron-store';
 import ua from 'universal-analytics';
 import { injectable } from 'inversify';
@@ -32,16 +32,8 @@ export class GoogleAnalyticsTracker implements IAnalyticsTracker {
     app.whenReady().then(() => {
       this.tracker.set('ua', session.defaultSession.getUserAgent());
       this.tracker.set('ul', app.getLocale());
+      this.tracker.set('sr', this.getScreenResolution());
     });
-  }
-
-  private getTrackUid(): string {
-    let uid = this.store.get('tuid') as string;
-    if (uid === undefined) {
-      uid = uuidv4();
-      this.store.set('tuid', uid);
-    }
-    return uid;
   }
 
   view(name: string): void {
@@ -73,4 +65,23 @@ export class GoogleAnalyticsTracker implements IAnalyticsTracker {
   ): void {
     this.tracker.event(category, action, label, value, cb).send();
   }
+
+  private getTrackUid(): string {
+    let uid = this.store.get('tuid') as string;
+    if (uid === undefined) {
+      uid = uuidv4();
+      this.store.set('tuid', uid);
+    }
+    return uid;
+  }
+
+  private getScreenResolution = (): string =>
+    screen
+      .getAllDisplays()
+      .map(({ bounds, scaleFactor: s }) => {
+        const width = bounds.width * s;
+        const height = bounds.height * s;
+        return `${width}x${height}`;
+      })
+      .join(',');
 }
