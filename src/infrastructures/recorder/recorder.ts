@@ -40,9 +40,9 @@ import { IRecordContext, ITargetSlice } from './rec-delegate/types';
 type ScreenAndBoundsTuple = [IScreen, IBounds | undefined];
 
 const FRAMERATE = 25;
-const FRAMERATE_LOW = 17;
-const VIDEO_BITRATES_LOW = 700000;
-const SCALE_DOWN_FACTOR_LOW = 0.7;
+const FRAMERATE_LOW = 18;
+const VIDEO_BITRATES_LOW = 850000;
+const SCALE_DOWN_FACTOR_LOW = 0.65;
 
 @injectable()
 export class ElectronScreenRecorder implements IScreenRecorder {
