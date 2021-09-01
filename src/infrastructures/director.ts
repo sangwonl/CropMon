@@ -42,10 +42,11 @@ class CaptureOverlayWrap {
   }
 
   show(screenBounds: IBounds) {
-    const sparedBounds = this.addSparePixels(screenBounds);
     this.widget?.setIgnoreMouseEvents(false);
     this.widget?.show();
+
     // WORKAROUND: https://github.com/electron/electron/issues/10862
+    const sparedBounds = this.addSparePixels(screenBounds);
     for (let i = 0; i < 5; i++) {
       this.widget?.setBounds(sparedBounds);
     }
@@ -63,13 +64,8 @@ class CaptureOverlayWrap {
   }
 
   ignoreMouseEvents() {
-    // WORKAROUND: for sure those ops work
     this.widget?.setIgnoreMouseEvents(true);
     this.widget?.blur();
-    setTimeout(() => {
-      this.widget?.setIgnoreMouseEvents(true);
-      this.widget?.blur();
-    });
   }
 
   // WORKAROUND: to fix non-clickable area at the nearest borders
