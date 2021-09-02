@@ -4,7 +4,8 @@
 
 _9 Sep 2021_
 
-- Update selection cursor with area size hint
+- Add size hint while selecting capture area
+- Fix bug in capture area caused by invalid key handler
 
 ### v0.6.0
 

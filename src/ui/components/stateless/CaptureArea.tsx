@@ -243,7 +243,9 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.code === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!isRecording && e.code === 'Escape') {
         setSelCtx(initialSelCtx);
         onCancel();
       }
@@ -252,7 +254,7 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     return () => {
       window.removeEventListener('keydown', onKeyDown);
     };
-  }, []);
+  }, [isRecording]);
 
   const calcBounds = calcSelectedBounds(selCtx);
 
