@@ -173,12 +173,10 @@ const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
         );
       });
     }
-
-    setTimeout(renderCapturedToCanvas, interval);
   };
 
-  // In electron browser window web content, we can't use renderFrame..
-  setTimeout(renderCapturedToCanvas);
+  // In electron browser window web content, we can't use requestAnimationFrame..
+  setInterval(renderCapturedToCanvas, interval);
 
   return (canvasElem as any).captureStream(frameRate);
 };
