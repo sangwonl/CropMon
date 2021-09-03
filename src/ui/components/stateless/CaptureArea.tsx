@@ -281,14 +281,14 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
             className={getAreaClasses(isRecording, calcBounds)}
             style={getAreaLayout(calcBounds)}
           />
-          <div
-            className={classNames({
-              [styles.cursorSizeHint]: !selCtx.selected,
-            })}
-            style={getCursorHintLayout(selCtx)}
-          >
-            {calcBounds.width}x{calcBounds.height}
-          </div>
+          {!selCtx.selected && (
+            <div
+              className={styles.cursorSizeHint}
+              style={getCursorHintLayout(selCtx)}
+            >
+              {calcBounds.width}x{calcBounds.height}
+            </div>
+          )}
         </>
       )}
     </div>
