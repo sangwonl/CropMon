@@ -6,7 +6,7 @@ _9 Sep 2021_
 
 - Add size hint while selecting capture area
 - Display elapsed recording time on tray (only Mac)
-- Fix bug in capture area caused by invalid key handler
+- Fix minor bugs related to capture area
 
 ### v0.6.0
 

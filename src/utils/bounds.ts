@@ -94,12 +94,8 @@ const getAllScreens = (): IScreen[] => {
   });
 };
 
-const mapDisplayToScreen = (d: Display): IScreen => {
-  return {
-    id: d.id,
-    bounds: d.bounds,
-    scaleFactor: d.scaleFactor,
-  };
+const mapDisplayToScreen = ({ id, bounds, scaleFactor }: Display): IScreen => {
+  return { id, bounds, scaleFactor };
 };
 
 const calcScreenBounds = (screens: IScreen[]): IBounds => {

@@ -169,12 +169,12 @@ export class ElectronScreenRecorder implements IScreenRecorder {
 
     // WORKAROUND: For browser large pixels canvas issue
     // https://stackoverflow.com/a/11585939
-    const screenBounds = getOverlayScreenBounds();
-    const screenArea = screenBounds.width * screenBounds.height;
-    const targetArea = targetBounds.width * targetBounds.height;
-    const targetAreaRate = targetArea / screenArea;
-
-    let scaleDownFactor = targetAreaRate < 0.5 ? 1.0 : 0.7;
+    // const screenBounds = getOverlayScreenBounds();
+    // const screenArea = screenBounds.width * screenBounds.height;
+    // const targetArea = targetBounds.width * targetBounds.height;
+    // const targetAreaRate = targetArea / screenArea;
+    // let scaleDownFactor = targetAreaRate < 0.5 ? 1.0 : 0.7;
+    let scaleDownFactor = 1.0;
     let frameRate = FRAMERATE;
     let videoBitrates;
 
