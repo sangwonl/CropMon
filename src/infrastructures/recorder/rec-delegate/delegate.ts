@@ -198,6 +198,21 @@ const attachAudioStreamForMic = async (stream: MediaStream) => {
   return stream;
 };
 
+const createStreamToRecord = async (
+  recordCtx: IRecordContext
+): Promise<MediaStream> => {
+  const { outputFormat, recordMicrophone } = recordCtx;
+
+  const drawContext = await createDrawContext(recordCtx);
+  const canvasStream = withCanvasProcess(drawContext);
+
+  if (recordMicrophone && outputFormat !== 'gif') {
+    await attachAudioStreamForMic(canvasStream);
+  }
+
+  return canvasStream;
+};
+
 const flushChunksToFile = async (chunks: Blob[]) => {
   if (chunks === undefined || chunks.length === 0) {
     return;
@@ -231,17 +246,11 @@ const handleRecordStop = async (_event: Event) => {
 
 ipcRenderer.on('start-record', async (_event, data) => {
   const recordCtx: IRecordContext = data.recordContext;
-  const { outputFormat, recordMicrophone, videoBitrates } = recordCtx;
+  const { videoBitrates } = recordCtx;
 
-  const drawContext = await createDrawContext(recordCtx);
-  const canvasStream = withCanvasProcess(drawContext);
-
-  if (recordMicrophone && outputFormat !== 'gif') {
-    await attachAudioStreamForMic(canvasStream);
-  }
-
+  const stream = await createStreamToRecord(recordCtx);
   const recOpts = recorderOpts(MEDIA_MIME_TYPE, videoBitrates);
-  mediaRecorder = new MediaRecorder(canvasStream, recOpts);
+  mediaRecorder = new MediaRecorder(stream, recOpts);
   mediaRecorder.ondataavailable = handleStreamDataAvailable;
   mediaRecorder.onstop = handleRecordStop;
 
