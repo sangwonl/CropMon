@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable max-classes-per-file */
 
-import { emptyBounds } from '@utils/bounds';
 import { assetPathResolver } from '@utils/asset';
 import { WidgetType } from '@ui/widgets/types';
 import { Widget } from '@ui/widgets/widget';
@@ -25,12 +24,16 @@ export class CaptureOverlay extends Widget {
       enableLargerThanScreen: true, // for MacOS, margin workaround
     });
 
-    // this.setAlwaysOnTop(true, 'main-menu', 1);
-    this.setAlwaysOnTop(true, 'screen-saver', 1);
-    this.setBounds(emptyBounds());
+    this.loadURL(`file://${__dirname}/../overlays/index.html`);
+
     // https://github.com/electron/electron/issues/25368
     this.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+    this.setAlwaysOnTop(true, 'screen-saver', 1);
 
-    this.loadURL(`file://${__dirname}/../overlays/index.html`);
+    // be sure overlay window scaled
+    this.webContents.on('did-finish-load', () => {
+      this.webContents.setZoomFactor(1.0);
+      this.webContents.setZoomLevel(0.0);
+    });
   }
 }
