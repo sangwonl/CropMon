@@ -3,6 +3,8 @@
 
 import { BrowserWindow } from 'electron';
 
+import { isDebugMode } from '@utils/process';
+
 export class RecorderDelegate extends BrowserWindow {
   constructor() {
     super({
@@ -15,6 +17,7 @@ export class RecorderDelegate extends BrowserWindow {
       width: 0,
       height: 0,
       webPreferences: {
+        devTools: isDebugMode(),
         nodeIntegration: true,
         enableRemoteModule: true,
         contextIsolation: false,

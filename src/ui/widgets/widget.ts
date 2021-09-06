@@ -5,7 +5,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { BrowserWindow, NativeImage } from 'electron';
-import localShortcut from 'electron-localshortcut';
 
 import { isDebugMode } from '@utils/process';
 import { setCustomData } from '@utils/remote';
@@ -59,6 +58,7 @@ export class Widget extends BrowserWindow {
       enableLargerThanScreen: options?.enableLargerThanScreen ?? false,
       titleBarStyle: options?.titleBarStyle ?? 'default',
       webPreferences: {
+        devTools: isDebugMode(),
         nodeIntegration: true,
         enableRemoteModule: true,
         contextIsolation: false,
@@ -77,12 +77,6 @@ export class Widget extends BrowserWindow {
         this.hide();
       }
     });
-
-    if (isDebugMode()) {
-      localShortcut.register(this, 'Ctrl+F12', () => {
-        this.webContents.openDevTools();
-      });
-    }
   }
 
   close(): void {
