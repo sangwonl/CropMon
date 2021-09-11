@@ -1,9 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react/no-unused-prop-types */
-/* eslint-disable import/prefer-default-export */
 
 import React, { useLayoutEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,11 +10,12 @@ import {
   startAreaSelection,
   finishAreaSelection,
   disableCaptureMode,
+  startCapture,
 } from '@ui/redux/slice';
 import { getCursorScreenPoint } from '@utils/remote';
 import { isEmptyBounds } from '@utils/bounds';
 
-import { CaptureArea } from '../stateless/CaptureArea';
+import CaptureArea from '../stateless/CaptureArea';
 import styles from './CaptureCover.css';
 
 const stretchBodySize = (w: number, h: number) => {
@@ -36,7 +32,7 @@ const adjustBodySize = (captureOverlay: ICaptureOverlay) => {
   stretchBodySize(bounds.width, bounds.height);
 };
 
-export const CaptureCover = () => {
+const CaptureCover = () => {
   const dispatch = useDispatch();
 
   const captureOverlay: ICaptureOverlay = useSelector(
@@ -63,6 +59,10 @@ export const CaptureCover = () => {
     dispatch(disableCaptureMode());
   }, []);
 
+  const onRecordingStart = useCallback((bounds: IBounds) => {
+    dispatch(startCapture({ bounds }));
+  }, []);
+
   useLayoutEffect(() => {
     adjustBodySize(captureOverlay);
   }, [captureOverlay]);
@@ -83,7 +83,10 @@ export const CaptureCover = () => {
         onSelectionStart={onSelectionStart}
         onSelectionCancel={onSelectionCancel}
         onSelectionFinish={onSelectionFinish}
+        onRecordingStart={onRecordingStart}
       />
     </div>
   );
 };
+
+export default CaptureCover;

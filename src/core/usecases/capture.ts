@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/prefer-default-export */
@@ -95,11 +97,9 @@ export class CaptureUseCase {
     });
   }
 
-  async finishAreaSelectionAndStartCapture(bounds: IBounds) {
-    await this.startCapture({ mode: CaptureMode.AREA, bounds });
-  }
+  async finishAreaSelection(_bounds: IBounds) {}
 
-  private async startCapture(option: ICaptureOption): Promise<void> {
+  async startCapture(option: ICaptureOption): Promise<void> {
     // creating capture context and submit to recorder
     const prefs = await this.prefsUseCase.fetchUserPreferences();
     const newCtx = this.createCaptureContext(option, prefs);

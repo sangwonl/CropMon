@@ -4,7 +4,7 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import { takeLatest } from 'redux-saga/effects';
 
 import { diContainer } from '@di/container';
-import { IFinishAreaSelection, IRecordingOptions } from '@core/entities/ui';
+import { ISelectedArea, IRecordingOptions } from '@core/entities/ui';
 import { ActionDispatcher } from '@adapters/action';
 
 import {
@@ -18,6 +18,7 @@ import {
   disableCaptureMode,
   startAreaSelection,
   finishAreaSelection,
+  startCapture,
   finishCapture,
   toggleRecOptions,
 } from './slice';
@@ -40,7 +41,8 @@ function* sagaEntry() {
   yield takeLatest(enableCaptureMode.type, () => actionDispatcher.enableCaptureSelection());
   yield takeLatest(disableCaptureMode.type, () => actionDispatcher.disableCaptureSelection());
   yield takeLatest(startAreaSelection.type, () => actionDispatcher.startAreaSelection());
-  yield takeLatest(finishAreaSelection.type, ({ payload }: PayloadAction<IFinishAreaSelection>) => actionDispatcher.finishAreaSelection(payload.bounds));
+  yield takeLatest(finishAreaSelection.type, ({ payload }: PayloadAction<ISelectedArea>) => actionDispatcher.finishAreaSelection(payload.bounds));
+  yield takeLatest(startCapture.type, ({ payload }: PayloadAction<ISelectedArea>) => actionDispatcher.startCapture(payload.bounds));
   yield takeLatest(finishCapture.type, () => actionDispatcher.finishCapture());
 }
 

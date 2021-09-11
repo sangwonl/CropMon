@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable import/prefer-default-export */
 
 import React, {
   MouseEvent,
@@ -9,7 +8,9 @@ import React, {
   SetStateAction,
   FC,
   useState,
+  useRef,
   useEffect,
+  useCallback,
 } from 'react';
 import classNames from 'classnames';
 
@@ -18,20 +19,11 @@ import { SPARE_PIXELS, isEmptyBounds, isCapturableBounds } from '@utils/bounds';
 
 import styles from './CaptureArea.css';
 
-interface PropTypes {
-  active: boolean;
-  isRecording: boolean;
-  boundsSelected: boolean;
-  getCursorScreenPoint: () => IPoint;
-  onSelectionStart: () => void;
-  onSelectionCancel: () => void;
-  onSelectionFinish: (bounds: IBounds) => void;
-}
+const DEFAULT_COUNTDOWN = 3;
 
 interface IAreaSelectionCtx {
   started: boolean;
   selected: boolean;
-  recording: boolean;
   startPt: IPoint;
   endPt: IPoint;
   curPt: IPoint;
@@ -41,7 +33,6 @@ interface IAreaSelectionCtx {
 const initialSelCtx: IAreaSelectionCtx = {
   started: false,
   selected: false,
-  recording: false,
   startPt: { x: 0, y: 0 },
   endPt: { x: 0, y: 0 },
   curPt: { x: 0, y: 0 },
@@ -59,7 +50,11 @@ const calcSelectedBounds = (selCtx: IAreaSelectionCtx): IBounds => {
   };
 };
 
-const getAreaClasses = (recording: boolean, bounds: IBounds): string => {
+const getAreaClasses = (
+  countdown: number,
+  selCtx: IAreaSelectionCtx,
+  bounds: IBounds
+): string => {
   if (isEmptyBounds(bounds)) {
     return styles.areaHidden;
   }
@@ -68,11 +63,19 @@ const getAreaClasses = (recording: boolean, bounds: IBounds): string => {
     return classNames(styles.area, styles.areaUncapturable);
   }
 
-  if (recording) {
+  if (!selCtx.selected) {
+    return classNames(styles.area, styles.areaSelecting);
+  }
+
+  if (countdown > 0) {
+    return classNames(styles.area, styles.areaCountingDown);
+  }
+
+  if (countdown === 0) {
     return classNames(styles.area, styles.areaRecording);
   }
 
-  return classNames(styles.area, styles.areaSelecting);
+  return classNames(styles.area);
 };
 
 const getAreaLayout = (curBounds: IBounds): any => {
@@ -126,15 +129,34 @@ const getCursorHintLayout = (selCtx: IAreaSelectionCtx): any => {
   };
 };
 
+const getCountdownStyle = (bounds: IBounds) => {
+  const { width, height } = bounds;
+  if (width < 40 && height < 40) {
+    return {
+      fontSize: 16,
+    };
+  }
+  if (width < 600 && height < 600) {
+    return {
+      fontSize: 40,
+    };
+  }
+  return {
+    fontSize: 80,
+  };
+};
+
 const handleMouseDown = (
   e: MouseEvent<HTMLDivElement>,
   getCursorScreenPoint: () => IPoint,
   onSelectionStart: () => void,
   onSelectionCancel: () => void,
   selCtx: IAreaSelectionCtx,
-  setSelCtx: Dispatch<SetStateAction<IAreaSelectionCtx>>
+  setSelCtx: Dispatch<SetStateAction<IAreaSelectionCtx>>,
+  countdown: number,
+  isRecording: boolean
 ) => {
-  if (selCtx.recording) {
+  if (countdown > 0 || isRecording) {
     return;
   }
 
@@ -162,9 +184,11 @@ const handleMouseUp = (
   onSelectionCancel: () => void,
   onSelectionFinish: (bounds: IBounds) => void,
   selCtx: IAreaSelectionCtx,
-  setSelCtx: Dispatch<SetStateAction<IAreaSelectionCtx>>
+  setSelCtx: Dispatch<SetStateAction<IAreaSelectionCtx>>,
+  countdown: number,
+  isRecording: boolean
 ) => {
-  if (selCtx.recording) {
+  if (countdown > 0 || isRecording) {
     return;
   }
 
@@ -204,9 +228,11 @@ const handleMouseUp = (
 const handleMouseMove = (
   e: MouseEvent<HTMLDivElement>,
   selCtx: IAreaSelectionCtx,
-  setSelCtx: Dispatch<SetStateAction<IAreaSelectionCtx>>
+  setSelCtx: Dispatch<SetStateAction<IAreaSelectionCtx>>,
+  countdown: number,
+  isRecording: boolean
 ) => {
-  if (selCtx.recording || !selCtx.started) {
+  if (countdown > 0 || isRecording || !selCtx.started) {
     return;
   }
 
@@ -216,7 +242,18 @@ const handleMouseMove = (
   });
 };
 
-export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
+interface PropTypes {
+  active: boolean;
+  isRecording: boolean;
+  boundsSelected: boolean;
+  getCursorScreenPoint: () => IPoint;
+  onSelectionStart: () => void;
+  onSelectionCancel: () => void;
+  onSelectionFinish: (bounds: IBounds) => void;
+  onRecordingStart: (bounds: IBounds) => void;
+}
+
+const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
   const {
     active,
     isRecording,
@@ -225,9 +262,39 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     onSelectionStart: onStart,
     onSelectionFinish: onFinish,
     onSelectionCancel: onCancel,
+    onRecordingStart: onRecord,
   } = props;
 
   const [selCtx, setSelCtx] = useState<IAreaSelectionCtx>(initialSelCtx);
+  const [countdown, setCountdown] = useState<number>(0);
+  const countdownRef = useRef<number>(0);
+  const countdownTimer = useRef<any>();
+
+  const onSelFinish = useCallback(
+    (bounds: IBounds) => {
+      onFinish(bounds);
+
+      // HINT: if we need to switch to non-countdown mode
+      // onRecord(bounds);
+      // return;
+
+      let cnt = DEFAULT_COUNTDOWN;
+      setCountdown(cnt);
+      countdownRef.current = cnt;
+
+      countdownTimer.current = setInterval(() => {
+        cnt -= 1;
+        setCountdown(cnt);
+        countdownRef.current = cnt;
+
+        if (cnt <= 0) {
+          clearInterval(countdownTimer.current);
+          onRecord(bounds);
+        }
+      }, 1000);
+    },
+    [onFinish, onRecord, setCountdown]
+  );
 
   useEffect(() => {
     if (!boundsSelected) {
@@ -235,17 +302,25 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     } else {
       setSelCtx({
         ...selCtx,
-        recording: isRecording,
         selected: boundsSelected,
       });
     }
-  }, [isRecording, boundsSelected]);
+  }, [boundsSelected]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      if (!isRecording && e.code === 'Escape') {
+
+      if (e.code === 'Escape') {
+        if (countdownRef.current <= 0 || isRecording) {
+          return;
+        }
+
+        setCountdown(0);
+        countdownRef.current = 0;
+        clearInterval(countdownTimer.current);
+
         setSelCtx(initialSelCtx);
         onCancel();
       }
@@ -254,7 +329,7 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     return () => {
       window.removeEventListener('keydown', onKeyDown);
     };
-  }, [isRecording]);
+  }, [isRecording, onCancel]);
 
   const calcBounds = calcSelectedBounds(selCtx);
 
@@ -262,25 +337,52 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     <div
       className={classNames({
         [styles.wrapper]: true,
-        [styles.wrapperHack]: !isRecording,
+        [styles.wrapperHack]: !selCtx.selected,
         [styles.cursorSelecting]: !selCtx.selected,
       })}
       onMouseDown={(e: MouseEvent<HTMLDivElement>) =>
-        handleMouseDown(e, getCursorPt, onStart, onCancel, selCtx, setSelCtx)
+        handleMouseDown(
+          e,
+          getCursorPt,
+          onStart,
+          onCancel,
+          selCtx,
+          setSelCtx,
+          countdown,
+          isRecording
+        )
       }
       onMouseUp={(e: MouseEvent<HTMLDivElement>) =>
-        handleMouseUp(e, getCursorPt, onCancel, onFinish, selCtx, setSelCtx)
+        handleMouseUp(
+          e,
+          getCursorPt,
+          onCancel,
+          onSelFinish,
+          selCtx,
+          setSelCtx,
+          countdown,
+          isRecording
+        )
       }
       onMouseMove={(e: MouseEvent<HTMLDivElement>) =>
-        handleMouseMove(e, selCtx, setSelCtx)
+        handleMouseMove(e, selCtx, setSelCtx, countdown, isRecording)
       }
     >
       {active && (
         <>
           <div
-            className={getAreaClasses(isRecording, calcBounds)}
+            className={getAreaClasses(countdown, selCtx, calcBounds)}
             style={getAreaLayout(calcBounds)}
-          />
+          >
+            {countdown > 0 && (
+              <div
+                className={styles.countdownText}
+                style={getCountdownStyle(calcBounds)}
+              >
+                {countdown}
+              </div>
+            )}
+          </div>
           {!selCtx.selected && (
             <div
               className={styles.cursorSizeHint}
@@ -294,3 +396,5 @@ export const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     </div>
   );
 };
+
+export default CaptureArea;

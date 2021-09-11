@@ -17,7 +17,7 @@ export interface ICaptureArea {
   isRecording: boolean;
 }
 
-export interface IFinishAreaSelection {
+export interface ISelectedArea {
   bounds: IBounds;
 }
 
