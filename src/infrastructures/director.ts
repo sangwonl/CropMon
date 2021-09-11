@@ -65,6 +65,9 @@ class CaptureOverlayWrap {
 
   ignoreMouseEvents() {
     this.widget?.setIgnoreMouseEvents(true);
+  }
+
+  blur() {
     this.widget?.blur();
   }
 
@@ -229,6 +232,7 @@ export class UiDirector implements IUiDirector {
 
   enableRecordingMode(): void {
     this.captureOverlay?.ignoreMouseEvents();
+    this.captureOverlay?.blur();
   }
 
   showItemInFolder(path: string): void {

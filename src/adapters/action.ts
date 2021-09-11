@@ -2,7 +2,7 @@
 
 import { injectable } from 'inversify';
 
-import { CaptureStatus } from '@core/entities/capture';
+import { CaptureMode, CaptureStatus } from '@core/entities/capture';
 import { IBounds } from '@core/entities/screen';
 import { AppUseCase } from '@core/usecases/app';
 import { PreferencesUseCase } from '@core/usecases/preferences';
@@ -63,9 +63,14 @@ export class ActionDispatcher {
   }
 
   finishAreaSelection(bounds: IBounds) {
-    this.captureUseCase.finishAreaSelectionAndStartCapture(
-      adjustSelectionBounds(bounds)
-    );
+    this.captureUseCase.finishAreaSelection(adjustSelectionBounds(bounds));
+  }
+
+  startCapture(bounds: IBounds) {
+    this.captureUseCase.startCapture({
+      mode: CaptureMode.AREA,
+      bounds: adjustSelectionBounds(bounds),
+    });
   }
 
   finishCapture() {
