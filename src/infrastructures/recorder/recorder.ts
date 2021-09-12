@@ -30,7 +30,6 @@ import { isProduction } from '@utils/process';
 import {
   getAllScreensFromLeftTop,
   getIntersection,
-  getOverlayScreenBounds,
   isEmptyBounds,
 } from '@utils/bounds';
 

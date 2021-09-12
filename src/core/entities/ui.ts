@@ -6,25 +6,20 @@ export interface IPreferencesModal {
   preferences: IPreferences;
 }
 
+export interface ISelectedArea {
+  bounds: IBounds;
+}
+
 export interface ICaptureOverlay {
   show: boolean;
   bounds: IBounds | undefined;
+  showCountdown: boolean;
 }
 
 export interface ICaptureArea {
   selectedBounds: IBounds | undefined;
   isSelecting: boolean;
   isRecording: boolean;
-}
-
-export interface ISelectedArea {
-  bounds: IBounds;
-}
-
-export interface IRecordingOptions {
-  enableLowQualityMode?: boolean;
-  enableRecordMicrophone?: boolean;
-  enableOutputAsGif?: boolean;
 }
 
 export interface IUiState {
@@ -36,6 +31,7 @@ export const initialUiState: IUiState = {
   captureOverlay: {
     show: false,
     bounds: undefined,
+    showCountdown: true,
   },
   captureArea: {
     selectedBounds: undefined,

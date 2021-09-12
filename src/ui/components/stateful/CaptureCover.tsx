@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import React, { useLayoutEffect, useState, useCallback } from 'react';
+import React, { useLayoutEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IBounds } from '@core/entities/screen';
@@ -43,10 +43,6 @@ const CaptureCover = () => {
     (state: RootState) => state.ui.root.captureArea
   );
 
-  const [coverActive, setCoverActive] = useState<boolean>(false);
-  const [recording, setRecording] = useState<boolean>(false);
-  const [boundsSelected, setBoundsSelected] = useState<boolean>(false);
-
   const onSelectionStart = useCallback(() => {
     dispatch(startAreaSelection());
   }, []);
@@ -67,18 +63,13 @@ const CaptureCover = () => {
     adjustBodySize(captureOverlay);
   }, [captureOverlay]);
 
-  useLayoutEffect(() => {
-    setCoverActive(captureArea.isSelecting);
-    setRecording(captureArea.isRecording);
-    setBoundsSelected(!isEmptyBounds(captureArea.selectedBounds));
-  }, [captureArea]);
-
   return (
     <div className={styles.cover}>
       <CaptureArea
-        active={coverActive}
-        isRecording={recording}
-        boundsSelected={boundsSelected}
+        active={captureArea.isSelecting}
+        isRecording={captureArea.isRecording}
+        boundsSelected={!isEmptyBounds(captureArea.selectedBounds)}
+        showCountdown={captureOverlay.showCountdown}
         getCursorScreenPoint={getCursorScreenPoint}
         onSelectionStart={onSelectionStart}
         onSelectionCancel={onSelectionCancel}

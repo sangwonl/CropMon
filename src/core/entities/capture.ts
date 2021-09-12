@@ -24,6 +24,12 @@ export interface ICaptureOption {
   bounds: IBounds | undefined;
 }
 
+export interface IRecordingOptions {
+  enableLowQualityMode?: boolean;
+  enableRecordMicrophone?: boolean;
+  enableOutputAsGif?: boolean;
+}
+
 export interface ICaptureContext {
   target: ICaptureTarget;
   status: CaptureStatus;

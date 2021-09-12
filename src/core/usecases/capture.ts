@@ -15,10 +15,10 @@ import {
   CaptureStatus,
   ICaptureOption,
   ICaptureContext,
-  CaptureMode,
+  IRecordingOptions,
 } from '@core/entities/capture';
 import { IPreferences } from '@core/entities/preferences';
-import { IRecordingOptions, IUiState } from '@core/entities/ui';
+import { IUiState } from '@core/entities/ui';
 import { IBounds } from '@core/entities/screen';
 import { StateManager } from '@core/interfaces/state';
 import { IScreenRecorder } from '@core/interfaces/recorder';
@@ -43,8 +43,10 @@ export class CaptureUseCase {
     return this.lastCaptureCtx;
   }
 
-  enableCaptureSelection() {
+  async enableCaptureSelection() {
     const screenBounds = this.uiDirector.enableCaptureSelectionMode();
+
+    const prefs = await this.prefsUseCase.fetchUserPreferences();
 
     this.stateManager.updateUiState((state: IUiState): IUiState => {
       return {
@@ -57,6 +59,7 @@ export class CaptureUseCase {
         captureOverlay: {
           show: true,
           bounds: screenBounds,
+          showCountdown: prefs.showCountdown,
         },
       };
     });

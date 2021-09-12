@@ -15,6 +15,7 @@ import React, {
 import classNames from 'classnames';
 
 import { IBounds, IPoint } from '@core/entities/screen';
+import { useStateWithGetter } from '@ui/hooks/state';
 import { SPARE_PIXELS, isEmptyBounds, isCapturableBounds } from '@utils/bounds';
 
 import styles from './CaptureArea.css';
@@ -246,6 +247,7 @@ interface PropTypes {
   active: boolean;
   isRecording: boolean;
   boundsSelected: boolean;
+  showCountdown: boolean;
   getCursorScreenPoint: () => IPoint;
   onSelectionStart: () => void;
   onSelectionCancel: () => void;
@@ -258,6 +260,7 @@ const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     active,
     isRecording,
     boundsSelected,
+    showCountdown,
     getCursorScreenPoint: getCursorPt,
     onSelectionStart: onStart,
     onSelectionFinish: onFinish,
@@ -266,26 +269,26 @@ const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
   } = props;
 
   const [selCtx, setSelCtx] = useState<IAreaSelectionCtx>(initialSelCtx);
-  const [countdown, setCountdown] = useState<number>(0);
-  const countdownRef = useRef<number>(0);
+  const [countdown, getCountdown, setCountdown] = useStateWithGetter<number>(0);
   const countdownTimer = useRef<any>();
 
   const onSelFinish = useCallback(
     (bounds: IBounds) => {
       onFinish(bounds);
 
-      // HINT: if we need to switch to non-countdown mode
-      // onRecord(bounds);
-      // return;
+      // start recording immediately if no countdown
+      if (!showCountdown) {
+        onRecord(bounds);
+        return;
+      }
 
+      // start counting down before recording
       let cnt = DEFAULT_COUNTDOWN;
       setCountdown(cnt);
-      countdownRef.current = cnt;
 
       countdownTimer.current = setInterval(() => {
         cnt -= 1;
         setCountdown(cnt);
-        countdownRef.current = cnt;
 
         if (cnt <= 0) {
           clearInterval(countdownTimer.current);
@@ -293,7 +296,7 @@ const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
         }
       }, 1000);
     },
-    [onFinish, onRecord, setCountdown]
+    [showCountdown]
   );
 
   useEffect(() => {
@@ -313,12 +316,11 @@ const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
       e.stopPropagation();
 
       if (e.code === 'Escape') {
-        if (countdownRef.current <= 0 || isRecording) {
+        if ((selCtx.selected && getCountdown() <= 0) || isRecording) {
           return;
         }
 
         setCountdown(0);
-        countdownRef.current = 0;
         clearInterval(countdownTimer.current);
 
         setSelCtx(initialSelCtx);
@@ -329,7 +331,7 @@ const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     return () => {
       window.removeEventListener('keydown', onKeyDown);
     };
-  }, [isRecording, onCancel]);
+  }, [selCtx.selected, isRecording]);
 
   const calcBounds = calcSelectedBounds(selCtx);
 
