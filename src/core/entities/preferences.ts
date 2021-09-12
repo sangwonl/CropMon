@@ -6,8 +6,9 @@ export interface IPreferences {
   version: string;
   runAtStartup: boolean;
   shortcut: string;
-  openRecordHomeWhenRecordCompleted: boolean;
   recordHome: string;
+  openRecordHomeWhenRecordCompleted: boolean;
+  showCountdown: boolean;
   recordMicrophone: boolean;
   recordQualityMode: RecordQualityMode;
   outputFormat: OutputFormat;
