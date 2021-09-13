@@ -34,6 +34,7 @@
 
 .areaSelecting {
   background-color: rgba(250, 250, 250, 0.2);
+  outline: 1px solid rgba(250, 250, 250, 0.8);
   box-shadow: inset 0 0 2px gray;
 }
 
@@ -43,9 +44,9 @@
 }
 
 .areaCountingDown {
-  background-color: transparent;
+  background-color: rgba(250, 250, 250, 0.2);
   outline: 1px solid rgba(250, 250, 250, 0.8);
-  box-shadow: inset 0 0 20px rgba(100, 100, 100, 0.2);
+  box-shadow: inset 0 0 2px gray;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -65,9 +66,9 @@
 
 .countdownText {
   color: #eee;
-  font-size: 40px;
+  font-size: 50px;
   font-family: Roboto;
-  font-weight: 800;
+  font-weight: 1000;
   text-shadow: #000 0px 1px 2px;
   text-decoration: none;
   user-select: none;

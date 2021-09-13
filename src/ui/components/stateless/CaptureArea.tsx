@@ -139,7 +139,7 @@ const getCountdownStyle = (bounds: IBounds) => {
   }
   if (width < 600 && height < 600) {
     return {
-      fontSize: 40,
+      fontSize: 50,
     };
   }
   return {
