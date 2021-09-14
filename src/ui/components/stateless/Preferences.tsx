@@ -17,7 +17,7 @@ import {
   InputAdornment,
   IconButton,
 } from '@material-ui/core';
-import { Clear } from '@material-ui/icons';
+import Clear from '@material-ui/icons/Clear';
 
 import { IPreferences } from '@core/entities/preferences';
 import {

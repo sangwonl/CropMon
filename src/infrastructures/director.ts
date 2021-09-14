@@ -31,6 +31,7 @@ import { StaticPagePopupOptions } from '@ui/widgets/staticpage/shared';
 import { getOverlayScreenBounds, SPARE_PIXELS } from '@utils/bounds';
 import { shortcutForDisplay } from '@utils/shortcut';
 import { isMac } from '@utils/process';
+import { getTimeInSeconds } from '@utils/date';
 
 import { version as curVersion } from '../package.json';
 
@@ -143,10 +144,10 @@ export class UiDirector implements IUiDirector {
     }
 
     if (activate) {
-      this.recTimeStart = new Date().getTime();
+      this.recTimeStart = getTimeInSeconds();
       this.recTimeHandle = setInterval(() => {
         if (this.recTimeStart !== undefined) {
-          const now = new Date().getTime();
+          const now = getTimeInSeconds();
           this.appTray?.refreshRecTime(
             Math.floor((now - this.recTimeStart) / 1000)
           );

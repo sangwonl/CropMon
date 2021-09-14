@@ -7,7 +7,6 @@
 import 'reflect-metadata';
 
 import path from 'path';
-import dayjs from 'dayjs';
 import { inject, injectable } from 'inversify';
 
 import { TYPES } from '@di/types';
@@ -24,6 +23,7 @@ import { StateManager } from '@core/interfaces/state';
 import { IScreenRecorder } from '@core/interfaces/recorder';
 import { IHookManager } from '@core/interfaces/hook';
 import { IUiDirector } from '@core/interfaces/director';
+import { getNowAsYYYYMMDDHHmmss, getTimeInSeconds } from '@utils/date';
 
 import { PreferencesUseCase } from './preferences';
 
@@ -143,7 +143,7 @@ export class CaptureUseCase {
     prefs: IPreferences
   ): ICaptureContext => {
     const { mode, bounds } = option;
-    const fileName = dayjs().format('YYYYMMDDHHmmss');
+    const fileName = getNowAsYYYYMMDDHHmmss();
     const output = path.join(
       prefs.recordHome,
       `${fileName}.${prefs.outputFormat}`
@@ -152,7 +152,7 @@ export class CaptureUseCase {
     return {
       target: { mode, bounds },
       status: CaptureStatus.PREPARED,
-      createdAt: new Date().getTime(),
+      createdAt: getTimeInSeconds(),
       outputPath: output,
       outputFormat: prefs.outputFormat,
       lowQualityMode: prefs.recordQualityMode === 'low',
@@ -182,7 +182,7 @@ export class CaptureUseCase {
     const newCtx = {
       ...curCtx,
       status: newStatus,
-      finishedAt: new Date().getTime(),
+      finishedAt: getTimeInSeconds(),
     };
     this.lastCaptureCtx = newCtx;
 

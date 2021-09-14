@@ -23,10 +23,16 @@ const Template: Story<PreferencesProps> = (args) => (
 export const Default = Template.bind({});
 Default.args = {
   preferences: {
+    initialLoaded: false,
     version: '0.0.1',
+    runAtStartup: true,
     recordHome: '/home/pineple/kropsaurus',
     openRecordHomeWhenRecordCompleted: true,
     shortcut: 'Win + Shift + E',
+    showCountdown: true,
+    recordMicrophone: false,
+    recordQualityMode: 'normal',
+    outputFormat: 'mp4',
   },
   onChooseRecordHome: () => {},
   onClose: () => {},

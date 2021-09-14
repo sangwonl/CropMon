@@ -9,10 +9,8 @@ const {
 } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const dayjs = require('dayjs');
 
 contextBridge.exposeInMainWorld('injected', {
-  dateString: (fmt) => dayjs().format(fmt),
   getAppTempPath: () => remote.app.getPath('temp'),
   newBuffer: (blob) => Buffer.from(blob),
   pathExt: (p) => path.extname(p),

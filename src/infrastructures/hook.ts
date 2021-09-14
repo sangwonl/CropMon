@@ -7,7 +7,6 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable import/prefer-default-export */
 
-import dayjs from 'dayjs';
 import { inject, injectable } from 'inversify';
 import { app, globalShortcut, systemPreferences } from 'electron';
 
@@ -21,6 +20,7 @@ import { PreferencesUseCase } from '@core/usecases/preferences';
 import { IUiDirector } from '@core/interfaces/director';
 import { ActionDispatcher } from '@adapters/action';
 import { getPlatform, isDebugMode, isMac } from '@utils/process';
+import { getTimeInSeconds } from '@utils/date';
 
 type HookHandler = (args: any) => void;
 
@@ -135,7 +135,7 @@ export class BuiltinHooks {
       args.updateAvailable
     );
 
-    this.lastUpdateCheckedAt = dayjs().second();
+    this.lastUpdateCheckedAt = getTimeInSeconds();
   };
 
   onAppUpdated = async (_args: HookArgsAppUpdated) => {
@@ -205,7 +205,7 @@ export class BuiltinHooks {
   };
 
   onCaptureFinished = async (args: HookArgsCaptureFinished) => {
-    const now = dayjs().second();
+    const now = getTimeInSeconds();
     if (
       this.lastUpdateCheckedAt === undefined ||
       now - this.lastUpdateCheckedAt > UPDATE_CHECK_INTERVAL

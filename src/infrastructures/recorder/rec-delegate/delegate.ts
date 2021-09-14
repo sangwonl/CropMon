@@ -7,11 +7,11 @@
 
 import fs from 'fs';
 import path from 'path';
-import dayjs from 'dayjs';
 import { desktopCapturer, ipcRenderer } from 'electron';
 
 import { IBounds } from '@core/entities/screen';
 import { getApp } from '@utils/remote';
+import { getNowAsYYYYMMDDHHmmss } from '@utils/date';
 
 import { IRecordContext, ITargetSlice } from './types';
 
@@ -48,7 +48,7 @@ const recorderOpts = (mimeType?: string, videoBitrates?: number) => {
 };
 
 const getTempOutputPath = () => {
-  const fileName = dayjs().format('YYYYMMDDHHmmss');
+  const fileName = getNowAsYYYYMMDDHHmmss();
   return path.join(
     getApp().getPath('temp'),
     'kropsaurus',
