@@ -21,6 +21,11 @@ import { SPARE_PIXELS, isEmptyBounds, isCapturableBounds } from '@utils/bounds';
 import styles from './CaptureArea.css';
 
 const DEFAULT_COUNTDOWN = 3;
+const COUNTDOWN_FONT_SMALL = 16;
+const COUNTDOWN_FONT_MID = 50;
+const COUNTDOWN_FONT_LARGE = 80;
+const AREA_SIZE_SMALL = 40;
+const AREA_SIZE_MID = 600;
 
 interface IAreaSelectionCtx {
   started: boolean;
@@ -132,18 +137,18 @@ const getCursorHintLayout = (selCtx: IAreaSelectionCtx): any => {
 
 const getCountdownStyle = (bounds: IBounds) => {
   const { width, height } = bounds;
-  if (width < 40 && height < 40) {
+  if (width < AREA_SIZE_SMALL && height < AREA_SIZE_SMALL) {
     return {
-      fontSize: 16,
+      fontSize: COUNTDOWN_FONT_SMALL,
     };
   }
-  if (width < 600 && height < 600) {
+  if (width < AREA_SIZE_MID && height < AREA_SIZE_MID) {
     return {
-      fontSize: 50,
+      fontSize: COUNTDOWN_FONT_MID,
     };
   }
   return {
-    fontSize: 80,
+    fontSize: COUNTDOWN_FONT_LARGE,
   };
 };
 
