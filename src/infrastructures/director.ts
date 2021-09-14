@@ -148,9 +148,7 @@ export class UiDirector implements IUiDirector {
       this.recTimeHandle = setInterval(() => {
         if (this.recTimeStart !== undefined) {
           const now = getTimeInSeconds();
-          this.appTray?.refreshRecTime(
-            Math.floor((now - this.recTimeStart) / 1000)
-          );
+          this.appTray?.refreshRecTime(now - this.recTimeStart);
         }
       }, 1000);
       this.appTray?.refreshRecTime(0);

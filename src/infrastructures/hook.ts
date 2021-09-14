@@ -217,7 +217,7 @@ export class BuiltinHooks {
 
     const { status, createdAt, finishedAt } = args.captureContext;
     if (status === CaptureStatus.FINISHED) {
-      const duration = Math.floor((finishedAt! - createdAt) / 1000);
+      const duration = finishedAt! - createdAt;
       this.tracker.eventLV('capture', 'finish-capture', 'duration', duration);
     } else if (status === CaptureStatus.ERROR) {
       this.tracker.eventL('capture', 'finish-capture', 'fail');
