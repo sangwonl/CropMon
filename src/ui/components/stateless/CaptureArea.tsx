@@ -339,7 +339,7 @@ const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     <div
       className={classNames({
         [styles.wrapper]: true,
-        [styles.wrapperHack]: !selCtx.selected,
+        [styles.wrapperHack]: !selCtx.selected || countdown > 0,
         [styles.cursorSelecting]: !selCtx.selected,
       })}
       onMouseDown={(e: MouseEvent<HTMLDivElement>) =>
