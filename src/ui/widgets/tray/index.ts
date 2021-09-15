@@ -27,7 +27,7 @@ import {
   toggleRecOptions,
 } from '@ui/redux/slice';
 import { assetPathResolver } from '@utils/asset';
-import { IRecordingOptions } from '@core/entities/ui';
+import { IRecordingOptions } from '@core/entities/capture';
 import { isMac } from '@utils/process';
 
 const TOOLTIP_GREETING = "Roar! I'm here to help you record the screen";
@@ -300,14 +300,14 @@ class MacAppTray extends AppTray {
   constructor() {
     super(
       nativeImage
-        .createFromPath(assetPathResolver('icon.png'))
-        .resize({ width: 16, height: 16 }),
+        .createFromPath(assetPathResolver('icon-mac.png'))
+        .resize({ width: 18, height: 16 }),
       nativeImage
-        .createFromPath(assetPathResolver('icon-app-updatable.png'))
-        .resize({ width: 16, height: 16 }),
+        .createFromPath(assetPathResolver('icon-app-updatable-mac.png'))
+        .resize({ width: 18, height: 16 }),
       nativeImage
-        .createFromPath(assetPathResolver('icon-rec-stop.png'))
-        .resize({ width: 16, height: 16 })
+        .createFromPath(assetPathResolver('icon-rec-stop-mac.png'))
+        .resize({ width: 18, height: 16 })
     );
   }
 
