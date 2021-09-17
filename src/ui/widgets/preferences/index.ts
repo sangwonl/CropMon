@@ -45,8 +45,12 @@ export class PreferencesModal extends Widget {
         defaultPath: this.prefs!.recordHome ?? app.getPath('videos'),
         properties: ['openDirectory'],
       });
-      this.prefs!.recordHome = filePaths.length > 0 ? filePaths[0] : '';
-      this.notifyPrefsUpdated();
+
+      if (filePaths.length > 0) {
+        const [selectedFilePath] = filePaths;
+        this.prefs!.recordHome = selectedFilePath;
+        this.notifyPrefsUpdated();
+      }
     };
 
     const onClose = (_event: any, data: IpcEvtOnClose) => {
@@ -57,7 +61,7 @@ export class PreferencesModal extends Widget {
     ipcMain.on(IPC_EVT_ON_CLOSE, onClose);
 
     this.on('close', () => {
-      this.closeResolver?.(undefined);
+      this.closeResolver?.();
     });
 
     this.on('closed', () => {
@@ -67,17 +71,14 @@ export class PreferencesModal extends Widget {
   }
 
   async open(prefs: IPreferences): Promise<IPreferences | undefined> {
-    const initialOpen = this.prefs === undefined;
     this.prefs = { ...prefs };
-    if (initialOpen) {
-      setCustomData<IPreferences>(this, 'initialPrefs', this.prefs);
-    }
+    setCustomData<IPreferences>(this, 'initialPrefs', { ...this.prefs });
 
     this.lazyShow();
     this.notifyPrefsUpdated();
 
     return new Promise((resolve, _) => {
-      this.closeResolver = (result: any) => {
+      this.closeResolver = (result?: IPreferences) => {
         resolve(result);
         this.hide();
       };

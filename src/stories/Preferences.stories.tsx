@@ -3,8 +3,7 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
 
-import {
-  Preferences,
+import Preferences, {
   PreferencesProps,
 } from '@ui/components/stateless/Preferences';
 
@@ -15,14 +14,21 @@ export default {
 } as Meta;
 
 const Template: Story<PreferencesProps> = (args) => (
-  <div style={{ width: 600, padding: 20, backgroundColor: '#f1f1f1' }}>
+  <div
+    style={{
+      width: 600,
+      height: 400,
+      backgroundColor: '#ffffff',
+      border: '1px solid #000',
+    }}
+  >
     <Preferences {...args} />
   </div>
 );
 
 export const Default = Template.bind({});
 Default.args = {
-  preferences: {
+  origPrefs: {
     initialLoaded: false,
     version: '0.0.1',
     runAtStartup: true,
@@ -34,6 +40,7 @@ Default.args = {
     recordQualityMode: 'normal',
     outputFormat: 'mp4',
   },
+  selectedRecordHome: '/home/pineple/kropsaurus',
   onChooseRecordHome: () => {},
   onClose: () => {},
 };

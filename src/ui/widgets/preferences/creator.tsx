@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/display-name */
 
@@ -5,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { ipcRenderer } from 'electron';
 
 import { IPreferences } from '@core/entities/preferences';
-import { Preferences } from '@ui/components/stateless/Preferences';
+import Preferences from '@ui/components/stateless/Preferences';
 import { getCurWidgetCustomData } from '@utils/remote';
 
 import {
@@ -20,21 +21,24 @@ const getInitialPrefs = (): IPreferences => {
 };
 
 const Wrapper = () => {
-  const [prefs, setPrefs] = useState<IPreferences>(() => getInitialPrefs());
+  const [origPrefs, setOrigPrefs] = useState<IPreferences>(getInitialPrefs());
+  const [prefs, setPrefs] = useState<IPreferences>(origPrefs);
 
   useEffect(() => {
     ipcRenderer.on(
       IPC_EVT_ON_PREFS_UPDATED,
       (_event: any, data: IpcEvtOnPrefsUpdated) => {
         setPrefs(data.preferences);
+        setOrigPrefs(getInitialPrefs());
       }
     );
-  }, []);
+  }, [setPrefs]);
 
   return (
     <Preferences
-      preferences={prefs}
-      onClose={(preferences: IPreferences | undefined) => {
+      origPrefs={origPrefs}
+      selectedRecordHome={prefs.recordHome}
+      onClose={(preferences?: IPreferences) => {
         ipcRenderer.send(IPC_EVT_ON_CLOSE, { preferences });
       }}
       onChooseRecordHome={() => {

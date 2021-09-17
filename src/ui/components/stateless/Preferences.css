@@ -1,48 +1,14 @@
-.itemContainer {
+.container {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  padding: 4px 20px 4px 20px;
-  margin: 4px;
-  font-family: Roboto;
-  font-weight: 500;
-}
-
-.itemRow {
   flex-direction: row;
-  justify-content: flex-start;
-  align-items: stretch;
-  padding-top: 4px;
-  margin: 10px 0px;
+  height: 100%;
 }
 
-.itemTitle {
-  text-decoration: underline;
+.tabs {
+  display: none;
+  flex-basis: 100px;
 }
 
-.itemRecordHome {
+.tabPanel {
   flex-grow: 1;
-  margin-right: 10px !important;
-}
-
-.itemOpenRecordHome {
-  padding-top: 10px;
-}
-
-.itemShortcut {
-  flex-grow: 1;
-}
-
-.buttonRow {
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: stretch;
-  height: 40px;
-  margin-top: 10px;
-}
-
-.button {
-  width: 80px;
-  margin-left: 10px !important;
 }
