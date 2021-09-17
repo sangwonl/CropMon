@@ -1,5 +1,11 @@
 ## Release Notes
 
+### v0.6.3
+
+_7 Oct 2021_
+
+- Renew preferences modal styles
+
 ### v0.6.2
 
 _23 Sep 2021_

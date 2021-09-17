@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.panelOptions {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+
+.optionRow {
+  padding: 10px;
+}
+
+.panelButtons {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  flex-basis: 40px;
+}
+
+.shortcutInvalid {
+  color: red;
+}
