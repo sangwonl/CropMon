@@ -33,25 +33,25 @@ export class PreferencesStore implements IPreferencesStore {
       fileExtension: 'json',
       accessPropertiesByDotNotation: false,
       migrations: {
-        '0.7.0': (store) => {
+        '0.6.2': (store) => {
           const curPrefs: IPreferences = {
             initialLoaded: false,
             version: store.get('version') as string,
             runAtStartup: store.get('runAtStartup', true) as boolean,
+            showCountdown: true, // newly added on 0.6.2
             shortcut: store.get('shortcut', INITIAL_SHORTCUT) as string,
-            recordHome: store.get('recordHomeDir') as string,
-            openRecordHomeWhenRecordCompleted: store.get('openRecordHomeDirWhenRecordCompleted') as boolean,
-            showCountdown: true, // newly added on 0.7.0
+            recordHome: store.get('recordHomeDir', app.getPath('videos')) as string,
+            openRecordHomeWhenRecordCompleted: store.get('openRecordHomeDirWhenRecordCompleted', true) as boolean,
             recordMicrophone: store.get('recordMicrophone', false) as boolean,
             recordQualityMode: store.get('recordQualityMode', 'normal') as RecordQualityMode,
             outputFormat: store.get('outputFormat', 'mp4') as OutputFormat,
           }
 
           store.set(PREFS_GENERAL_RUNATSTARTUP, curPrefs.runAtStartup);
+          store.set(PREFS_GENERAL_SHOWCOUNTDOWN, curPrefs.showCountdown);
           store.set(PREFS_GENERAL_SHORTCUT, curPrefs.shortcut);
           store.set(PREFS_GENERAL_RECORDHOME, curPrefs.recordHome);
           store.set(PREFS_GENERAL_REVEALRECORDEDFILE, curPrefs.openRecordHomeWhenRecordCompleted);
-          store.set(PREFS_GENERAL_SHOWCOUNTDOWN, curPrefs.showCountdown);
           store.set(PREFS_RECORDING_MICROPHONE, curPrefs.recordMicrophone);
           store.set(PREFS_RECORDING_QUALITYMODE, curPrefs.recordQualityMode);
           store.set(PREFS_RECORDING_OUTPUTFORMAT, curPrefs.outputFormat);

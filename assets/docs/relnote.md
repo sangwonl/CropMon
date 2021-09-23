@@ -1,5 +1,12 @@
 ## Release Notes
 
+### v0.6.2
+
+_23 Sep 2021_
+
+- Add countdown before recording start
+- Change Mac tray icon
+
 ### v0.6.1
 
 _9 Sep 2021_

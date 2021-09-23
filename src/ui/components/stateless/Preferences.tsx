@@ -46,6 +46,9 @@ export const Preferences = (props: PreferencesProps) => {
   const [runAtStartup, setRunAtStartup] = useState<boolean>(
     origPrefs.runAtStartup
   );
+  const [showCountdown, setShowCountdown] = useState<boolean>(
+    origPrefs.showCountdown
+  );
 
   const setShortcutKey = (s: string) => {
     setShortcutValidated(validateShortcut(s));
@@ -62,6 +65,7 @@ export const Preferences = (props: PreferencesProps) => {
     setRecordHome(origPrefs.recordHome);
     setOpenRecordHome(origPrefs.openRecordHomeWhenRecordCompleted);
     setRunAtStartup(origPrefs.runAtStartup);
+    setShowCountdown(origPrefs.showCountdown);
   }, [origPrefs]);
 
   return (
@@ -82,6 +86,22 @@ export const Preferences = (props: PreferencesProps) => {
               />
             }
             label="Run automatically at startup"
+          />
+        </Grid>
+        <Grid container>
+          <FormControlLabel
+            control={
+              <Checkbox
+                tabIndex={-1}
+                color="primary"
+                name="show-countdown"
+                checked={showCountdown}
+                onChange={({ target }) => {
+                  setShowCountdown(target.checked);
+                }}
+              />
+            }
+            label="Show countdown before recording start"
           />
         </Grid>
       </div>
@@ -176,6 +196,7 @@ export const Preferences = (props: PreferencesProps) => {
                 recordHome,
                 shortcut,
                 runAtStartup,
+                showCountdown,
               };
               props.onClose(newPrefs);
             }}
