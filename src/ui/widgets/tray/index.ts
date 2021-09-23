@@ -205,9 +205,9 @@ export abstract class AppTray {
 class WinAppTray extends AppTray {
   constructor() {
     super(
-      nativeImage.createFromPath(assetPathResolver('icon.png')),
-      nativeImage.createFromPath(assetPathResolver('icon-app-updatable.png')),
-      nativeImage.createFromPath(assetPathResolver('icon-rec-stop.png'))
+      nativeImage.createFromPath(assetPathResolver('icon-tray-default.png')),
+      nativeImage.createFromPath(assetPathResolver('icon-tray-updatable.png')),
+      nativeImage.createFromPath(assetPathResolver('icon-tray-recstop.png'))
     );
   }
 
@@ -300,13 +300,13 @@ class MacAppTray extends AppTray {
   constructor() {
     super(
       nativeImage
-        .createFromPath(assetPathResolver('icon-mac.png'))
+        .createFromPath(assetPathResolver('icon-tray-default.png'))
         .resize({ width: 18, height: 16 }),
       nativeImage
-        .createFromPath(assetPathResolver('icon-app-updatable-mac.png'))
+        .createFromPath(assetPathResolver('icon-tray-updatable.png'))
         .resize({ width: 18, height: 16 }),
       nativeImage
-        .createFromPath(assetPathResolver('icon-rec-stop-mac.png'))
+        .createFromPath(assetPathResolver('icon-tray-recstop.png'))
         .resize({ width: 18, height: 16 })
     );
   }
