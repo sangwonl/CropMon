@@ -77,6 +77,13 @@ export class Widget extends BrowserWindow {
         this.hide();
       }
     });
+
+    // be sure window scaled as default
+    this.webContents.on('did-finish-load', () => {
+      this.webContents.setZoomFactor(1.0);
+      this.webContents.setZoomLevel(0.0);
+      this.webContents.setVisualZoomLevelLimits(1.0, 1.0);
+    });
   }
 
   close(): void {
