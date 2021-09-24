@@ -29,11 +29,5 @@ export class CaptureOverlay extends Widget {
     // https://github.com/electron/electron/issues/25368
     this.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     this.setAlwaysOnTop(true, 'screen-saver', 1);
-
-    // be sure overlay window scaled
-    this.webContents.on('did-finish-load', () => {
-      this.webContents.setZoomFactor(1.0);
-      this.webContents.setZoomLevel(0.0);
-    });
   }
 }

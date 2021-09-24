@@ -8,6 +8,7 @@ import { ipcRenderer } from 'electron';
 import React, { useEffect, useState } from 'react';
 
 import { ProgressDialog } from '@ui/components/stateless/ProgressDialog';
+import { preventZoomKeyEvent } from '@ui/widgets/utils';
 import { getCurWidgetCustomData } from '@utils/remote';
 
 import {
@@ -53,3 +54,5 @@ const Wrapper = () => {
 export default () => {
   return <Wrapper />;
 };
+
+preventZoomKeyEvent();

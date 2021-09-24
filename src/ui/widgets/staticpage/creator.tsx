@@ -8,6 +8,7 @@ import React from 'react';
 
 import { getCurWidgetCustomData } from '@utils/remote';
 import { StaticPage } from '@ui/components/stateless/StaticPage';
+import { preventZoomKeyEvent } from '@ui/widgets/utils';
 
 import { StaticPagePopupOptions } from './shared';
 
@@ -20,3 +21,5 @@ const Wrapper = () => (
 export default () => {
   return <Wrapper />;
 };
+
+preventZoomKeyEvent();

@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 
 import CaptureCover from '@ui/components/stateful/CaptureCover';
 import store from '@ui/redux/store';
+import { preventZoomKeyEvent } from '@ui/widgets/utils';
 
 const Wrapper = () => (
   <Provider store={store}>
@@ -15,3 +16,5 @@ const Wrapper = () => (
 export default () => {
   return <Wrapper />;
 };
+
+preventZoomKeyEvent();
