@@ -82,15 +82,16 @@ export const PrefsGeneralTabPanel = ({
     [setShortcutKey, resetShortcut]
   );
 
-  // Dirty check
-  const isDirty = useCallback(() => {
+  // Dirty and saveability check
+  const canSave = useCallback(() => {
     const { openRecordHomeWhenRecordCompleted } = initialPrefs;
     return (
-      isChanged(initialPrefs.runAtStartup, runAtStartup) ||
-      isChanged(initialPrefs.showCountdown, showCountdown) ||
-      isChanged(initialPrefs.recordHome, recordHome) ||
-      isChanged(openRecordHomeWhenRecordCompleted, openRecordHome) ||
-      isChanged(initialPrefs.shortcut, shortcut)
+      shortcutValidated &&
+      (isChanged(initialPrefs.runAtStartup, runAtStartup) ||
+        isChanged(initialPrefs.showCountdown, showCountdown) ||
+        isChanged(initialPrefs.recordHome, recordHome) ||
+        isChanged(openRecordHomeWhenRecordCompleted, openRecordHome) ||
+        isChanged(initialPrefs.shortcut, shortcut))
     );
   }, [
     initialPrefs,
@@ -99,6 +100,7 @@ export const PrefsGeneralTabPanel = ({
     recordHome,
     openRecordHome,
     shortcut,
+    shortcutValidated,
   ]);
 
   // Save handler
@@ -210,7 +212,7 @@ export const PrefsGeneralTabPanel = ({
           </div>
         </fieldset>
         <div className={styles.panelButtons}>
-          <button type="button" disabled={!isDirty()} onClick={handleSave}>
+          <button type="button" disabled={!canSave()} onClick={handleSave}>
             Save
           </button>
           <button tabIndex={1} type="button" onClick={onCancel}>
