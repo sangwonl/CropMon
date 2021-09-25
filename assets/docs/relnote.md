@@ -5,6 +5,8 @@
 _7 Oct 2021_
 
 - Renew preferences modal styles
+- Fix window zoom factor issue
+- Change Win tray icon
 
 ### v0.6.2
 
