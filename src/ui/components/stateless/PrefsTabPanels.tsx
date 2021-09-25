@@ -1,16 +1,15 @@
+/* eslint-disable jsx-a11y/tabindex-no-positive */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 
 import React, {
-  useRef,
   useState,
   useCallback,
   useEffect,
   ChangeEvent,
   KeyboardEvent,
-  MouseEvent,
 } from 'react';
 import classNames from 'classnames';
 
@@ -61,7 +60,6 @@ export const PrefsGeneralTabPanel = ({
   );
 
   // Shortcut options
-  const shortcutInputRef = useRef<HTMLInputElement>(null);
   const [shortcut, setShortcut] = useState<string>(initialPrefs.shortcut);
   const [shortcutValidated, setShortcutValidated] = useState<boolean>(true);
   const setShortcutKey = useCallback((s: string) => {
@@ -169,7 +167,6 @@ export const PrefsGeneralTabPanel = ({
           <legend>Shortcut to start or stop capturing</legend>
           <div className={styles.optionRow}>
             <input
-              ref={shortcutInputRef}
               type="text"
               className={classNames({
                 [styles.shortcutInput]: shortcutValidated,
@@ -216,7 +213,7 @@ export const PrefsGeneralTabPanel = ({
           <button type="button" disabled={!isDirty()} onClick={handleSave}>
             Save
           </button>
-          <button type="button" onClick={onCancel}>
+          <button tabIndex={1} type="button" onClick={onCancel}>
             Close
           </button>
         </div>

@@ -22,7 +22,7 @@ import {
 } from './shared';
 
 export class PreferencesModal extends Widget {
-  private modalLoaded = false;
+  private loaded = false;
   private prefs: IPreferences | undefined;
   private closeResolver: any | undefined;
 
@@ -78,11 +78,11 @@ export class PreferencesModal extends Widget {
     this.prefs = { ...prefs };
     setCustomData<IPreferences>(this, 'initialPrefs', { ...this.prefs });
 
-    if (this.modalLoaded) {
+    if (this.loaded) {
       this.showModal();
     } else {
       this.webContents.on('did-finish-load', () => {
-        this.modalLoaded = true;
+        this.loaded = true;
         this.showModal();
       });
     }

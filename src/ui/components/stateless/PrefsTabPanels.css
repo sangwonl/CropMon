@@ -43,11 +43,6 @@
   margin: 1px 8px 0px 0px;
 }
 
-.optionRow input[type="checkbox"]:checked {
-  background-color: #3a9f3c;
-  color: #3a9f3c;
-}
-
 .optionRow input[type="text"] {
   appearance: none;
   outline: none;
@@ -124,6 +119,10 @@ button:disabled {
   color: #ff2222 !important;
   border-color: #ff222255 !important;
   background-color: #ff222211 !important;
+}
+
+.shortcutInvalid:not(:focus) + span {
+  display: none;
 }
 
 .shortcutCancelIconHidden {

@@ -8,6 +8,7 @@
 import { Widget } from './widget';
 
 export class CachedWidget<W extends Widget, C, R> {
+  private loaded = false;
   private widget: W | undefined = undefined;
   private timeoutHandle: any | undefined;
 
@@ -36,7 +37,15 @@ export class CachedWidget<W extends Widget, C, R> {
         this.timeoutHandle = undefined;
       }, this.ttlInSecs * 1000);
     });
-    this.widget.lazyShow();
+
+    if (this.loaded) {
+      this.widget.show();
+    } else {
+      this.widget.webContents.on('did-finish-load', () => {
+        this.loaded = true;
+        this.widget?.show();
+      });
+    }
   }
 
   async openAsModal(args: C): Promise<R | undefined> {

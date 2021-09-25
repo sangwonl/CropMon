@@ -8,10 +8,10 @@
 import React, { useState, useCallback } from 'react';
 
 import { IPreferences } from '@core/entities/preferences';
+import { PrefsGeneralTabPanel } from './PrefsTabPanels';
 
 import Tabs, { TabItem } from './Tabs';
 import styles from './Preferences.css';
-import { PrefsGeneralTabPanel } from './PrefsTabPanels';
 
 export interface PreferencesProps {
   origPrefs: IPreferences;
