@@ -90,19 +90,4 @@ export class Widget extends BrowserWindow {
     this.forceClose = true;
     super.close();
   }
-
-  async lazyShow(): Promise<void> {
-    return new Promise((resolve, _) => {
-      if (this.contentReady) {
-        super.show();
-        resolve();
-      } else {
-        this.webContents.on('did-finish-load', () => {
-          this.contentReady = true;
-          super.show();
-          resolve();
-        });
-      }
-    });
-  }
 }

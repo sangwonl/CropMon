@@ -6,8 +6,30 @@ import { capitalize } from './strings';
 
 export const INITIAL_SHORTCUT = `Meta + Shift + E`;
 
+const MODIFIER_CODES = [
+  16, // Shift
+  17, // Ctrl
+  18, // Alt
+  91, // Meta
+  93, // Meta
+];
+const FUNCTIONAL_CODES = [
+  8, // Backspace
+  9, // Tab
+  13, // Return (or Enter as alias)
+  27, // Escape (or Esc for short)
+  32, // Space
+  // Capslock
+  // Numlock
+  // Scrolllock
+  46, // Delete
+  // Insert
+  // Up, Down, Left and Right
+  // Home and End
+  // PageUp and PageDown
+];
+
 export const extractShortcut = (e: any) => {
-  const modifierCodes = [16, 17, 18, 91]; // Shift, Ctrl, Alt, Meta
   const pressed = [];
   if (e.metaKey) {
     pressed.push('Meta');
@@ -21,9 +43,14 @@ export const extractShortcut = (e: any) => {
   if (e.ctrlKey) {
     pressed.push('Ctrl');
   }
-  if (!modifierCodes.includes(e.keyCode)) {
-    const key = String.fromCharCode(e.keyCode);
-    pressed.push(capitalize(key));
+  if (!MODIFIER_CODES.includes(e.keyCode)) {
+    let k = '';
+    if (FUNCTIONAL_CODES.includes(e.keyCode)) {
+      k = e.code;
+    } else if (e.keyCode >= 32 && e.keyCode <= 126) {
+      k = String.fromCharCode(e.keyCode);
+    }
+    pressed.push(capitalize(k));
   }
 
   return pressed.join(' + ');

@@ -22,6 +22,7 @@ import {
 } from './shared';
 
 export class PreferencesModal extends Widget {
+  private modalLoaded = false;
   private prefs: IPreferences | undefined;
   private closeResolver: any | undefined;
 
@@ -30,12 +31,10 @@ export class PreferencesModal extends Widget {
       icon: assetPathResolver('icon.png'),
       show: false,
       width: 640,
-      height: 600,
-      frame: true,
+      height: 500,
       resizable: false,
       minimizable: false,
       maximizable: false,
-      skipTaskbar: true,
     });
 
     this.loadURL(`file://${__dirname}/../preferences/index.html`);
@@ -70,12 +69,23 @@ export class PreferencesModal extends Widget {
     });
   }
 
+  private showModal(): void {
+    this.notifyPrefsUpdated();
+    this.show();
+  }
+
   async open(prefs: IPreferences): Promise<IPreferences | undefined> {
     this.prefs = { ...prefs };
     setCustomData<IPreferences>(this, 'initialPrefs', { ...this.prefs });
 
-    this.lazyShow();
-    this.notifyPrefsUpdated();
+    if (this.modalLoaded) {
+      this.showModal();
+    } else {
+      this.webContents.on('did-finish-load', () => {
+        this.modalLoaded = true;
+        this.showModal();
+      });
+    }
 
     return new Promise((resolve, _) => {
       this.closeResolver = (result?: IPreferences) => {

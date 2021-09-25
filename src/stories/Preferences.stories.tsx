@@ -17,7 +17,7 @@ const Template: Story<PreferencesProps> = (args) => (
   <div
     style={{
       width: 600,
-      height: 400,
+      height: 500,
       backgroundColor: '#ffffff',
       border: '1px solid #000',
     }}
