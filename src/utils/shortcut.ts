@@ -6,28 +6,41 @@ import { capitalize } from './strings';
 
 export const INITIAL_SHORTCUT = `Meta + Shift + E`;
 
-const MODIFIER_CODES = [
+const MODIFIER_KEYCODES = [
   16, // Shift
   17, // Ctrl
   18, // Alt
   91, // Meta
   93, // Meta
 ];
-const FUNCTIONAL_CODES = [
+const CONTROL_KEYCODES = [
   8, // Backspace
   9, // Tab
   13, // Return (or Enter as alias)
   27, // Escape (or Esc for short)
   32, // Space
-  // Capslock
-  // Numlock
-  // Scrolllock
+  20, // Capslock
+  33, // PageUp
+  34, // PageDown
+  35, // End
+  36, // Home
+  37, // Left
+  38, // Up
+  39, // Right
+  40, // Down
+  45, // Insert
   46, // Delete
-  // Insert
-  // Up, Down, Left and Right
-  // Home and End
-  // PageUp and PageDown
+  144, // Numlock
+  145, // Scrolllock
 ];
+
+const isFunctionKeyCodes = (keyCode: number): boolean => {
+  return keyCode >= 112 && keyCode <= 143;
+};
+
+const isOthersAllowed = (keyCode: number): boolean => {
+  return keyCode >= 32 && keyCode <= 111;
+};
 
 export const extractShortcut = (e: any) => {
   const pressed = [];
@@ -43,14 +56,12 @@ export const extractShortcut = (e: any) => {
   if (e.ctrlKey) {
     pressed.push('Ctrl');
   }
-  if (!MODIFIER_CODES.includes(e.keyCode)) {
-    let k = '';
-    if (FUNCTIONAL_CODES.includes(e.keyCode)) {
-      k = e.code;
-    } else if (e.keyCode >= 32 && e.keyCode <= 126) {
-      k = String.fromCharCode(e.keyCode);
+  if (!MODIFIER_KEYCODES.includes(e.keyCode)) {
+    if (CONTROL_KEYCODES.includes(e.keyCode) || isFunctionKeyCodes(e.keyCode)) {
+      pressed.push(capitalize(e.code));
+    } else if (isOthersAllowed(e.keyCode)) {
+      pressed.push(capitalize(String.fromCharCode(e.keyCode)));
     }
-    pressed.push(capitalize(k));
   }
 
   return pressed.join(' + ');
