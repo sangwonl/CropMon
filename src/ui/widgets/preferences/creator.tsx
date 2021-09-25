@@ -22,31 +22,35 @@ const getInitialPrefs = (): IPreferences => {
 };
 
 const Wrapper = () => {
+  const [readyToShow, setReadyToShow] = useState<boolean>(true);
   const [origPrefs, setOrigPrefs] = useState<IPreferences>(getInitialPrefs());
   const [prefs, setPrefs] = useState<IPreferences>(origPrefs);
 
   useEffect(() => {
-    ipcRenderer.on(
-      IPC_EVT_ON_PREFS_UPDATED,
-      (_event: any, data: IpcEvtOnPrefsUpdated) => {
-        setPrefs(data.preferences);
-        setOrigPrefs(getInitialPrefs());
-      }
-    );
+    const handlePrefsUpdated = (_event: any, data: IpcEvtOnPrefsUpdated) => {
+      setPrefs(data.preferences);
+      setOrigPrefs(getInitialPrefs());
+      setReadyToShow(true);
+    };
+    ipcRenderer.on(IPC_EVT_ON_PREFS_UPDATED, handlePrefsUpdated);
+    return () => {
+      ipcRenderer.off(IPC_EVT_ON_PREFS_UPDATED, handlePrefsUpdated);
+    };
   }, [setPrefs]);
 
-  return (
+  return readyToShow ? (
     <Preferences
       origPrefs={origPrefs}
       selectedRecordHome={prefs.recordHome}
       onClose={(preferences?: IPreferences) => {
         ipcRenderer.send(IPC_EVT_ON_CLOSE, { preferences });
+        setReadyToShow(false);
       }}
       onChooseRecordHome={() => {
         ipcRenderer.send(IPC_EVT_ON_RECORD_HOME_SELECTION, {});
       }}
     />
-  );
+  ) : null;
 };
 
 export default () => {

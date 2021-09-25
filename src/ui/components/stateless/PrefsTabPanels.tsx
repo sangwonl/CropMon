@@ -1,12 +1,16 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 
 import React, {
+  useRef,
   useState,
   useCallback,
   useEffect,
   ChangeEvent,
   KeyboardEvent,
+  MouseEvent,
 } from 'react';
 import classNames from 'classnames';
 
@@ -57,6 +61,7 @@ export const PrefsGeneralTabPanel = ({
   );
 
   // Shortcut options
+  const shortcutInputRef = useRef<HTMLInputElement>(null);
   const [shortcut, setShortcut] = useState<string>(initialPrefs.shortcut);
   const [shortcutValidated, setShortcutValidated] = useState<boolean>(true);
   const setShortcutKey = useCallback((s: string) => {
@@ -69,23 +74,15 @@ export const PrefsGeneralTabPanel = ({
   }, [initialPrefs.shortcut]);
   const handleShortcutKeyEvent = useCallback(
     (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      const extracted = extractShortcut(event);
+      if (extracted === 'Escape') {
         resetShortcut();
       } else {
-        setShortcutKey(extractShortcut(event));
+        setShortcutKey(extracted);
       }
     },
     [setShortcutKey, resetShortcut]
   );
-
-  // Update states
-  useEffect(() => {
-    setRunAtStartup(initialPrefs.runAtStartup);
-    setShowCountdown(initialPrefs.showCountdown);
-    setRecordHome(selectedRecordHome);
-    setOpenRecordHome(initialPrefs.openRecordHomeWhenRecordCompleted);
-    setShortcutKey(initialPrefs.shortcut);
-  }, [initialPrefs, selectedRecordHome, setShortcutKey]);
 
   // Dirty check
   const isDirty = useCallback(() => {
@@ -106,6 +103,7 @@ export const PrefsGeneralTabPanel = ({
     shortcut,
   ]);
 
+  // Save handler
   const handleSave = useCallback(() => {
     const newPrefs: IPreferences = {
       ...initialPrefs,
@@ -126,11 +124,20 @@ export const PrefsGeneralTabPanel = ({
     shortcut,
   ]);
 
+  // Update states
+  useEffect(() => {
+    setRunAtStartup(initialPrefs.runAtStartup);
+    setShowCountdown(initialPrefs.showCountdown);
+    setRecordHome(selectedRecordHome);
+    setOpenRecordHome(initialPrefs.openRecordHomeWhenRecordCompleted);
+    setShortcutKey(initialPrefs.shortcut);
+  }, [initialPrefs, selectedRecordHome, setShortcutKey]);
+
   return (
     <div className={styles.container}>
       <div className={styles.panelOptions}>
         <fieldset>
-          <legend>General</legend>
+          <legend>General options</legend>
           <div className={styles.optionRow}>
             <input
               id="opt-run-at-startup"
@@ -159,7 +166,32 @@ export const PrefsGeneralTabPanel = ({
           </div>
         </fieldset>
         <fieldset>
-          <legend>Ouput</legend>
+          <legend>Shortcut to start or stop capturing</legend>
+          <div className={styles.optionRow}>
+            <input
+              ref={shortcutInputRef}
+              type="text"
+              className={classNames({
+                [styles.shortcutInput]: shortcutValidated,
+                [styles.shortcutInvalid]: !shortcutValidated,
+              })}
+              value={shortcutForDisplay(shortcut)}
+              onKeyDown={handleShortcutKeyEvent}
+              readOnly
+            />
+            <span
+              className={classNames({
+                [styles.shortcutCancelIcon]: shortcut !== initialPrefs.shortcut,
+                [styles.shortcutCancelIconHidden]:
+                  shortcut === initialPrefs.shortcut,
+              })}
+            >
+              Press <b>ESC</b> to reset
+            </span>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Output file will be saved to</legend>
           <div className={styles.optionRow}>
             <input type="text" value={recordHome} readOnly />
             <button type="button" onClick={onChooseRecordHome}>
@@ -180,28 +212,14 @@ export const PrefsGeneralTabPanel = ({
             </label>
           </div>
         </fieldset>
-        <fieldset>
-          <legend>Shortcut</legend>
-          <div className={styles.optionRow}>
-            <input
-              type="text"
-              className={classNames({
-                [styles.shortcutInvalid]: !shortcutValidated,
-              })}
-              value={shortcutForDisplay(shortcut)}
-              onKeyDown={handleShortcutKeyEvent}
-              readOnly
-            />
-          </div>
-        </fieldset>
-      </div>
-      <div className={styles.panelButtons}>
-        <button type="button" disabled={!isDirty()} onClick={handleSave}>
-          Save
-        </button>
-        <button type="button" onClick={onCancel}>
-          Close
-        </button>
+        <div className={styles.panelButtons}>
+          <button type="button" disabled={!isDirty()} onClick={handleSave}>
+            Save
+          </button>
+          <button type="button" onClick={onCancel}>
+            Close
+          </button>
+        </div>
       </div>
     </div>
   );
