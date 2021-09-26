@@ -21,15 +21,20 @@
     margin: 20px;
     text-align: center;
   }
-  #usage p {
+  #usage p:nth-child(1) {
     margin: 2px;
+    font-size: 12px;
+  }
+  #usage p:nth-child(2) {
+    margin: 2px;
+    font-weight: bold;
   }
   #copy p:nth-child(1) {
+    margin: 2px;
     font-size: 12px;
-    margin: 0px;
   }
   #copy p:nth-child(2) {
-    margin: 4px;
+    margin: 2px;
     font-size: 14px;
     font-weight: 500;
   }
@@ -40,7 +45,8 @@
     <h2>Unregistered</h2>
   </section>
   <section id="usage">
-    <p>Capture Start/Stop: __shortcut__</p>
+    <p>Capture Shortcut:</p>
+    <p>__shortcut__</p>
   </section>
   <section id="copy">
     <p>Copyright @2021 Pineple</p>

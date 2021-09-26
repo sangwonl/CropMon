@@ -31,7 +31,7 @@ export class PreferencesModal extends Widget {
       icon: assetPathResolver('icon.png'),
       show: false,
       width: 640,
-      height: 500,
+      height: 510,
       resizable: false,
       minimizable: false,
       maximizable: false,

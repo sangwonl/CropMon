@@ -180,7 +180,7 @@ export class UiDirector implements IUiDirector {
 
     this.aboutPopup?.open({
       width: 300,
-      height: 220,
+      height: 240,
       html: this.aboutContent,
     });
   }

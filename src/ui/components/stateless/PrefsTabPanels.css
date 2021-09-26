@@ -37,13 +37,13 @@
   font-size: 14px;
 }
 
-.optionRow input[type="checkbox"] {
+.optionRow input[type='checkbox'] {
   height: 14px;
   width: 14px;
   margin: 1px 8px 0px 0px;
 }
 
-.optionRow input[type="text"] {
+.optionRow input[type='text'] {
   appearance: none;
   outline: none;
   padding: 12px;
@@ -85,6 +85,7 @@ button:disabled {
 }
 
 .panelButtons {
+  padding-top: 8px;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
