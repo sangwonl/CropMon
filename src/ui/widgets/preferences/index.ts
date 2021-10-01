@@ -12,7 +12,6 @@ import { IPreferences } from '@core/entities/preferences';
 import { assetPathResolver } from '@utils/asset';
 import { WidgetType } from '@ui/widgets/types';
 import { Widget } from '@ui/widgets/widget';
-import { setCustomData } from '@utils/remote';
 
 import {
   IPC_EVT_ON_RECORD_HOME_SELECTION,
@@ -76,7 +75,7 @@ export class PreferencesModal extends Widget {
 
   async open(prefs: IPreferences): Promise<IPreferences | undefined> {
     this.prefs = { ...prefs };
-    setCustomData<IPreferences>(this, 'initialPrefs', { ...this.prefs });
+    this.setCustomData<IPreferences>('initialPrefs', { ...this.prefs });
 
     if (this.loaded) {
       this.showModal();

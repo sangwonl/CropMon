@@ -7,27 +7,30 @@ import { Widget } from '@ui/widgets/widget';
 
 import { isMac } from './process';
 
-export function setCustomData<T>(widget: Widget, name: string, value: T) {
-  (widget as any)[name] = value;
-}
-
-export function getCustomData<T>(widget: Widget, name: string): T {
-  return (widget as any)[name] as T;
-}
-
 export function getCurWidgetCustomData<T>(name: string): T {
-  return getCustomData<T>(remote.getCurrentWindow() as Widget, name);
+  return (remote.getCurrentWindow() as Widget).getCustomData(name);
 }
 
-export function focusCurWidget() {
-  const curWin = remote.getCurrentWindow();
-  if (!curWin.isFocused()) {
-    curWin.focus();
-  }
-}
-
-export function getApp() {
-  return remote.app;
+export function getAppPath(
+  name:
+    | 'home'
+    | 'appData'
+    | 'userData'
+    | 'cache'
+    | 'temp'
+    | 'exe'
+    | 'module'
+    | 'desktop'
+    | 'documents'
+    | 'downloads'
+    | 'music'
+    | 'pictures'
+    | 'videos'
+    | 'recent'
+    | 'logs'
+    | 'crashDumps'
+) {
+  return remote.app.getPath(name);
 }
 
 export function getCursorScreenPoint() {

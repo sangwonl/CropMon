@@ -7,7 +7,6 @@
 import { BrowserWindow, NativeImage } from 'electron';
 
 import { isDebugMode } from '@utils/process';
-import { setCustomData } from '@utils/remote';
 
 import { WidgetType } from './types';
 
@@ -38,7 +37,6 @@ export interface WidgetOptions {
 
 export class Widget extends BrowserWindow {
   private forceClose = false;
-  private contentReady = false;
 
   constructor(type: WidgetType, options?: WidgetOptions) {
     super({
@@ -66,8 +64,8 @@ export class Widget extends BrowserWindow {
     });
 
     this.removeMenu();
-    setCustomData(this, 'type', type);
-    setCustomData(this, 'options', options?.options);
+    this.setCustomData('type', type);
+    this.setCustomData('options', options?.options);
 
     this.on('close', (event) => {
       if (!this.forceClose) {
@@ -89,5 +87,13 @@ export class Widget extends BrowserWindow {
   close(): void {
     this.forceClose = true;
     super.close();
+  }
+
+  setCustomData<T>(name: string, value: T) {
+    (this as any)[name] = value;
+  }
+
+  getCustomData<T>(name: string): T {
+    return (this as any)[name] as T;
   }
 }
