@@ -10,7 +10,7 @@ import path from 'path';
 import { desktopCapturer, ipcRenderer } from 'electron';
 
 import { IBounds } from '@core/entities/screen';
-import { getApp } from '@utils/remote';
+import { getAppPath } from '@utils/remote';
 import { getNowAsYYYYMMDDHHmmss } from '@utils/date';
 
 import { IRecordContext, ITargetSlice } from './types';
@@ -50,7 +50,7 @@ const recorderOpts = (mimeType?: string, videoBitrates?: number) => {
 const getTempOutputPath = () => {
   const fileName = getNowAsYYYYMMDDHHmmss();
   return path.join(
-    getApp().getPath('temp'),
+    getAppPath('temp'),
     'kropsaurus',
     'recording',
     `tmp-${fileName}.webm`
