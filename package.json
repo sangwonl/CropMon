@@ -71,7 +71,8 @@
         "from": "infrastructures/recorder/rec-delegate",
         "to": "rec-delegate",
         "filter": [
-          "*.html"
+          "*.html",
+          "*.js"
         ]
       }
     ],

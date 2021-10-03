@@ -19,6 +19,7 @@ import { IRecordContext, ITargetSlice } from './types';
 // const MEDIA_MIME_TYPE = 'video/webm; codecs=h264';
 const MEDIA_MIME_TYPE = 'video/webm; codecs=h264,opus';
 const NUM_CHUNKS_TO_FLUSH = 100;
+const DRAW_WORKER_PATH = `file://${__dirname}/../rec-delegate/worker.js`;
 
 let gMediaRecorder: MediaRecorder;
 let gRecordState: 'initial' | 'recording' | 'stopping' | 'stopped' = 'initial';
@@ -160,7 +161,7 @@ const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
   canvasElem.height = targetBounds.height;
   const offscreenCanvas = canvasElem.transferControlToOffscreen();
 
-  const drawWorker = new Worker('./worker.js');
+  const drawWorker = new Worker(DRAW_WORKER_PATH);
   drawWorker.onmessage = (event: MessageEvent) => {
     if (event.data.type === 'stopped') {
       gMediaRecorder.stop();
