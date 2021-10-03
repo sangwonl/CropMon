@@ -10,8 +10,7 @@ import { TYPES } from '@di/types';
 import { IUiDirector } from '@core/interfaces/director';
 import { IAppUpdater } from '@core/interfaces/updater';
 import { IHookManager } from '@core/interfaces/hook';
-
-import { PreferencesUseCase } from './preferences';
+import { PreferencesUseCase } from '@core/usecases/preferences';
 
 @injectable()
 export class AppUseCase {

@@ -9,6 +9,10 @@ export const getNowAsYYYYMMDDHHmmss = () => {
   return localISOTime.split('.')[0].replace(/[-:T]/g, '');
 };
 
+export const getTimeInMs = () => {
+  return new Date().getTime();
+};
+
 export const getTimeInSeconds = () => {
-  return Math.floor(new Date().getTime() / 1000);
+  return Math.floor(getTimeInMs() / 1000);
 };

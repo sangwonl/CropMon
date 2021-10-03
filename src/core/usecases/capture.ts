@@ -25,7 +25,7 @@ import { IHookManager } from '@core/interfaces/hook';
 import { IUiDirector } from '@core/interfaces/director';
 import { getNowAsYYYYMMDDHHmmss, getTimeInSeconds } from '@utils/date';
 
-import { PreferencesUseCase } from './preferences';
+import { PreferencesUseCase } from '@core/usecases/preferences';
 
 @injectable()
 export class CaptureUseCase {

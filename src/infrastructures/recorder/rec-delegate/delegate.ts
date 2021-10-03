@@ -1,3 +1,4 @@
+/* eslint-disable promise/always-return */
 /* eslint-disable no-console */
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -19,13 +20,14 @@ import { IRecordContext, ITargetSlice } from './types';
 const MEDIA_MIME_TYPE = 'video/webm; codecs=h264,opus';
 const NUM_CHUNKS_TO_FLUSH = 100;
 
-let mediaRecorder: MediaRecorder;
-let recordState: 'initial' | 'recording' | 'stopped' = 'initial';
-let tempFilePath: string;
-let recordedChunks: Blob[] = [];
-let totalRecordedChunks = 0;
+let gMediaRecorder: MediaRecorder;
+let gRecordState: 'initial' | 'recording' | 'stopping' | 'stopped' = 'initial';
+let gTempFilePath: string;
+let gRecordedChunks: Blob[] = [];
+let gTotalRecordedChunks = 0;
 
 interface IDrawable {
+  id: string;
   videoElem: HTMLVideoElement;
   srcBounds: IBounds;
   dstBounds: IBounds;
@@ -131,7 +133,7 @@ const createDrawContext = async (
           height: Math.floor(srcBounds.height * recordCtx.scaleDownFactor),
         };
 
-        return { videoElem, srcBounds, dstBounds };
+        return { id: source!.id, videoElem, srcBounds, dstBounds };
       }
     )
   );
@@ -146,39 +148,57 @@ const createDrawContext = async (
 const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
   const { targetBounds, frameRate, drawables } = drawContext;
 
-  const canvasElem = document.createElement('canvas') as HTMLCanvasElement;
+  const imageCaptures: Map<string, ImageCapture> = new Map();
+  drawables.forEach((d: IDrawable) => {
+    const stream = d.videoElem.srcObject as MediaStream;
+    const [track] = stream.getVideoTracks();
+    imageCaptures.set(d.id, new ImageCapture(track));
+  });
+
+  const canvasElem = document.createElement('canvas') as any;
   canvasElem.width = targetBounds.width;
   canvasElem.height = targetBounds.height;
+  const offscreenCanvas = canvasElem.transferControlToOffscreen();
 
-  const canvasCtx = canvasElem.getContext('2d')!;
-  const interval = Math.floor(1000 / frameRate);
+  const drawWorker = new Worker('./worker.js');
+  drawWorker.onmessage = (event: MessageEvent) => {
+    if (event.data.type === 'stopped') {
+      gMediaRecorder.stop();
+    }
+  };
 
+  drawWorker.postMessage({ type: 'setup', offscreenCanvas, frameRate }, [
+    offscreenCanvas,
+  ]);
+
+  let renderTimer: any;
   const renderCapturedToCanvas = () => {
-    if (recordState === 'stopped') {
+    if (gRecordState === 'stopping') {
+      clearInterval(renderTimer);
+      drawWorker.postMessage({ type: 'stop' });
       return;
     }
 
-    if (recordState === 'recording') {
-      drawables.forEach((d: any) => {
-        canvasCtx.drawImage(
-          d.videoElem,
-          d.srcBounds.x,
-          d.srcBounds.y,
-          d.srcBounds.width,
-          d.srcBounds.height,
-          d.dstBounds.x,
-          d.dstBounds.y,
-          d.dstBounds.width,
-          d.dstBounds.height
-        );
+    if (gRecordState === 'recording') {
+      const promises = drawables.map(async (d: IDrawable) => {
+        const imageBitmap = await imageCaptures.get(d.id)!.grabFrame();
+        const { srcBounds, dstBounds } = d;
+        return { imageBitmap, srcBounds, dstBounds };
       });
+
+      Promise.all(promises)
+        .then((renderData: any) => {
+          drawWorker.postMessage({ type: 'render', renderData });
+        })
+        .catch(() => {});
     }
   };
 
   // In electron browser window web content, we can't use requestAnimationFrame..
-  setInterval(renderCapturedToCanvas, interval);
+  const interval = 1000 / frameRate;
+  renderTimer = setInterval(renderCapturedToCanvas, interval);
 
-  return (canvasElem as any).captureStream(frameRate);
+  return canvasElem.captureStream(frameRate);
 };
 
 const attachAudioStreamForMic = async (stream: MediaStream) => {
@@ -220,28 +240,24 @@ const flushChunksToFile = async (chunks: Blob[]) => {
 
   const blob = new Blob(chunks, { type: MEDIA_MIME_TYPE });
   const buffer = Buffer.from(await blob.arrayBuffer());
-  await fs.promises.appendFile(tempFilePath, buffer);
+  await fs.promises.appendFile(gTempFilePath, buffer);
 };
 
 const handleStreamDataAvailable = async (event: BlobEvent) => {
-  if (recordState !== 'recording') {
-    return;
-  }
+  gRecordedChunks.push(event.data);
+  gTotalRecordedChunks += 1;
 
-  recordedChunks.push(event.data);
-  totalRecordedChunks += 1;
-
-  if (recordedChunks.length >= NUM_CHUNKS_TO_FLUSH) {
-    const chunks = recordedChunks;
-    recordedChunks = [];
+  if (gRecordedChunks.length >= NUM_CHUNKS_TO_FLUSH) {
+    const chunks = gRecordedChunks;
+    gRecordedChunks = [];
     await flushChunksToFile(chunks);
   }
 };
 
 const handleRecordStop = async (_event: Event) => {
-  recordState = 'stopped';
-  await flushChunksToFile(recordedChunks);
-  ipcRenderer.send('recording-file-saved', { tempFilePath });
+  gRecordState = 'stopped';
+  await flushChunksToFile(gRecordedChunks);
+  ipcRenderer.send('recording-file-saved', { tempFilePath: gTempFilePath });
 };
 
 ipcRenderer.on('start-record', async (_event, data) => {
@@ -250,35 +266,35 @@ ipcRenderer.on('start-record', async (_event, data) => {
 
   const stream = await createStreamToRecord(recordCtx);
   const recOpts = recorderOpts(MEDIA_MIME_TYPE, videoBitrates);
-  mediaRecorder = new MediaRecorder(stream, recOpts);
-  mediaRecorder.ondataavailable = handleStreamDataAvailable;
-  mediaRecorder.onstop = handleRecordStop;
+  gMediaRecorder = new MediaRecorder(stream, recOpts);
+  gMediaRecorder.ondataavailable = handleStreamDataAvailable;
+  gMediaRecorder.onstop = handleRecordStop;
 
-  tempFilePath = getTempOutputPath();
-  ensureTempDirPathExists(tempFilePath);
+  gTempFilePath = getTempOutputPath();
+  ensureTempDirPathExists(gTempFilePath);
 
   setTimeout(() => {
-    mediaRecorder.start(300);
-    recordState = 'recording';
+    gMediaRecorder.start(300);
+    gRecordState = 'recording';
   });
 
   ipcRenderer.send('recording-started', {});
 });
 
 ipcRenderer.on('stop-record', async (_event, _data) => {
-  if (mediaRecorder === undefined) {
+  if (gMediaRecorder === undefined) {
     ipcRenderer.send('recording-failed', {
       message: 'invalid media recorder state',
     });
     return;
   }
 
-  if (totalRecordedChunks === 0) {
+  if (gTotalRecordedChunks === 0) {
     ipcRenderer.send('recording-failed', {
       message: 'empty recorded chunks',
     });
     return;
   }
 
-  mediaRecorder.stop();
+  gRecordState = 'stopping';
 });

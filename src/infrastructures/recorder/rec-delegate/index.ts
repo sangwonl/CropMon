@@ -22,6 +22,7 @@ export class RecorderDelegate extends BrowserWindow {
         enableRemoteModule: true,
         contextIsolation: false,
         backgroundThrottling: false,
+        nodeIntegrationInWorker: true,
         offscreen: true,
       },
     });
