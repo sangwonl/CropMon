@@ -28,6 +28,7 @@ import { OutputFormat } from '@core/entities/preferences';
 import { IScreenRecorder } from '@core/interfaces/recorder';
 import { isProduction } from '@utils/process';
 import {
+  getOverlayScreenBounds,
   getAllScreensFromLeftTop,
   getIntersection,
   isEmptyBounds,
@@ -166,14 +167,14 @@ export class ElectronScreenRecorder implements IScreenRecorder {
       return undefined;
     }
 
-    // WORKAROUND: For browser large pixels canvas issue
+    // WORKAROUND: For browser large pixels canvas issue & transcoding lag
     // https://stackoverflow.com/a/11585939
-    // const screenBounds = getOverlayScreenBounds();
-    // const screenArea = screenBounds.width * screenBounds.height;
-    // const targetArea = targetBounds.width * targetBounds.height;
-    // const targetAreaRate = targetArea / screenArea;
-    // let scaleDownFactor = targetAreaRate < 0.5 ? 1.0 : 0.7;
-    let scaleDownFactor = 1.0;
+    const screenBounds = getOverlayScreenBounds();
+    const screenArea = screenBounds.width * screenBounds.height;
+    const targetArea = targetBounds.width * targetBounds.height;
+    const targetAreaRate = targetArea / screenArea;
+    let scaleDownFactor = targetAreaRate < 0.5 ? 1.0 : 0.7;
+
     let frameRate = FRAMERATE;
     let videoBitrates;
 
