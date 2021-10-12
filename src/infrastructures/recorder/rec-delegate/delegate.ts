@@ -161,10 +161,12 @@ const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
   let prevFrameTime = 0;
   let frameElapsedTime = 0;
 
-  const renderCapturedToCanvas = (time: number) => {
-    frameElapsedTime += time - prevFrameTime;
+  const renderCapturedToCanvas = () => {
+    const time = performance.now();
+    const dTime = time - prevFrameTime;
+    frameElapsedTime += dTime;
 
-    if (frameElapsedTime > interval) {
+    if (dTime > interval || frameElapsedTime > interval) {
       drawables.forEach((d: any) => {
         canvasCtx.drawImage(
           d.videoElem,
