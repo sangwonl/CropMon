@@ -8,6 +8,7 @@
 import fs from 'fs';
 import path from 'path';
 import { desktopCapturer, ipcRenderer } from 'electron';
+import log from 'electron-log';
 
 import { IBounds } from '@core/entities/screen';
 import { getAppPath } from '@utils/remote';
@@ -17,7 +18,9 @@ import { IRecordContext, ITargetSlice } from './types';
 
 const MEDIA_MIME_TYPE = 'video/webm; codecs=h264,opus';
 // const MEDIA_MIME_TYPE = 'video/webm; codecs=vp8,opus';
-const NUM_CHUNKS_TO_FLUSH = 100;
+
+const RECORD_TIMESLICE_MS = 100;
+const NUM_CHUNKS_TO_FLUSH = 50;
 
 let gMediaRecorder: MediaRecorder;
 let gRecordState: 'initial' | 'recording' | 'stopping' | 'stopped' = 'initial';
@@ -147,21 +150,21 @@ const createDrawContext = async (
 const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
   const { targetBounds, frameRate, drawables } = drawContext;
 
-  const canvasElem = document.createElement('canvas') as HTMLCanvasElement;
+  const canvasElem = document.createElement('canvas') as any;
   canvasElem.width = targetBounds.width;
   canvasElem.height = targetBounds.height;
 
-  const canvasCtx = canvasElem.getContext('2d')!;
-  const interval = Math.floor(1000 / frameRate);
+  const offCanvas = canvasElem.transferControlToOffscreen();
+  const canvasCtx = offCanvas.getContext('2d')!;
 
-  let renderTimer: any;
-  const renderCapturedToCanvas = () => {
-    if (gRecordState === 'stopping') {
-      clearInterval(renderTimer);
-      return;
-    }
+  const interval = 1000 / frameRate;
+  let prevFrameTime = 0;
+  let frameElapsedTime = 0;
 
-    if (gRecordState === 'recording') {
+  const renderCapturedToCanvas = (time: number) => {
+    frameElapsedTime += time - prevFrameTime;
+
+    if (frameElapsedTime > interval) {
       drawables.forEach((d: any) => {
         canvasCtx.drawImage(
           d.videoElem,
@@ -175,12 +178,18 @@ const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
           d.dstBounds.height
         );
       });
+
+      frameElapsedTime = 0;
     }
+
+    prevFrameTime = time;
+
+    requestAnimationFrame(renderCapturedToCanvas);
   };
 
-  renderTimer = setInterval(renderCapturedToCanvas, interval);
+  requestAnimationFrame(renderCapturedToCanvas);
 
-  return (canvasElem as any).captureStream(frameRate);
+  return canvasElem.captureStream(frameRate);
 };
 
 const attachAudioStreamForMic = async (stream: MediaStream) => {
@@ -194,7 +203,7 @@ const attachAudioStreamForMic = async (stream: MediaStream) => {
       tracks.forEach((t: MediaStreamTrack) => stream.addTrack(t));
     }
   } catch (error) {
-    console.error('no available audio stream found', error);
+    log.error('no available audio stream found', error);
   }
 
   return stream;
@@ -214,22 +223,6 @@ const createStreamToRecord = async (
 
   return canvasStream;
 };
-
-// let gLastRequestDataTimer: any;
-// const requestRecordedData = (timeout = 0) => {
-//   if (gRecordState === 'stopped') {
-//     return;
-//   }
-
-//   if (gLastRequestDataTimer !== undefined) {
-//     clearTimeout(gLastRequestDataTimer);
-//   }
-
-//   gLastRequestDataTimer = setTimeout(
-//     () => gMediaRecorder.requestData(),
-//     timeout
-//   );
-// };
 
 const flushChunksToFile = async () => {
   if (gRecordedChunks.length === 0) {
@@ -255,7 +248,13 @@ const handleStreamDataAvailable = async (event: BlobEvent) => {
     gRecordedChunks.length >= NUM_CHUNKS_TO_FLUSH
   ) {
     await flushChunksToFile();
+  } else if (gRecordState === 'stopping') {
+    gMediaRecorder.stop();
   }
+};
+
+const handleRecordStart = (_event: Event) => {
+  gRecordState = 'recording';
 };
 
 const handleRecordStop = async (_event: Event) => {
@@ -272,6 +271,7 @@ ipcRenderer.on('start-record', async (_event, data) => {
   const stream = await createStreamToRecord(recordCtx);
   const recOpts = recorderOpts(MEDIA_MIME_TYPE, videoBitrates);
   gMediaRecorder = new MediaRecorder(stream, recOpts);
+  gMediaRecorder.onstart = handleRecordStart;
   gMediaRecorder.ondataavailable = handleStreamDataAvailable;
   gMediaRecorder.onstop = handleRecordStop;
 
@@ -279,9 +279,7 @@ ipcRenderer.on('start-record', async (_event, data) => {
   ensureTempDirPathExists(gTempFilePath);
 
   setTimeout(() => {
-    gMediaRecorder.start(100);
-    gRecordState = 'recording';
-    // requestRecordedData(500);
+    gMediaRecorder.start(RECORD_TIMESLICE_MS);
   });
 
   ipcRenderer.send('recording-started', {});
@@ -303,5 +301,4 @@ ipcRenderer.on('stop-record', async (_event, _data) => {
   }
 
   gRecordState = 'stopping';
-  gMediaRecorder.stop();
 });
