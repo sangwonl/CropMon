@@ -157,34 +157,20 @@ const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
   const offCanvas = canvasElem.transferControlToOffscreen();
   const canvasCtx = offCanvas.getContext('2d')!;
 
-  const interval = 1000 / frameRate;
-  let prevFrameTime = 0;
-  let frameElapsedTime = 0;
-
   const renderCapturedToCanvas = () => {
-    const time = performance.now();
-    const dTime = time - prevFrameTime;
-    frameElapsedTime += dTime;
-
-    if (dTime > interval || frameElapsedTime > interval) {
-      drawables.forEach((d: any) => {
-        canvasCtx.drawImage(
-          d.videoElem,
-          d.srcBounds.x,
-          d.srcBounds.y,
-          d.srcBounds.width,
-          d.srcBounds.height,
-          d.dstBounds.x,
-          d.dstBounds.y,
-          d.dstBounds.width,
-          d.dstBounds.height
-        );
-      });
-
-      frameElapsedTime = 0;
-    }
-
-    prevFrameTime = time;
+    drawables.forEach((d: any) => {
+      canvasCtx.drawImage(
+        d.videoElem,
+        d.srcBounds.x,
+        d.srcBounds.y,
+        d.srcBounds.width,
+        d.srcBounds.height,
+        d.dstBounds.x,
+        d.dstBounds.y,
+        d.dstBounds.width,
+        d.dstBounds.height
+      );
+    });
 
     requestAnimationFrame(renderCapturedToCanvas);
   };
