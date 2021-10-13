@@ -28,7 +28,7 @@ let gRecordState: 'initial' | 'recording' | 'stopping' | 'stopped' = 'initial';
 let gTempFilePath: string;
 let gRecordedChunks: Blob[] = [];
 let gTotalRecordedChunks = 0;
-let gRecordStartTime = 0;
+// let gRecordStartTime = 0;
 let gRecordStoppingTime = Number.MAX_VALUE;
 let gChunkHandler: any;
 
@@ -161,16 +161,16 @@ const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
   const offCanvas = canvasElem.transferControlToOffscreen();
   const canvasCtx = offCanvas.getContext('2d')!;
 
-  const interval = 1000 / frameRate;
+  const frameInterval = Math.floor(1000 / frameRate);
   let frameElapsed = 0;
   let prevTime = 0;
 
   const renderCapturedToCanvas = () => {
-    const now = performance.now();
-    const dTime = now - prevTime;
+    const now = Math.floor(performance.now());
+    const dTime = Math.floor(now - prevTime);
     frameElapsed += dTime;
 
-    if (dTime > interval || frameElapsed > interval) {
+    if (dTime >= frameInterval || frameElapsed >= frameInterval) {
       drawables.forEach((d: any) => {
         canvasCtx.drawImage(
           d.videoElem,
@@ -184,7 +184,11 @@ const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
           d.dstBounds.height
         );
       });
+
+      frameElapsed = 0;
     }
+
+    prevTime = now;
 
     requestAnimationFrame(renderCapturedToCanvas);
   };
@@ -238,17 +242,17 @@ const flushChunksToFile = async (numChunks: number) => {
 };
 
 const handleStreamDataAvailable = async (event: BlobEvent) => {
-  if (event.data.size > 0) {
+  if (event.data.size > 0 && gRecordStoppingTime >= event.timecode) {
     gRecordedChunks.push(event.data);
     gTotalRecordedChunks += 1;
   }
 };
 
 const handleRecordedChunks = async () => {
-  const now = performance.now();
-  const recordingTime = Math.min(now, gRecordStoppingTime) - gRecordStartTime;
-  const expectedChunks = Math.floor(recordingTime / RECORD_TIMESLICE_MS) + 1;
-  const remainingChunks = expectedChunks - gTotalRecordedChunks;
+  // const now = performance.now();
+  // const recordingTime = Math.min(now, gRecordStoppingTime) - gRecordStartTime;
+  // const expectedChunks = Math.floor(recordingTime / RECORD_TIMESLICE_MS) + 1;
+  // const remainingChunks = expectedChunks - gTotalRecordedChunks;
 
   switch (gRecordState) {
     case 'recording':
@@ -256,10 +260,13 @@ const handleRecordedChunks = async () => {
       break;
 
     case 'stopping':
-      await flushChunksToFile(Math.max(0, remainingChunks));
-      if (remainingChunks < 0) {
-        gMediaRecorder.stop();
-      }
+      // await flushChunksToFile(Math.max(0, remainingChunks));
+      // if (remainingChunks < 0) {
+      //   gMediaRecorder.stop();
+      // }
+
+      await flushChunksToFile(gRecordedChunks.length);
+      gMediaRecorder.stop();
       break;
 
     case 'stopped':
@@ -273,7 +280,7 @@ const handleRecordedChunks = async () => {
 
 const handleRecordStart = (_event: Event) => {
   gRecordState = 'recording';
-  gRecordStartTime = performance.now();
+  // gRecordStartTime = performance.now();
 
   gChunkHandler = setInterval(handleRecordedChunks, CHUNK_HANLER_INTERVAL);
 };
