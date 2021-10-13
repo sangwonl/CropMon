@@ -28,7 +28,6 @@ import { OutputFormat } from '@core/entities/preferences';
 import { IScreenRecorder } from '@core/interfaces/recorder';
 import { isProduction } from '@utils/process';
 import {
-  getOverlayScreenBounds,
   getAllScreensFromLeftTop,
   getIntersection,
   isEmptyBounds,
@@ -39,8 +38,8 @@ import { IRecordContext, ITargetSlice } from './rec-delegate/types';
 
 type ScreenAndBoundsTuple = [IScreen, IBounds | undefined];
 
-const FRAMERATE = 25;
-const FRAMERATE_LOW = 18;
+const FRAMERATE = 30;
+const FRAMERATE_LOW = 30;
 const VIDEO_BITRATES_LOW = 850000;
 const SCALE_DOWN_FACTOR_LOW = 0.65;
 
