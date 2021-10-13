@@ -21,12 +21,15 @@ const MEDIA_MIME_TYPE = 'video/webm; codecs=h264,opus';
 
 const RECORD_TIMESLICE_MS = 100;
 const NUM_CHUNKS_TO_FLUSH = 50;
+const CHUNK_HANLER_INTERVAL = 1000;
 
 let gMediaRecorder: MediaRecorder;
 let gRecordState: 'initial' | 'recording' | 'stopping' | 'stopped' = 'initial';
 let gTempFilePath: string;
 let gRecordedChunks: Blob[] = [];
 let gTotalRecordedChunks = 0;
+let gRecordStoppingTime = Number.MAX_VALUE;
+let gChunkHandler: any;
 
 interface IDrawable {
   videoElem: HTMLVideoElement;
@@ -150,23 +153,33 @@ const createDrawContext = async (
 const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
   const { targetBounds, frameRate, drawables } = drawContext;
 
+  // WORKAROUND - completely no evidence for this setting
+  const MAX_FPS = 30;
+  const MIN_FPS = 10;
+  const BASE_PIXELS = 1280 * 720;
+  const pixelRatio = BASE_PIXELS / (targetBounds.width * targetBounds.height);
+  const targetFps = Math.floor(frameRate * pixelRatio);
+  const fps = Math.max(Math.min(targetFps, MAX_FPS), MIN_FPS);
+  const frameDuration = Math.floor(1000 / fps);
+
   const canvasElem = document.createElement('canvas') as any;
   canvasElem.width = targetBounds.width;
   canvasElem.height = targetBounds.height;
 
-  const offCanvas = canvasElem.transferControlToOffscreen();
-  const canvasCtx = offCanvas.getContext('2d')!;
+  // const offCanvas = canvasElem.transferControlToOffscreen();
+  // const canvasCtx = offCanvas.getContext('2d')!;
+  const canvasCtx = canvasElem.getContext('2d')!;
+  const canvasStream = canvasElem.captureStream(0);
+  const [canvasTrack] = canvasStream.getVideoTracks();
 
-  const interval = 1000 / frameRate;
-  let prevFrameTime = 0;
-  let frameElapsedTime = 0;
-
+  let frameElapsed = 0;
+  let prevTime = 0;
   const renderCapturedToCanvas = () => {
-    const time = performance.now();
-    const dTime = time - prevFrameTime;
-    frameElapsedTime += dTime;
+    const now = performance.now();
+    const dTime = Math.ceil(now - prevTime);
+    frameElapsed += dTime;
 
-    if (dTime > interval || frameElapsedTime > interval) {
+    if (dTime >= frameDuration || frameElapsed >= frameDuration) {
       drawables.forEach((d: any) => {
         canvasCtx.drawImage(
           d.videoElem,
@@ -181,17 +194,21 @@ const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
         );
       });
 
-      frameElapsedTime = 0;
+      canvasTrack.requestFrame();
+
+      frameElapsed = 0;
     }
 
-    prevFrameTime = time;
+    prevTime = now;
 
-    requestAnimationFrame(renderCapturedToCanvas);
+    if (gRecordState !== 'stopped') {
+      requestAnimationFrame(renderCapturedToCanvas);
+    }
   };
 
   requestAnimationFrame(renderCapturedToCanvas);
 
-  return canvasElem.captureStream(frameRate);
+  return canvasStream;
 };
 
 const attachAudioStreamForMic = async (stream: MediaStream) => {
@@ -226,13 +243,11 @@ const createStreamToRecord = async (
   return canvasStream;
 };
 
-const flushChunksToFile = async () => {
-  if (gRecordedChunks.length === 0) {
+const flushChunksToFile = async (numChunks: number) => {
+  const chunks = gRecordedChunks.splice(0, numChunks);
+  if (chunks.length === 0) {
     return;
   }
-
-  const chunks = gRecordedChunks;
-  gRecordedChunks = [];
 
   const blob = new Blob(chunks, { type: MEDIA_MIME_TYPE });
   const buffer = Buffer.from(await blob.arrayBuffer());
@@ -240,27 +255,43 @@ const flushChunksToFile = async () => {
 };
 
 const handleStreamDataAvailable = async (event: BlobEvent) => {
-  if (event.data.size > 0) {
+  const LOOSE_TIME = RECORD_TIMESLICE_MS * 2;
+  if (
+    event.data.size > 0 &&
+    gRecordStoppingTime + LOOSE_TIME >= event.timeStamp
+  ) {
     gRecordedChunks.push(event.data);
     gTotalRecordedChunks += 1;
   }
+};
 
-  if (
-    gRecordState === 'recording' &&
-    gRecordedChunks.length >= NUM_CHUNKS_TO_FLUSH
-  ) {
-    await flushChunksToFile();
-  } else if (gRecordState === 'stopping') {
-    gMediaRecorder.stop();
+const handleRecordedChunks = async () => {
+  switch (gRecordState) {
+    case 'recording':
+      await flushChunksToFile(NUM_CHUNKS_TO_FLUSH);
+      break;
+
+    case 'stopping':
+      await flushChunksToFile(gRecordedChunks.length);
+      gMediaRecorder.stop();
+      break;
+
+    case 'stopped':
+      clearInterval(gChunkHandler);
+      break;
+
+    default:
+      break;
   }
 };
 
 const handleRecordStart = (_event: Event) => {
   gRecordState = 'recording';
+
+  gChunkHandler = setInterval(handleRecordedChunks, CHUNK_HANLER_INTERVAL);
 };
 
 const handleRecordStop = async (_event: Event) => {
-  await flushChunksToFile();
   gRecordState = 'stopped';
 
   ipcRenderer.send('recording-file-saved', { tempFilePath: gTempFilePath });
@@ -280,10 +311,7 @@ ipcRenderer.on('start-record', async (_event, data) => {
   gTempFilePath = getTempOutputPath();
   ensureTempDirPathExists(gTempFilePath);
 
-  setTimeout(() => {
-    gMediaRecorder.start(RECORD_TIMESLICE_MS);
-  });
-
+  setTimeout(() => gMediaRecorder.start(RECORD_TIMESLICE_MS));
   ipcRenderer.send('recording-started', {});
 });
 
@@ -303,4 +331,5 @@ ipcRenderer.on('stop-record', async (_event, _data) => {
   }
 
   gRecordState = 'stopping';
+  gRecordStoppingTime = performance.now();
 });
