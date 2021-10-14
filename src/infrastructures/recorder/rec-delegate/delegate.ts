@@ -28,8 +28,10 @@ let gRecordState: 'initial' | 'recording' | 'stopping' | 'stopped' = 'initial';
 let gTempFilePath: string;
 let gRecordedChunks: Blob[] = [];
 let gTotalRecordedChunks = 0;
+// let gTotalExpectedChunks = 0;
 // let gRecordStartTime = 0;
 let gRecordStoppingTime = Number.MAX_VALUE;
+let gEncodingLagTime = 0;
 let gChunkHandler: any;
 
 interface IDrawable {
@@ -160,15 +162,25 @@ const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
 
   const offCanvas = canvasElem.transferControlToOffscreen();
   const canvasCtx = offCanvas.getContext('2d')!;
+  const canvasStream = canvasElem.captureStream(0);
+  const [canvasStreamTrack] = canvasStream.getVideoTracks();
 
-  const frameInterval = Math.floor(1000 / frameRate);
+  const defaultInterval = Math.floor(1000 / frameRate);
   let frameElapsed = 0;
   let prevTime = 0;
 
+  const delayAdjustment = () => {
+    return Math.floor(gEncodingLagTime) * 100;
+  };
+
   const renderCapturedToCanvas = () => {
-    const now = Math.floor(performance.now());
-    const dTime = Math.floor(now - prevTime);
+    const now = performance.now();
+    const dTime = Math.ceil(now - prevTime);
     frameElapsed += dTime;
+
+    const frameInterval = Math.ceil(defaultInterval + delayAdjustment());
+
+    log.info(dTime, frameElapsed, frameInterval);
 
     if (dTime >= frameInterval || frameElapsed >= frameInterval) {
       drawables.forEach((d: any) => {
@@ -185,17 +197,21 @@ const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
         );
       });
 
+      canvasStreamTrack.requestFrame();
+
       frameElapsed = 0;
     }
 
     prevTime = now;
 
-    requestAnimationFrame(renderCapturedToCanvas);
+    if (gRecordState !== 'stopped') {
+      requestAnimationFrame(renderCapturedToCanvas);
+    }
   };
 
   requestAnimationFrame(renderCapturedToCanvas);
 
-  return canvasElem.captureStream(frameRate);
+  return canvasStream;
 };
 
 const attachAudioStreamForMic = async (stream: MediaStream) => {
@@ -245,13 +261,14 @@ const handleStreamDataAvailable = async (event: BlobEvent) => {
   if (event.data.size > 0 && gRecordStoppingTime >= event.timecode) {
     gRecordedChunks.push(event.data);
     gTotalRecordedChunks += 1;
+    gEncodingLagTime = performance.now() - event.timeStamp;
   }
 };
 
 const handleRecordedChunks = async () => {
   // const now = performance.now();
   // const recordingTime = Math.min(now, gRecordStoppingTime) - gRecordStartTime;
-  // const expectedChunks = Math.floor(recordingTime / RECORD_TIMESLICE_MS) + 1;
+  // gTotalExpectedChunks = Math.floor(recordingTime / RECORD_TIMESLICE_MS) + 1;
   // const remainingChunks = expectedChunks - gTotalRecordedChunks;
 
   switch (gRecordState) {
@@ -305,10 +322,7 @@ ipcRenderer.on('start-record', async (_event, data) => {
   gTempFilePath = getTempOutputPath();
   ensureTempDirPathExists(gTempFilePath);
 
-  setTimeout(() => {
-    gMediaRecorder.start(RECORD_TIMESLICE_MS);
-  });
-
+  setTimeout(() => gMediaRecorder.start(RECORD_TIMESLICE_MS));
   ipcRenderer.send('recording-started', {});
 });
 
