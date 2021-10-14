@@ -168,9 +168,18 @@ const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
   const defaultInterval = Math.floor(1000 / frameRate);
   let frameElapsed = 0;
   let prevTime = 0;
+  let delayUntil = 0;
 
-  const delayAdjustment = () => {
-    return Math.floor(gEncodingLagTime) * 100;
+  const delayAdjustment = (now: DOMHighResTimeStamp) => {
+    if (Math.floor(gEncodingLagTime * 10) >= 3) {
+      delayUntil = now + 1000;
+    }
+
+    if (now <= delayUntil) {
+      return defaultInterval * 3;
+    }
+
+    return 0;
   };
 
   const renderCapturedToCanvas = () => {
@@ -178,9 +187,10 @@ const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
     const dTime = Math.ceil(now - prevTime);
     frameElapsed += dTime;
 
-    const frameInterval = Math.ceil(defaultInterval + delayAdjustment());
+    const delay = delayAdjustment(now);
+    const frameInterval = Math.ceil(defaultInterval + delay);
 
-    log.info(dTime, frameElapsed, frameInterval);
+    log.info(delay, frameInterval);
 
     if (dTime >= frameInterval || frameElapsed >= frameInterval) {
       drawables.forEach((d: any) => {
