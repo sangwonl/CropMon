@@ -155,6 +155,7 @@ const createDrawContext = async (
 
 const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
   const { targetBounds, frameRate, drawables } = drawContext;
+  const defaultInterval = Math.floor(1000 / frameRate);
 
   const canvasElem = document.createElement('canvas') as any;
   canvasElem.width = targetBounds.width;
@@ -163,25 +164,36 @@ const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
   const offCanvas = canvasElem.transferControlToOffscreen();
   const canvasCtx = offCanvas.getContext('2d')!;
   const canvasStream = canvasElem.captureStream(0);
-  const [canvasStreamTrack] = canvasStream.getVideoTracks();
+  const [canvasTrack] = canvasStream.getVideoTracks();
 
-  const defaultInterval = Math.floor(1000 / frameRate);
-  let frameElapsed = 0;
-  let prevTime = 0;
+  const lastLags: number[] = [];
+  let avgLagTime = 0;
   let delayUntil = 0;
-
   const delayAdjustment = (now: DOMHighResTimeStamp) => {
-    if (Math.floor(gEncodingLagTime * 10) >= 3) {
+    if (gEncodingLagTime > avgLagTime * 5) {
       delayUntil = now + 1000;
     }
 
+    let adjustment = 0;
     if (now <= delayUntil) {
-      return defaultInterval * 3;
+      adjustment = defaultInterval;
     }
 
-    return 0;
+    if (gTotalRecordedChunks > 0) {
+      lastLags.push(gEncodingLagTime);
+    }
+
+    if (gTotalRecordedChunks % 10 === 0) {
+      const lagTimes = lastLags.splice(0, 10);
+      const sumLagTime: number = lagTimes.reduce((a, b) => a + b, 0);
+      avgLagTime = sumLagTime / lagTimes.length || 0;
+    }
+
+    return adjustment;
   };
 
+  let frameElapsed = 0;
+  let prevTime = 0;
   const renderCapturedToCanvas = () => {
     const now = performance.now();
     const dTime = Math.ceil(now - prevTime);
@@ -189,8 +201,6 @@ const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
 
     const delay = delayAdjustment(now);
     const frameInterval = Math.ceil(defaultInterval + delay);
-
-    log.info(delay, frameInterval);
 
     if (dTime >= frameInterval || frameElapsed >= frameInterval) {
       drawables.forEach((d: any) => {
@@ -207,7 +217,7 @@ const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
         );
       });
 
-      canvasStreamTrack.requestFrame();
+      canvasTrack.requestFrame();
 
       frameElapsed = 0;
     }
