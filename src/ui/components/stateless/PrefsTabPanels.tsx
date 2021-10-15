@@ -61,6 +61,7 @@ export const PrefsGeneralTabPanel = ({
 
   // Shortcut options
   const [shortcut, setShortcut] = useState<string>(initialPrefs.shortcut);
+  const [shortcutFocused, setShortcutFocused] = useState<boolean>(false);
   const [shortcutValidated, setShortcutValidated] = useState<boolean>(true);
   const setShortcutKey = useCallback((s: string) => {
     setShortcutValidated(validateShortcut(s));
@@ -168,25 +169,33 @@ export const PrefsGeneralTabPanel = ({
         <fieldset>
           <legend>Shortcut to start or stop capturing</legend>
           <div className={styles.optionRow}>
-            <input
-              type="text"
-              className={classNames({
-                [styles.shortcutInput]: shortcutValidated,
+            <div
+              className={classNames(styles.shortcut, {
+                [styles.shortcutFocusedValid]:
+                  shortcutFocused && shortcutValidated,
                 [styles.shortcutInvalid]: !shortcutValidated,
               })}
-              value={shortcutForDisplay(shortcut)}
-              onKeyDown={handleShortcutKeyEvent}
-              readOnly
-            />
-            <span
-              className={classNames({
-                [styles.shortcutCancelIcon]: shortcut !== initialPrefs.shortcut,
-                [styles.shortcutCancelIconHidden]:
-                  shortcut === initialPrefs.shortcut,
-              })}
             >
-              Press <b>ESC</b> to reset
-            </span>
+              <input
+                id={styles.shortcutInput}
+                type="text"
+                value={shortcutForDisplay(shortcut)}
+                onKeyDown={handleShortcutKeyEvent}
+                onFocus={() => setShortcutFocused(true)}
+                onBlur={() => setShortcutFocused(false)}
+                readOnly
+              />
+              <span
+                className={classNames({
+                  [styles.shortcutCancelIcon]:
+                    shortcut !== initialPrefs.shortcut,
+                  [styles.shortcutCancelIconHidden]:
+                    shortcut === initialPrefs.shortcut,
+                })}
+              >
+                Press <b>ESC</b> to reset
+              </span>
+            </div>
           </div>
         </fieldset>
         <fieldset>
