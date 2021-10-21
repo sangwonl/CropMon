@@ -1,5 +1,11 @@
 ## Release Notes
 
+### v0.6.4
+
+_21 Oct 2021_
+
+- Fix tailing truncated with large size capture
+
 ### v0.6.3
 
 _7 Oct 2021_
