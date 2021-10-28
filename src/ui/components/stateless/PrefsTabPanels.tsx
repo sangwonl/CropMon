@@ -35,6 +35,8 @@ interface PrefsGeneralTabPanelProps extends PrefsTabPanelBaseProps {
 
 // type PrefsRecordingTabPanelProps = PrefsTabPanelBaseProps;
 
+// type PrefsAppearanceTabPanelProps = PrefsTabPanelBaseProps;
+
 type OptionType = string | number | boolean;
 const isChanged = (a: OptionType, b: OptionType) => a !== b;
 
@@ -247,6 +249,41 @@ export const PrefsGeneralTabPanel = ({
 //       <div className={styles.panelButtons}>
 //         <button type="button">Save</button>
 //         <button type="button">Close</button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export const PrefsAppearanceTabPanel = ({
+//   initialPrefs,
+//   onSave,
+//   onCancel,
+// }: PrefsAppearanceTabPanelProps) => {
+//   const canSave = useCallback(() => {
+//     // const { openRecordHomeWhenRecordCompleted } = initialPrefs;
+//     return false;
+//   }, [initialPrefs]);
+
+//   const handleSave = useCallback(() => {
+//     const newPrefs: IPreferences = {
+//       ...initialPrefs,
+//     };
+//     onSave(newPrefs);
+//   }, [initialPrefs, onSave]);
+
+//   return (
+//     <div className={styles.container}>
+//       <div className={styles.panelOptions}>
+//         <div>row</div>
+//         <div>row</div>
+//       </div>
+//       <div className={styles.panelButtons}>
+//         <button type="button" disabled={!canSave()} onClick={handleSave}>
+//           Save
+//         </button>
+//         <button tabIndex={1} type="button" onClick={onCancel}>
+//           Close
+//         </button>
 //       </div>
 //     </div>
 //   );

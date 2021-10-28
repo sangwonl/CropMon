@@ -61,16 +61,15 @@ const getAreaClasses = (
   selCtx: IAreaSelectionCtx,
   bounds: IBounds
 ): string => {
-  if (isEmptyBounds(bounds)) {
+  if (!selCtx.started || isEmptyBounds(bounds)) {
     return styles.areaHidden;
   }
 
-  if (!isCapturableBounds(bounds)) {
-    return classNames(styles.area, styles.areaUncapturable);
-  }
-
   if (!selCtx.selected) {
-    return classNames(styles.area, styles.areaSelecting);
+    if (isCapturableBounds(bounds)) {
+      return classNames(styles.area, styles.areaCapturable);
+    }
+    return classNames(styles.area, styles.areaUncapturable);
   }
 
   if (countdown > 0) {
@@ -84,20 +83,28 @@ const getAreaClasses = (
   return classNames(styles.area);
 };
 
-const getAreaLayout = (curBounds: IBounds): any => {
+const getAreaLayout = (bounds: IBounds): any => {
   return {
-    left: curBounds.x + SPARE_PIXELS - 1,
-    top: curBounds.y + SPARE_PIXELS - 1,
-    width: curBounds.width + 2,
-    height: curBounds.height + 2,
+    left: bounds.x + SPARE_PIXELS - 1,
+    top: bounds.y + SPARE_PIXELS - 1,
+    width: bounds.width + 2,
+    height: bounds.height + 2,
   };
 };
 
 const CURSOR_HINT_BOX_SIZE = { width: 60, height: 10 };
 const CURSOR_HINT_BOX_PAD = 4;
-const getCursorHintLayout = (selCtx: IAreaSelectionCtx): any => {
-  const { startPt, curPt } = selCtx;
+const getCursorHintLayout = (
+  selCtx: IAreaSelectionCtx,
+  bounds: IBounds
+): any => {
+  if (!selCtx.started || !isCapturableBounds(bounds)) {
+    return {
+      display: 'none',
+    };
+  }
 
+  const { startPt, curPt } = selCtx;
   if (curPt.x > startPt.x) {
     // right-bottom
     if (curPt.y > startPt.y) {
@@ -218,7 +225,6 @@ const handleMouseUp = (
     return;
   }
 
-  updatedSelCtx.started = false;
   updatedSelCtx.selected = true;
   setSelCtx(updatedSelCtx);
 
@@ -345,7 +351,7 @@ const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
       className={classNames({
         [styles.wrapper]: true,
         [styles.wrapperHack]: !selCtx.selected || countdown > 0,
-        [styles.cursorSelecting]: !selCtx.selected,
+        [styles.cursorSelecting]: active && !selCtx.selected,
       })}
       onMouseDown={(e: MouseEvent<HTMLDivElement>) =>
         handleMouseDown(
@@ -393,7 +399,7 @@ const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
           {!selCtx.selected && (
             <div
               className={styles.cursorSizeHint}
-              style={getCursorHintLayout(selCtx)}
+              style={getCursorHintLayout(selCtx, calcBounds)}
             >
               {calcBounds.width}x{calcBounds.height}
             </div>
