@@ -32,21 +32,19 @@
   display: none;
 }
 
-.areaSelecting {
-  background-color: rgba(250, 250, 250, 0.2);
-  outline: 1px solid rgba(250, 250, 250, 0.8);
-  box-shadow: inset 0 0 2px gray;
+.areaCapturable {
+  background-color: rgba(59, 159, 61, 0.2);
+  box-shadow: inset 0 0 1px rgba(59, 159, 61, 1.0);
 }
 
 .areaUncapturable {
-  background-color: rgba(255, 10, 10, 0.1);
-  box-shadow: inset 0 0 2px red;
+  background-color: rgba(255, 0, 0, 0.1);
+  box-shadow: inset 0 0 1px rgba(255, 0, 0, 1.0);
 }
 
 .areaCountingDown {
-  background-color: rgba(250, 250, 250, 0.2);
-  outline: 1px solid rgba(250, 250, 250, 0.8);
-  box-shadow: inset 0 0 2px gray;
+  background-color: rgba(59, 159, 61, 0.2);
+  box-shadow: inset 0 0 1px rgba(59, 159, 61, 1.0);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -54,7 +52,7 @@
 
 .areaRecording {
   background-color: transparent;
-  outline: 1px solid rgba(255, 0, 0, 0.4);
+  outline: 1px solid rgba(255, 0, 0, 0.5);
   animation: recordingBorder 2s infinite;
 }
 
@@ -69,7 +67,7 @@
   font-size: 50px;
   font-family: Roboto;
   font-weight: 1000;
-  text-shadow: #000 0px 1px 2px;
+  text-shadow: rgba(59, 159, 61, 0.5) 1px 2px 2px;
   text-decoration: none;
   user-select: none;
 }

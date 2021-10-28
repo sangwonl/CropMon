@@ -21,10 +21,12 @@ export interface PreferencesProps {
 }
 
 const TAB_GENERAL = 'general';
-const TAB_RECORDING = 'recording';
+// const TAB_RECORDING = 'recording';
+// const TAB_APPEARANCE = 'appearance';
 const TAB_ITEMS: TabItem[] = [
   { tabId: TAB_GENERAL, title: 'General' },
-  { tabId: TAB_RECORDING, title: 'Recording' },
+  // { tabId: TAB_RECORDING, title: 'Recording' },
+  // { tabId: TAB_APPEARANCE, title: 'Appearance' },
 ];
 
 const Preferences = ({
@@ -69,6 +71,13 @@ const Preferences = ({
             ),
             // [TAB_RECORDING]: (
             //   <PrefsRecordingTabPanel
+            //     initialPrefs={origPrefs}
+            //     onSave={handleSave}
+            //     onCancel={handleCancel}
+            //   />
+            // ),
+            // [TAB_APPEARANCE]: (
+            //   <PrefsAppearanceTabPanel
             //     initialPrefs={origPrefs}
             //     onSave={handleSave}
             //     onCancel={handleCancel}
