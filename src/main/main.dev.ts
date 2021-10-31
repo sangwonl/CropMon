@@ -29,8 +29,12 @@ const start = async () => {
 
   await actionDispatcher.initializeApp();
 
-  app.on('will-quit', () => {
-    log.info('app will quit... bye!');
+  app.on('before-quit', () => {
+    app.quit();
+  });
+
+  app.on('window-all-closed', () => {
+    app.quit();
   });
 };
 

@@ -2,12 +2,15 @@
 
 import { injectable } from 'inversify';
 
-import { CaptureMode, CaptureStatus } from '@core/entities/capture';
+import {
+  CaptureMode,
+  CaptureStatus,
+  IRecordingOptions,
+} from '@core/entities/capture';
 import { IBounds } from '@core/entities/screen';
 import { AppUseCase } from '@core/usecases/app';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { CaptureUseCase } from '@core/usecases/capture';
-import { IRecordingOptions } from '@core/entities/ui';
 import { adjustSelectionBounds } from '@utils/bounds';
 
 @injectable()
