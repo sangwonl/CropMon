@@ -8,7 +8,7 @@
 /* eslint-disable import/prefer-default-export */
 
 import { inject, injectable } from 'inversify';
-import { app, globalShortcut, systemPreferences } from 'electron';
+import { app, desktopCapturer, globalShortcut, systemPreferences } from 'electron';
 
 import { TYPES } from '@di/types';
 import { CaptureStatus, ICaptureContext } from '@core/entities/capture';
@@ -231,7 +231,7 @@ export class BuiltinHooks {
   ): Promise<void> => {
     this.setupShortcut(newPrefs, prevPrefs);
     this.setupRunAtStartup(newPrefs);
-    this.askMediaAccess(newPrefs);
+    await this.askMediaAccess(newPrefs);
     await this.uiDirector.refreshTrayState(newPrefs);
   };
 
@@ -259,9 +259,17 @@ export class BuiltinHooks {
     });
   };
 
-  private askMediaAccess = (prefs: IPreferences): void => {
+  private askMediaAccess = async (prefs: IPreferences): Promise<void> => {
+    const screenAccess = systemPreferences.getMediaAccessStatus('screen');
+    if (screenAccess !== 'granted') {
+      await desktopCapturer.getSources({ types: ['screen'] });
+    }
+
     if (prefs.recordMicrophone && isMac()) {
-      systemPreferences.askForMediaAccess('microphone');
+      const micAccess = systemPreferences.getMediaAccessStatus('microphone');
+      if (micAccess !== 'granted') {
+        systemPreferences.askForMediaAccess('microphone');
+      }
     }
   };
 }
