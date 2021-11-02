@@ -8,9 +8,12 @@
 import React, { useState, useCallback } from 'react';
 
 import { IPreferences } from '@core/entities/preferences';
-import { PrefsGeneralTabPanel } from './PrefsTabPanels';
 
-import Tabs, { TabItem } from './Tabs';
+import {
+  PrefsGeneralTabPanel,
+  PrefsAppearancesTabPanel,
+} from './PrefsTabPanels';
+import SideTabs, { TabItem } from './SideTabs';
 import styles from './Preferences.css';
 
 export interface PreferencesProps {
@@ -22,11 +25,11 @@ export interface PreferencesProps {
 
 const TAB_GENERAL = 'general';
 // const TAB_RECORDING = 'recording';
-// const TAB_APPEARANCE = 'appearance';
+const TAB_APPEARANCES = 'appearances';
 const TAB_ITEMS: TabItem[] = [
   { tabId: TAB_GENERAL, title: 'General' },
   // { tabId: TAB_RECORDING, title: 'Recording' },
-  // { tabId: TAB_APPEARANCE, title: 'Appearance' },
+  { tabId: TAB_APPEARANCES, title: 'Appearances' },
 ];
 
 const Preferences = ({
@@ -35,7 +38,7 @@ const Preferences = ({
   onChooseRecordHome,
   onClose,
 }: PreferencesProps) => {
-  const [curTabId, setCurTabId] = useState<string>(TAB_GENERAL);
+  const [curTabId, setCurTabId] = useState<string>(TAB_APPEARANCES);
 
   const handleChooseRecordHome = useCallback(() => {
     onChooseRecordHome();
@@ -55,7 +58,11 @@ const Preferences = ({
   return (
     <div className={styles.container}>
       <div className={styles.tabs}>
-        <Tabs tabItems={TAB_ITEMS} onTabItemSelect={setCurTabId} />
+        <SideTabs
+          defaultTabId={curTabId}
+          tabItems={TAB_ITEMS}
+          onTabItemSelect={setCurTabId}
+        />
       </div>
       <div className={styles.tabPanel}>
         {
@@ -76,13 +83,13 @@ const Preferences = ({
             //     onCancel={handleCancel}
             //   />
             // ),
-            // [TAB_APPEARANCE]: (
-            //   <PrefsAppearanceTabPanel
-            //     initialPrefs={origPrefs}
-            //     onSave={handleSave}
-            //     onCancel={handleCancel}
-            //   />
-            // ),
+            [TAB_APPEARANCES]: (
+              <PrefsAppearancesTabPanel
+                initialPrefs={origPrefs}
+                onSave={handleSave}
+                onCancel={handleCancel}
+              />
+            ),
           }[curTabId]
         }
       </div>

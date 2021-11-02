@@ -35,7 +35,7 @@ interface PrefsGeneralTabPanelProps extends PrefsTabPanelBaseProps {
 
 // type PrefsRecordingTabPanelProps = PrefsTabPanelBaseProps;
 
-// type PrefsAppearanceTabPanelProps = PrefsTabPanelBaseProps;
+type PrefsAppearancesTabPanelProps = PrefsTabPanelBaseProps;
 
 type OptionType = string | number | boolean;
 const isChanged = (a: OptionType, b: OptionType) => a !== b;
@@ -222,14 +222,14 @@ export const PrefsGeneralTabPanel = ({
             </label>
           </div>
         </fieldset>
-        <div className={styles.panelButtons}>
-          <button type="button" disabled={!canSave()} onClick={handleSave}>
-            Save
-          </button>
-          <button tabIndex={1} type="button" onClick={onCancel}>
-            Close
-          </button>
-        </div>
+      </div>
+      <div className={styles.panelButtons}>
+        <button type="button" disabled={!canSave()} onClick={handleSave}>
+          Save
+        </button>
+        <button tabIndex={1} type="button" onClick={onCancel}>
+          Close
+        </button>
       </div>
     </div>
   );
@@ -254,37 +254,49 @@ export const PrefsGeneralTabPanel = ({
 //   );
 // };
 
-// export const PrefsAppearanceTabPanel = ({
-//   initialPrefs,
-//   onSave,
-//   onCancel,
-// }: PrefsAppearanceTabPanelProps) => {
-//   const canSave = useCallback(() => {
-//     // const { openRecordHomeWhenRecordCompleted } = initialPrefs;
-//     return false;
-//   }, [initialPrefs]);
+export const PrefsAppearancesTabPanel = ({
+  initialPrefs,
+  onSave,
+  onCancel,
+}: PrefsAppearancesTabPanelProps) => {
+  const canSave = useCallback(() => {
+    // const { openRecordHomeWhenRecordCompleted } = initialPrefs;
+    return false;
+  }, [initialPrefs]);
 
-//   const handleSave = useCallback(() => {
-//     const newPrefs: IPreferences = {
-//       ...initialPrefs,
-//     };
-//     onSave(newPrefs);
-//   }, [initialPrefs, onSave]);
+  const handleSave = useCallback(() => {
+    const newPrefs: IPreferences = {
+      ...initialPrefs,
+    };
+    onSave(newPrefs);
+  }, [initialPrefs, onSave]);
 
-//   return (
-//     <div className={styles.container}>
-//       <div className={styles.panelOptions}>
-//         <div>row</div>
-//         <div>row</div>
-//       </div>
-//       <div className={styles.panelButtons}>
-//         <button type="button" disabled={!canSave()} onClick={handleSave}>
-//           Save
-//         </button>
-//         <button tabIndex={1} type="button" onClick={onCancel}>
-//           Close
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
+  return (
+    <div className={styles.container}>
+      <div className={styles.panelOptions}>
+        <fieldset>
+          <legend>General options</legend>
+          <div className={styles.optionRow}>
+            <input
+              // id={styles.shortcutInput}
+              type="text"
+              // value={shortcutForDisplay(shortcut)}
+              // onKeyDown={handleShortcutKeyEvent}
+              // onFocus={() => setShortcutFocused(true)}
+              // onBlur={() => setShortcutFocused(false)}
+              readOnly
+            />
+          </div>
+        </fieldset>
+      </div>
+      <div className={styles.panelButtons}>
+        <button type="button" disabled={!canSave()} onClick={handleSave}>
+          Save
+        </button>
+        <button tabIndex={1} type="button" onClick={onCancel}>
+          Close
+        </button>
+      </div>
+    </div>
+  );
+};
