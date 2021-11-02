@@ -20,6 +20,7 @@ import {
   shortcutForDisplay,
 } from '@utils/shortcut';
 
+import ColorInput from './ColorInput';
 import styles from './PrefsTabPanels.css';
 
 interface PrefsTabPanelBaseProps {
@@ -275,17 +276,56 @@ export const PrefsAppearancesTabPanel = ({
     <div className={styles.container}>
       <div className={styles.panelOptions}>
         <fieldset>
-          <legend>General options</legend>
+          <legend>Customize capture area colors</legend>
           <div className={styles.optionRow}>
-            <input
-              // id={styles.shortcutInput}
-              type="text"
-              // value={shortcutForDisplay(shortcut)}
-              // onKeyDown={handleShortcutKeyEvent}
-              // onFocus={() => setShortcutFocused(true)}
-              // onBlur={() => setShortcutFocused(false)}
-              readOnly
-            />
+            <div className={styles.colorInput}>
+              <label htmlFor="opt-color-capt-area-selecting-bg">
+                Selecting Background:
+              </label>
+              <div id="opt-color-capt-area-selecting-bg">
+                <ColorInput defaultColor="#113a9f3c" onChange={() => {}} />
+              </div>
+            </div>
+          </div>
+          <div className={styles.optionRow}>
+            <div className={styles.colorInput}>
+              <label htmlFor="opt-color-capt-area-selecting-hint">
+                Selecting Hint Text:
+              </label>
+              <div id="opt-color-capt-area-selecting-hint">
+                <ColorInput defaultColor="#113a9f3c" onChange={() => {}} />
+              </div>
+            </div>
+          </div>
+          <div className={styles.optionRow}>
+            <div className={styles.colorInput}>
+              <label htmlFor="opt-color-capt-area-countdown-bg">
+                Countdown Background:
+              </label>
+              <div id="opt-color-capt-area-countdown-bg">
+                <ColorInput defaultColor="#113a9f3c" onChange={() => {}} />
+              </div>
+            </div>
+          </div>
+          <div className={styles.optionRow}>
+            <div className={styles.colorInput}>
+              <label htmlFor="opt-color-capt-area-countdown-num">
+                Countdown Text:
+              </label>
+              <div id="opt-color-capt-area-countdown-num">
+                <ColorInput defaultColor="#113a9f3c" onChange={() => {}} />
+              </div>
+            </div>
+          </div>
+          <div className={styles.optionRow}>
+            <div className={styles.colorInput}>
+              <label htmlFor="opt-color-capt-area-recording">
+                Recording Outline:
+              </label>
+              <div id="opt-color-capt-area-recording">
+                <ColorInput defaultColor="#113a9f3c" onChange={() => {}} />
+              </div>
+            </div>
           </div>
         </fieldset>
       </div>
