@@ -38,7 +38,7 @@ const Preferences = ({
   onChooseRecordHome,
   onClose,
 }: PreferencesProps) => {
-  const [curTabId, setCurTabId] = useState<string>(TAB_APPEARANCES);
+  const [curTabId, setCurTabId] = useState<string>(TAB_GENERAL);
 
   const handleChooseRecordHome = useCallback(() => {
     onChooseRecordHome();
