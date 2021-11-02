@@ -10,9 +10,8 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  justify-content: space-between;
   padding: 16px;
-  row-gap: 16px;
+  row-gap: 30px;
 }
 
 .panelOptions fieldset {
@@ -85,11 +84,11 @@ button:disabled {
 }
 
 .panelButtons {
-  padding-top: 8px;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
   flex-basis: 40px;
+  padding: 16px;
   column-gap: 12px;
 }
 
