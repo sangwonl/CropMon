@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 
 import { TYPES } from '@di/types';
-import { initialUiState, IUiState } from '@core/entities/ui';
+import { INITIAL_UI_STATE, IUiState } from '@core/entities/ui';
 
 export interface IUiStateApplier {
   apply(newState: IUiState): void;
@@ -13,7 +13,7 @@ export class StateManager {
     @inject(TYPES.UiStateApplier) private uiStateApplier: IUiStateApplier
   ) {}
 
-  private uiState: IUiState = initialUiState;
+  private uiState: IUiState = INITIAL_UI_STATE;
 
   updateUiState(updater: (state: IUiState) => IUiState) {
     const newState = updater(this.uiState);

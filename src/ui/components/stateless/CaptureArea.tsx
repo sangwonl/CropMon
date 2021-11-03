@@ -13,8 +13,10 @@ import React, {
   useCallback,
 } from 'react';
 import classNames from 'classnames';
+import Color from 'color';
 
 import { IBounds, IPoint } from '@core/entities/screen';
+import { ICaptureAreaColors } from '@core/entities/ui';
 import { useStateWithGetter } from '@ui/hooks/state';
 import { SPARE_PIXELS, isEmptyBounds, isCapturableBounds } from '@utils/bounds';
 
@@ -56,48 +58,77 @@ const calcSelectedBounds = (selCtx: IAreaSelectionCtx): IBounds => {
   };
 };
 
-const getAreaClasses = (
+const getAreaStyles = (
   countdown: number,
   selCtx: IAreaSelectionCtx,
-  bounds: IBounds
-): string => {
-  if (!selCtx.started || isEmptyBounds(bounds)) {
-    return styles.areaHidden;
-  }
-
-  if (!selCtx.selected) {
-    if (isCapturableBounds(bounds)) {
-      return classNames(styles.area, styles.areaCapturable);
-    }
-    return classNames(styles.area, styles.areaUncapturable);
-  }
-
-  if (countdown > 0) {
-    return classNames(styles.area, styles.areaCountingDown);
-  }
-
-  if (countdown === 0) {
-    return classNames(styles.area, styles.areaRecording);
-  }
-
-  return classNames(styles.area);
-};
-
-const getAreaLayout = (bounds: IBounds): any => {
-  return {
+  bounds: IBounds,
+  colors: ICaptureAreaColors
+): any => {
+  const layoutStyle = {
     left: bounds.x + SPARE_PIXELS - 1,
     top: bounds.y + SPARE_PIXELS - 1,
     width: bounds.width + 2,
     height: bounds.height + 2,
   };
+
+  if (!selCtx.started || isEmptyBounds(bounds)) {
+    return layoutStyle;
+  }
+
+  if (!selCtx.selected) {
+    if (isCapturableBounds(bounds)) {
+      const color = Color(colors.selectingBackground);
+      return {
+        ...layoutStyle,
+        backgroundColor: color.string(),
+        boxShadow: `inset 0 0 1px ${color.alpha(1.0).string()}`,
+      };
+    }
+    return {
+      ...layoutStyle,
+      backgroundColor: '#ff00001a',
+      boxShadow: 'inset 0 0 1px #ff0000',
+    };
+  }
+
+  if (countdown > 0) {
+    const color = Color(colors.countdownBackground);
+    return {
+      ...layoutStyle,
+      backgroundColor: color.string(),
+      boxShadow: `inset 0 0 1px ${color.alpha(1.0).string()}`,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    };
+  }
+
+  if (countdown === 0) {
+    return {
+      ...layoutStyle,
+      backgroundColor: 'transparent',
+      outline: '1px solid rgba(255, 0, 0, 1.0)',
+      animation: 'recordingBorder 2s infinite',
+    };
+  }
+
+  return layoutStyle;
 };
 
 const CURSOR_HINT_BOX_SIZE = { width: 60, height: 10 };
 const CURSOR_HINT_BOX_PAD = 4;
-const getCursorHintLayout = (
+const getCursorHintStyles = (
   selCtx: IAreaSelectionCtx,
-  bounds: IBounds
+  bounds: IBounds,
+  colors: ICaptureAreaColors
 ): any => {
+  const colorStyle = {
+    color: colors.selectingText,
+    textShadow: `${Color(colors.selectingBackground)
+      .alpha(0.5)
+      .string()} 0px 0px 1px`,
+  };
+
   if (!selCtx.started || !isCapturableBounds(bounds)) {
     return {
       display: 'none',
@@ -110,6 +141,7 @@ const getCursorHintLayout = (
     if (curPt.y > startPt.y) {
       return {
         ...CURSOR_HINT_BOX_SIZE,
+        ...colorStyle,
         left: curPt.x - (CURSOR_HINT_BOX_SIZE.width + CURSOR_HINT_BOX_PAD),
         top: curPt.y - (CURSOR_HINT_BOX_SIZE.height + CURSOR_HINT_BOX_PAD),
         textAlign: 'right',
@@ -119,6 +151,7 @@ const getCursorHintLayout = (
     // right-top
     return {
       ...CURSOR_HINT_BOX_SIZE,
+      ...colorStyle,
       left: curPt.x - (CURSOR_HINT_BOX_SIZE.width + CURSOR_HINT_BOX_PAD),
       top: curPt.y + CURSOR_HINT_BOX_PAD,
       textAlign: 'right',
@@ -129,6 +162,7 @@ const getCursorHintLayout = (
   if (curPt.y > startPt.y) {
     return {
       ...CURSOR_HINT_BOX_SIZE,
+      ...colorStyle,
       left: curPt.x + CURSOR_HINT_BOX_PAD,
       top: curPt.y - (CURSOR_HINT_BOX_SIZE.height + CURSOR_HINT_BOX_PAD),
     };
@@ -137,24 +171,35 @@ const getCursorHintLayout = (
   // left-top
   return {
     ...CURSOR_HINT_BOX_SIZE,
+    ...colorStyle,
     left: curPt.x + CURSOR_HINT_BOX_PAD,
     top: curPt.y + CURSOR_HINT_BOX_PAD,
   };
 };
 
-const getCountdownStyle = (bounds: IBounds) => {
+const getCountdownStyles = (bounds: IBounds, colors: ICaptureAreaColors) => {
+  const colorStyle = {
+    color: colors.countdownText,
+    textShadow: `${Color(colors.countdownBackground)
+      .alpha(0.5)
+      .string()} 1px 2px 2px`,
+  };
+
   const { width, height } = bounds;
   if (width < AREA_SIZE_SMALL && height < AREA_SIZE_SMALL) {
     return {
+      ...colorStyle,
       fontSize: COUNTDOWN_FONT_SMALL,
     };
   }
   if (width < AREA_SIZE_MID && height < AREA_SIZE_MID) {
     return {
+      ...colorStyle,
       fontSize: COUNTDOWN_FONT_MID,
     };
   }
   return {
+    ...colorStyle,
     fontSize: COUNTDOWN_FONT_LARGE,
   };
 };
@@ -259,6 +304,7 @@ interface PropTypes {
   isRecording: boolean;
   boundsSelected: boolean;
   showCountdown: boolean;
+  areaColors: ICaptureAreaColors;
   getCursorScreenPoint: () => IPoint;
   onSelectionStart: () => void;
   onSelectionCancel: () => void;
@@ -272,6 +318,7 @@ const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     isRecording,
     boundsSelected,
     showCountdown,
+    areaColors,
     getCursorScreenPoint: getCursorPt,
     onSelectionStart: onStart,
     onSelectionFinish: onFinish,
@@ -384,13 +431,15 @@ const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
       {active && (
         <>
           <div
-            className={getAreaClasses(countdown, selCtx, calcBounds)}
-            style={getAreaLayout(calcBounds)}
+            className={classNames(styles.area, {
+              [styles.areaHidden]: !selCtx.started || isEmptyBounds(calcBounds),
+            })}
+            style={getAreaStyles(countdown, selCtx, calcBounds, areaColors)}
           >
             {countdown > 0 && (
               <div
                 className={styles.countdownText}
-                style={getCountdownStyle(calcBounds)}
+                style={getCountdownStyles(calcBounds, areaColors)}
               >
                 {countdown}
               </div>
@@ -399,7 +448,7 @@ const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
           {!selCtx.selected && (
             <div
               className={styles.cursorSizeHint}
-              style={getCursorHintLayout(selCtx, calcBounds)}
+              style={getCursorHintStyles(selCtx, calcBounds, areaColors)}
             >
               {calcBounds.width}x{calcBounds.height}
             </div>

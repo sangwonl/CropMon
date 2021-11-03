@@ -7,7 +7,7 @@ import { injectable } from 'inversify';
 import { app } from 'electron';
 import Store from 'electron-store';
 
-import { IPreferences, OutputFormat, RecordQualityMode } from '@core/entities/preferences';
+import { IPreferences, IAppearancesColors, OutputFormat, RecordQualityMode, DEFAULT_APPEAR_COLORS } from '@core/entities/preferences';
 import { IPreferencesStore } from '@core/interfaces/preferences';
 import { INITIAL_SHORTCUT } from '@utils/shortcut';
 
@@ -22,6 +22,10 @@ const PREFS_GENERAL_REVEALRECORDEDFILE = 'general.revealRecordedFile';
 const PREFS_RECORDING_MICROPHONE = 'recording.microphone';
 const PREFS_RECORDING_QUALITYMODE = 'recording.qualityMode';
 const PREFS_RECORDING_OUTPUTFORMAT = 'recording.outputFormat';
+const PREFS_APPEAR_COLOR_SELECT_BG = 'appearances.colors.selectingBackground';
+const PREFS_APPEAR_COLOR_SELECT_TEXT = 'appearances.colors.selectingText';
+const PREFS_APPEAR_COLOR_COUNTDOWN_BG = 'appearances.colors.countdownBackground';
+const PREFS_APPEAR_COLOR_COUNTDOWN_TEXT = 'appearances.colors.countdownText';
 
 @injectable()
 export class PreferencesStore implements IPreferencesStore {
@@ -45,6 +49,7 @@ export class PreferencesStore implements IPreferencesStore {
             recordMicrophone: store.get('recordMicrophone', false) as boolean,
             recordQualityMode: store.get('recordQualityMode', 'normal') as RecordQualityMode,
             outputFormat: store.get('outputFormat', 'mp4') as OutputFormat,
+            colors: DEFAULT_APPEAR_COLORS,
           }
 
           store.set(PREFS_GENERAL_RUNATSTARTUP, curPrefs.runAtStartup);
@@ -63,6 +68,12 @@ export class PreferencesStore implements IPreferencesStore {
           store.delete('recordMicrophone');
           store.delete('recordQualityMode');
           store.delete('outputFormat');
+        },
+        '0.6.5': (store) => {
+          store.set(PREFS_APPEAR_COLOR_SELECT_BG, '#3b9f3d33');
+          store.set(PREFS_APPEAR_COLOR_SELECT_TEXT, '#cccccc');
+          store.set(PREFS_APPEAR_COLOR_COUNTDOWN_BG, '#3b9f3d33');
+          store.set(PREFS_APPEAR_COLOR_COUNTDOWN_TEXT, '#eeeeee');
         },
       }
     });
@@ -90,6 +101,10 @@ export class PreferencesStore implements IPreferencesStore {
     this.store.set(PREFS_RECORDING_MICROPHONE, prefs.recordMicrophone);
     this.store.set(PREFS_RECORDING_QUALITYMODE, prefs.recordQualityMode);
     this.store.set(PREFS_RECORDING_OUTPUTFORMAT, prefs.outputFormat);
+    this.store.set(PREFS_APPEAR_COLOR_SELECT_BG, prefs.colors.selectingBackground);
+    this.store.set(PREFS_APPEAR_COLOR_SELECT_TEXT, prefs.colors.selectingText);
+    this.store.set(PREFS_APPEAR_COLOR_COUNTDOWN_BG, prefs.colors.countdownBackground);
+    this.store.set(PREFS_APPEAR_COLOR_COUNTDOWN_TEXT, prefs.colors.countdownText);
   }
 
   private initialPreferences(): IPreferences {
@@ -104,10 +119,17 @@ export class PreferencesStore implements IPreferencesStore {
       recordMicrophone: false,
       recordQualityMode: 'normal',
       outputFormat: 'mp4',
+      colors: DEFAULT_APPEAR_COLORS,
     };
   }
 
   private mapStoreToPreferences(): IPreferences {
+    const colors: IAppearancesColors = {
+      selectingBackground: this.store.get(PREFS_APPEAR_COLOR_SELECT_BG, '#3b9f3d33') as string,
+      selectingText: this.store.get(PREFS_APPEAR_COLOR_SELECT_TEXT, '#cccccc') as string,
+      countdownBackground: this.store.get(PREFS_APPEAR_COLOR_COUNTDOWN_BG, '#3b9f3d33') as string,
+      countdownText: this.store.get(PREFS_APPEAR_COLOR_COUNTDOWN_TEXT, '#eeeeee') as string,
+    };
     return {
       initialLoaded: false,
       version: this.store.get(PREFS_VERSION) as string,
@@ -119,6 +141,7 @@ export class PreferencesStore implements IPreferencesStore {
       recordMicrophone: this.store.get(PREFS_RECORDING_MICROPHONE, false) as boolean,
       recordQualityMode: this.store.get(PREFS_RECORDING_QUALITYMODE, 'normal') as RecordQualityMode,
       outputFormat: this.store.get(PREFS_RECORDING_OUTPUTFORMAT, 'mp4') as OutputFormat,
+      colors,
     };
   }
 }

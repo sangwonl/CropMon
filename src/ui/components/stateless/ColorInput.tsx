@@ -3,6 +3,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { RgbaStringColorPicker } from 'react-colorful';
+import Color from 'color';
 
 import useOnClickOutside from '@ui/hooks/hover';
 
@@ -14,7 +15,7 @@ interface ColorInputProps {
 }
 
 const ColorInput = ({ defaultColor, onChange }: ColorInputProps) => {
-  const [color, setColor] = useState(defaultColor);
+  const [rgbaColor, setRgbaColor] = useState(Color(defaultColor).string());
   const [showPicker, togglePicker] = useState(false);
   const picker = useOnClickOutside(() => {
     if (showPicker) {
@@ -23,8 +24,12 @@ const ColorInput = ({ defaultColor, onChange }: ColorInputProps) => {
   });
 
   const handleChange = useCallback(
-    (hexColor: string) => {
-      setColor(hexColor);
+    (rgbaColorPicked: string) => {
+      setRgbaColor(rgbaColorPicked);
+
+      const color = Color(rgbaColorPicked);
+      const hexAlpha = Math.floor(color.alpha() * 255).toString(16);
+      const hexColor = `${color.hex()}${hexAlpha}`.toLowerCase();
       onChange(hexColor);
     },
     [onChange]
@@ -38,12 +43,12 @@ const ColorInput = ({ defaultColor, onChange }: ColorInputProps) => {
       >
         <div
           className={styles.colorBox}
-          style={{ backgroundColor: `${color}` }}
+          style={{ backgroundColor: `${rgbaColor}` }}
         />
       </div>
       {showPicker && (
         <div ref={picker} className={styles.pickerCover}>
-          <RgbaStringColorPicker color={color} onChange={handleChange} />
+          <RgbaStringColorPicker color={rgbaColor} onChange={handleChange} />
         </div>
       )}
     </div>

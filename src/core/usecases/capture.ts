@@ -61,6 +61,7 @@ export class CaptureUseCase {
           bounds: screenBounds,
           showCountdown: prefs.showCountdown,
         },
+        captureAreaColors: prefs.colors,
       };
     });
 
