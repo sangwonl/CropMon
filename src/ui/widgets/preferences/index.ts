@@ -68,7 +68,10 @@ export class PreferencesModal extends Widget {
     });
   }
 
-  async open(prefs: IPreferences): Promise<IPreferences | undefined> {
+  async open(
+    prefs: IPreferences,
+    onSave: (updatedPrefs: IPreferences) => void
+  ): Promise<IPreferences | undefined> {
     this.prefs = { ...prefs };
 
     const refreshPrefsData = (prefsData: IPreferences) => {
@@ -89,10 +92,11 @@ export class PreferencesModal extends Widget {
 
     return new Promise((resolve, _) => {
       this.closeResolver = (result?: IPreferences) => {
-        resolve(result);
         if (result) {
+          onSave(result);
           refreshPrefsData(result);
         } else {
+          resolve(result);
           this.hide();
         }
       };

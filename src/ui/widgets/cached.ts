@@ -48,7 +48,7 @@ export class CachedWidget<W extends Widget, C, R> {
     }
   }
 
-  async openAsModal(args: C): Promise<R | undefined> {
+  async openAsModal(args: C, onClose: (result: R) => void): Promise<void> {
     if (this.timeoutHandle !== undefined) {
       clearTimeout(this.timeoutHandle);
       this.timeoutHandle = undefined;
@@ -58,14 +58,12 @@ export class CachedWidget<W extends Widget, C, R> {
       this.widget = new this.widgetClass(args) as any;
     }
 
-    const result = await (this.widget as any).open(args);
+    await (this.widget as any).open(args, onClose);
     this.timeoutHandle = setTimeout(() => {
       this.widget?.destroy();
       this.widget = undefined;
       this.timeoutHandle = undefined;
     }, this.ttlInSecs * 1000);
-
-    return result;
   }
 
   close() {

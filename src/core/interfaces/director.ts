@@ -13,7 +13,10 @@ export interface IUiDirector {
   openAboutPagePopup(prefs: IPreferences): Promise<void>;
   openReleaseNotesPopup(): Promise<void>;
   openHelpPagePopup(): Promise<void>;
-  openPreferencesModal(prefs: IPreferences): Promise<IPreferences | undefined>;
+  openPreferencesModal(
+    prefs: IPreferences,
+    onSave: (updatedPrefs: IPreferences) => void
+  ): Promise<void>;
   enableCaptureSelectionMode(): IBounds;
   disableCaptureSelectionMode(): void;
   enableRecordingMode(): void;
