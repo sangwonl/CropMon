@@ -260,17 +260,57 @@ export const PrefsAppearancesTabPanel = ({
   onSave,
   onCancel,
 }: PrefsAppearancesTabPanelProps) => {
+  const [colorSelectingBg, setColorSelectingBg] = useState(
+    initialPrefs.colors.selectingBackground
+  );
+
+  const [colorSelectingText, setColorSelectingText] = useState(
+    initialPrefs.colors.selectingText
+  );
+
+  const [colorCountdownBg, setColorCountdownBg] = useState(
+    initialPrefs.colors.countdownBackground
+  );
+
+  const [colorCountdownText, setColorCountdownText] = useState(
+    initialPrefs.colors.countdownText
+  );
+
   const canSave = useCallback(() => {
-    // const { openRecordHomeWhenRecordCompleted } = initialPrefs;
-    return false;
-  }, [initialPrefs]);
+    const { colors: initialColors } = initialPrefs;
+    return (
+      isChanged(initialColors.selectingBackground, colorSelectingBg) ||
+      isChanged(initialColors.selectingText, colorSelectingText) ||
+      isChanged(initialColors.countdownBackground, colorCountdownBg) ||
+      isChanged(initialColors.countdownText, colorCountdownText)
+    );
+  }, [
+    colorCountdownBg,
+    colorCountdownText,
+    colorSelectingBg,
+    colorSelectingText,
+    initialPrefs,
+  ]);
 
   const handleSave = useCallback(() => {
     const newPrefs: IPreferences = {
       ...initialPrefs,
+      colors: {
+        selectingBackground: colorSelectingBg,
+        selectingText: colorSelectingText,
+        countdownBackground: colorCountdownBg,
+        countdownText: colorCountdownText,
+      },
     };
     onSave(newPrefs);
-  }, [initialPrefs, onSave]);
+  }, [
+    colorCountdownBg,
+    colorCountdownText,
+    colorSelectingBg,
+    colorSelectingText,
+    initialPrefs,
+    onSave,
+  ]);
 
   return (
     <div className={styles.container}>
@@ -283,17 +323,23 @@ export const PrefsAppearancesTabPanel = ({
                 Selecting Background:
               </label>
               <div id="opt-color-capt-area-selecting-bg">
-                <ColorInput defaultColor="#113a9f3c" onChange={() => {}} />
+                <ColorInput
+                  defaultColor={colorSelectingBg}
+                  onChange={setColorSelectingBg}
+                />
               </div>
             </div>
           </div>
           <div className={styles.optionRow}>
             <div className={styles.colorInput}>
-              <label htmlFor="opt-color-capt-area-selecting-hint">
-                Selecting Hint Text:
+              <label htmlFor="opt-color-capt-area-selecting-text">
+                Selecting Text:
               </label>
-              <div id="opt-color-capt-area-selecting-hint">
-                <ColorInput defaultColor="#113a9f3c" onChange={() => {}} />
+              <div id="opt-color-capt-area-selecting-text">
+                <ColorInput
+                  defaultColor={colorSelectingText}
+                  onChange={setColorSelectingText}
+                />
               </div>
             </div>
           </div>
@@ -303,7 +349,10 @@ export const PrefsAppearancesTabPanel = ({
                 Countdown Background:
               </label>
               <div id="opt-color-capt-area-countdown-bg">
-                <ColorInput defaultColor="#113a9f3c" onChange={() => {}} />
+                <ColorInput
+                  defaultColor={colorCountdownBg}
+                  onChange={setColorCountdownBg}
+                />
               </div>
             </div>
           </div>
@@ -313,17 +362,10 @@ export const PrefsAppearancesTabPanel = ({
                 Countdown Text:
               </label>
               <div id="opt-color-capt-area-countdown-num">
-                <ColorInput defaultColor="#113a9f3c" onChange={() => {}} />
-              </div>
-            </div>
-          </div>
-          <div className={styles.optionRow}>
-            <div className={styles.colorInput}>
-              <label htmlFor="opt-color-capt-area-recording">
-                Recording Outline:
-              </label>
-              <div id="opt-color-capt-area-recording">
-                <ColorInput defaultColor="#113a9f3c" onChange={() => {}} />
+                <ColorInput
+                  defaultColor={colorCountdownText}
+                  onChange={setColorCountdownText}
+                />
               </div>
             </div>
           </div>

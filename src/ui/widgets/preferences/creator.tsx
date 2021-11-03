@@ -44,7 +44,6 @@ const Wrapper = () => {
       selectedRecordHome={prefs.recordHome}
       onClose={(preferences?: IPreferences) => {
         ipcRenderer.send(IPC_EVT_ON_CLOSE, { preferences });
-        setReadyToShow(false);
       }}
       onChooseRecordHome={() => {
         ipcRenderer.send(IPC_EVT_ON_RECORD_HOME_SELECTION, {});

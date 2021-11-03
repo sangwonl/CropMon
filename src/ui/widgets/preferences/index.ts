@@ -68,28 +68,33 @@ export class PreferencesModal extends Widget {
     });
   }
 
-  private showModal(): void {
-    this.notifyPrefsUpdated();
-    this.show();
-  }
-
   async open(prefs: IPreferences): Promise<IPreferences | undefined> {
     this.prefs = { ...prefs };
-    this.setCustomData<IPreferences>('initialPrefs', { ...this.prefs });
+
+    const refreshPrefsData = (prefsData: IPreferences) => {
+      this.setCustomData<IPreferences>('initialPrefs', { ...prefsData });
+      this.notifyPrefsUpdated();
+    };
+
+    refreshPrefsData(prefs);
 
     if (this.loaded) {
-      this.showModal();
+      this.show();
     } else {
       this.webContents.on('did-finish-load', () => {
         this.loaded = true;
-        this.showModal();
+        this.show();
       });
     }
 
     return new Promise((resolve, _) => {
       this.closeResolver = (result?: IPreferences) => {
         resolve(result);
-        this.hide();
+        if (result) {
+          refreshPrefsData(result);
+        } else {
+          this.hide();
+        }
       };
     });
   }

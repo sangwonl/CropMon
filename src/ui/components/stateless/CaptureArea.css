@@ -9,21 +9,6 @@
   background-color: rgba(255, 255, 255, 0.01);
 }
 
-.cursorSelecting {
-  cursor: crosshair;
-}
-
-.cursorSizeHint {
-  position: absolute;
-  color: #ccc;
-  font-size: 10px;
-  font-family: Roboto;
-  font-weight: 100;
-  text-shadow: #000 0px 0px 1px;
-  text-decoration: none;
-  user-select: none;
-}
-
 .area {
   position: absolute;
 }
@@ -32,42 +17,29 @@
   display: none;
 }
 
-.areaCapturable {
-  background-color: rgba(59, 159, 61, 0.2);
-  box-shadow: inset 0 0 1px rgba(59, 159, 61, 1.0);
+.cursorSelecting {
+  cursor: crosshair;
 }
 
-.areaUncapturable {
-  background-color: rgba(255, 0, 0, 0.1);
-  box-shadow: inset 0 0 1px rgba(255, 0, 0, 1.0);
-}
-
-.areaCountingDown {
-  background-color: rgba(59, 159, 61, 0.2);
-  box-shadow: inset 0 0 1px rgba(59, 159, 61, 1.0);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.areaRecording {
-  background-color: transparent;
-  outline: 1px solid rgba(255, 0, 0, 0.5);
-  animation: recordingBorder 2s infinite;
-}
-
-@keyframes recordingBorder {
-  50% {
-    outline: 1px solid rgba(255, 0, 0, 0.7);
-  }
+.cursorSizeHint {
+  position: absolute;
+  font-size: 10px;
+  font-family: Roboto;
+  font-weight: 400;
+  text-decoration: none;
+  user-select: none;
 }
 
 .countdownText {
-  color: #eee;
   font-size: 50px;
   font-family: Roboto;
   font-weight: 1000;
-  text-shadow: rgba(59, 159, 61, 0.5) 1px 2px 2px;
   text-decoration: none;
   user-select: none;
+}
+
+@keyframes :global(recordingBorder) {
+  50% {
+    outline: 1px solid rgba(255, 0, 0, 0.7);
+  }
 }

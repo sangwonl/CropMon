@@ -2,16 +2,12 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import {
-  initialUiState,
-  ISelectedArea,
-  IUiState,
-  IRecordingOptions,
-} from '@core/entities/ui';
+import { INITIAL_UI_STATE, ISelectedArea, IUiState } from '@core/entities/ui';
+import { IRecordingOptions } from '@core/entities/capture';
 
 const slice = createSlice({
   name: 'ui',
-  initialState: { root: initialUiState },
+  initialState: { root: INITIAL_UI_STATE },
   reducers: {
     updateUiState: (s, a: PayloadAction<IUiState>) => {
       s.root = a.payload;

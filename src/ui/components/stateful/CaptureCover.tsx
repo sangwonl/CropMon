@@ -4,7 +4,7 @@ import React, { useLayoutEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IBounds } from '@core/entities/screen';
-import { ICaptureArea, ICaptureOverlay } from '@core/entities/ui';
+import { ICaptureArea, ICaptureAreaColors, ICaptureOverlay } from '@core/entities/ui';
 import { RootState } from '@ui/redux/store';
 import {
   startAreaSelection,
@@ -43,6 +43,10 @@ const CaptureCover = () => {
     (state: RootState) => state.ui.root.captureArea
   );
 
+  const captureAreaColors: ICaptureAreaColors = useSelector(
+    (state: RootState) => state.ui.root.captureAreaColors
+  );
+
   const onSelectionStart = useCallback(() => {
     dispatch(startAreaSelection());
   }, []);
@@ -70,6 +74,7 @@ const CaptureCover = () => {
         isRecording={captureArea.isRecording}
         boundsSelected={!isEmptyBounds(captureArea.selectedBounds)}
         showCountdown={captureOverlay.showCountdown}
+        areaColors={captureAreaColors}
         getCursorScreenPoint={getCursorScreenPoint}
         onSelectionStart={onSelectionStart}
         onSelectionCancel={onSelectionCancel}
