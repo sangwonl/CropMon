@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { RgbaStringColorPicker } from 'react-colorful';
 import Color from 'color';
 
@@ -14,8 +14,18 @@ interface ColorInputProps {
   onChange: (color: string) => void;
 }
 
+const rgbaToHex = (rgba: string): string => {
+  const color = Color(rgba);
+  const hexAlpha = Math.floor(color.alpha() * 255).toString(16);
+  return `${color.hex()}${hexAlpha}`.toLowerCase();
+};
+
+const hexToRgba = (hex: string): string => {
+  return Color(hex).string();
+};
+
 const ColorInput = ({ defaultColor, onChange }: ColorInputProps) => {
-  const [rgbaColor, setRgbaColor] = useState(Color(defaultColor).string());
+  const [rgbaColor, setRgbaColor] = useState(hexToRgba(defaultColor));
   const [showPicker, togglePicker] = useState(false);
   const picker = useOnClickOutside(() => {
     if (showPicker) {
@@ -26,14 +36,14 @@ const ColorInput = ({ defaultColor, onChange }: ColorInputProps) => {
   const handleChange = useCallback(
     (rgbaColorPicked: string) => {
       setRgbaColor(rgbaColorPicked);
-
-      const color = Color(rgbaColorPicked);
-      const hexAlpha = Math.floor(color.alpha() * 255).toString(16);
-      const hexColor = `${color.hex()}${hexAlpha}`.toLowerCase();
-      onChange(hexColor);
+      onChange(rgbaToHex(rgbaColorPicked));
     },
     [onChange]
   );
+
+  useEffect(() => {
+    setRgbaColor(hexToRgba(defaultColor));
+  }, [defaultColor]);
 
   return (
     <div>

@@ -161,7 +161,7 @@ button:disabled {
 .colorInput {
   display: flex;
   flex-direction: row;
-  flex-basis: 220px;
+  flex-basis: 260px;
   justify-content: space-between;
   font-size: 14px;
   margin: -2px 0px;
@@ -169,6 +169,27 @@ button:disabled {
 
 .colorInput label {
   margin-top: 6px;
+}
+
+.resetColors {
+  display: inline-block;
+  user-select: none;
+  margin-top: 10px;
+  padding: 10px 18px;
+  background: #3a9f3c08;
+  border-radius: 1px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  font-weight: 400;
+}
+
+.resetColors:hover {
+  background: #3a9f3c;
+  color: #fff;
+}
+
+.resetColors:active {
+  background: #3aaf3c;
+  color: #fff;
 }
 
 /* react-colorful customization */
