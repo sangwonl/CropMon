@@ -1,5 +1,12 @@
 ## Release Notes
 
+### v0.6.5
+
+_4 Nov 2021_
+
+- Improve media access asking flow
+- Support custom colors for capture area
+
 ### v0.6.4
 
 _21 Oct 2021_
