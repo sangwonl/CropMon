@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/interactive-supports-focus */
 /* eslint-disable jsx-a11y/tabindex-no-positive */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
@@ -13,7 +14,10 @@ import React, {
 } from 'react';
 import classNames from 'classnames';
 
-import { IPreferences } from '@core/entities/preferences';
+import {
+  IPreferences,
+  DEFAULT_APPEAR_COLORS,
+} from '@core/entities/preferences';
 import {
   extractShortcut,
   validateShortcut,
@@ -312,6 +316,13 @@ export const PrefsAppearancesTabPanel = ({
     onSave,
   ]);
 
+  const handleResetColor = useCallback(() => {
+    setColorSelectingBg(DEFAULT_APPEAR_COLORS.selectingBackground);
+    setColorSelectingText(DEFAULT_APPEAR_COLORS.selectingText);
+    setColorCountdownBg(DEFAULT_APPEAR_COLORS.countdownBackground);
+    setColorCountdownText(DEFAULT_APPEAR_COLORS.countdownText);
+  }, []);
+
   return (
     <div className={styles.container}>
       <div className={styles.panelOptions}>
@@ -367,6 +378,15 @@ export const PrefsAppearancesTabPanel = ({
                   onChange={setColorCountdownText}
                 />
               </div>
+            </div>
+          </div>
+          <div className={styles.optionRow}>
+            <div
+              role="button"
+              className={styles.resetColors}
+              onClick={handleResetColor}
+            >
+              Reset Colors
             </div>
           </div>
         </fieldset>
