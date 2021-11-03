@@ -214,9 +214,10 @@ export class UiDirector implements IUiDirector {
   }
 
   async openPreferencesModal(
-    prefs: IPreferences
-  ): Promise<IPreferences | undefined> {
-    return await this.preferencesModal?.openAsModal(prefs);
+    prefs: IPreferences,
+    onSave: (updatedPrefs: IPreferences) => void
+  ): Promise<void> {
+    await this.preferencesModal?.openAsModal(prefs, onSave);
   }
 
   enableCaptureSelectionMode(): IBounds {

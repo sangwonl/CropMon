@@ -25,10 +25,14 @@ export class PreferencesUseCase {
     this.hookManager.emit('prefs-modal-opening', {});
 
     const prefs = await this.fetchUserPreferences();
-    const updatedPrefs = await this.uiDirector.openPreferencesModal(prefs);
-    if (updatedPrefs !== undefined) {
-      this.updateUserPreference(updatedPrefs);
-    }
+    await this.uiDirector.openPreferencesModal(
+      prefs,
+      (updatedPrefs: IPreferences) => {
+        if (updatedPrefs !== undefined) {
+          this.updateUserPreference(updatedPrefs);
+        }
+      }
+    );
   }
 
   async fetchUserPreferences(): Promise<IPreferences> {
