@@ -4,7 +4,11 @@ import React, { useLayoutEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IBounds } from '@core/entities/screen';
-import { ICaptureArea, ICaptureAreaColors, ICaptureOverlay } from '@core/entities/ui';
+import {
+  ICaptureArea,
+  ICaptureAreaColors,
+  ICaptureOverlay,
+} from '@core/entities/ui';
 import { RootState } from '@ui/redux/store';
 import {
   startAreaSelection,
