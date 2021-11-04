@@ -70,10 +70,10 @@ export class PreferencesStore implements IPreferencesStore {
           store.delete('outputFormat');
         },
         '0.6.5': (store) => {
-          store.set(PREFS_APPEAR_COLOR_SELECT_BG, '#3b9f3d33');
-          store.set(PREFS_APPEAR_COLOR_SELECT_TEXT, '#cccccc');
-          store.set(PREFS_APPEAR_COLOR_COUNTDOWN_BG, '#3b9f3d33');
-          store.set(PREFS_APPEAR_COLOR_COUNTDOWN_TEXT, '#eeeeee');
+          store.set(PREFS_APPEAR_COLOR_SELECT_BG, DEFAULT_APPEAR_COLORS.selectingBackground);
+          store.set(PREFS_APPEAR_COLOR_SELECT_TEXT, DEFAULT_APPEAR_COLORS.selectingText);
+          store.set(PREFS_APPEAR_COLOR_COUNTDOWN_BG, DEFAULT_APPEAR_COLORS.countdownBackground);
+          store.set(PREFS_APPEAR_COLOR_COUNTDOWN_TEXT, DEFAULT_APPEAR_COLORS.countdownText);
         },
       }
     });
@@ -125,10 +125,10 @@ export class PreferencesStore implements IPreferencesStore {
 
   private mapStoreToPreferences(): IPreferences {
     const colors: IAppearancesColors = {
-      selectingBackground: this.store.get(PREFS_APPEAR_COLOR_SELECT_BG, '#3b9f3d33') as string,
-      selectingText: this.store.get(PREFS_APPEAR_COLOR_SELECT_TEXT, '#cccccc') as string,
-      countdownBackground: this.store.get(PREFS_APPEAR_COLOR_COUNTDOWN_BG, '#3b9f3d33') as string,
-      countdownText: this.store.get(PREFS_APPEAR_COLOR_COUNTDOWN_TEXT, '#eeeeee') as string,
+      selectingBackground: this.store.get(PREFS_APPEAR_COLOR_SELECT_BG, DEFAULT_APPEAR_COLORS.selectingBackground) as string,
+      selectingText: this.store.get(PREFS_APPEAR_COLOR_SELECT_TEXT, DEFAULT_APPEAR_COLORS.selectingText) as string,
+      countdownBackground: this.store.get(PREFS_APPEAR_COLOR_COUNTDOWN_BG, DEFAULT_APPEAR_COLORS.countdownBackground) as string,
+      countdownText: this.store.get(PREFS_APPEAR_COLOR_COUNTDOWN_TEXT, DEFAULT_APPEAR_COLORS.countdownText) as string,
     };
     return {
       initialLoaded: false,

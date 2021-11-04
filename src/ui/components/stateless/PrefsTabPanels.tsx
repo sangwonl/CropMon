@@ -14,17 +14,14 @@ import React, {
 } from 'react';
 import classNames from 'classnames';
 
-import {
-  IPreferences,
-  DEFAULT_APPEAR_COLORS,
-} from '@core/entities/preferences';
+import { IPreferences } from '@core/entities/preferences';
 import {
   extractShortcut,
   validateShortcut,
   shortcutForDisplay,
 } from '@utils/shortcut';
 
-import ColorInput from './ColorInput';
+import ColorPalette from './ColorPalette';
 import styles from './PrefsTabPanels.css';
 
 interface PrefsTabPanelBaseProps {
@@ -316,13 +313,6 @@ export const PrefsAppearancesTabPanel = ({
     onSave,
   ]);
 
-  const handleResetColor = useCallback(() => {
-    setColorSelectingBg(DEFAULT_APPEAR_COLORS.selectingBackground);
-    setColorSelectingText(DEFAULT_APPEAR_COLORS.selectingText);
-    setColorCountdownBg(DEFAULT_APPEAR_COLORS.countdownBackground);
-    setColorCountdownText(DEFAULT_APPEAR_COLORS.countdownText);
-  }, []);
-
   return (
     <div className={styles.container}>
       <div className={styles.panelOptions}>
@@ -331,10 +321,10 @@ export const PrefsAppearancesTabPanel = ({
           <div className={styles.optionRow}>
             <div className={styles.colorInput}>
               <label htmlFor="opt-color-capt-area-selecting-bg">
-                Selecting Background:
+                Selecting Area:
               </label>
               <div id="opt-color-capt-area-selecting-bg">
-                <ColorInput
+                <ColorPalette
                   defaultColor={colorSelectingBg}
                   onChange={setColorSelectingBg}
                 />
@@ -347,7 +337,7 @@ export const PrefsAppearancesTabPanel = ({
                 Selecting Text:
               </label>
               <div id="opt-color-capt-area-selecting-text">
-                <ColorInput
+                <ColorPalette
                   defaultColor={colorSelectingText}
                   onChange={setColorSelectingText}
                 />
@@ -357,10 +347,10 @@ export const PrefsAppearancesTabPanel = ({
           <div className={styles.optionRow}>
             <div className={styles.colorInput}>
               <label htmlFor="opt-color-capt-area-countdown-bg">
-                Countdown Background:
+                Countdown Area:
               </label>
               <div id="opt-color-capt-area-countdown-bg">
-                <ColorInput
+                <ColorPalette
                   defaultColor={colorCountdownBg}
                   onChange={setColorCountdownBg}
                 />
@@ -373,20 +363,11 @@ export const PrefsAppearancesTabPanel = ({
                 Countdown Text:
               </label>
               <div id="opt-color-capt-area-countdown-num">
-                <ColorInput
+                <ColorPalette
                   defaultColor={colorCountdownText}
                   onChange={setColorCountdownText}
                 />
               </div>
-            </div>
-          </div>
-          <div className={styles.optionRow}>
-            <div
-              role="button"
-              className={styles.resetColors}
-              onClick={handleResetColor}
-            >
-              Reset Colors
             </div>
           </div>
         </fieldset>

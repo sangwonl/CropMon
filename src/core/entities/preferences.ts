@@ -23,8 +23,8 @@ export interface IPreferences {
 }
 
 export const DEFAULT_APPEAR_COLORS: IAppearancesColors = {
-  selectingBackground: '#3b9f3d33',
-  selectingText: '#cccccc',
-  countdownBackground: '#3b9f3d33',
-  countdownText: '#eeeeee',
+  selectingBackground: '#3B9F3D',
+  selectingText: '#EEEEEE',
+  countdownBackground: '#3B9F3D',
+  countdownText: '#EEEEEE',
 };

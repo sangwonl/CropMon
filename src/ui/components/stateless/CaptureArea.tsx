@@ -29,6 +29,10 @@ const COUNTDOWN_FONT_LARGE = 80;
 const AREA_SIZE_SMALL = 40;
 const AREA_SIZE_MID = 600;
 
+const COLOR_ALPHA_AREA = 0.1;
+const COLOR_ALPHA_AREA_SHADOW = 1.0;
+const COLOR_ALPHA_TEXT_SHADOW = 0.3;
+
 interface IAreaSelectionCtx {
   started: boolean;
   selected: boolean;
@@ -80,8 +84,10 @@ const getAreaStyles = (
       const color = Color(colors.selectingBackground);
       return {
         ...layoutStyle,
-        backgroundColor: color.string(),
-        boxShadow: `inset 0 0 1px ${color.alpha(1.0).string()}`,
+        backgroundColor: color.alpha(COLOR_ALPHA_AREA).string(),
+        boxShadow: `inset 0 0 1px ${color
+          .alpha(COLOR_ALPHA_AREA_SHADOW)
+          .string()}`,
       };
     }
     return {
@@ -95,8 +101,10 @@ const getAreaStyles = (
     const color = Color(colors.countdownBackground);
     return {
       ...layoutStyle,
-      backgroundColor: color.string(),
-      boxShadow: `inset 0 0 1px ${color.alpha(1.0).string()}`,
+      backgroundColor: color.alpha(COLOR_ALPHA_AREA).string(),
+      boxShadow: `inset 0 0 1px ${color
+        .alpha(COLOR_ALPHA_AREA_SHADOW)
+        .string()}`,
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
@@ -125,7 +133,7 @@ const getCursorHintStyles = (
   const colorStyle = {
     color: colors.selectingText,
     textShadow: `${Color(colors.selectingBackground)
-      .alpha(0.5)
+      .alpha(COLOR_ALPHA_TEXT_SHADOW)
       .string()} 0px 0px 1px`,
   };
 
@@ -181,7 +189,7 @@ const getCountdownStyles = (bounds: IBounds, colors: ICaptureAreaColors) => {
   const colorStyle = {
     color: colors.countdownText,
     textShadow: `${Color(colors.countdownBackground)
-      .alpha(0.5)
+      .alpha(COLOR_ALPHA_TEXT_SHADOW)
       .string()} 1px 2px 2px`,
   };
 
