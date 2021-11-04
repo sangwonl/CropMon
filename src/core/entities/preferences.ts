@@ -24,7 +24,7 @@ export interface IPreferences {
 
 export const DEFAULT_APPEAR_COLORS: IAppearancesColors = {
   selectingBackground: '#3B9F3D',
-  selectingText: '#EEEEEE',
+  selectingText: '#EFEFEF',
   countdownBackground: '#3B9F3D',
-  countdownText: '#EEEEEE',
+  countdownText: '#EFEFEF',
 };
