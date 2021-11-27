@@ -8,26 +8,15 @@ import React, {
   SetStateAction,
   FC,
   useState,
-  useRef,
   useEffect,
-  useCallback,
 } from 'react';
 import classNames from 'classnames';
 import Color from 'color';
 
 import { IBounds, IPoint } from '@core/entities/screen';
 import { ICaptureAreaColors } from '@core/entities/ui';
-import { useStateWithGetter } from '@ui/hooks/state';
+import styles from '@ui/components/stateless/CaptureTargeting.css';
 import { SPARE_PIXELS, isEmptyBounds, isCapturableBounds } from '@utils/bounds';
-
-import styles from './CaptureArea.css';
-
-const DEFAULT_COUNTDOWN = 3;
-const COUNTDOWN_FONT_SMALL = 16;
-const COUNTDOWN_FONT_MID = 50;
-const COUNTDOWN_FONT_LARGE = 80;
-const AREA_SIZE_SMALL = 40;
-const AREA_SIZE_MID = 600;
 
 const COLOR_ALPHA_AREA = 0.2;
 const COLOR_ALPHA_AREA_SHADOW = 1.0;
@@ -63,7 +52,6 @@ const calcSelectedBounds = (selCtx: IAreaSelectionCtx): IBounds => {
 };
 
 const getAreaStyles = (
-  countdown: number,
   selCtx: IAreaSelectionCtx,
   bounds: IBounds,
   colors: ICaptureAreaColors
@@ -94,29 +82,6 @@ const getAreaStyles = (
       ...layoutStyle,
       backgroundColor: '#ff00001a',
       boxShadow: 'inset 0 0 1px #ff0000',
-    };
-  }
-
-  if (countdown > 0) {
-    const color = Color(colors.countdownBackground);
-    return {
-      ...layoutStyle,
-      backgroundColor: color.alpha(COLOR_ALPHA_AREA).string(),
-      boxShadow: `inset 0 0 1px ${color
-        .alpha(COLOR_ALPHA_AREA_SHADOW)
-        .string()}`,
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    };
-  }
-
-  if (countdown === 0) {
-    return {
-      ...layoutStyle,
-      backgroundColor: 'transparent',
-      outline: '1px solid rgba(255, 0, 0, 1.0)',
-      animation: 'recordingBorder 2s infinite',
     };
   }
 
@@ -185,51 +150,18 @@ const getCursorHintStyles = (
   };
 };
 
-const getCountdownStyles = (bounds: IBounds, colors: ICaptureAreaColors) => {
-  const colorStyle = {
-    color: colors.countdownText,
-    textShadow: `${Color(colors.countdownBackground)
-      .alpha(COLOR_ALPHA_TEXT_SHADOW)
-      .string()} 1px 2px 2px`,
-  };
-
-  const { width, height } = bounds;
-  if (width < AREA_SIZE_SMALL && height < AREA_SIZE_SMALL) {
-    return {
-      ...colorStyle,
-      fontSize: COUNTDOWN_FONT_SMALL,
-    };
-  }
-  if (width < AREA_SIZE_MID && height < AREA_SIZE_MID) {
-    return {
-      ...colorStyle,
-      fontSize: COUNTDOWN_FONT_MID,
-    };
-  }
-  return {
-    ...colorStyle,
-    fontSize: COUNTDOWN_FONT_LARGE,
-  };
-};
-
 const handleMouseDown = (
   e: MouseEvent<HTMLDivElement>,
-  getCursorScreenPoint: () => IPoint,
-  onSelectionStart: () => void,
-  onSelectionCancel: () => void,
+  getScreenPoint: () => IPoint,
+  onStart: () => void,
+  onCancel: () => void,
   selCtx: IAreaSelectionCtx,
-  setSelCtx: Dispatch<SetStateAction<IAreaSelectionCtx>>,
-  countdown: number,
-  isRecording: boolean
+  setSelCtx: Dispatch<SetStateAction<IAreaSelectionCtx>>
 ) => {
-  if (countdown > 0 || isRecording) {
-    return;
-  }
-
   // if click after already area settled or right click while selecting
   if (selCtx.selected || e.button === 2) {
     setSelCtx(initialSelCtx);
-    onSelectionCancel();
+    onCancel();
     return;
   }
 
@@ -238,30 +170,24 @@ const handleMouseDown = (
     started: true,
     startPt: { x: e.clientX, y: e.clientY },
     curPt: { x: e.clientX, y: e.clientY },
-    curScreenPt: getCursorScreenPoint(),
+    curScreenPt: getScreenPoint(),
   });
 
-  onSelectionStart();
+  onStart();
 };
 
 const handleMouseUp = (
   e: MouseEvent<HTMLDivElement>,
-  getCursorScreenPoint: () => IPoint,
-  onSelectionCancel: () => void,
-  onSelectionFinish: (bounds: IBounds) => void,
+  getScreenPoint: () => IPoint,
+  onCancel: () => void,
+  onFinish: (boundsForUi: IBounds, boundsForCapture: IBounds) => void,
   selCtx: IAreaSelectionCtx,
-  setSelCtx: Dispatch<SetStateAction<IAreaSelectionCtx>>,
-  countdown: number,
-  isRecording: boolean
+  setSelCtx: Dispatch<SetStateAction<IAreaSelectionCtx>>
 ) => {
-  if (countdown > 0 || isRecording) {
-    return;
-  }
-
   // if click after already area settled or right click while selecting
   if (!selCtx.started || selCtx.selected || e.button === 2) {
     setSelCtx(initialSelCtx);
-    onSelectionCancel();
+    onCancel();
     return;
   }
 
@@ -271,33 +197,32 @@ const handleMouseUp = (
     curPt: { x: e.clientX, y: e.clientY },
   };
 
-  const bounds = calcSelectedBounds(updatedSelCtx);
-  if (selCtx.started && !isCapturableBounds(bounds)) {
+  const boundsForUi = calcSelectedBounds(updatedSelCtx);
+  if (selCtx.started && !isCapturableBounds(boundsForUi)) {
     setSelCtx(initialSelCtx);
-    onSelectionCancel();
+    onCancel();
     return;
   }
 
   updatedSelCtx.selected = true;
   setSelCtx(updatedSelCtx);
 
-  const curScreenPt = getCursorScreenPoint();
-  onSelectionFinish({
+  const curScreenPt = getScreenPoint();
+  const boundsForCapture = {
     x: Math.min(updatedSelCtx.curScreenPt.x, curScreenPt.x),
     y: Math.min(updatedSelCtx.curScreenPt.y, curScreenPt.y),
     width: Math.abs(curScreenPt.x - updatedSelCtx.curScreenPt.x) + 1,
     height: Math.abs(curScreenPt.y - updatedSelCtx.curScreenPt.y) + 1,
-  });
+  };
+  onFinish(boundsForUi, boundsForCapture);
 };
 
 const handleMouseMove = (
   e: MouseEvent<HTMLDivElement>,
   selCtx: IAreaSelectionCtx,
-  setSelCtx: Dispatch<SetStateAction<IAreaSelectionCtx>>,
-  countdown: number,
-  isRecording: boolean
+  setSelCtx: Dispatch<SetStateAction<IAreaSelectionCtx>>
 ) => {
-  if (countdown > 0 || isRecording || !selCtx.started) {
+  if (!selCtx.started) {
     return;
   }
 
@@ -308,73 +233,17 @@ const handleMouseMove = (
 };
 
 interface PropTypes {
-  active: boolean;
-  isRecording: boolean;
-  boundsSelected: boolean;
-  showCountdown: boolean;
   areaColors: ICaptureAreaColors;
-  getCursorScreenPoint: () => IPoint;
-  onSelectionStart: () => void;
-  onSelectionCancel: () => void;
-  onSelectionFinish: (bounds: IBounds) => void;
-  onRecordingStart: (bounds: IBounds) => void;
+  getScreenPoint: () => IPoint;
+  onStart: () => void;
+  onCancel: () => void;
+  onFinish: (boundsForUi: IBounds, boundsForCapture: IBounds) => void;
 }
 
-const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
-  const {
-    active,
-    isRecording,
-    boundsSelected,
-    showCountdown,
-    areaColors,
-    getCursorScreenPoint: getCursorPt,
-    onSelectionStart: onStart,
-    onSelectionFinish: onFinish,
-    onSelectionCancel: onCancel,
-    onRecordingStart: onRecord,
-  } = props;
+const CaptureTargeting: FC<PropTypes> = (props: PropTypes) => {
+  const { areaColors, getScreenPoint, onStart, onFinish, onCancel } = props;
 
   const [selCtx, setSelCtx] = useState<IAreaSelectionCtx>(initialSelCtx);
-  const [countdown, getCountdown, setCountdown] = useStateWithGetter<number>(0);
-  const countdownTimer = useRef<any>();
-
-  const onSelFinish = useCallback(
-    (bounds: IBounds) => {
-      onFinish(bounds);
-
-      // start recording immediately if no countdown
-      if (!showCountdown) {
-        onRecord(bounds);
-        return;
-      }
-
-      // start counting down before recording
-      let cnt = DEFAULT_COUNTDOWN;
-      setCountdown(cnt);
-
-      countdownTimer.current = setInterval(() => {
-        cnt -= 1;
-        setCountdown(cnt);
-
-        if (cnt <= 0) {
-          clearInterval(countdownTimer.current);
-          onRecord(bounds);
-        }
-      }, 1000);
-    },
-    [showCountdown]
-  );
-
-  useEffect(() => {
-    if (!boundsSelected) {
-      setSelCtx(initialSelCtx);
-    } else {
-      setSelCtx({
-        ...selCtx,
-        selected: boundsSelected,
-      });
-    }
-  }, [boundsSelected]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -382,12 +251,9 @@ const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
       e.stopPropagation();
 
       if (e.code === 'Escape') {
-        if ((selCtx.selected && getCountdown() <= 0) || isRecording) {
+        if (selCtx.selected) {
           return;
         }
-
-        setCountdown(0);
-        clearInterval(countdownTimer.current);
 
         setSelCtx(initialSelCtx);
         onCancel();
@@ -397,7 +263,7 @@ const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     return () => {
       window.removeEventListener('keydown', onKeyDown);
     };
-  }, [selCtx.selected, isRecording]);
+  }, [selCtx.selected]);
 
   const calcBounds = calcSelectedBounds(selCtx);
 
@@ -405,66 +271,37 @@ const CaptureArea: FC<PropTypes> = (props: PropTypes) => {
     <div
       className={classNames({
         [styles.wrapper]: true,
-        [styles.wrapperHack]: !selCtx.selected || countdown > 0,
-        [styles.cursorSelecting]: active && !selCtx.selected,
+        [styles.wrapperHack]: !selCtx.selected,
+        [styles.cursorSelecting]: !selCtx.selected,
       })}
       onMouseDown={(e: MouseEvent<HTMLDivElement>) =>
-        handleMouseDown(
-          e,
-          getCursorPt,
-          onStart,
-          onCancel,
-          selCtx,
-          setSelCtx,
-          countdown,
-          isRecording
-        )
+        handleMouseDown(e, getScreenPoint, onStart, onCancel, selCtx, setSelCtx)
       }
       onMouseUp={(e: MouseEvent<HTMLDivElement>) =>
-        handleMouseUp(
-          e,
-          getCursorPt,
-          onCancel,
-          onSelFinish,
-          selCtx,
-          setSelCtx,
-          countdown,
-          isRecording
-        )
+        handleMouseUp(e, getScreenPoint, onCancel, onFinish, selCtx, setSelCtx)
       }
       onMouseMove={(e: MouseEvent<HTMLDivElement>) =>
-        handleMouseMove(e, selCtx, setSelCtx, countdown, isRecording)
+        handleMouseMove(e, selCtx, setSelCtx)
       }
     >
-      {active && (
-        <>
+      <>
+        <div
+          className={classNames(styles.area, {
+            [styles.areaHidden]: !selCtx.started || isEmptyBounds(calcBounds),
+          })}
+          style={getAreaStyles(selCtx, calcBounds, areaColors)}
+        />
+        {!selCtx.selected && (
           <div
-            className={classNames(styles.area, {
-              [styles.areaHidden]: !selCtx.started || isEmptyBounds(calcBounds),
-            })}
-            style={getAreaStyles(countdown, selCtx, calcBounds, areaColors)}
+            className={styles.cursorSizeHint}
+            style={getCursorHintStyles(selCtx, calcBounds, areaColors)}
           >
-            {countdown > 0 && (
-              <div
-                className={styles.countdownText}
-                style={getCountdownStyles(calcBounds, areaColors)}
-              >
-                {countdown}
-              </div>
-            )}
+            {calcBounds.width}x{calcBounds.height}
           </div>
-          {!selCtx.selected && (
-            <div
-              className={styles.cursorSizeHint}
-              style={getCursorHintStyles(selCtx, calcBounds, areaColors)}
-            >
-              {calcBounds.width}x{calcBounds.height}
-            </div>
-          )}
-        </>
-      )}
+        )}
+      </>
     </div>
   );
 };
 
-export default CaptureArea;
+export default CaptureTargeting;

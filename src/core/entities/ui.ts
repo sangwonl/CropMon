@@ -12,12 +12,12 @@ export interface ISelectedArea {
 
 export interface ICaptureOverlay {
   show: boolean;
-  bounds: IBounds | undefined;
+  bounds: IBounds | null;
   showCountdown: boolean;
 }
 
 export interface ICaptureArea {
-  selectedBounds: IBounds | undefined;
+  selectedBounds: IBounds | null;
   isSelecting: boolean;
   isRecording: boolean;
 }
@@ -38,11 +38,11 @@ export interface IUiState {
 export const INITIAL_UI_STATE: IUiState = {
   captureOverlay: {
     show: false,
-    bounds: undefined,
+    bounds: null,
     showCountdown: true,
   },
   captureArea: {
-    selectedBounds: undefined,
+    selectedBounds: null,
     isSelecting: false,
     isRecording: false,
   },

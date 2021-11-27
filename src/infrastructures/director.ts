@@ -78,7 +78,6 @@ class CaptureOverlayWrap {
     return {
       x: bounds.x - SPARE_PIXELS,
       y: bounds.y - SPARE_PIXELS,
-      // width: (bounds.width + SPARE_PIXELS * 2) / 2,
       width: bounds.width + SPARE_PIXELS * 2,
       height: bounds.height + SPARE_PIXELS * 2,
     };
