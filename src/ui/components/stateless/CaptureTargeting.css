@@ -37,9 +37,3 @@
   text-decoration: none;
   user-select: none;
 }
-
-@keyframes :global(recordingBorder) {
-  50% {
-    outline: 1px solid rgba(255, 0, 0, 0.7);
-  }
-}

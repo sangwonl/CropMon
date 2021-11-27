@@ -17,7 +17,7 @@ import {
   IRecordingOptions,
 } from '@core/entities/capture';
 import { IPreferences } from '@core/entities/preferences';
-import { IUiState } from '@core/entities/ui';
+import { INITIAL_UI_STATE, IUiState } from '@core/entities/ui';
 import { IBounds } from '@core/entities/screen';
 import { StateManager } from '@core/interfaces/state';
 import { IScreenRecorder } from '@core/interfaces/recorder';
@@ -52,9 +52,7 @@ export class CaptureUseCase {
       return {
         ...state,
         captureArea: {
-          selectedBounds: undefined,
-          isSelecting: true,
-          isRecording: false,
+          ...INITIAL_UI_STATE.captureArea,
         },
         captureOverlay: {
           show: true,
@@ -75,9 +73,7 @@ export class CaptureUseCase {
       return {
         ...state,
         captureArea: {
-          selectedBounds: undefined,
-          isSelecting: false,
-          isRecording: false,
+          ...INITIAL_UI_STATE.captureArea,
         },
         captureOverlay: {
           ...state.captureOverlay,
@@ -95,13 +91,24 @@ export class CaptureUseCase {
         ...state,
         captureArea: {
           ...state.captureArea,
-          selectedBounds: undefined,
+          isSelecting: true,
         },
       };
     });
   }
 
-  async finishAreaSelection(_bounds: IBounds) {}
+  async finishAreaSelection(bounds: IBounds) {
+    this.stateManager.updateUiState((state: IUiState): IUiState => {
+      return {
+        ...state,
+        captureArea: {
+          ...state.captureArea,
+          selectedBounds: bounds,
+          isSelecting: false,
+        },
+      };
+    });
+  }
 
   async startCapture(option: ICaptureOption): Promise<void> {
     // creating capture context and submit to recorder
@@ -128,7 +135,6 @@ export class CaptureUseCase {
           ...state,
           captureArea: {
             ...state.captureArea,
-            selectedBounds: option.bounds,
             isRecording,
           },
         };
@@ -187,7 +193,7 @@ export class CaptureUseCase {
     };
     this.lastCaptureCtx = newCtx;
 
-    // handle ui state
+    // open folder where recoding file saved
     const prefs = await this.prefsUseCase.fetchUserPreferences();
     if (
       newCtx.outputPath &&
