@@ -12,11 +12,8 @@ export interface ISelectedArea {
 
 export interface ICaptureOverlay {
   show: boolean;
-  bounds: IBounds | null;
   showCountdown: boolean;
-}
-
-export interface ICaptureArea {
+  bounds: IBounds | null;
   selectedBounds: IBounds | null;
   isSelecting: boolean;
   isRecording: boolean;
@@ -31,17 +28,14 @@ export interface ICaptureAreaColors {
 
 export interface IUiState {
   captureOverlay: ICaptureOverlay;
-  captureArea: ICaptureArea;
   captureAreaColors: ICaptureAreaColors;
 }
 
 export const INITIAL_UI_STATE: IUiState = {
   captureOverlay: {
     show: false,
-    bounds: null,
     showCountdown: true,
-  },
-  captureArea: {
+    bounds: null,
     selectedBounds: null,
     isSelecting: false,
     isRecording: false,

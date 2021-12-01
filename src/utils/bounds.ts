@@ -23,8 +23,13 @@ export const emptyBounds = (): IBounds => {
   };
 };
 
-export const isEmptyBounds = (bounds: IBounds | undefined): boolean => {
-  return bounds === undefined || bounds.width === 0 || bounds.height === 0;
+export const isEmptyBounds = (bounds: IBounds | undefined | null): boolean => {
+  return (
+    bounds === undefined ||
+    bounds === null ||
+    bounds.width === 0 ||
+    bounds.height === 0
+  );
 };
 
 export const isCapturableBounds = (bounds: IBounds): boolean => {
