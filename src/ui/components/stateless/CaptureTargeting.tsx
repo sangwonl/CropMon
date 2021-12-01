@@ -27,8 +27,8 @@ interface IAreaSelectionCtx {
   selected: boolean;
   startPt: IPoint;
   endPt: IPoint;
-  curPt: IPoint;
-  curScreenPt: IPoint;
+  cursorPt: IPoint;
+  cursorScreenPt: IPoint;
 }
 
 const initialSelCtx: IAreaSelectionCtx = {
@@ -36,13 +36,13 @@ const initialSelCtx: IAreaSelectionCtx = {
   selected: false,
   startPt: { x: 0, y: 0 },
   endPt: { x: 0, y: 0 },
-  curPt: { x: 0, y: 0 },
-  curScreenPt: { x: 0, y: 0 },
+  cursorPt: { x: 0, y: 0 },
+  cursorScreenPt: { x: 0, y: 0 },
 };
 
 const calcSelectedBounds = (selCtx: IAreaSelectionCtx): IBounds => {
-  const endX = selCtx.selected ? selCtx.endPt.x : selCtx.curPt.x;
-  const endY = selCtx.selected ? selCtx.endPt.y : selCtx.curPt.y;
+  const endX = selCtx.selected ? selCtx.endPt.x : selCtx.cursorPt.x;
+  const endY = selCtx.selected ? selCtx.endPt.y : selCtx.cursorPt.y;
   return {
     x: Math.min(selCtx.startPt.x, endX) - SPARE_PIXELS,
     y: Math.min(selCtx.startPt.y, endY) - SPARE_PIXELS,
@@ -108,7 +108,7 @@ const getCursorHintStyles = (
     };
   }
 
-  const { startPt, curPt } = selCtx;
+  const { startPt, cursorPt: curPt } = selCtx;
   if (curPt.x > startPt.x) {
     // right-bottom
     if (curPt.y > startPt.y) {
@@ -152,7 +152,7 @@ const getCursorHintStyles = (
 
 const handleMouseDown = (
   e: MouseEvent<HTMLDivElement>,
-  getScreenPoint: () => IPoint,
+  getCursorPoint: () => IPoint,
   onStart: () => void,
   onCancel: () => void,
   selCtx: IAreaSelectionCtx,
@@ -169,8 +169,8 @@ const handleMouseDown = (
     ...selCtx,
     started: true,
     startPt: { x: e.clientX, y: e.clientY },
-    curPt: { x: e.clientX, y: e.clientY },
-    curScreenPt: getScreenPoint(),
+    cursorPt: { x: e.clientX, y: e.clientY },
+    cursorScreenPt: getCursorPoint(),
   });
 
   onStart();
@@ -178,7 +178,7 @@ const handleMouseDown = (
 
 const handleMouseUp = (
   e: MouseEvent<HTMLDivElement>,
-  getScreenPoint: () => IPoint,
+  getCursorPoint: () => IPoint,
   onCancel: () => void,
   onFinish: (boundsForUi: IBounds, boundsForCapture: IBounds) => void,
   selCtx: IAreaSelectionCtx,
@@ -207,12 +207,12 @@ const handleMouseUp = (
   updatedSelCtx.selected = true;
   setSelCtx(updatedSelCtx);
 
-  const curScreenPt = getScreenPoint();
+  const settledCursorPt = getCursorPoint();
   const boundsForCapture = {
-    x: Math.min(updatedSelCtx.curScreenPt.x, curScreenPt.x),
-    y: Math.min(updatedSelCtx.curScreenPt.y, curScreenPt.y),
-    width: Math.abs(curScreenPt.x - updatedSelCtx.curScreenPt.x) + 1,
-    height: Math.abs(curScreenPt.y - updatedSelCtx.curScreenPt.y) + 1,
+    x: Math.min(updatedSelCtx.cursorScreenPt.x, settledCursorPt.x),
+    y: Math.min(updatedSelCtx.cursorScreenPt.y, settledCursorPt.y),
+    width: Math.abs(settledCursorPt.x - updatedSelCtx.cursorScreenPt.x) + 1,
+    height: Math.abs(settledCursorPt.y - updatedSelCtx.cursorScreenPt.y) + 1,
   };
   onFinish(boundsForUi, boundsForCapture);
 };
@@ -228,20 +228,20 @@ const handleMouseMove = (
 
   setSelCtx({
     ...selCtx,
-    curPt: { x: e.clientX, y: e.clientY },
+    cursorPt: { x: e.clientX, y: e.clientY },
   });
 };
 
 interface PropTypes {
   areaColors: ICaptureAreaColors;
-  getScreenPoint: () => IPoint;
+  getCursorPoint: () => IPoint;
   onStart: () => void;
   onCancel: () => void;
   onFinish: (boundsForUi: IBounds, boundsForCapture: IBounds) => void;
 }
 
 const CaptureTargeting: FC<PropTypes> = (props: PropTypes) => {
-  const { areaColors, getScreenPoint, onStart, onFinish, onCancel } = props;
+  const { areaColors, getCursorPoint, onStart, onFinish, onCancel } = props;
 
   const [selCtx, setSelCtx] = useState<IAreaSelectionCtx>(initialSelCtx);
 
@@ -275,10 +275,10 @@ const CaptureTargeting: FC<PropTypes> = (props: PropTypes) => {
         [styles.cursorSelecting]: !selCtx.selected,
       })}
       onMouseDown={(e: MouseEvent<HTMLDivElement>) =>
-        handleMouseDown(e, getScreenPoint, onStart, onCancel, selCtx, setSelCtx)
+        handleMouseDown(e, getCursorPoint, onStart, onCancel, selCtx, setSelCtx)
       }
       onMouseUp={(e: MouseEvent<HTMLDivElement>) =>
-        handleMouseUp(e, getScreenPoint, onCancel, onFinish, selCtx, setSelCtx)
+        handleMouseUp(e, getCursorPoint, onCancel, onFinish, selCtx, setSelCtx)
       }
       onMouseMove={(e: MouseEvent<HTMLDivElement>) =>
         handleMouseMove(e, selCtx, setSelCtx)
