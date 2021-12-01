@@ -143,7 +143,7 @@ const CaptureCover = () => {
         <>
           <CaptureTargeting
             areaColors={captureAreaColors}
-            getScreenPoint={getCursorScreenPoint}
+            getCursorPoint={getCursorScreenPoint}
             onStart={onSelectionStart}
             onCancel={onCaptureCancel}
             onFinish={onSelectionFinish}
