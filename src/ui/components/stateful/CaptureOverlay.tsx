@@ -6,11 +6,7 @@ import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IBounds } from '@core/entities/screen';
-import {
-  ICaptureArea,
-  ICaptureAreaColors,
-  ICaptureOverlay,
-} from '@core/entities/ui';
+import { ICaptureAreaColors, ICaptureOverlay } from '@core/entities/ui';
 import { RootState } from '@ui/redux/store';
 import {
   startAreaSelection,
@@ -23,12 +19,13 @@ import CaptureCountdown from '@ui/components/stateless/CaptureCountdown';
 import CaptureRecording from '@ui/components/stateless/CaptureRecording';
 import styles from '@ui/components/stateful/CaptureOverlay.css';
 import { getCursorScreenPoint } from '@utils/remote';
+import { emptyBounds, isEmptyBounds } from '@utils/bounds';
 
 const DEFAULT_COUNTDOWN = 3;
 
 enum RenderMode {
   IDLE = 0,
-  TARGETING = 1,
+  TARGETING,
   COUNTDOWN,
   RECORDING,
 }
@@ -50,10 +47,6 @@ const CaptureCover = () => {
 
   const captureOverlay: ICaptureOverlay = useSelector(
     (state: RootState) => state.ui.root.captureOverlay
-  );
-
-  const captureArea: ICaptureArea = useSelector(
-    (state: RootState) => state.ui.root.captureArea
   );
 
   const captureAreaColors: ICaptureAreaColors = useSelector(
@@ -123,37 +116,39 @@ const CaptureCover = () => {
   useEffect(() => {
     if (captureOverlay.show) {
       adjustBodySize(captureOverlay.bounds);
+      setSelectedBounds(emptyBounds());
     } else {
       changeRenderMode(RenderMode.IDLE);
-    }
-  }, [captureOverlay]);
-
-  useEffect(() => {
-    if (!captureArea.selectedBounds) {
       setSelectedBounds(null);
     }
-  }, [captureArea]);
+  }, [captureOverlay.show]);
 
   useEffect(() => {
-    if (!selectedBounds) {
+    if (!captureOverlay.show) {
+      return;
+    }
+
+    if (isEmptyBounds(selectedBounds)) {
       changeRenderMode(RenderMode.TARGETING);
     } else if (countdown > 0) {
       changeRenderMode(RenderMode.COUNTDOWN);
     } else {
       changeRenderMode(RenderMode.RECORDING);
     }
-  }, [selectedBounds, countdown]);
+  }, [captureOverlay.show, selectedBounds, countdown]);
 
   return (
     <div className={styles.cover}>
       {renderMode === RenderMode.TARGETING && (
-        <CaptureTargeting
-          areaColors={captureAreaColors}
-          getScreenPoint={getCursorScreenPoint}
-          onStart={onSelectionStart}
-          onCancel={onCaptureCancel}
-          onFinish={onSelectionFinish}
-        />
+        <>
+          <CaptureTargeting
+            areaColors={captureAreaColors}
+            getScreenPoint={getCursorScreenPoint}
+            onStart={onSelectionStart}
+            onCancel={onCaptureCancel}
+            onFinish={onSelectionFinish}
+          />
+        </>
       )}
       {renderMode === RenderMode.COUNTDOWN && countdown > 0 && (
         <CaptureCountdown

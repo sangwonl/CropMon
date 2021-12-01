@@ -51,13 +51,11 @@ export class CaptureUseCase {
     this.stateManager.updateUiState((state: IUiState): IUiState => {
       return {
         ...state,
-        captureArea: {
-          ...INITIAL_UI_STATE.captureArea,
-        },
         captureOverlay: {
+          ...INITIAL_UI_STATE.captureOverlay,
           show: true,
-          bounds: screenBounds,
           showCountdown: prefs.showCountdown,
+          bounds: screenBounds,
         },
         captureAreaColors: prefs.colors,
       };
@@ -72,12 +70,8 @@ export class CaptureUseCase {
     this.stateManager.updateUiState((state: IUiState): IUiState => {
       return {
         ...state,
-        captureArea: {
-          ...INITIAL_UI_STATE.captureArea,
-        },
         captureOverlay: {
-          ...state.captureOverlay,
-          show: false,
+          ...INITIAL_UI_STATE.captureOverlay,
         },
       };
     });
@@ -89,8 +83,8 @@ export class CaptureUseCase {
     this.stateManager.updateUiState((state: IUiState): IUiState => {
       return {
         ...state,
-        captureArea: {
-          ...state.captureArea,
+        captureOverlay: {
+          ...state.captureOverlay,
           isSelecting: true,
         },
       };
@@ -101,8 +95,8 @@ export class CaptureUseCase {
     this.stateManager.updateUiState((state: IUiState): IUiState => {
       return {
         ...state,
-        captureArea: {
-          ...state.captureArea,
+        captureOverlay: {
+          ...state.captureOverlay,
           selectedBounds: bounds,
           isSelecting: false,
         },
@@ -133,8 +127,8 @@ export class CaptureUseCase {
       this.stateManager.updateUiState((state: IUiState): IUiState => {
         return {
           ...state,
-          captureArea: {
-            ...state.captureArea,
+          captureOverlay: {
+            ...state.captureOverlay,
             isRecording,
           },
         };
