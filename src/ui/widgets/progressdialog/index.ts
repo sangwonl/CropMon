@@ -28,6 +28,10 @@ export class ProgressDialog extends Widget {
       show: false,
       width: options.width,
       height: options.height,
+      resizable: false,
+      maximizable: false,
+      minimizable: false,
+      closable: true,
       options,
     });
     this.options = options;
