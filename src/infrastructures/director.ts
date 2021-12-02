@@ -20,14 +20,17 @@ import { app, shell } from 'electron';
 import { IBounds } from '@core/entities/screen';
 import { IPreferences } from '@core/entities/preferences';
 import { IUiDirector } from '@core/interfaces/director';
-import { assetPathResolver } from '@utils/asset';
-import { CachedWidget } from '@ui/widgets/cached';
-import { AppTray } from '@ui/widgets/tray';
-import { CaptureOverlay } from '@ui/widgets/overlays';
-import { PreferencesModal } from '@ui/widgets/preferences';
-import { ProgressDialog } from '@ui/widgets/progressdialog';
-import { StaticPagePopup } from '@ui/widgets/staticpage';
+
 import { StaticPagePopupOptions } from '@ui/widgets/staticpage/shared';
+import CachedWidget from '@ui/widgets/cached';
+import AppTray from '@ui/widgets/tray';
+import ControlPanel from '@ui/widgets/ctrlpanel';
+import CaptureOverlay from '@ui/widgets/overlays';
+import PreferencesModal from '@ui/widgets/preferences';
+import ProgressDialog from '@ui/widgets/progressdialog';
+import StaticPagePopup from '@ui/widgets/staticpage';
+
+import { assetPathResolver } from '@utils/asset';
 import { getOverlayScreenBounds, SPARE_PIXELS } from '@utils/bounds';
 import { shortcutForDisplay } from '@utils/shortcut';
 import { isMac } from '@utils/process';
@@ -99,6 +102,7 @@ class CachedPreferencesModal extends CachedWidget<
 @injectable()
 export class UiDirector implements IUiDirector {
   private appTray: AppTray | undefined;
+  private controlPanel: ControlPanel | undefined;
   private captureOverlay: CaptureOverlayWrap | undefined;
   private updateProgressDialog: ProgressDialog | undefined;
   private preferencesModal: CachedPreferencesModal | undefined;
@@ -113,6 +117,7 @@ export class UiDirector implements IUiDirector {
 
   initialize(): void {
     this.appTray = AppTray.create();
+    this.controlPanel = new ControlPanel();
     this.captureOverlay = new CaptureOverlayWrap();
     this.preferencesModal = new CachedPreferencesModal(PreferencesModal, 600);
     this.aboutPopup = new CachedStaticPagePopup(StaticPagePopup, 300);
@@ -221,11 +226,13 @@ export class UiDirector implements IUiDirector {
 
   enableCaptureSelectionMode(): IBounds {
     const screenBounds = getOverlayScreenBounds();
+    this.controlPanel?.show();
     this.captureOverlay?.show(screenBounds);
     return screenBounds;
   }
 
   disableCaptureSelectionMode(): void {
+    this.controlPanel?.hide();
     this.captureOverlay?.hide();
   }
 
