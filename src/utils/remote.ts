@@ -1,11 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable import/prefer-default-export */
-
 import { remote } from 'electron';
 
 import { Widget } from '@ui/widgets/widget';
-
-import { isMac } from './process';
+import { isMac } from '@utils/process';
 
 export function getCurWidgetCustomData<T>(name: string): T {
   return (remote.getCurrentWindow() as Widget).getCustomData(name);
