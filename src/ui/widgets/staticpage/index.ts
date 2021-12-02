@@ -12,7 +12,7 @@ import { Widget } from '@ui/widgets/widget';
 
 import { StaticPagePopupOptions } from './shared';
 
-export class StaticPagePopup extends Widget {
+export default class StaticPagePopup extends Widget {
   options?: StaticPagePopupOptions;
 
   constructor(options: StaticPagePopupOptions) {

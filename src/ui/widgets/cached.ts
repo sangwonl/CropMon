@@ -7,7 +7,7 @@
 
 import { Widget } from './widget';
 
-export class CachedWidget<W extends Widget, C, R> {
+export default class CachedWidget<W extends Widget, C, R> {
   private loaded = false;
   private widget: W | undefined = undefined;
   private timeoutHandle: any | undefined;

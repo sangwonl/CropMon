@@ -34,7 +34,7 @@ const TOOLTIP_GREETING = "Roar! I'm here to help you record the screen";
 const TOOLTIP_UPDATE = 'New update available, please make me stronger!';
 const TOOLTIP_RECORDING = 'Now recording.. Click to stop';
 
-export abstract class AppTray {
+export default abstract class AppTray {
   tray: Tray;
   menu: Menu | null = null;
   isRecording = false;

@@ -140,15 +140,13 @@ const CaptureCover = () => {
   return (
     <div className={styles.cover}>
       {renderMode === RenderMode.TARGETING && (
-        <>
-          <CaptureTargeting
-            areaColors={captureAreaColors}
-            getCursorPoint={getCursorScreenPoint}
-            onStart={onSelectionStart}
-            onCancel={onCaptureCancel}
-            onFinish={onSelectionFinish}
-          />
-        </>
+        <CaptureTargeting
+          areaColors={captureAreaColors}
+          getCursorPoint={getCursorScreenPoint}
+          onStart={onSelectionStart}
+          onCancel={onCaptureCancel}
+          onFinish={onSelectionFinish}
+        />
       )}
       {renderMode === RenderMode.COUNTDOWN && countdown > 0 && (
         <CaptureCountdown

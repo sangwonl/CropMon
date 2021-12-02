@@ -19,7 +19,7 @@ import {
   IPC_EVT_ON_CANCEL,
 } from './shared';
 
-export class ProgressDialog extends Widget {
+export default class ProgressDialog extends Widget {
   options?: ProgressDialogOptions;
 
   constructor(options: ProgressDialogOptions) {

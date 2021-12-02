@@ -20,7 +20,7 @@ import {
   IpcEvtOnClose,
 } from './shared';
 
-export class PreferencesModal extends Widget {
+export default class PreferencesModal extends Widget {
   private loaded = false;
   private prefs: IPreferences | undefined;
   private closeResolver: any | undefined;

@@ -6,9 +6,9 @@ import { assetPathResolver } from '@utils/asset';
 import { WidgetType } from '@ui/widgets/types';
 import { Widget } from '@ui/widgets/widget';
 
-export default class CaptureOverlay extends Widget {
+export default class ControlPanel extends Widget {
   constructor() {
-    super(WidgetType.CAPTURE_OVERLAY, {
+    super(WidgetType.CONTROL_PANEL, {
       icon: assetPathResolver('icon.png'),
       show: false,
       frame: false,
@@ -24,7 +24,7 @@ export default class CaptureOverlay extends Widget {
       enableLargerThanScreen: true, // for MacOS, margin workaround
     });
 
-    this.loadURL(`file://${__dirname}/../overlays/index.html`);
+    this.loadURL(`file://${__dirname}/../ctrlpanel/index.html`);
 
     // https://github.com/electron/electron/issues/25368
     this.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
