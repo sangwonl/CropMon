@@ -6,11 +6,15 @@ import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IBounds } from '@core/entities/screen';
-import { ICaptureAreaColors, ICaptureOverlay } from '@core/entities/ui';
+import {
+  ICaptureAreaColors,
+  ICaptureOverlay,
+  IControlPanel,
+} from '@core/entities/ui';
 import { RootState } from '@ui/redux/store';
 import {
-  startAreaSelection,
-  finishAreaSelection,
+  startTargetSelection,
+  finishTargetSelection,
   disableCaptureMode,
   startCapture,
 } from '@ui/redux/slice';
@@ -44,6 +48,10 @@ const adjustBodySize = (overlayBounds: IBounds | null) => {
 
 const CaptureCover = () => {
   const dispatch = useDispatch();
+
+  const controlPanel: IControlPanel = useSelector(
+    (state: RootState) => state.ui.root.controlPanel
+  );
 
   const captureOverlay: ICaptureOverlay = useSelector(
     (state: RootState) => state.ui.root.captureOverlay
@@ -91,17 +99,30 @@ const CaptureCover = () => {
   };
 
   const onSelectionStart = useCallback(() => {
-    dispatch(startAreaSelection());
+    dispatch(startTargetSelection());
   }, []);
 
   const onSelectionFinish = useCallback(
     (boundsForUi: IBounds, boundsForCapture: IBounds) => {
       setSelectedBounds(boundsForUi);
 
-      dispatch(finishAreaSelection({ bounds: boundsForCapture }));
+      dispatch(
+        finishTargetSelection({
+          target: {
+            mode: controlPanel.captureMode,
+            bounds: boundsForCapture,
+            screenId: undefined, // TODO
+          },
+          recordOptions: {
+            enableLowQualityMode: controlPanel.lowQualityMode,
+            enableRecordMicrophone: controlPanel.recordMicrophone,
+            enableOutputAsGif: controlPanel.outputAsGif,
+          },
+        })
+      );
 
       startCountdown(() => {
-        dispatch(startCapture({ bounds: boundsForCapture }));
+        dispatch(startCapture());
       });
     },
     [captureOverlay]

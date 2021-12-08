@@ -5,7 +5,9 @@
 import React from 'react';
 // import { useDispatch, useSelector } from 'react-redux';
 
-import CaptureOptionPanel from '@ui/components/stateless/CaptureOptionPanel';
+import CaptureOptions from '@ui/components/stateless/CaptureOptions';
+
+import { CaptureMode, IRecordOptions } from '@core/entities/capture';
 
 import styles from '@ui/components/stateful/ControlPanel.css';
 
@@ -18,7 +20,10 @@ const ControlPanel = () => {
 
   return (
     <div className={styles.container}>
-      <CaptureOptionPanel />
+      <CaptureOptions
+        onCaptureModeChange={(mode: CaptureMode) => {}}
+        onRecordingOptionChange={(recOpt: IRecordOptions) => {}}
+      />
     </div>
   );
 };

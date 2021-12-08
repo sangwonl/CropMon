@@ -2,8 +2,12 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { INITIAL_UI_STATE, ISelectedArea, IUiState } from '@core/entities/ui';
-import { IRecordingOptions } from '@core/entities/capture';
+import { INITIAL_UI_STATE, IUiState } from '@core/entities/ui';
+import {
+  CaptureMode,
+  ICaptureOptions,
+  IRecordOptions,
+} from '@core/entities/capture';
 
 const slice = createSlice({
   name: 'ui',
@@ -21,16 +25,16 @@ const slice = createSlice({
     quitApplication: () => {},
 
     // capture
-    enableCaptureMode: () => {},
+    enableCaptureMode: (_s, _a: PayloadAction<CaptureMode | undefined>) => {},
     disableCaptureMode: () => {},
-    startAreaSelection: () => {},
-    finishAreaSelection: (_s, _a: PayloadAction<ISelectedArea>) => {},
-    startCapture: (_s, _a: PayloadAction<ISelectedArea>) => {},
+    startTargetSelection: () => {},
+    finishTargetSelection: (_s, _a: PayloadAction<ICaptureOptions>) => {},
+    startCapture: () => {},
     finishCapture: () => {},
 
     // preferences
     openPreferences: () => {},
-    toggleRecOptions: (_s, _a: PayloadAction<IRecordingOptions>) => {},
+    toggleRecOptions: (_s, _a: PayloadAction<IRecordOptions>) => {},
   },
 });
 
@@ -45,8 +49,8 @@ export const {
   quitApplication,
   enableCaptureMode,
   disableCaptureMode,
-  startAreaSelection,
-  finishAreaSelection,
+  startTargetSelection,
+  finishTargetSelection,
   startCapture,
   finishCapture,
 } = slice.actions;

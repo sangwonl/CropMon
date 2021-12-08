@@ -19,6 +19,7 @@ import { app, shell } from 'electron';
 
 import { IBounds } from '@core/entities/screen';
 import { IPreferences } from '@core/entities/preferences';
+import { CaptureMode } from '@core/entities/capture';
 import { IUiDirector } from '@core/interfaces/director';
 
 import { StaticPagePopupOptions } from '@ui/widgets/staticpage/shared';
@@ -165,6 +166,7 @@ export class UiDirector implements IUiDirector {
   }
 
   quitApplication(): void {
+    this.controlPanel?.close();
     this.captureOverlay?.close();
     this.preferencesModal?.close();
     this.aboutPopup?.close();
@@ -224,14 +226,18 @@ export class UiDirector implements IUiDirector {
     await this.preferencesModal?.openAsModal(prefs, onSave);
   }
 
-  enableCaptureSelectionMode(): IBounds {
+  enableCaptureMode(
+    mode: CaptureMode,
+    onActiveScreenBoundsChange: (bounds: IBounds) => void
+  ): void {
     const screenBounds = getOverlayScreenBounds();
-    this.controlPanel?.show();
     this.captureOverlay?.show(screenBounds);
-    return screenBounds;
+    this.controlPanel?.show();
+
+    onActiveScreenBoundsChange(screenBounds);
   }
 
-  disableCaptureSelectionMode(): void {
+  disableCaptureMode(): void {
     this.controlPanel?.hide();
     this.captureOverlay?.hide();
   }
