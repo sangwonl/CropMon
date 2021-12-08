@@ -23,7 +23,7 @@ export const emptyBounds = (): IBounds => {
   };
 };
 
-export const isEmptyBounds = (bounds: IBounds | undefined | null): boolean => {
+export const isEmptyBounds = (bounds?: IBounds | null): boolean => {
   return (
     bounds === undefined ||
     bounds === null ||

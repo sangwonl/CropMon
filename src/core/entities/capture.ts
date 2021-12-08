@@ -16,12 +16,12 @@ export enum CaptureStatus {
 
 export interface ICaptureTarget {
   mode: CaptureMode;
-  bounds: IBounds | undefined;
+  bounds?: IBounds;
 }
 
 export interface ICaptureOption {
   mode: CaptureMode;
-  bounds: IBounds | undefined;
+  bounds?: IBounds;
 }
 
 export interface IRecordingOptions {
@@ -35,7 +35,7 @@ export interface ICaptureContext {
   status: CaptureStatus;
   createdAt: number;
   finishedAt?: number;
-  outputPath: string | undefined;
+  outputPath?: string;
   outputFormat: OutputFormat;
   lowQualityMode: boolean;
   recordMicrophone: boolean;

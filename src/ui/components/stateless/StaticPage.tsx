@@ -8,8 +8,8 @@ import ReactMarkdown from 'react-markdown';
 import styles from './StaticPage.css';
 
 export interface StaticPageProps {
-  markdown: string | undefined;
-  html: string | undefined;
+  markdown?: string;
+  html?: string;
 }
 
 export const StaticPage = (props: StaticPageProps) => {

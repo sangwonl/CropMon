@@ -13,7 +13,7 @@ import { IUiDirector } from '@core/interfaces/director';
 
 @injectable()
 export class PreferencesUseCase {
-  private cachedUserPrefs: IPreferences | undefined;
+  private cachedUserPrefs?: IPreferences;
 
   public constructor(
     @inject(TYPES.PreferencesStore) private preferencesStore: IPreferencesStore,

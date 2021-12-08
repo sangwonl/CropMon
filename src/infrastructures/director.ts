@@ -101,19 +101,19 @@ class CachedPreferencesModal extends CachedWidget<
 
 @injectable()
 export class UiDirector implements IUiDirector {
-  private appTray: AppTray | undefined;
-  private controlPanel: ControlPanel | undefined;
-  private captureOverlay: CaptureOverlayWrap | undefined;
-  private updateProgressDialog: ProgressDialog | undefined;
-  private preferencesModal: CachedPreferencesModal | undefined;
-  private aboutPopup: CachedStaticPagePopup | undefined;
-  private aboutContent: string | undefined;
-  private relNotePopup: CachedStaticPagePopup | undefined;
-  private relNoteContent: string | undefined;
-  private helpPopup: CachedStaticPagePopup | undefined;
-  private helpContent: string | undefined;
-  private recTimeHandle: NodeJS.Timer | undefined;
-  private recTimeStart: number | undefined;
+  private appTray?: AppTray;
+  private controlPanel?: ControlPanel;
+  private captureOverlay?: CaptureOverlayWrap;
+  private updateProgressDialog?: ProgressDialog;
+  private preferencesModal?: CachedPreferencesModal;
+  private aboutPopup?: CachedStaticPagePopup;
+  private aboutContent?: string;
+  private relNotePopup?: CachedStaticPagePopup;
+  private relNoteContent?: string;
+  private helpPopup?: CachedStaticPagePopup;
+  private helpContent?: string;
+  private recTimeHandle?: NodeJS.Timer;
+  private recTimeStart?: number;
 
   initialize(): void {
     this.appTray = AppTray.create();

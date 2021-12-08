@@ -22,8 +22,8 @@ import {
 
 export default class PreferencesModal extends Widget {
   private loaded = false;
-  private prefs: IPreferences | undefined;
-  private closeResolver: any | undefined;
+  private prefs?: IPreferences;
+  private closeResolver?: any;
 
   constructor() {
     super(WidgetType.PREFERENECS_MODAL, {
