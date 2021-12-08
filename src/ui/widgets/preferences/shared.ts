@@ -15,5 +15,5 @@ export interface IpcEvtOnPrefsUpdated {
 }
 
 export interface IpcEvtOnClose {
-  preferences: IPreferences | undefined;
+  preferences?: IPreferences;
 }

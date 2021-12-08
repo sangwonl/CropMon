@@ -9,8 +9,8 @@ import { Widget } from './widget';
 
 export default class CachedWidget<W extends Widget, C, R> {
   private loaded = false;
-  private widget: W | undefined = undefined;
-  private timeoutHandle: any | undefined;
+  private widget?: W;
+  private timeoutHandle?: any;
 
   constructor(
     private widgetClass: new (args: C) => W,

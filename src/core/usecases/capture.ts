@@ -29,7 +29,7 @@ import { PreferencesUseCase } from './preferences';
 
 @injectable()
 export class CaptureUseCase {
-  private lastCaptureCtx: ICaptureContext | undefined;
+  private lastCaptureCtx?: ICaptureContext;
 
   constructor(
     private prefsUseCase: PreferencesUseCase,

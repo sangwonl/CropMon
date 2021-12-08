@@ -11,28 +11,23 @@ import { isDebugMode } from '@utils/process';
 import { WidgetType } from './types';
 
 export interface WidgetOptions {
-  hideWhenClose?: boolean | undefined;
-  icon?: NativeImage | string | undefined;
-  show?: boolean | undefined;
-  width?: number | undefined;
-  height?: number | undefined;
-  frame?: boolean | undefined;
-  movable?: boolean | undefined;
-  focusable?: boolean | undefined;
-  resizable?: boolean | undefined;
-  maximizable?: boolean | undefined;
-  minimizable?: boolean | undefined;
-  closable?: boolean | undefined;
-  skipTaskbar?: boolean | undefined;
-  transparent?: boolean | undefined;
-  enableLargerThanScreen?: boolean | undefined;
-  titleBarStyle?:
-    | 'default'
-    | 'hidden'
-    | 'hiddenInset'
-    | 'customButtonsOnHover'
-    | undefined;
-  options?: any | undefined;
+  hideWhenClose?: boolean;
+  icon?: NativeImage | string;
+  show?: boolean;
+  width?: number;
+  height?: number;
+  frame?: boolean;
+  movable?: boolean;
+  focusable?: boolean;
+  resizable?: boolean;
+  maximizable?: boolean;
+  minimizable?: boolean;
+  closable?: boolean;
+  skipTaskbar?: boolean;
+  transparent?: boolean;
+  enableLargerThanScreen?: boolean;
+  titleBarStyle?: 'default' | 'hidden' | 'hiddenInset' | 'customButtonsOnHover';
+  options?: any;
 }
 
 export class Widget extends BrowserWindow {

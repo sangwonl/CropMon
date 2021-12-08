@@ -157,7 +157,7 @@ export default abstract class AppTray {
     this.tray.setToolTip(this.chooseTrayTooltip());
   }
 
-  refreshRecTime(elapsedTimeInSec: number | undefined) {
+  refreshRecTime(elapsedTimeInSec?: number) {
     if (elapsedTimeInSec === undefined) {
       this.tray.setTitle('');
     } else {
