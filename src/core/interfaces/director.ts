@@ -1,5 +1,6 @@
 import { IBounds } from '@core/entities/screen';
 import { IPreferences } from '@core/entities/preferences';
+import { CaptureMode } from '@core/entities/capture';
 
 export interface IUiDirector {
   initialize(): void;
@@ -17,8 +18,11 @@ export interface IUiDirector {
     prefs: IPreferences,
     onSave: (updatedPrefs: IPreferences) => void
   ): Promise<void>;
-  enableCaptureSelectionMode(): IBounds;
-  disableCaptureSelectionMode(): void;
+  enableCaptureMode(
+    mode: CaptureMode,
+    onActiveScreenBoundsChange: (bounds: IBounds) => void
+  ): void;
+  disableCaptureMode(): void;
   enableRecordingMode(): void;
   showItemInFolder(path: string): void;
   startDownloadAndInstall(

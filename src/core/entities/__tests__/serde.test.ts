@@ -1,18 +1,18 @@
 import {
   CaptureMode,
-  ICaptureOption,
+  ICaptureTarget,
   createCaptureContext,
 } from '@core/entities/capture';
 
 describe('Entities', () => {
   it('should still expose private fields when serialization', () => {
-    const option: ICaptureOption = {
+    const target: ICaptureTarget = {
       mode: CaptureMode.FULLSCREEN,
       bounds: undefined,
     };
 
     // because nothing is private in js which typescript is transpiled to.
-    const ctx = createCaptureContext(option, '/home/videos');
+    const ctx = createCaptureContext(target, '/home/videos');
     const serialized = JSON.parse(JSON.stringify(ctx));
     expect(serialized).toHaveProperty('createdAt');
 

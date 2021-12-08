@@ -17,17 +17,18 @@ export enum CaptureStatus {
 export interface ICaptureTarget {
   mode: CaptureMode;
   bounds?: IBounds;
+  screenId?: number;
 }
 
-export interface ICaptureOption {
-  mode: CaptureMode;
-  bounds?: IBounds;
-}
-
-export interface IRecordingOptions {
+export interface IRecordOptions {
   enableLowQualityMode?: boolean;
   enableRecordMicrophone?: boolean;
   enableOutputAsGif?: boolean;
+}
+
+export interface ICaptureOptions {
+  target: ICaptureTarget;
+  recordOptions: IRecordOptions;
 }
 
 export interface ICaptureContext {

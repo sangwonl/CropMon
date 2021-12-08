@@ -27,7 +27,7 @@ import {
   toggleRecOptions,
 } from '@ui/redux/slice';
 import { assetPathResolver } from '@utils/asset';
-import { IRecordingOptions } from '@core/entities/capture';
+import { IRecordOptions } from '@core/entities/capture';
 import { isMac } from '@utils/process';
 
 const TOOLTIP_GREETING = "Roar! I'm here to help you record the screen";
@@ -112,7 +112,7 @@ export default abstract class AppTray {
     shortcut?: string,
     isUpdatable?: boolean,
     isRecording?: boolean,
-    recOptions?: IRecordingOptions
+    recOptions?: IRecordOptions
   ) {
     if (isRecording !== undefined) {
       this.isRecording = isRecording;

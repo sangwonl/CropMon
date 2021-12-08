@@ -5,9 +5,9 @@ import { injectable } from 'inversify';
 import {
   CaptureMode,
   CaptureStatus,
-  IRecordingOptions,
+  ICaptureOptions,
+  IRecordOptions,
 } from '@core/entities/capture';
-import { IBounds } from '@core/entities/screen';
 import { AppUseCase } from '@core/usecases/app';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { CaptureUseCase } from '@core/usecases/capture';
@@ -49,31 +49,33 @@ export class ActionDispatcher {
     this.prefsUseCase.openPreferencesModal();
   }
 
-  toggleRecordingOptions(recOptions: IRecordingOptions) {
-    this.captureUseCase.toggleRecordingOptions(recOptions);
+  toggleRecordOptions(recordOptions: IRecordOptions) {
+    this.captureUseCase.toggleRecordOptions(recordOptions);
   }
 
-  enableCaptureSelection() {
-    this.captureUseCase.enableCaptureSelection();
+  enableCaptureMode(captureMode?: CaptureMode) {
+    this.captureUseCase.enableCaptureMode(captureMode);
   }
 
-  disableCaptureSelection() {
-    this.captureUseCase.disableCaptureSelection();
+  disableCaptureMode() {
+    this.captureUseCase.disableCaptureMode();
   }
 
-  startAreaSelection() {
-    this.captureUseCase.startAreaSelection();
+  startTargetSelection() {
+    this.captureUseCase.startTargetSelection();
   }
 
-  finishAreaSelection(bounds: IBounds) {
-    this.captureUseCase.finishAreaSelection(adjustSelectionBounds(bounds));
+  finishTargetSelection(options: ICaptureOptions) {
+    const { bounds: targetBounds } = options.target;
+    const target = {
+      ...options.target,
+      bounds: targetBounds && adjustSelectionBounds(targetBounds),
+    };
+    this.captureUseCase.finishTargetSelection(target, options.recordOptions);
   }
 
-  startCapture(bounds: IBounds) {
-    this.captureUseCase.startCapture({
-      mode: CaptureMode.AREA,
-      bounds: adjustSelectionBounds(bounds),
-    });
+  startCapture() {
+    this.captureUseCase.startCapture();
   }
 
   finishCapture() {
@@ -85,7 +87,7 @@ export class ActionDispatcher {
     if (captCtx?.status === CaptureStatus.IN_PROGRESS) {
       this.finishCapture();
     } else {
-      this.enableCaptureSelection();
+      this.enableCaptureMode();
     }
   };
 }

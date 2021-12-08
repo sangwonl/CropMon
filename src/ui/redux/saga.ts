@@ -4,7 +4,7 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import { takeLatest } from 'redux-saga/effects';
 
 import { diContainer } from '@di/container';
-import { ISelectedArea, IRecordingOptions } from '@core/entities/ui';
+import { CaptureMode, ICaptureOptions, IRecordOptions } from '@core/entities/capture';
 import { ActionDispatcher } from '@adapters/action';
 
 import {
@@ -16,12 +16,12 @@ import {
   quitApplication,
   enableCaptureMode,
   disableCaptureMode,
-  startAreaSelection,
-  finishAreaSelection,
+  startTargetSelection,
+  finishTargetSelection,
   startCapture,
   finishCapture,
   toggleRecOptions,
-} from './slice';
+} from '@ui/redux/slice';
 
 const actionDispatcher = diContainer.get(ActionDispatcher);
 
@@ -35,14 +35,14 @@ function* sagaEntry() {
 
   // preferences usecase
   yield takeLatest(openPreferences.type, () => actionDispatcher.openPreferences());
-  yield takeLatest(toggleRecOptions.type, ({ payload }: PayloadAction<IRecordingOptions>) => actionDispatcher.toggleRecordingOptions(payload));
+  yield takeLatest(toggleRecOptions.type, ({ payload }: PayloadAction<IRecordOptions>) => actionDispatcher.toggleRecordOptions(payload));
 
   // capture related usecase
-  yield takeLatest(enableCaptureMode.type, () => actionDispatcher.enableCaptureSelection());
-  yield takeLatest(disableCaptureMode.type, () => actionDispatcher.disableCaptureSelection());
-  yield takeLatest(startAreaSelection.type, () => actionDispatcher.startAreaSelection());
-  yield takeLatest(finishAreaSelection.type, ({ payload }: PayloadAction<ISelectedArea>) => actionDispatcher.finishAreaSelection(payload.bounds));
-  yield takeLatest(startCapture.type, ({ payload }: PayloadAction<ISelectedArea>) => actionDispatcher.startCapture(payload.bounds));
+  yield takeLatest(enableCaptureMode.type, ({ payload }: PayloadAction<CaptureMode | undefined>) => actionDispatcher.enableCaptureMode(payload));
+  yield takeLatest(disableCaptureMode.type, () => actionDispatcher.disableCaptureMode());
+  yield takeLatest(startTargetSelection.type, () => actionDispatcher.startTargetSelection());
+  yield takeLatest(finishTargetSelection.type, ({ payload }: PayloadAction<ICaptureOptions>) => actionDispatcher.finishTargetSelection(payload));
+  yield takeLatest(startCapture.type, () => actionDispatcher.startCapture());
   yield takeLatest(finishCapture.type, () => actionDispatcher.finishCapture());
 }
 
