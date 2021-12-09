@@ -1,18 +1,9 @@
-import { IBounds } from './screen';
-import { OutputFormat } from './preferences';
-
-export enum CaptureMode {
-  AREA = 1,
-  WINDOW,
-  FULLSCREEN,
-}
-
-export enum CaptureStatus {
-  PREPARED = 1,
-  IN_PROGRESS,
-  FINISHED,
-  ERROR,
-}
+import {
+  CaptureMode,
+  CaptureStatus,
+  OutputFormat,
+} from '@core/entities/common';
+import { IBounds } from '@core/entities/screen';
 
 export interface ICaptureTarget {
   mode: CaptureMode;
@@ -21,9 +12,9 @@ export interface ICaptureTarget {
 }
 
 export interface IRecordOptions {
-  enableLowQualityMode?: boolean;
-  enableRecordMicrophone?: boolean;
-  enableOutputAsGif?: boolean;
+  enableLowQualityMode: boolean;
+  enableRecordMicrophone: boolean;
+  enableOutputAsGif: boolean;
 }
 
 export interface ICaptureOptions {

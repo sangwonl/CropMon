@@ -1,6 +1,6 @@
+import { CaptureMode } from '@core/entities/common';
 import { IBounds } from '@core/entities/screen';
 import { IPreferences } from '@core/entities/preferences';
-import { CaptureMode } from '@core/entities/capture';
 
 export interface IUiDirector {
   initialize(): void;
@@ -23,6 +23,7 @@ export interface IUiDirector {
     onActiveScreenBoundsChange: (bounds: IBounds) => void
   ): void;
   disableCaptureMode(): void;
+  startTargetSelection(): void;
   enableRecordingMode(): void;
   showItemInFolder(path: string): void;
   startDownloadAndInstall(

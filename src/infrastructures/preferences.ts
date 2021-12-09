@@ -7,7 +7,8 @@ import { injectable } from 'inversify';
 import { app } from 'electron';
 import Store from 'electron-store';
 
-import { IPreferences, IAppearancesColors, OutputFormat, RecordQualityMode, DEFAULT_APPEAR_COLORS } from '@core/entities/preferences';
+import { CaptureMode, OutputFormat, RecordQualityMode } from '@core/entities/common';
+import { IPreferences, IAppearancesColors, DEFAULT_APPEAR_COLORS } from '@core/entities/preferences';
 import { IPreferencesStore } from '@core/interfaces/preferences';
 import { INITIAL_SHORTCUT } from '@utils/shortcut';
 
@@ -22,6 +23,7 @@ const PREFS_GENERAL_REVEALRECORDEDFILE = 'general.revealRecordedFile';
 const PREFS_RECORDING_MICROPHONE = 'recording.microphone';
 const PREFS_RECORDING_QUALITYMODE = 'recording.qualityMode';
 const PREFS_RECORDING_OUTPUTFORMAT = 'recording.outputFormat';
+const PREFS_RECORDING_CAPTUREMODE = 'recording.captureMode';
 const PREFS_APPEAR_COLOR_SELECT_BG = 'appearances.colors.selectingBackground';
 const PREFS_APPEAR_COLOR_SELECT_TEXT = 'appearances.colors.selectingText';
 const PREFS_APPEAR_COLOR_COUNTDOWN_BG = 'appearances.colors.countdownBackground';
@@ -49,6 +51,7 @@ export class PreferencesStore implements IPreferencesStore {
             recordMicrophone: store.get('recordMicrophone', false) as boolean,
             recordQualityMode: store.get('recordQualityMode', 'normal') as RecordQualityMode,
             outputFormat: store.get('outputFormat', 'mp4') as OutputFormat,
+            captureMode: CaptureMode.AREA, // newly added on 0.7.0
             colors: DEFAULT_APPEAR_COLORS,
           }
 
@@ -75,6 +78,9 @@ export class PreferencesStore implements IPreferencesStore {
           store.set(PREFS_APPEAR_COLOR_COUNTDOWN_BG, DEFAULT_APPEAR_COLORS.countdownBackground);
           store.set(PREFS_APPEAR_COLOR_COUNTDOWN_TEXT, DEFAULT_APPEAR_COLORS.countdownText);
         },
+        '0.7.0': (store) => {
+          store.set(PREFS_RECORDING_CAPTUREMODE, CaptureMode.AREA);
+        }
       }
     });
   }
@@ -101,6 +107,7 @@ export class PreferencesStore implements IPreferencesStore {
     this.store.set(PREFS_RECORDING_MICROPHONE, prefs.recordMicrophone);
     this.store.set(PREFS_RECORDING_QUALITYMODE, prefs.recordQualityMode);
     this.store.set(PREFS_RECORDING_OUTPUTFORMAT, prefs.outputFormat);
+    this.store.set(PREFS_RECORDING_CAPTUREMODE, prefs.captureMode);
     this.store.set(PREFS_APPEAR_COLOR_SELECT_BG, prefs.colors.selectingBackground);
     this.store.set(PREFS_APPEAR_COLOR_SELECT_TEXT, prefs.colors.selectingText);
     this.store.set(PREFS_APPEAR_COLOR_COUNTDOWN_BG, prefs.colors.countdownBackground);
@@ -119,6 +126,7 @@ export class PreferencesStore implements IPreferencesStore {
       recordMicrophone: false,
       recordQualityMode: 'normal',
       outputFormat: 'mp4',
+      captureMode: CaptureMode.AREA,
       colors: DEFAULT_APPEAR_COLORS,
     };
   }
@@ -141,6 +149,7 @@ export class PreferencesStore implements IPreferencesStore {
       recordMicrophone: this.store.get(PREFS_RECORDING_MICROPHONE, false) as boolean,
       recordQualityMode: this.store.get(PREFS_RECORDING_QUALITYMODE, 'normal') as RecordQualityMode,
       outputFormat: this.store.get(PREFS_RECORDING_OUTPUTFORMAT, 'mp4') as OutputFormat,
+      captureMode: this.store.get(PREFS_RECORDING_CAPTUREMODE, CaptureMode.AREA) as CaptureMode,
       colors,
     };
   }

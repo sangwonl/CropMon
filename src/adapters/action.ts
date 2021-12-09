@@ -2,12 +2,9 @@
 
 import { injectable } from 'inversify';
 
-import {
-  CaptureMode,
-  CaptureStatus,
-  ICaptureOptions,
-  IRecordOptions,
-} from '@core/entities/capture';
+import { CaptureMode, CaptureStatus } from '@core/entities/common';
+import { IBounds } from '@core/entities/screen';
+import { ICaptureOptions, IRecordOptions } from '@core/entities/capture';
 import { AppUseCase } from '@core/usecases/app';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { CaptureUseCase } from '@core/usecases/capture';
@@ -61,17 +58,18 @@ export class ActionDispatcher {
     this.captureUseCase.disableCaptureMode();
   }
 
+  changeCaptureOptions(options: ICaptureOptions) {
+    this.captureUseCase.changeCaptureOptions(options);
+  }
+
   startTargetSelection() {
     this.captureUseCase.startTargetSelection();
   }
 
-  finishTargetSelection(options: ICaptureOptions) {
-    const { bounds: targetBounds } = options.target;
-    const target = {
-      ...options.target,
-      bounds: targetBounds && adjustSelectionBounds(targetBounds),
-    };
-    this.captureUseCase.finishTargetSelection(target, options.recordOptions);
+  finishTargetSelection(targetBounds: IBounds) {
+    this.captureUseCase.finishTargetSelection(
+      adjustSelectionBounds(targetBounds)
+    );
   }
 
   startCapture() {

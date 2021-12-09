@@ -17,9 +17,9 @@ import fs from 'fs';
 import { injectable } from 'inversify';
 import { app, shell } from 'electron';
 
+import { CaptureMode } from '@core/entities/common';
 import { IBounds } from '@core/entities/screen';
 import { IPreferences } from '@core/entities/preferences';
-import { CaptureMode } from '@core/entities/capture';
 import { IUiDirector } from '@core/interfaces/director';
 
 import { StaticPagePopupOptions } from '@ui/widgets/staticpage/shared';
@@ -32,7 +32,11 @@ import ProgressDialog from '@ui/widgets/progressdialog';
 import StaticPagePopup from '@ui/widgets/staticpage';
 
 import { assetPathResolver } from '@utils/asset';
-import { getOverlayScreenBounds, SPARE_PIXELS } from '@utils/bounds';
+import {
+  getScreenBoundsOfCursor,
+  getWholeScreenBounds,
+  SPARE_PIXELS,
+} from '@utils/bounds';
 import { shortcutForDisplay } from '@utils/shortcut';
 import { isMac } from '@utils/process';
 import { getTimeInSeconds } from '@utils/date';
@@ -115,6 +119,7 @@ export class UiDirector implements IUiDirector {
   private helpContent?: string;
   private recTimeHandle?: NodeJS.Timer;
   private recTimeStart?: number;
+  private screenBoundsDetector?: NodeJS.Timer;
 
   initialize(): void {
     this.appTray = AppTray.create();
@@ -151,7 +156,7 @@ export class UiDirector implements IUiDirector {
     if (activate) {
       this.recTimeStart = getTimeInSeconds();
       this.recTimeHandle = setInterval(() => {
-        if (this.recTimeStart !== undefined) {
+        if (this.recTimeStart) {
           const now = getTimeInSeconds();
           this.appTray?.refreshRecTime(now - this.recTimeStart);
         }
@@ -161,7 +166,7 @@ export class UiDirector implements IUiDirector {
       clearInterval(this.recTimeHandle);
       this.recTimeHandle = undefined;
       this.recTimeStart = undefined;
-      this.appTray?.refreshRecTime(undefined);
+      this.appTray?.refreshRecTime();
     }
   }
 
@@ -230,16 +235,39 @@ export class UiDirector implements IUiDirector {
     mode: CaptureMode,
     onActiveScreenBoundsChange: (bounds: IBounds) => void
   ): void {
-    const screenBounds = getOverlayScreenBounds();
-    this.captureOverlay?.show(screenBounds);
-    this.controlPanel?.show();
+    this.resetScreenBoundsDetector();
 
-    onActiveScreenBoundsChange(screenBounds);
+    if (mode === CaptureMode.AREA) {
+      const screenBounds = getWholeScreenBounds();
+      this.captureOverlay?.show(screenBounds);
+      this.controlPanel?.show();
+      onActiveScreenBoundsChange(screenBounds);
+    } else if (mode === CaptureMode.SCREEN) {
+      this.screenBoundsDetector = setInterval(() => {
+        const screenBounds = getScreenBoundsOfCursor();
+        this.captureOverlay?.show(screenBounds);
+        this.controlPanel?.show();
+        onActiveScreenBoundsChange(screenBounds);
+      }, 100);
+    }
   }
 
   disableCaptureMode(): void {
     this.controlPanel?.hide();
     this.captureOverlay?.hide();
+    this.resetScreenBoundsDetector();
+  }
+
+  startTargetSelection(): void {
+    this.controlPanel?.hide();
+    this.resetScreenBoundsDetector();
+  }
+
+  resetScreenBoundsDetector(): void {
+    if (this.screenBoundsDetector) {
+      clearInterval(this.screenBoundsDetector);
+      this.screenBoundsDetector = undefined;
+    }
   }
 
   enableRecordingMode(): void {

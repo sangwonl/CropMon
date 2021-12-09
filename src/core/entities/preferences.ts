@@ -1,5 +1,8 @@
-export type RecordQualityMode = 'low' | 'normal';
-export type OutputFormat = 'mp4' | 'webm' | 'gif';
+import {
+  CaptureMode,
+  OutputFormat,
+  RecordQualityMode,
+} from '@core/entities/common';
 
 export interface IAppearancesColors {
   selectingBackground: string;
@@ -19,6 +22,7 @@ export interface IPreferences {
   recordMicrophone: boolean;
   recordQualityMode: RecordQualityMode;
   outputFormat: OutputFormat;
+  captureMode: CaptureMode;
   colors: IAppearancesColors;
 }
 

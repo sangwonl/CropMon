@@ -15,8 +15,9 @@ import Color from 'color';
 
 import { IBounds, IPoint } from '@core/entities/screen';
 import { ICaptureAreaColors } from '@core/entities/ui';
-import styles from '@ui/components/stateless/CaptureTargeting.css';
 import { SPARE_PIXELS, isEmptyBounds, isCapturableBounds } from '@utils/bounds';
+
+import styles from '@ui/components/stateless/CaptureTargetingArea.css';
 
 const COLOR_ALPHA_AREA = 0.2;
 const COLOR_ALPHA_AREA_SHADOW = 1.0;
@@ -240,7 +241,7 @@ interface PropTypes {
   onFinish: (boundsForUi: IBounds, boundsForCapture: IBounds) => void;
 }
 
-const CaptureTargeting: FC<PropTypes> = (props: PropTypes) => {
+const CaptureTargetingArea: FC<PropTypes> = (props: PropTypes) => {
   const { areaColors, getCursorPoint, onStart, onFinish, onCancel } = props;
 
   const [selCtx, setSelCtx] = useState<IAreaSelectionCtx>(initialSelCtx);
@@ -304,4 +305,4 @@ const CaptureTargeting: FC<PropTypes> = (props: PropTypes) => {
   );
 };
 
-export default CaptureTargeting;
+export default CaptureTargetingArea;

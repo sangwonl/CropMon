@@ -4,7 +4,9 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import { takeLatest } from 'redux-saga/effects';
 
 import { diContainer } from '@di/container';
-import { CaptureMode, ICaptureOptions, IRecordOptions } from '@core/entities/capture';
+import { CaptureMode } from '@core/entities/common';
+import { IBounds } from '@core/entities/screen';
+import { ICaptureOptions, IRecordOptions } from '@core/entities/capture';
 import { ActionDispatcher } from '@adapters/action';
 
 import {
@@ -16,6 +18,7 @@ import {
   quitApplication,
   enableCaptureMode,
   disableCaptureMode,
+  changeCaptureOptions,
   startTargetSelection,
   finishTargetSelection,
   startCapture,
@@ -40,8 +43,9 @@ function* sagaEntry() {
   // capture related usecase
   yield takeLatest(enableCaptureMode.type, ({ payload }: PayloadAction<CaptureMode | undefined>) => actionDispatcher.enableCaptureMode(payload));
   yield takeLatest(disableCaptureMode.type, () => actionDispatcher.disableCaptureMode());
+  yield takeLatest(changeCaptureOptions.type, ({ payload }: PayloadAction<ICaptureOptions>) => actionDispatcher.changeCaptureOptions(payload))
   yield takeLatest(startTargetSelection.type, () => actionDispatcher.startTargetSelection());
-  yield takeLatest(finishTargetSelection.type, ({ payload }: PayloadAction<ICaptureOptions>) => actionDispatcher.finishTargetSelection(payload));
+  yield takeLatest(finishTargetSelection.type, ({ payload }: PayloadAction<IBounds>) => actionDispatcher.finishTargetSelection(payload));
   yield takeLatest(startCapture.type, () => actionDispatcher.startCapture());
   yield takeLatest(finishCapture.type, () => actionDispatcher.finishCapture());
 }

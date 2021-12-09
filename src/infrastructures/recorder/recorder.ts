@@ -22,19 +22,21 @@ import {
   FFmpeg,
 } from '@ffmpeg/ffmpeg';
 
+import { OutputFormat } from '@core/entities/common';
 import { IBounds, IScreen } from '@core/entities/screen';
 import { ICaptureContext } from '@core/entities/capture';
-import { OutputFormat } from '@core/entities/preferences';
 import { IScreenRecorder } from '@core/interfaces/recorder';
+import { RecorderDelegate } from '@infrastructures/recorder/rec-delegate';
+import {
+  IRecordContext,
+  ITargetSlice,
+} from '@infrastructures/recorder/rec-delegate/types';
 import { isProduction } from '@utils/process';
 import {
   getAllScreensFromLeftTop,
   getIntersection,
   isEmptyBounds,
 } from '@utils/bounds';
-
-import { RecorderDelegate } from './rec-delegate';
-import { IRecordContext, ITargetSlice } from './rec-delegate/types';
 
 type ScreenAndBoundsTuple = [IScreen, IBounds | undefined];
 
