@@ -5,9 +5,8 @@
 
 import { Display, Rectangle, screen } from 'electron';
 
-import { IBounds, IScreen } from '@core/entities/screen';
-
-import { isMac } from './process';
+import { IBounds, IPoint, IScreen } from '@core/entities/screen';
+import { isMac } from '@utils/process';
 
 // WORKAROUND: to fix non-clickable area at the nearest borders
 // Same issue here: https://github.com/electron/electron/issues/21929
@@ -57,6 +56,15 @@ export const getIntersection = (
   };
 };
 
+export const isPointInsideBounds = (pt: IPoint, bounds: IBounds): boolean => {
+  return (
+    bounds.x <= pt.x &&
+    pt.x <= bounds.x + bounds.width &&
+    bounds.y <= pt.y &&
+    pt.y <= bounds.y + bounds.height
+  );
+};
+
 export const getAllScreensFromLeftTop = (): IScreen[] => {
   const screens = getAllScreens();
   const screenBounds = calcScreenBounds(screens);
@@ -72,18 +80,26 @@ export const getAllScreensFromLeftTop = (): IScreen[] => {
   });
 };
 
-export const getOverlayScreenBounds = (): IBounds => {
+export const getWholeScreenBounds = (): IBounds => {
   return calcScreenBounds(getAllScreens());
 };
 
 export const adjustSelectionBounds = (bounds: IBounds): IBounds => {
-  const screens = getAllScreens();
-  const screenBounds = calcScreenBounds(screens);
+  const screenBounds = getWholeScreenBounds();
   return {
     ...bounds,
     x: bounds.x - screenBounds.x,
     y: bounds.y - screenBounds.y,
   };
+};
+
+export const getScreenBoundsOfCursor = (): IBounds => {
+  const cursorPoint = getCursorScreenPoint();
+  const screenOfCursor = getAllScreens().filter((s) => {
+    return isPointInsideBounds(cursorPoint, s.bounds);
+  })[0];
+
+  return screenOfCursor.bounds;
 };
 
 const getAllScreens = (): IScreen[] => {
@@ -122,4 +138,12 @@ const calcScreenBounds = (screens: IScreen[]): IBounds => {
     width: right - left,
     height: bottom - top,
   };
+};
+
+const getCursorScreenPoint = () => {
+  if (isMac()) {
+    // because mac doesn't support dipToScreenPoint
+    return screen.getCursorScreenPoint();
+  }
+  return screen.dipToScreenPoint(screen.getCursorScreenPoint());
 };

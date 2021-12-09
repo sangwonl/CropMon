@@ -1,6 +1,9 @@
-import { CaptureMode } from './capture';
-import { IPreferences, DEFAULT_APPEAR_COLORS } from './preferences';
-import { IBounds } from './screen';
+import { CaptureMode } from '@core/entities/common';
+import {
+  IPreferences,
+  DEFAULT_APPEAR_COLORS,
+} from '@core/entities/preferences';
+import { IBounds } from '@core/entities/screen';
 
 export interface IPreferencesModal {
   show: boolean;

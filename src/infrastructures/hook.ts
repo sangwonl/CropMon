@@ -11,7 +11,8 @@ import { inject, injectable } from 'inversify';
 import { app, desktopCapturer, globalShortcut, systemPreferences } from 'electron';
 
 import { TYPES } from '@di/types';
-import { CaptureStatus, ICaptureContext } from '@core/entities/capture';
+import { CaptureStatus } from '@core/entities/common';
+import { ICaptureContext } from '@core/entities/capture';
 import { IPreferences } from '@core/entities/preferences';
 import { HookType, IHookManager } from '@core/interfaces/hook';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';

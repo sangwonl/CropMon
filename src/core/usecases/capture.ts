@@ -11,12 +11,12 @@ import path from 'path';
 import { inject, injectable } from 'inversify';
 
 import { TYPES } from '@di/types';
+import { CaptureStatus, CaptureMode } from '@core/entities/common';
 import {
-  CaptureStatus,
   ICaptureTarget,
   ICaptureContext,
   IRecordOptions,
-  CaptureMode,
+  ICaptureOptions,
 } from '@core/entities/capture';
 import { IPreferences } from '@core/entities/preferences';
 import { INITIAL_UI_STATE, IUiState } from '@core/entities/ui';
@@ -25,9 +25,8 @@ import { StateManager } from '@core/interfaces/state';
 import { IScreenRecorder } from '@core/interfaces/recorder';
 import { IHookManager } from '@core/interfaces/hook';
 import { IUiDirector } from '@core/interfaces/director';
+import { PreferencesUseCase } from '@core/usecases/preferences';
 import { getNowAsYYYYMMDDHHmmss, getTimeInSeconds } from '@utils/date';
-
-import { PreferencesUseCase } from './preferences';
 
 @injectable()
 export class CaptureUseCase {
@@ -51,8 +50,7 @@ export class CaptureUseCase {
   async enableCaptureMode(captureMode?: CaptureMode) {
     const prefs = await this.prefsUseCase.fetchUserPreferences();
 
-    const lastCaptureMode = CaptureMode.AREA; // prefs.lastCaptureMode;
-
+    const lastCaptureMode = prefs.captureMode;
     const activeCaptureMode = captureMode ?? lastCaptureMode;
 
     this.uiDirector.enableCaptureMode(
@@ -61,6 +59,10 @@ export class CaptureUseCase {
         this.stateManager.updateUiState((state: IUiState): IUiState => {
           return {
             ...state,
+            controlPanel: {
+              ...state.controlPanel,
+              captureMode: activeCaptureMode,
+            },
             captureOverlay: {
               ...INITIAL_UI_STATE.captureOverlay,
               show: true,
@@ -93,7 +95,25 @@ export class CaptureUseCase {
     this.hookManager.emit('capture-selection-finished', {});
   }
 
+  changeCaptureOptions(options: ICaptureOptions) {
+    this.stateManager.updateUiState((state: IUiState): IUiState => {
+      return {
+        ...state,
+        controlPanel: {
+          captureMode: options.target.mode,
+          lowQualityMode: options.recordOptions.enableLowQualityMode,
+          outputAsGif: options.recordOptions.enableOutputAsGif,
+          recordMicrophone: options.recordOptions.enableRecordMicrophone,
+        },
+      };
+    });
+
+    this.enableCaptureMode(options.target.mode);
+  }
+
   startTargetSelection() {
+    this.uiDirector.startTargetSelection();
+
     this.stateManager.updateUiState((state: IUiState): IUiState => {
       return {
         ...state,
@@ -105,20 +125,17 @@ export class CaptureUseCase {
     });
   }
 
-  async finishTargetSelection(
-    target: ICaptureTarget,
-    recordOptions: IRecordOptions
-  ) {
-    this.preparedTarget = target;
-    this.preparedRecordOptions = recordOptions;
+  async finishTargetSelection(targetBounds: IBounds) {
+    // this.preparedTarget = target;
+    // this.preparedRecordOptions = recordOptions;
 
     this.stateManager.updateUiState((state: IUiState): IUiState => {
       return {
         ...state,
         captureOverlay: {
           ...state.captureOverlay,
-          selectedBounds: target.bounds ?? null,
-          selectedScreenId: target.screenId ?? null,
+          // selectedBounds: target.bounds ?? null,
+          // selectedScreenId: target.screenId ?? null,
           isSelecting: false,
         },
       };

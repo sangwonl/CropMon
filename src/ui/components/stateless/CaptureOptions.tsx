@@ -2,7 +2,8 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { FC, useCallback } from 'react';
 
-import { CaptureMode, IRecordOptions } from '@core/entities/capture';
+import { CaptureMode } from '@core/entities/common';
+import { IRecordOptions } from '@core/entities/capture';
 
 import styles from '@ui/components/stateless/CaptureOptions.css';
 
@@ -34,12 +35,18 @@ const CaptureOptions: FC<PropTypes> = ({
     <div className={styles.container}>
       <div
         className={styles.button}
-        onClick={() => handleCaptModeChange(CaptureMode.FULLSCREEN)}
+        onClick={() => handleCaptModeChange(CaptureMode.SCREEN)}
       >
         Fullscreen
       </div>
+      <div
+        className={styles.button}
+        onClick={() => handleCaptModeChange(CaptureMode.AREA)}
+      >
+        Area
+      </div>
       <div className={styles.button} onClick={() => handleRecOptChange()}>
-        Selection
+        Recording Options
       </div>
     </div>
   );

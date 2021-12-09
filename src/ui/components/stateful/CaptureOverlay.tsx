@@ -5,6 +5,7 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { CaptureMode } from '@core/entities/common';
 import { IBounds } from '@core/entities/screen';
 import {
   ICaptureAreaColors,
@@ -18,12 +19,14 @@ import {
   disableCaptureMode,
   startCapture,
 } from '@ui/redux/slice';
-import CaptureTargeting from '@ui/components/stateless/CaptureTargeting';
+import CaptureTargetingArea from '@ui/components/stateless/CaptureTargetingArea';
+import CaptureTargetingScreen from '@ui/components/stateless/CaptureTargetingScreen';
 import CaptureCountdown from '@ui/components/stateless/CaptureCountdown';
 import CaptureRecording from '@ui/components/stateless/CaptureRecording';
-import styles from '@ui/components/stateful/CaptureOverlay.css';
 import { getCursorScreenPoint } from '@utils/remote';
 import { emptyBounds, isEmptyBounds } from '@utils/bounds';
+
+import styles from '@ui/components/stateful/CaptureOverlay.css';
 
 const DEFAULT_COUNTDOWN = 3;
 
@@ -106,24 +109,9 @@ const CaptureCover = () => {
     (boundsForUi: IBounds, boundsForCapture: IBounds) => {
       setSelectedBounds(boundsForUi);
 
-      dispatch(
-        finishTargetSelection({
-          target: {
-            mode: controlPanel.captureMode,
-            bounds: boundsForCapture,
-            screenId: undefined, // TODO
-          },
-          recordOptions: {
-            enableLowQualityMode: controlPanel.lowQualityMode,
-            enableRecordMicrophone: controlPanel.recordMicrophone,
-            enableOutputAsGif: controlPanel.outputAsGif,
-          },
-        })
-      );
+      dispatch(finishTargetSelection(boundsForCapture));
 
-      startCountdown(() => {
-        dispatch(startCapture());
-      });
+      startCountdown(() => dispatch(startCapture()));
     },
     [captureOverlay]
   );
@@ -160,15 +148,27 @@ const CaptureCover = () => {
 
   return (
     <div className={styles.cover}>
-      {renderMode === RenderMode.TARGETING && (
-        <CaptureTargeting
-          areaColors={captureAreaColors}
-          getCursorPoint={getCursorScreenPoint}
-          onStart={onSelectionStart}
-          onCancel={onCaptureCancel}
-          onFinish={onSelectionFinish}
-        />
-      )}
+      {renderMode === RenderMode.TARGETING &&
+        controlPanel.captureMode === CaptureMode.AREA && (
+          <CaptureTargetingArea
+            areaColors={captureAreaColors}
+            getCursorPoint={getCursorScreenPoint}
+            onStart={onSelectionStart}
+            onCancel={onCaptureCancel}
+            onFinish={onSelectionFinish}
+          />
+        )}
+      {renderMode === RenderMode.TARGETING &&
+        controlPanel.captureMode === CaptureMode.SCREEN &&
+        captureOverlay.bounds && (
+          <CaptureTargetingScreen
+            areaColors={captureAreaColors}
+            selectedBounds={captureOverlay.bounds}
+            onStart={onSelectionStart}
+            onCancel={onCaptureCancel}
+            onFinish={onSelectionFinish}
+          />
+        )}
       {renderMode === RenderMode.COUNTDOWN && countdown > 0 && (
         <CaptureCountdown
           selectedBounds={selectedBounds!}

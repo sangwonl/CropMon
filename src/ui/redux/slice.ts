@@ -2,12 +2,10 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { INITIAL_UI_STATE, IUiState } from '@core/entities/ui';
-import {
-  CaptureMode,
-  ICaptureOptions,
-  IRecordOptions,
-} from '@core/entities/capture';
+import { CaptureMode } from '@core/entities/common';
+import { ICaptureOptions, IRecordOptions } from '@core/entities/capture';
+import { IControlPanel, INITIAL_UI_STATE, IUiState } from '@core/entities/ui';
+import { IBounds } from '@core/entities/screen';
 
 const slice = createSlice({
   name: 'ui',
@@ -27,8 +25,9 @@ const slice = createSlice({
     // capture
     enableCaptureMode: (_s, _a: PayloadAction<CaptureMode | undefined>) => {},
     disableCaptureMode: () => {},
+    changeCaptureOptions: (_s, _a: PayloadAction<ICaptureOptions>) => {},
     startTargetSelection: () => {},
-    finishTargetSelection: (_s, _a: PayloadAction<ICaptureOptions>) => {},
+    finishTargetSelection: (_s, _a: PayloadAction<IBounds>) => {},
     startCapture: () => {},
     finishCapture: () => {},
 
@@ -49,6 +48,7 @@ export const {
   quitApplication,
   enableCaptureMode,
   disableCaptureMode,
+  changeCaptureOptions,
   startTargetSelection,
   finishTargetSelection,
   startCapture,
