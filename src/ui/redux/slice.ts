@@ -4,7 +4,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { CaptureMode } from '@core/entities/common';
 import { ICaptureOptions, IRecordOptions } from '@core/entities/capture';
-import { IControlPanel, INITIAL_UI_STATE, IUiState } from '@core/entities/ui';
+import { INITIAL_UI_STATE, IUiState } from '@core/entities/ui';
 import { IBounds } from '@core/entities/screen';
 
 const slice = createSlice({

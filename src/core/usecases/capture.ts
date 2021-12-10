@@ -13,7 +13,6 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '@di/types';
 import { CaptureStatus, CaptureMode } from '@core/entities/common';
 import {
-  ICaptureTarget,
   ICaptureContext,
   IRecordOptions,
   ICaptureOptions,
