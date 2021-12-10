@@ -20,4 +20,8 @@ export class StateManager {
     this.uiState = newState;
     this.uiStateApplier.apply(this.uiState);
   }
+
+  queryUiState(getter: (state: IUiState) => void) {
+    getter(this.uiState);
+  }
 }

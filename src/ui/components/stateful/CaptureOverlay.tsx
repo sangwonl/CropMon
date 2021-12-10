@@ -123,26 +123,38 @@ const CaptureCover = () => {
   }, []);
 
   useEffect(() => {
-    if (captureOverlay.show) {
+    if (captureOverlay.show && captureOverlay.bounds) {
       adjustBodySize(captureOverlay.bounds);
-      setSelectedBounds(emptyBounds());
+      switch (controlPanel.captureMode) {
+        case CaptureMode.AREA:
+          setSelectedBounds(emptyBounds());
+          break;
+        case CaptureMode.SCREEN:
+          setSelectedBounds(captureOverlay.bounds);
+          break;
+        default:
+          break;
+      }
     } else {
       changeRenderMode(RenderMode.IDLE);
       setSelectedBounds(null);
     }
-  }, [captureOverlay.show]);
+  }, [captureOverlay.show, captureOverlay.bounds]);
 
   useEffect(() => {
     if (!captureOverlay.show) {
       return;
     }
 
-    if (isEmptyBounds(selectedBounds)) {
-      changeRenderMode(RenderMode.TARGETING);
-    } else if (countdown > 0) {
+    if (countdown > 0) {
       changeRenderMode(RenderMode.COUNTDOWN);
-    } else {
+    } else if (captureOverlay.isRecording) {
       changeRenderMode(RenderMode.RECORDING);
+    } else if (
+      isEmptyBounds(selectedBounds) ||
+      controlPanel.captureMode === CaptureMode.SCREEN
+    ) {
+      changeRenderMode(RenderMode.TARGETING);
     }
   }, [captureOverlay.show, selectedBounds, countdown]);
 
@@ -160,10 +172,10 @@ const CaptureCover = () => {
         )}
       {renderMode === RenderMode.TARGETING &&
         controlPanel.captureMode === CaptureMode.SCREEN &&
-        captureOverlay.bounds && (
+        selectedBounds && (
           <CaptureTargetingScreen
             areaColors={captureAreaColors}
-            selectedBounds={captureOverlay.bounds}
+            selectedBounds={selectedBounds}
             onStart={onSelectionStart}
             onCancel={onCaptureCancel}
             onFinish={onSelectionFinish}

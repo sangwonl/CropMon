@@ -50,7 +50,7 @@ const CaptureTargetingScreen: FC<PropTypes> = (props: PropTypes) => {
 
   const handleMouseEvent = useCallback(
     (e: MouseEvent<HTMLDivElement>, isDown: boolean) => {
-      if (e.button === 1) {
+      if (e.button === 0) {
         if (isDown) {
           onStart();
         } else {

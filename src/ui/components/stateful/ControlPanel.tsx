@@ -28,10 +28,10 @@ const ControlPanel = () => {
           mode: mode ?? controlPanel.captureMode,
         },
         recordOptions: {
-          enableLowQualityMode:
-            recOpts?.enableLowQualityMode ?? controlPanel.lowQualityMode,
           enableOutputAsGif:
             recOpts?.enableOutputAsGif ?? controlPanel.outputAsGif,
+          enableLowQualityMode:
+            recOpts?.enableLowQualityMode ?? controlPanel.lowQualityMode,
           enableRecordMicrophone:
             recOpts?.enableRecordMicrophone ?? controlPanel.recordMicrophone,
         },

@@ -12,19 +12,19 @@ export interface IPreferencesModal {
 
 export interface IControlPanel {
   captureMode: CaptureMode;
+  outputAsGif: boolean;
   lowQualityMode: boolean;
   recordMicrophone: boolean;
-  outputAsGif: boolean;
 }
 
 export interface ICaptureOverlay {
   show: boolean;
   showCountdown: boolean;
-  bounds: IBounds | null;
-  selectedBounds: IBounds | null;
-  selectedScreenId: number | null;
   isSelecting: boolean;
   isRecording: boolean;
+  bounds?: IBounds;
+  selectedBounds?: IBounds;
+  selectedScreenId?: number;
 }
 
 export interface ICaptureAreaColors {
@@ -50,11 +50,11 @@ export const INITIAL_UI_STATE: IUiState = {
   captureOverlay: {
     show: false,
     showCountdown: true,
-    bounds: null,
-    selectedBounds: null,
-    selectedScreenId: null,
     isSelecting: false,
     isRecording: false,
+    bounds: undefined,
+    selectedBounds: undefined,
+    selectedScreenId: undefined,
   },
   captureAreaColors: DEFAULT_APPEAR_COLORS,
 };

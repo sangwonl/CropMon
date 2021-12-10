@@ -20,7 +20,7 @@ export interface IUiDirector {
   ): Promise<void>;
   enableCaptureMode(
     mode: CaptureMode,
-    onActiveScreenBoundsChange: (bounds: IBounds) => void
+    onActiveScreenBoundsChange: (bounds: IBounds, screenId?: number) => void
   ): void;
   disableCaptureMode(): void;
   startTargetSelection(): void;

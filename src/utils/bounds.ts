@@ -93,13 +93,11 @@ export const adjustSelectionBounds = (bounds: IBounds): IBounds => {
   };
 };
 
-export const getScreenBoundsOfCursor = (): IBounds => {
+export const getScreenOfCursor = (): IScreen => {
   const cursorPoint = getCursorScreenPoint();
-  const screenOfCursor = getAllScreens().filter((s) => {
-    return isPointInsideBounds(cursorPoint, s.bounds);
-  })[0];
-
-  return screenOfCursor.bounds;
+  return getAllScreens().find((s) =>
+    isPointInsideBounds(cursorPoint, s.bounds)
+  )!;
 };
 
 const getAllScreens = (): IScreen[] => {

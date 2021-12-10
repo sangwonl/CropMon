@@ -33,7 +33,7 @@ import StaticPagePopup from '@ui/widgets/staticpage';
 
 import { assetPathResolver } from '@utils/asset';
 import {
-  getScreenBoundsOfCursor,
+  getScreenOfCursor,
   getWholeScreenBounds,
   SPARE_PIXELS,
 } from '@utils/bounds';
@@ -233,7 +233,7 @@ export class UiDirector implements IUiDirector {
 
   enableCaptureMode(
     mode: CaptureMode,
-    onActiveScreenBoundsChange: (bounds: IBounds) => void
+    onActiveScreenBoundsChange: (bounds: IBounds, screenId?: number) => void
   ): void {
     this.resetScreenBoundsDetector();
 
@@ -244,10 +244,10 @@ export class UiDirector implements IUiDirector {
       onActiveScreenBoundsChange(screenBounds);
     } else if (mode === CaptureMode.SCREEN) {
       this.screenBoundsDetector = setInterval(() => {
-        const screenBounds = getScreenBoundsOfCursor();
-        this.captureOverlay?.show(screenBounds);
+        const screen = getScreenOfCursor();
+        this.captureOverlay?.show(screen.bounds);
         this.controlPanel?.show();
-        onActiveScreenBoundsChange(screenBounds);
+        onActiveScreenBoundsChange(screen.bounds, screen.id);
       }, 100);
     }
   }

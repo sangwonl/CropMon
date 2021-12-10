@@ -30,9 +30,7 @@ import { getNowAsYYYYMMDDHHmmss, getTimeInSeconds } from '@utils/date';
 
 @injectable()
 export class CaptureUseCase {
-  private preparedTarget?: ICaptureTarget;
-  private preparedRecordOptions?: IRecordOptions;
-
+  private preparedCaptureOptions?: ICaptureOptions;
   private lastCaptureCtx?: ICaptureContext;
 
   constructor(
@@ -55,7 +53,7 @@ export class CaptureUseCase {
 
     this.uiDirector.enableCaptureMode(
       activeCaptureMode,
-      (screenBounds: IBounds) => {
+      (screenBounds: IBounds, screenId?: number) => {
         this.stateManager.updateUiState((state: IUiState): IUiState => {
           return {
             ...state,
@@ -68,6 +66,7 @@ export class CaptureUseCase {
               show: true,
               showCountdown: prefs.showCountdown,
               bounds: screenBounds,
+              selectedScreenId: screenId,
             },
             captureAreaColors: prefs.colors,
           };
@@ -101,8 +100,8 @@ export class CaptureUseCase {
         ...state,
         controlPanel: {
           captureMode: options.target.mode,
-          lowQualityMode: options.recordOptions.enableLowQualityMode,
           outputAsGif: options.recordOptions.enableOutputAsGif,
+          lowQualityMode: options.recordOptions.enableLowQualityMode,
           recordMicrophone: options.recordOptions.enableRecordMicrophone,
         },
       };
@@ -126,32 +125,43 @@ export class CaptureUseCase {
   }
 
   async finishTargetSelection(targetBounds: IBounds) {
-    // this.preparedTarget = target;
-    // this.preparedRecordOptions = recordOptions;
-
     this.stateManager.updateUiState((state: IUiState): IUiState => {
       return {
         ...state,
         captureOverlay: {
           ...state.captureOverlay,
-          // selectedBounds: target.bounds ?? null,
-          // selectedScreenId: target.screenId ?? null,
+          selectedBounds: targetBounds,
+          selectedScreenId: state.captureOverlay.selectedScreenId,
           isSelecting: false,
+        },
+      };
+    });
+
+    this.stateManager.queryUiState((state: IUiState): void => {
+      this.preparedCaptureOptions = {
+        target: {
+          mode: state.controlPanel.captureMode,
+          bounds: state.captureOverlay.selectedBounds,
+          screenId: state.captureOverlay.selectedScreenId,
+        },
+        recordOptions: {
+          enableOutputAsGif: state.controlPanel.outputAsGif,
+          enableLowQualityMode: state.controlPanel.lowQualityMode,
+          enableRecordMicrophone: state.controlPanel.recordMicrophone,
         },
       };
     });
   }
 
   async startCapture(): Promise<void> {
-    if (!this.preparedTarget || !this.preparedRecordOptions) {
+    if (!this.preparedCaptureOptions) {
       return;
     }
 
     // creating capture context and submit to recorder
     const prefs = await this.prefsUseCase.fetchUserPreferences();
     const newCtx = this.createCaptureContext(
-      this.preparedTarget,
-      this.preparedRecordOptions,
+      this.preparedCaptureOptions,
       prefs
     );
 
@@ -245,8 +255,7 @@ export class CaptureUseCase {
   }
 
   private createCaptureContext = (
-    target: ICaptureTarget,
-    recordOptions: IRecordOptions,
+    options: ICaptureOptions,
     prefs: IPreferences
   ): ICaptureContext => {
     const fileName = getNowAsYYYYMMDDHHmmss();
@@ -256,13 +265,13 @@ export class CaptureUseCase {
     );
 
     return {
-      target,
+      target: options.target,
       status: CaptureStatus.PREPARED,
       createdAt: getTimeInSeconds(),
       outputPath: output,
-      outputFormat: recordOptions.enableOutputAsGif ? 'gif' : 'mp4',
-      lowQualityMode: recordOptions.enableLowQualityMode ?? false,
-      recordMicrophone: recordOptions.enableRecordMicrophone ?? false,
+      outputFormat: options.recordOptions.enableOutputAsGif ? 'gif' : 'mp4',
+      lowQualityMode: options.recordOptions.enableLowQualityMode ?? false,
+      recordMicrophone: options.recordOptions.enableRecordMicrophone ?? false,
     };
   };
 }
