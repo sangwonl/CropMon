@@ -64,7 +64,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
 
   async record(ctx: ICaptureContext): Promise<void> {
     const recordCtx = this.createRecordContext(ctx);
-    if (recordCtx === undefined) {
+    if (!recordCtx) {
       return Promise.reject();
     }
 
@@ -141,14 +141,16 @@ export class ElectronScreenRecorder implements IScreenRecorder {
     });
   }
 
-  private createRecordContext(
-    ctx: ICaptureContext
-  ): IRecordContext | undefined {
+  private createRecordContext(ctx: ICaptureContext): IRecordContext | null {
     const { outputFormat, recordMicrophone } = ctx;
+    const {
+      mode: captureMode,
+      bounds: targetBounds,
+      screenId: targetScreenId,
+    } = ctx.target;
 
-    const { bounds: targetBounds } = ctx.target;
-    if (targetBounds === undefined || isEmptyBounds(targetBounds)) {
-      return undefined;
+    if (!targetBounds || isEmptyBounds(targetBounds)) {
+      return null;
     }
 
     const screens = getAllScreensFromLeftTop();
@@ -165,7 +167,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
       });
 
     if (targetSlices.length === 0) {
-      return undefined;
+      return null;
     }
 
     // WORKAROUND: For browser large pixels canvas issue & transcoding lag
@@ -187,8 +189,10 @@ export class ElectronScreenRecorder implements IScreenRecorder {
     }
 
     return {
+      captureMode,
       targetSlices,
       targetBounds,
+      targetScreenId,
       outputFormat,
       recordMicrophone,
       frameRate,

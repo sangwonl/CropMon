@@ -10,11 +10,14 @@ import path from 'path';
 import { desktopCapturer, ipcRenderer } from 'electron';
 import log from 'electron-log';
 
+import { CaptureMode } from '@core/entities/common';
 import { IBounds } from '@core/entities/screen';
+import {
+  IRecordContext,
+  ITargetSlice,
+} from '@infrastructures/recorder/rec-delegate/types';
 import { getAppPath } from '@utils/remote';
 import { getNowAsYYYYMMDDHHmmss } from '@utils/date';
-
-import { IRecordContext, ITargetSlice } from './types';
 
 const MEDIA_MIME_TYPE = 'video/webm; codecs=h264,opus';
 // const MEDIA_MIME_TYPE = 'video/webm; codecs=vp8,opus';
@@ -39,6 +42,7 @@ interface IDrawable {
 
 interface IDrawContext {
   targetBounds: IBounds;
+  targetScreenId?: number;
   frameRate: number;
   drawables: IDrawable[];
 }
@@ -96,7 +100,13 @@ const getVideoConstraint = (srcId: string, bounds: IBounds): any => {
 const createDrawContext = async (
   recordCtx: IRecordContext
 ): Promise<IDrawContext> => {
-  const { targetBounds, scaleDownFactor, frameRate, targetSlices } = recordCtx;
+  const {
+    targetScreenId,
+    targetBounds,
+    scaleDownFactor,
+    frameRate,
+    targetSlices,
+  } = recordCtx;
 
   const scaledTargetBounds = {
     x: 0,
@@ -109,9 +119,12 @@ const createDrawContext = async (
   const drawables = await Promise.all(
     targetSlices.map(
       async ({ screen, bounds }: ITargetSlice): Promise<IDrawable> => {
-        const source = sources.find(
-          (src) => src.display_id === screen.id.toString()
-        );
+        const source = sources.find((src) => {
+          if (targetScreenId) {
+            return src.display_id === targetScreenId.toString();
+          }
+          return src.display_id === screen.id.toString();
+        });
         const constraints = getVideoConstraint(source!.id, screen.bounds);
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
@@ -145,12 +158,18 @@ const createDrawContext = async (
 
   return {
     targetBounds: scaledTargetBounds,
+    targetScreenId,
     frameRate,
     drawables,
   };
 };
 
-const withCanvasProcess = (drawContext: IDrawContext): MediaStream => {
+const createBypassStream = (drawContext: IDrawContext): MediaStream => {
+  const [screenDrawable] = drawContext.drawables;
+  return screenDrawable.videoElem.srcObject as MediaStream;
+};
+
+const createCanvasStream = (drawContext: IDrawContext): MediaStream => {
   const { targetBounds, frameRate, drawables } = drawContext;
 
   // WORKAROUND - completely no evidence for this setting
@@ -234,13 +253,16 @@ const createStreamToRecord = async (
   const { outputFormat, recordMicrophone } = recordCtx;
 
   const drawContext = await createDrawContext(recordCtx);
-  const canvasStream = withCanvasProcess(drawContext);
+  const videoStream =
+    recordCtx.captureMode === CaptureMode.SCREEN
+      ? createBypassStream(drawContext)
+      : createCanvasStream(drawContext);
 
   if (recordMicrophone && outputFormat !== 'gif') {
-    await attachAudioStreamForMic(canvasStream);
+    await attachAudioStreamForMic(videoStream);
   }
 
-  return canvasStream;
+  return videoStream;
 };
 
 const flushChunksToFile = async (numChunks: number) => {

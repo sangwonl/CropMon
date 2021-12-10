@@ -1,4 +1,4 @@
-import { OutputFormat } from '@core/entities/preferences';
+import { CaptureMode, OutputFormat } from '@core/entities/common';
 import { IBounds, IScreen } from '@core/entities/screen';
 
 export interface ITargetSlice {
@@ -7,8 +7,10 @@ export interface ITargetSlice {
 }
 
 export interface IRecordContext {
+  captureMode: CaptureMode;
   targetSlices: ITargetSlice[];
   targetBounds: IBounds;
+  targetScreenId?: number;
   outputFormat: OutputFormat;
   recordMicrophone: boolean;
   frameRate: number;
