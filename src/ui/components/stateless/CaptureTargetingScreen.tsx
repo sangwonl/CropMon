@@ -39,14 +39,14 @@ const getAreaStyles = (bounds: IBounds, colors: ICaptureAreaColors): any => {
 
 interface PropTypes {
   areaColors: ICaptureAreaColors;
-  selectedBounds: IBounds;
+  screenBounds: IBounds;
   onStart: () => void;
   onCancel: () => void;
   onFinish: (boundsForUi: IBounds, boundsForCapture: IBounds) => void;
 }
 
 const CaptureTargetingScreen: FC<PropTypes> = (props: PropTypes) => {
-  const { areaColors, selectedBounds, onStart, onCancel, onFinish } = props;
+  const { areaColors, screenBounds, onStart, onCancel, onFinish } = props;
 
   const handleMouseEvent = useCallback(
     (e: MouseEvent<HTMLDivElement>, isDown: boolean) => {
@@ -54,13 +54,13 @@ const CaptureTargetingScreen: FC<PropTypes> = (props: PropTypes) => {
         if (isDown) {
           onStart();
         } else {
-          onFinish(selectedBounds, selectedBounds);
+          onFinish(screenBounds, screenBounds);
         }
       } else if (e.button === 2 && !isDown) {
         onCancel();
       }
     },
-    [selectedBounds]
+    [screenBounds]
   );
 
   useEffect(() => {
@@ -86,7 +86,7 @@ const CaptureTargetingScreen: FC<PropTypes> = (props: PropTypes) => {
     >
       <div
         className={styles.area}
-        style={getAreaStyles(selectedBounds, areaColors)}
+        style={getAreaStyles(screenBounds, areaColors)}
       />
     </div>
   );

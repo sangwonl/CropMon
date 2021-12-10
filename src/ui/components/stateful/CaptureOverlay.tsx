@@ -113,7 +113,7 @@ const CaptureCover = () => {
 
       startCountdown(() => dispatch(startCapture()));
     },
-    [captureOverlay]
+    [controlPanel.captureMode]
   );
 
   const onCaptureCancel = useCallback(() => {
@@ -125,36 +125,24 @@ const CaptureCover = () => {
   useEffect(() => {
     if (captureOverlay.show && captureOverlay.bounds) {
       adjustBodySize(captureOverlay.bounds);
-      switch (controlPanel.captureMode) {
-        case CaptureMode.AREA:
-          setSelectedBounds(emptyBounds());
-          break;
-        case CaptureMode.SCREEN:
-          setSelectedBounds(captureOverlay.bounds);
-          break;
-        default:
-          break;
-      }
+      setSelectedBounds(emptyBounds());
     } else {
       changeRenderMode(RenderMode.IDLE);
       setSelectedBounds(null);
     }
-  }, [captureOverlay.show, captureOverlay.bounds]);
+  }, [captureOverlay.show]);
 
   useEffect(() => {
     if (!captureOverlay.show) {
       return;
     }
 
-    if (countdown > 0) {
-      changeRenderMode(RenderMode.COUNTDOWN);
-    } else if (captureOverlay.isRecording) {
-      changeRenderMode(RenderMode.RECORDING);
-    } else if (
-      isEmptyBounds(selectedBounds) ||
-      controlPanel.captureMode === CaptureMode.SCREEN
-    ) {
+    if (isEmptyBounds(selectedBounds)) {
       changeRenderMode(RenderMode.TARGETING);
+    } else if (countdown > 0) {
+      changeRenderMode(RenderMode.COUNTDOWN);
+    } else {
+      changeRenderMode(RenderMode.RECORDING);
     }
   }, [captureOverlay.show, selectedBounds, countdown]);
 
@@ -172,25 +160,27 @@ const CaptureCover = () => {
         )}
       {renderMode === RenderMode.TARGETING &&
         controlPanel.captureMode === CaptureMode.SCREEN &&
-        selectedBounds && (
+        captureOverlay.bounds && (
           <CaptureTargetingScreen
             areaColors={captureAreaColors}
-            selectedBounds={selectedBounds}
+            screenBounds={captureOverlay.bounds}
             onStart={onSelectionStart}
             onCancel={onCaptureCancel}
             onFinish={onSelectionFinish}
           />
         )}
-      {renderMode === RenderMode.COUNTDOWN && countdown > 0 && (
-        <CaptureCountdown
-          selectedBounds={selectedBounds!}
-          countdown={countdown}
-          areaColors={captureAreaColors}
-          onCancel={onCaptureCancel}
-        />
-      )}
-      {renderMode === RenderMode.RECORDING && (
-        <CaptureRecording selectedBounds={selectedBounds!} />
+      {renderMode === RenderMode.COUNTDOWN &&
+        countdown > 0 &&
+        selectedBounds && (
+          <CaptureCountdown
+            selectedBounds={selectedBounds}
+            countdown={countdown}
+            areaColors={captureAreaColors}
+            onCancel={onCaptureCancel}
+          />
+        )}
+      {renderMode === RenderMode.RECORDING && selectedBounds && (
+        <CaptureRecording selectedBounds={selectedBounds} />
       )}
     </div>
   );
