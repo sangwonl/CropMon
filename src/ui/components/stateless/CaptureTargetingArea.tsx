@@ -15,7 +15,7 @@ import Color from 'color';
 
 import { IBounds, IPoint } from '@core/entities/screen';
 import { ICaptureAreaColors } from '@core/entities/ui';
-import { SPARE_PIXELS, isEmptyBounds, isCapturableBounds } from '@utils/bounds';
+import { isEmptyBounds, isCapturableBounds } from '@utils/bounds';
 
 import styles from '@ui/components/stateless/CaptureTargetingArea.css';
 
@@ -45,8 +45,8 @@ const calcSelectedBounds = (selCtx: IAreaSelectionCtx): IBounds => {
   const endX = selCtx.selected ? selCtx.endPt.x : selCtx.cursorPt.x;
   const endY = selCtx.selected ? selCtx.endPt.y : selCtx.cursorPt.y;
   return {
-    x: Math.min(selCtx.startPt.x, endX) - SPARE_PIXELS,
-    y: Math.min(selCtx.startPt.y, endY) - SPARE_PIXELS,
+    x: Math.min(selCtx.startPt.x, endX),
+    y: Math.min(selCtx.startPt.y, endY),
     width: Math.abs(endX - selCtx.startPt.x) + 1,
     height: Math.abs(endY - selCtx.startPt.y) + 1,
   };
@@ -58,8 +58,8 @@ const getAreaStyles = (
   colors: ICaptureAreaColors
 ): any => {
   const layoutStyle = {
-    left: bounds.x + SPARE_PIXELS - 1,
-    top: bounds.y + SPARE_PIXELS - 1,
+    left: bounds.x - 1,
+    top: bounds.y - 1,
     width: bounds.width + 2,
     height: bounds.height + 2,
   };

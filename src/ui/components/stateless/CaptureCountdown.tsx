@@ -9,7 +9,6 @@ import Color from 'color';
 import { IBounds } from '@core/entities/screen';
 import { ICaptureAreaColors } from '@core/entities/ui';
 import styles from '@ui/components/stateless/CaptureCountdown.css';
-import { SPARE_PIXELS } from '@utils/bounds';
 
 const COUNTDOWN_FONT_SMALL = 16;
 const COUNTDOWN_FONT_MID = 50;
@@ -23,8 +22,8 @@ const COLOR_ALPHA_TEXT_SHADOW = 0.3;
 
 const getAreaStyles = (bounds: IBounds, colors: ICaptureAreaColors): any => {
   const layoutStyle = {
-    left: bounds.x + SPARE_PIXELS - 1,
-    top: bounds.y + SPARE_PIXELS - 1,
+    left: bounds.x - 1,
+    top: bounds.y - 1,
     width: bounds.width + 2,
     height: bounds.height + 2,
   };

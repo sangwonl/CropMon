@@ -6,13 +6,13 @@ import React, { FC } from 'react';
 import classNames from 'classnames';
 
 import { IBounds } from '@core/entities/screen';
+
 import styles from '@ui/components/stateless/CaptureRecording.css';
-import { SPARE_PIXELS } from '@utils/bounds';
 
 const getAreaStyles = (bounds: IBounds): any => {
   const layoutStyle = {
-    left: bounds.x + SPARE_PIXELS - 1,
-    top: bounds.y + SPARE_PIXELS - 1,
+    left: bounds.x - 1,
+    top: bounds.y - 1,
     width: bounds.width + 2,
     height: bounds.height + 2,
   };

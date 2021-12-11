@@ -32,11 +32,7 @@ import ProgressDialog from '@ui/widgets/progressdialog';
 import StaticPagePopup from '@ui/widgets/staticpage';
 
 import { assetPathResolver } from '@utils/asset';
-import {
-  getScreenOfCursor,
-  getWholeScreenBounds,
-  SPARE_PIXELS,
-} from '@utils/bounds';
+import { getScreenOfCursor, getWholeScreenBounds } from '@utils/bounds';
 import { shortcutForDisplay } from '@utils/shortcut';
 import { isMac } from '@utils/process';
 import { getTimeInSeconds } from '@utils/date';
@@ -53,12 +49,7 @@ class CaptureOverlayWrap {
   show(screenBounds: IBounds) {
     this.widget?.setIgnoreMouseEvents(false);
     this.widget?.show();
-
-    // WORKAROUND: https://github.com/electron/electron/issues/10862
-    const sparedBounds = this.addSparePixels(screenBounds);
-    for (let i = 0; i < 5; i++) {
-      this.widget?.setBounds(sparedBounds);
-    }
+    this.widget?.setBounds(screenBounds);
   }
 
   hide() {
@@ -78,17 +69,6 @@ class CaptureOverlayWrap {
 
   blur() {
     this.widget?.blur();
-  }
-
-  // WORKAROUND: to fix non-clickable area at the nearest borders
-  // Same issue here: https://github.com/electron/electron/issues/21929
-  private addSparePixels(bounds: IBounds): IBounds {
-    return {
-      x: bounds.x - SPARE_PIXELS,
-      y: bounds.y - SPARE_PIXELS,
-      width: bounds.width + SPARE_PIXELS * 2,
-      height: bounds.height + SPARE_PIXELS * 2,
-    };
   }
 }
 
