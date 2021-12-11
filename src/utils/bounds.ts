@@ -8,9 +8,6 @@ import { Display, Rectangle, screen } from 'electron';
 import { IBounds, IPoint, IScreen } from '@core/entities/screen';
 import { isMac } from '@utils/process';
 
-// WORKAROUND: to fix non-clickable area at the nearest borders
-// Same issue here: https://github.com/electron/electron/issues/21929
-export const SPARE_PIXELS = 40;
 export const MIN_REQUIRED_SIZE = 16; // limited by code macroblock size
 
 export const emptyBounds = (): IBounds => {
@@ -95,9 +92,15 @@ export const adjustSelectionBounds = (bounds: IBounds): IBounds => {
 
 export const getScreenOfCursor = (): IScreen => {
   const cursorPoint = getCursorScreenPoint();
-  return getAllScreens().find((s) =>
-    isPointInsideBounds(cursorPoint, s.bounds)
-  )!;
+  return screen
+    .getAllDisplays()
+    .map(mapDisplayToScreen)
+    .find((s) => {
+      return isPointInsideBounds(
+        cursorPoint,
+        screen.dipToScreenRect(null, s.bounds as Rectangle)
+      );
+    })!;
 };
 
 const getAllScreens = (): IScreen[] => {
