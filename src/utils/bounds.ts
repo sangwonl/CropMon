@@ -98,7 +98,7 @@ export const getScreenOfCursor = (): IScreen => {
     .find((s) => {
       return isPointInsideBounds(
         cursorPoint,
-        screen.dipToScreenRect(null, s.bounds as Rectangle)
+        isMac() ? s.bounds : screen.dipToScreenRect(null, s.bounds as Rectangle)
       );
     })!;
 };
