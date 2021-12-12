@@ -123,7 +123,7 @@ export class UiDirector implements IUiDirector {
       {
         enableLowQualityMode: prefs.recordQualityMode === 'low',
         enableOutputAsGif: prefs.outputFormat === 'gif',
-        enableRecordMicrophone: prefs.recordMicrophone,
+        enableMicrophone: prefs.recordMicrophone,
       }
     );
   }
@@ -222,12 +222,22 @@ export class UiDirector implements IUiDirector {
       this.captureOverlay?.show(screenBounds);
       this.controlPanel?.show();
       onActiveScreenBoundsChange(screenBounds);
-    } else if (mode === CaptureMode.SCREEN) {
+      return;
+    }
+
+    if (mode === CaptureMode.SCREEN) {
+      let lastScreenId: number;
       this.screenBoundsDetector = setInterval(() => {
         const screen = getScreenOfCursor();
+        if (lastScreenId && lastScreenId === screen.id) {
+          return;
+        }
+
         this.captureOverlay?.show(screen.bounds);
         this.controlPanel?.show();
         onActiveScreenBoundsChange(screen.bounds, screen.id);
+
+        lastScreenId = screen.id;
       }, 100);
     }
   }

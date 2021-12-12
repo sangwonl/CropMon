@@ -1,55 +1,111 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { FC, useCallback } from 'react';
+
+import React, { FC, useCallback, useState } from 'react';
+import classNames from 'classnames';
 
 import { CaptureMode } from '@core/entities/common';
 import { IRecordOptions } from '@core/entities/capture';
 
 import styles from '@ui/components/stateless/CaptureOptions.css';
 
-interface PropTypes {
+export interface CaptureOptionsProps {
+  initialCaptureMode: CaptureMode;
+  initialRecordOptions: IRecordOptions;
   onCaptureModeChange: (mode: CaptureMode) => void;
-  onRecordingOptionChange: (recOptions: IRecordOptions) => void;
+  onRecordOptionsChange: (recOptions: IRecordOptions) => void;
 }
 
-const CaptureOptions: FC<PropTypes> = ({
+export const CaptureOptions: FC<CaptureOptionsProps> = ({
+  initialCaptureMode,
+  initialRecordOptions,
   onCaptureModeChange,
-  onRecordingOptionChange,
-}: PropTypes) => {
+  onRecordOptionsChange,
+}: CaptureOptionsProps) => {
+  const [captureMode, setCaptureMode] =
+    useState<CaptureMode>(initialCaptureMode);
+  const [recordOptions, setRecordOptions] =
+    useState<IRecordOptions>(initialRecordOptions);
+
   const handleCaptModeChange = useCallback(
     (mode: CaptureMode) => {
+      setCaptureMode(mode);
       onCaptureModeChange(mode);
     },
     [onCaptureModeChange]
   );
 
-  const handleRecOptChange = useCallback(() => {
-    onRecordingOptionChange({
-      enableLowQualityMode: false,
-      enableRecordMicrophone: false,
-      enableOutputAsGif: false,
-    });
-  }, [onRecordingOptionChange]);
+  const handleRecOptsChange = useCallback(
+    (newRecOptions: IRecordOptions) => {
+      setRecordOptions(newRecOptions);
+      onRecordOptionsChange(newRecOptions);
+    },
+    [onRecordOptionsChange]
+  );
 
   return (
     <div className={styles.container}>
-      <div
-        className={styles.button}
+      <button
+        type="button"
+        className={classNames({
+          [styles.toggled]: captureMode === CaptureMode.SCREEN,
+        })}
         onClick={() => handleCaptModeChange(CaptureMode.SCREEN)}
       >
-        Fullscreen
-      </div>
-      <div
-        className={styles.button}
+        Scr
+      </button>
+      <button
+        type="button"
+        className={classNames({
+          [styles.toggled]: captureMode === CaptureMode.AREA,
+        })}
         onClick={() => handleCaptModeChange(CaptureMode.AREA)}
       >
-        Area
-      </div>
-      <div className={styles.button} onClick={() => handleRecOptChange()}>
-        Recording Options
-      </div>
+        Ara
+      </button>
+      <div className={styles.divider} />
+      <button
+        type="button"
+        className={classNames({
+          [styles.toggled]: recordOptions?.enableOutputAsGif,
+        })}
+        onClick={() =>
+          handleRecOptsChange({
+            ...recordOptions,
+            enableOutputAsGif: !recordOptions?.enableOutputAsGif,
+          })
+        }
+      >
+        GIF
+      </button>
+      <button
+        type="button"
+        className={classNames({
+          [styles.toggled]: recordOptions?.enableLowQualityMode,
+        })}
+        onClick={() =>
+          handleRecOptsChange({
+            ...recordOptions,
+            enableLowQualityMode: !recordOptions?.enableLowQualityMode,
+          })
+        }
+      >
+        Low
+      </button>
+      <button
+        type="button"
+        className={classNames({
+          [styles.toggled]: recordOptions?.enableMicrophone,
+        })}
+        onClick={() =>
+          handleRecOptsChange({
+            ...recordOptions,
+            enableMicrophone: !recordOptions?.enableMicrophone,
+          })
+        }
+      >
+        Mic
+      </button>
     </div>
   );
 };
-
-export default CaptureOptions;

@@ -94,7 +94,7 @@ export default abstract class AppTray {
   }
 
   protected onToggleMic(m: MenuItem) {
-    store.dispatch(toggleRecOptions({ enableRecordMicrophone: m.checked }));
+    store.dispatch(toggleRecOptions({ enableMicrophone: m.checked }));
   }
 
   protected onQuit() {
@@ -142,7 +142,7 @@ export default abstract class AppTray {
     // update recording options
     const recOpts = this.getMenuItemTemplById(templ, 'recording-options');
     const micOpt = this.getMenuItemTemplById(recOpts.submenu, 'record-mic');
-    micOpt.checked = recOptions?.enableRecordMicrophone ?? false;
+    micOpt.checked = recOptions?.enableMicrophone ?? false;
 
     const gifOpt = this.getMenuItemTemplById(recOpts.submenu, 'out-gif');
     gifOpt.checked = recOptions?.enableOutputAsGif ?? false;
