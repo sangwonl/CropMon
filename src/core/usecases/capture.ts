@@ -93,20 +93,34 @@ export class CaptureUseCase {
     this.hookManager.emit('capture-selection-finished', {});
   }
 
-  changeCaptureOptions(options: ICaptureOptions) {
+  async changeCaptureOptions(options: ICaptureOptions) {
+    const prefs = await this.prefsUseCase.fetchUserPreferences();
+
+    if (prefs.captureMode !== options.target.mode) {
+      this.enableCaptureMode(options.target.mode);
+      prefs.captureMode = options.target.mode;
+    }
+
+    this.applyRecOptionsToPrefs(prefs, options.recordOptions);
+
+    await this.prefsUseCase.updateUserPreference(prefs);
+
     this.stateManager.updateUiState((state: IUiState): IUiState => {
       return {
         ...state,
         controlPanel: {
           captureMode: options.target.mode,
-          outputAsGif: options.recordOptions.enableOutputAsGif,
-          lowQualityMode: options.recordOptions.enableLowQualityMode,
-          recordMicrophone: options.recordOptions.enableRecordMicrophone,
+          outputAsGif:
+            options.recordOptions.enableOutputAsGif ??
+            prefs.outputFormat === 'gif',
+          lowQualityMode:
+            options.recordOptions.enableLowQualityMode ??
+            prefs.recordQualityMode === 'low',
+          microphone:
+            options.recordOptions.enableMicrophone ?? prefs.recordMicrophone,
         },
       };
     });
-
-    this.enableCaptureMode(options.target.mode);
   }
 
   startTargetSelection() {
@@ -146,7 +160,7 @@ export class CaptureUseCase {
         recordOptions: {
           enableOutputAsGif: state.controlPanel.outputAsGif,
           enableLowQualityMode: state.controlPanel.lowQualityMode,
-          enableRecordMicrophone: state.controlPanel.recordMicrophone,
+          enableMicrophone: state.controlPanel.microphone,
         },
       };
     });
@@ -236,22 +250,27 @@ export class CaptureUseCase {
   async toggleRecordOptions(recordOptions: IRecordOptions): Promise<void> {
     const prefs = await this.prefsUseCase.fetchUserPreferences();
 
-    if (recordOptions.enableLowQualityMode !== undefined) {
-      prefs.recordQualityMode = recordOptions.enableLowQualityMode
-        ? 'low'
-        : 'normal';
-    }
-
-    if (recordOptions.enableOutputAsGif !== undefined) {
-      prefs.outputFormat = recordOptions.enableOutputAsGif ? 'gif' : 'mp4';
-    }
-
-    if (recordOptions.enableRecordMicrophone !== undefined) {
-      prefs.recordMicrophone = recordOptions.enableRecordMicrophone;
-    }
+    this.applyRecOptionsToPrefs(prefs, recordOptions);
 
     await this.prefsUseCase.updateUserPreference(prefs);
   }
+
+  private applyRecOptionsToPrefs = (
+    prefs: IPreferences,
+    recOpts: IRecordOptions
+  ) => {
+    if (recOpts.enableLowQualityMode !== undefined) {
+      prefs.recordQualityMode = recOpts.enableLowQualityMode ? 'low' : 'normal';
+    }
+
+    if (recOpts.enableOutputAsGif !== undefined) {
+      prefs.outputFormat = recOpts.enableOutputAsGif ? 'gif' : 'mp4';
+    }
+
+    if (recOpts.enableMicrophone !== undefined) {
+      prefs.recordMicrophone = recOpts.enableMicrophone;
+    }
+  };
 
   private createCaptureContext = (
     options: ICaptureOptions,
@@ -270,7 +289,7 @@ export class CaptureUseCase {
       outputPath: output,
       outputFormat: options.recordOptions.enableOutputAsGif ? 'gif' : 'mp4',
       lowQualityMode: options.recordOptions.enableLowQualityMode ?? false,
-      recordMicrophone: options.recordOptions.enableRecordMicrophone ?? false,
+      recordMicrophone: options.recordOptions.enableMicrophone ?? false,
     };
   };
 }

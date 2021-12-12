@@ -12,9 +12,9 @@ export interface ICaptureTarget {
 }
 
 export interface IRecordOptions {
-  enableOutputAsGif: boolean;
-  enableLowQualityMode: boolean;
-  enableRecordMicrophone: boolean;
+  enableOutputAsGif?: boolean;
+  enableLowQualityMode?: boolean;
+  enableMicrophone?: boolean;
 }
 
 export interface ICaptureOptions {

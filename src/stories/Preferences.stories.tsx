@@ -3,7 +3,9 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
 
-import Preferences, {
+import { CaptureMode } from '@core/entities/common';
+import {
+  Preferences,
   PreferencesProps,
 } from '@ui/components/stateless/Preferences';
 
@@ -39,6 +41,13 @@ Default.args = {
     recordMicrophone: false,
     recordQualityMode: 'normal',
     outputFormat: 'mp4',
+    captureMode: CaptureMode.AREA,
+    colors: {
+      selectingBackground: '#efefef',
+      selectingText: '#232323',
+      countdownBackground: '#efefef',
+      countdownText: '#232323',
+    },
   },
   selectedRecordHome: '/home/pineple/kropsaurus',
   onChooseRecordHome: () => {},

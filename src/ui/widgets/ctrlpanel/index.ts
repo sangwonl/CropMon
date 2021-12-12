@@ -8,7 +8,7 @@ import { assetPathResolver } from '@utils/asset';
 import { WidgetType } from '@ui/widgets/types';
 import { Widget } from '@ui/widgets/widget';
 
-const WIDGET_WIDTH = 320;
+const WIDGET_WIDTH = 240;
 const WIDGET_HEIGHT = 40;
 
 export default class ControlPanel extends Widget {

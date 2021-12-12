@@ -32,7 +32,7 @@ const TAB_ITEMS: TabItem[] = [
   { tabId: TAB_APPEARANCES, title: 'Appearances' },
 ];
 
-const Preferences = ({
+export const Preferences = ({
   origPrefs,
   selectedRecordHome,
   onChooseRecordHome,
@@ -96,5 +96,3 @@ const Preferences = ({
     </div>
   );
 };
-
-export default Preferences;

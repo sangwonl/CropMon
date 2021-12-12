@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { ipcRenderer } from 'electron';
 
 import { IPreferences } from '@core/entities/preferences';
-import Preferences from '@ui/components/stateless/Preferences';
+import { Preferences } from '@ui/components/stateless/Preferences';
 import { preventZoomKeyEvent } from '@ui/widgets/utils';
 import { getCurWidgetCustomData } from '@utils/remote';
 

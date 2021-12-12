@@ -10,8 +10,9 @@ import { IControlPanel } from '@core/entities/ui';
 import { IRecordOptions } from '@core/entities/capture';
 
 import { RootState } from '@ui/redux/store';
-import CaptureOptions from '@ui/components/stateless/CaptureOptions';
+import { CaptureOptions } from '@ui/components/stateless/CaptureOptions';
 import { changeCaptureOptions } from '@ui/redux/slice';
+
 import styles from '@ui/components/stateful/ControlPanel.css';
 
 const ControlPanel = () => {
@@ -32,8 +33,8 @@ const ControlPanel = () => {
             recOpts?.enableOutputAsGif ?? controlPanel.outputAsGif,
           enableLowQualityMode:
             recOpts?.enableLowQualityMode ?? controlPanel.lowQualityMode,
-          enableRecordMicrophone:
-            recOpts?.enableRecordMicrophone ?? controlPanel.recordMicrophone,
+          enableMicrophone:
+            recOpts?.enableMicrophone ?? controlPanel.microphone,
         },
       };
     },
@@ -57,8 +58,14 @@ const ControlPanel = () => {
   return (
     <div className={styles.container}>
       <CaptureOptions
+        initialCaptureMode={controlPanel.captureMode}
+        initialRecordOptions={{
+          enableOutputAsGif: controlPanel.outputAsGif,
+          enableLowQualityMode: controlPanel.lowQualityMode,
+          enableMicrophone: controlPanel.microphone,
+        }}
         onCaptureModeChange={handleCaptureModeChange}
-        onRecordingOptionChange={handleRecOptionsChange}
+        onRecordOptionsChange={handleRecOptionsChange}
       />
     </div>
   );

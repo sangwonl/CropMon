@@ -1,12 +1,41 @@
 .container {
   display: flex;
+  height: 100%;
   flex-grow: 1;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
 }
 
-.button {
+.toggled {
+  background-color: #5aaa5c;
+}
+
+button {
+  height: 100%;
+  flex-basis: 40px;
   flex-grow: 1;
-  height: 80px;
-  background-color: #929223;
+}
+
+button:hover {
+  background-color: #aaaaff;
+}
+
+button:hover:not(button.toggled) {
+  background-color: #ffaa5c;
+}
+
+button:active {
+  background-color: #12ffaa;
+}
+
+button:active:not(button.toggled) {
+  background-color: #ff11aa;
+}
+
+.divider {
+  height: 100%;
+  border-left: 1px solid #5aaa5c;
+  border-right: 1px solid #80aa8d;
+  margin-left: 1px;
+  margin-right: 1px;
 }
