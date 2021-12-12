@@ -49,6 +49,12 @@ class CaptureOverlayWrap {
   show(screenBounds: IBounds) {
     this.widget?.setIgnoreMouseEvents(false);
     this.widget?.show();
+
+    // WORKAROUND: https://github.com/electron/electron/issues/10862
+    this.widget?.setBounds(screenBounds);
+    this.widget?.setBounds(screenBounds);
+    this.widget?.setBounds(screenBounds);
+    this.widget?.setBounds(screenBounds);
     this.widget?.setBounds(screenBounds);
   }
 
