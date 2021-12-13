@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC } from 'react';
 import classNames from 'classnames';
 
 import { CaptureMode } from '@core/entities/common';
@@ -13,41 +13,20 @@ import screenIcon from '@assets/screen.png';
 import cropIcon from '@assets/crop.png';
 
 export interface CaptureOptionsProps {
-  initialCaptureMode: CaptureMode;
-  initialRecordOptions: IRecordOptions;
+  captureMode: CaptureMode;
+  recordOptions: IRecordOptions;
   onCaptureModeChange: (mode: CaptureMode) => void;
   onRecordOptionsChange: (recOptions: IRecordOptions) => void;
   onCaptureCancel: () => void;
 }
 
 export const CaptureOptions: FC<CaptureOptionsProps> = ({
-  initialCaptureMode,
-  initialRecordOptions,
+  captureMode,
+  recordOptions,
   onCaptureModeChange,
   onRecordOptionsChange,
   onCaptureCancel,
 }: CaptureOptionsProps) => {
-  const [captureMode, setCaptureMode] =
-    useState<CaptureMode>(initialCaptureMode);
-  const [recordOptions, setRecordOptions] =
-    useState<IRecordOptions>(initialRecordOptions);
-
-  const handleCaptModeChange = useCallback(
-    (mode: CaptureMode) => {
-      setCaptureMode(mode);
-      onCaptureModeChange(mode);
-    },
-    [onCaptureModeChange]
-  );
-
-  const handleRecOptsChange = useCallback(
-    (newRecOptions: IRecordOptions) => {
-      setRecordOptions(newRecOptions);
-      onRecordOptionsChange(newRecOptions);
-    },
-    [onRecordOptionsChange]
-  );
-
   return (
     <div className={styles.container}>
       <button
@@ -55,7 +34,7 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
         className={classNames({
           [styles.toggled]: captureMode === CaptureMode.SCREEN,
         })}
-        onClick={() => handleCaptModeChange(CaptureMode.SCREEN)}
+        onClick={() => onCaptureModeChange(CaptureMode.SCREEN)}
       >
         <img src={screenIcon} width={22} height={22} />
       </button>
@@ -64,7 +43,7 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
         className={classNames({
           [styles.toggled]: captureMode === CaptureMode.AREA,
         })}
-        onClick={() => handleCaptModeChange(CaptureMode.AREA)}
+        onClick={() => onCaptureModeChange(CaptureMode.AREA)}
       >
         <img src={cropIcon} width={22} height={22} />
       </button>
@@ -75,7 +54,7 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
           [styles.toggled]: recordOptions?.enableOutputAsGif,
         })}
         onClick={() =>
-          handleRecOptsChange({
+          onRecordOptionsChange({
             ...recordOptions,
             enableOutputAsGif: !recordOptions?.enableOutputAsGif,
             enableMicrophone: false,
@@ -90,7 +69,7 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
           [styles.toggled]: recordOptions?.enableLowQualityMode,
         })}
         onClick={() =>
-          handleRecOptsChange({
+          onRecordOptionsChange({
             ...recordOptions,
             enableLowQualityMode: !recordOptions?.enableLowQualityMode,
           })
@@ -104,7 +83,7 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
           [styles.toggled]: recordOptions?.enableMicrophone,
         })}
         onClick={() =>
-          handleRecOptsChange({
+          onRecordOptionsChange({
             ...recordOptions,
             enableOutputAsGif: false,
             enableMicrophone: !recordOptions?.enableMicrophone,

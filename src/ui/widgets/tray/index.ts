@@ -86,15 +86,29 @@ export default abstract class AppTray {
   }
 
   protected onToggleLowQual(m: MenuItem) {
-    store.dispatch(toggleRecOptions({ enableLowQualityMode: m.checked }));
+    store.dispatch(
+      toggleRecOptions({
+        enableLowQualityMode: m.checked,
+      })
+    );
   }
 
   protected onToggleOutGif(m: MenuItem) {
-    store.dispatch(toggleRecOptions({ enableOutputAsGif: m.checked }));
+    store.dispatch(
+      toggleRecOptions({
+        enableOutputAsGif: m.checked,
+        enableMicrophone: false,
+      })
+    );
   }
 
   protected onToggleMic(m: MenuItem) {
-    store.dispatch(toggleRecOptions({ enableMicrophone: m.checked }));
+    store.dispatch(
+      toggleRecOptions({
+        enableMicrophone: m.checked,
+        enableOutputAsGif: false,
+      })
+    );
   }
 
   protected onQuit() {
