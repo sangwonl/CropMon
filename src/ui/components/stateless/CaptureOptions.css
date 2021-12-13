@@ -9,16 +9,16 @@
   background-color: #f0f0f0;
 }
 
-.toggled {
+.container .toggled {
   background-color: #45c76c !important;
   box-shadow: inset -4px -4px 13px #42a94f;
 }
 
-.toggled img {
+.container .toggled img {
   filter: invert(10%) !important;
 }
 
-button {
+.container button {
   outline: none;
   box-shadow: none;
   border: 0px !important;
@@ -32,35 +32,35 @@ button {
   border-radius: 0px !important;
 }
 
-button:hover {
+.container button:hover {
   background-color: #64da87 !important;
 }
 
-button:hover img {
+.container button:hover img {
   filter: invert(20%) !important;
 }
 
-button:hover:not(button.toggled) {
+.container button:hover:not(.toggled) {
   background-color: #e1e1e1 !important;
 }
 
-button:hover:not(button.toggled) img {
+.container button:hover:not(.toggled) img {
   filter: invert(10%) !important;
 }
 
-button:active {
+.container button:active {
   background-color: #6fe793 !important;
 }
 
-button:active img {
+.container button:active img {
   filter: invert(30%) !important;
 }
 
-button:active:not(button.toggled) {
+.container button:active:not(.toggled) {
   filter: invert(5%) !important;
 }
 
-button:active:not(button.toggled) img {
+.container button:active:not(.toggled) img {
   filter: invert(5%) !important;
 }
 

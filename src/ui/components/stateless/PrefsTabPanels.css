@@ -54,7 +54,7 @@
   flex-grow: 1;
 }
 
-button {
+.container button {
   border: 1px solid #cdcdcd;
   border-radius: 2px;
   background-color: #dddddd;
@@ -63,16 +63,16 @@ button {
   transition: background-color 0.25s, border-color 0.25s, color 0.25s;
 }
 
-button:hover {
+.container button:hover {
   background-color: #d5d5d5;
   color: #555555;
 }
 
-button:active {
+.container button:active {
   background-color: #a5a5a5;
 }
 
-button:disabled {
+.container button:disabled {
   border: 1px solid #cdcdcd;
   background-color: #dddddd;
   color: #9a9a9a;
@@ -173,7 +173,8 @@ button:disabled {
 }
 
 /* react-colorful customization */
-:global(.react-colorful__saturation), :global(.react-colorful__alpha) {
+:global(.react-colorful__saturation),
+:global(.react-colorful__alpha) {
   border-radius: 2px !important;
 }
 
@@ -183,7 +184,8 @@ button:disabled {
   border-radius: 10px !important;
 }
 
-:global(.react-colorful__hue-pointer), :global(.react-colorful__alpha-pointer) {
+:global(.react-colorful__hue-pointer),
+:global(.react-colorful__alpha-pointer) {
   width: 14px !important;
   border-radius: 2px !important;
 }
