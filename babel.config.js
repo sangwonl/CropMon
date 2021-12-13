@@ -74,6 +74,7 @@ module.exports = (api) => {
             '@ui': './src/ui',
             '@utils': './src/utils',
             '@di': './src/di',
+            '@assets': './assets',
           },
         },
       ],

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
@@ -8,12 +9,15 @@ import { CaptureMode } from '@core/entities/common';
 import { IRecordOptions } from '@core/entities/capture';
 
 import styles from '@ui/components/stateless/CaptureOptions.css';
+import screenIcon from '@assets/screen.png';
+import cropIcon from '@assets/crop.png';
 
 export interface CaptureOptionsProps {
   initialCaptureMode: CaptureMode;
   initialRecordOptions: IRecordOptions;
   onCaptureModeChange: (mode: CaptureMode) => void;
   onRecordOptionsChange: (recOptions: IRecordOptions) => void;
+  onCaptureCancel: () => void;
 }
 
 export const CaptureOptions: FC<CaptureOptionsProps> = ({
@@ -21,6 +25,7 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
   initialRecordOptions,
   onCaptureModeChange,
   onRecordOptionsChange,
+  onCaptureCancel,
 }: CaptureOptionsProps) => {
   const [captureMode, setCaptureMode] =
     useState<CaptureMode>(initialCaptureMode);
@@ -52,7 +57,7 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
         })}
         onClick={() => handleCaptModeChange(CaptureMode.SCREEN)}
       >
-        Scr
+        <img src={screenIcon} width={22} height={22} />
       </button>
       <button
         type="button"
@@ -61,7 +66,7 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
         })}
         onClick={() => handleCaptModeChange(CaptureMode.AREA)}
       >
-        Ara
+        <img src={cropIcon} width={22} height={22} />
       </button>
       <div className={styles.divider} />
       <button
@@ -105,6 +110,10 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
         }
       >
         Mic
+      </button>
+      <div className={styles.divider} />
+      <button type="button" onClick={onCaptureCancel}>
+        X
       </button>
     </div>
   );

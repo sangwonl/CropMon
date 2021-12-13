@@ -8,8 +8,8 @@ import { assetPathResolver } from '@utils/asset';
 import { WidgetType } from '@ui/widgets/types';
 import { Widget } from '@ui/widgets/widget';
 
-const WIDGET_WIDTH = 240;
-const WIDGET_HEIGHT = 40;
+const WIDGET_WIDTH = 280;
+const WIDGET_HEIGHT = 44;
 
 export default class ControlPanel extends Widget {
   constructor() {
@@ -25,10 +25,7 @@ export default class ControlPanel extends Widget {
       minimizable: false,
       focusable: true,
       skipTaskbar: true,
-      transparent: true,
       hideWhenClose: false,
-      titleBarStyle: 'customButtonsOnHover', // for MacOS, with frame: false
-      enableLargerThanScreen: true, // for MacOS, margin workaround
     });
 
     this.loadURL(`file://${__dirname}/../ctrlpanel/index.html`);
