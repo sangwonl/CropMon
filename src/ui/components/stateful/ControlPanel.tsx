@@ -11,7 +11,7 @@ import { IRecordOptions } from '@core/entities/capture';
 
 import { RootState } from '@ui/redux/store';
 import { CaptureOptions } from '@ui/components/stateless/CaptureOptions';
-import { changeCaptureOptions } from '@ui/redux/slice';
+import { changeCaptureOptions, disableCaptureMode } from '@ui/redux/slice';
 
 import styles from '@ui/components/stateful/ControlPanel.css';
 
@@ -55,6 +55,10 @@ const ControlPanel = () => {
     [controlPanel]
   );
 
+  const handleCaptureCancel = useCallback(() => {
+    dispatch(disableCaptureMode());
+  }, []);
+
   return (
     <div className={styles.container}>
       <CaptureOptions
@@ -66,6 +70,7 @@ const ControlPanel = () => {
         }}
         onCaptureModeChange={handleCaptureModeChange}
         onRecordOptionsChange={handleRecOptionsChange}
+        onCaptureCancel={handleCaptureCancel}
       />
     </div>
   );

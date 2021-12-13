@@ -30,7 +30,8 @@
       "@infrastructures/*": ["./src/infrastructures/*"],
       "@ui/*": ["./src/ui/*"],
       "@utils/*": ["./src/utils/*"],
-      "@di/*": ["./src/di/*"]
+      "@di/*": ["./src/di/*"],
+      "@assets/*": ["./src/assets/*"]
     }
   },
   "exclude": [
