@@ -57,8 +57,10 @@ export class CaptureUseCase {
           return {
             ...state,
             controlPanel: {
-              ...state.controlPanel,
               captureMode: activeCaptureMode,
+              outputAsGif: prefs.outputFormat === 'gif',
+              lowQualityMode: prefs.recordQualityMode === 'low',
+              microphone: prefs.recordMicrophone,
             },
             captureOverlay: {
               ...INITIAL_UI_STATE.captureOverlay,

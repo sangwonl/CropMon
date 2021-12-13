@@ -62,8 +62,8 @@ const ControlPanel = () => {
   return (
     <div className={styles.container}>
       <CaptureOptions
-        initialCaptureMode={controlPanel.captureMode}
-        initialRecordOptions={{
+        captureMode={controlPanel.captureMode}
+        recordOptions={{
           enableOutputAsGif: controlPanel.outputAsGif,
           enableLowQualityMode: controlPanel.lowQualityMode,
           enableMicrophone: controlPanel.microphone,
