@@ -78,6 +78,7 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
           handleRecOptsChange({
             ...recordOptions,
             enableOutputAsGif: !recordOptions?.enableOutputAsGif,
+            enableMicrophone: false,
           })
         }
       >
@@ -105,6 +106,7 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
         onClick={() =>
           handleRecOptsChange({
             ...recordOptions,
+            enableOutputAsGif: false,
             enableMicrophone: !recordOptions?.enableMicrophone,
           })
         }
