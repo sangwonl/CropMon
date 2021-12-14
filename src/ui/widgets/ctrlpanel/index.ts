@@ -9,7 +9,7 @@ import { WidgetType } from '@ui/widgets/types';
 import { Widget } from '@ui/widgets/widget';
 
 const WIDGET_WIDTH = 280;
-const WIDGET_HEIGHT = 44;
+const WIDGET_HEIGHT = 60;
 
 export default class ControlPanel extends Widget {
   constructor() {
