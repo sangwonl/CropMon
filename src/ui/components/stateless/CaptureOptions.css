@@ -1,63 +1,98 @@
 .container {
+  height: 40px;
+  padding: 10px;
+  background-color: #3a3a3a;
   display: flex;
-  height: 44px;
   flex-grow: 1;
   flex-direction: row;
   justify-content: center;
-  padding: 0px;
-  padding-top: 0px;
-  background-color: #f0f0f0;
+  align-items: center;
+  column-gap: 4px;
 }
 
 .container .toggled {
-  background-color: #45c76c !important;
-  box-shadow: inset -4px -4px 13px #42a94f;
+  background-color: #58bb76 !important;
 }
 
-.container .toggled img {
-  filter: invert(10%) !important;
+.btnCaptMode img {
+  padding-top: 4px;
+  width: 32px;
+  height: 28px;
+}
+
+.btnOutputMp4 {
+  border-top-right-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+  border-right: 0px !important;
+  height: 30px;
+  margin-right: -4px;
+  flex-basis: 42px !important;
+}
+
+.btnOutputMp4:not(.toggled) {
+  background-color: #474747 !important;
+}
+
+.btnOutputGif {
+  border-top-left-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
+  border-left: 0px !important;
+  height: 30px;
+  flex-basis: 42px !important;
+}
+
+.btnOutputGif:not(.toggled) {
+  background-color: #474747 !important;
+}
+
+.close {
+  font-size: 18px !important;
+  height: 34px !important;
+  flex-basis: 34px !important;
+}
+
+.close img {
+  padding-top: 3px;
+  width: 28px;
+  height: 26px;
 }
 
 .container button {
   outline: none;
   box-shadow: none;
   border: 0px !important;
-  height: 100%;
+  border-radius: 4px;
   flex-basis: 44px;
-  flex-grow: 1;
-  font-size: 12px;
+  font-family: Roboto;
+  font-size: 11px;
+  font-weight: 100;
   text-shadow: 1px 1px 4px #aaa;
-  background-color: #f7f7f7 !important;
-  color: #666 !important;
-  border-radius: 0px !important;
+  background-color: #3a3a3a !important;
+  color: #eee !important;
 }
 
-.container button:hover {
-  background-color: #64da87 !important;
-}
-
-.container button:hover img {
-  filter: invert(20%) !important;
-}
+/* .container button:hover {
+  background-color: #20aa4a !important;
+} */
 
 .container button:hover:not(.toggled) {
-  background-color: #e1e1e1 !important;
+  background-color: #565656 !important;
 }
 
 .container button:hover:not(.toggled) img {
   filter: invert(10%) !important;
 }
 
-.container button:active {
-  background-color: #6fe793 !important;
+/* .container button:active {
+  background-color: #4ba766 !important;
 }
 
 .container button:active img {
-  filter: invert(30%) !important;
-}
+  filter: invert(5%) !important;
+} */
 
 .container button:active:not(.toggled) {
-  filter: invert(5%) !important;
+  background-color: #58bb76 !important;
 }
 
 .container button:active:not(.toggled) img {
@@ -67,4 +102,8 @@
 .divider {
   height: 100%;
   margin-left: 2px;
+  border-left: 1px solid #888;
+  border-right: 1px solid #333;
+  margin-left: 8px;
+  margin-right: 8px;
 }
