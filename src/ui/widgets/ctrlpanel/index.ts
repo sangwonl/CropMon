@@ -10,6 +10,7 @@ import { Widget } from '@ui/widgets/widget';
 
 const WIDGET_WIDTH = 280;
 const WIDGET_HEIGHT = 60;
+const WIDGET_TOP = 16;
 
 export default class ControlPanel extends Widget {
   constructor() {
@@ -38,7 +39,7 @@ export default class ControlPanel extends Widget {
   show() {
     const { bounds: primBounds } = screen.getPrimaryDisplay();
     const widgetPosX = Math.floor((primBounds.width - WIDGET_WIDTH) / 2);
-    this.setPosition(widgetPosX, 0);
+    this.setPosition(widgetPosX, WIDGET_TOP);
     super.show();
   }
 }

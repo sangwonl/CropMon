@@ -35,7 +35,7 @@ export class Widget extends BrowserWindow {
 
   constructor(type: WidgetType, options?: WidgetOptions) {
     super({
-      icon: options?.icon ?? undefined,
+      icon: options?.icon,
       show: options?.show ?? true,
       width: options?.width ?? 800,
       height: options?.height ?? 600,
