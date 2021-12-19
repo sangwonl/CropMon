@@ -2,13 +2,14 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { MouseEvent, FC, useEffect, useCallback } from 'react';
+import React, { MouseEvent, FC, useCallback } from 'react';
 import classNames from 'classnames';
 import Color from 'color';
 
 import { IBounds } from '@core/entities/screen';
 import { ICaptureAreaColors } from '@core/entities/ui';
 import { isCapturableBounds } from '@utils/bounds';
+import useOnEscape from '@ui/hooks/key';
 
 import styles from '@ui/components/stateless/CaptureTargetingScreen.css';
 
@@ -69,20 +70,7 @@ const CaptureTargetingScreen: FC<PropTypes> = (props: PropTypes) => {
     [screenBounds]
   );
 
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      if (e.code === 'Escape') {
-        onCancel();
-      }
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => {
-      window.removeEventListener('keydown', onKeyDown);
-    };
-  }, []);
+  useOnEscape(onCancel, [onCancel]);
 
   return (
     <div
