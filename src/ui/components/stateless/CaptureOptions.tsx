@@ -114,7 +114,7 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
       <button
         type="button"
         title="Close"
-        className={styles.close}
+        className={styles.btnClose}
         onClick={onCaptureCancel}
       >
         <img src={closeIcon} />
