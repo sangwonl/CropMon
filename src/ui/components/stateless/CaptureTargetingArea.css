@@ -4,11 +4,6 @@
   background-color: transparent;
 }
 
-.wrapperHack {
-  /* Hack: transparent bgcolor makes illusion on MacOS */
-  background-color: rgba(255, 255, 255, 0.01);
-}
-
 .area {
   position: absolute;
 }
