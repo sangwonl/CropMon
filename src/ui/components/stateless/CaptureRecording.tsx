@@ -3,7 +3,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { FC } from 'react';
-import classNames from 'classnames';
 
 import { IBounds } from '@core/entities/screen';
 
@@ -34,10 +33,7 @@ const CaptureRecording: FC<PropTypes> = (props: PropTypes) => {
 
   return (
     <div className={styles.wrapper}>
-      <div
-        className={classNames(styles.area)}
-        style={getAreaStyles(selectedBounds)}
-      />
+      <div className={styles.area} style={getAreaStyles(selectedBounds)} />
     </div>
   );
 };
