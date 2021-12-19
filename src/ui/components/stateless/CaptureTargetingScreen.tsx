@@ -86,7 +86,7 @@ const CaptureTargetingScreen: FC<PropTypes> = (props: PropTypes) => {
 
   return (
     <div
-      className={classNames(styles.wrapper, styles.wrapperHack)}
+      className={classNames(styles.wrapper)}
       onMouseDown={(e: MouseEvent<HTMLDivElement>) => handleMouseEvent(e, true)}
       onMouseUp={(e: MouseEvent<HTMLDivElement>) => handleMouseEvent(e, false)}
     >

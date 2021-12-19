@@ -270,11 +270,7 @@ const CaptureTargetingArea: FC<PropTypes> = (props: PropTypes) => {
 
   return (
     <div
-      className={classNames({
-        [styles.wrapper]: true,
-        [styles.wrapperHack]: !selCtx.selected,
-        [styles.cursorSelecting]: !selCtx.selected,
-      })}
+      className={classNames(styles.wrapper, styles.cursorSelecting)}
       onMouseDown={(e: MouseEvent<HTMLDivElement>) =>
         handleMouseDown(e, getCursorPoint, onStart, onCancel, selCtx, setSelCtx)
       }
