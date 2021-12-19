@@ -253,14 +253,14 @@ export class UiDirector implements IUiDirector {
   }
 
   disableCaptureMode(): void {
+    this.resetScreenBoundsDetector();
     this.controlPanel?.hide();
     this.captureOverlay?.hide();
-    this.resetScreenBoundsDetector();
   }
 
   startTargetSelection(): void {
-    this.controlPanel?.hide();
     this.resetScreenBoundsDetector();
+    this.controlPanel?.hide();
   }
 
   resetScreenBoundsDetector(): void {

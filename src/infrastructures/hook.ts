@@ -108,6 +108,7 @@ export class BuiltinHooks {
     this.hookManager.on('prefs-loaded', this.onPrefsLoaded);
     this.hookManager.on('prefs-updated', this.onPrefsUpdated);
     this.hookManager.on('prefs-modal-opening', this.onPrefsModalOpening);
+    this.hookManager.on('capture-shortcut-triggered', this.onCaptureShortcutTriggered);
     this.hookManager.on('capture-selection-starting', this.onCaptureSelectionStarting);
     this.hookManager.on('capture-selection-finished', this.onCaptureSelectionFinished);
     this.hookManager.on('capture-starting', this.onCaptureStarting);
@@ -161,6 +162,11 @@ export class BuiltinHooks {
     this.tracker.view('preferences-modal');
   }
 
+  onCaptureShortcutTriggered = async () => {
+    const prefs = await this.prefsUseCase.fetchUserPreferences();
+    this.tracker.eventL('capture', 'shortcut-triggered', prefs.shortcut);
+  };
+
   onCaptureSelectionStarting = async () => {
     this.tracker.view('capture-area-selection');
   };
@@ -185,6 +191,7 @@ export class BuiltinHooks {
     if (status === CaptureStatus.IN_PROGRESS) {
       const { target, outputFormat, recordMicrophone, lowQualityMode } = args.captureContext;
       const { width, height } = target.bounds!;
+      this.tracker.eventL('capture', 'start-capture', `mode:${target.mode}`);
       this.tracker.eventL('capture', 'start-capture', `area:${width}x${height}`);
       this.tracker.eventL('capture', 'start-capture', `outfmt:${outputFormat}`);
       this.tracker.eventL('capture', 'start-capture', `mic:${String(recordMicrophone)}`);
