@@ -3,7 +3,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { FC, useEffect } from 'react';
-import classNames from 'classnames';
 import Color from 'color';
 
 import { IBounds } from '@core/entities/screen';
@@ -92,9 +91,9 @@ const CaptureCountdown: FC<PropTypes> = (props: PropTypes) => {
   }, [onCancel]);
 
   return (
-    <div className={classNames(styles.wrapper, styles.wrapperHack)}>
+    <div className={styles.wrapper}>
       <div
-        className={classNames(styles.area)}
+        className={styles.area}
         style={getAreaStyles(selectedBounds, areaColors)}
       >
         <div

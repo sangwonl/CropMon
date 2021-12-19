@@ -226,10 +226,10 @@ export class UiDirector implements IUiDirector {
     if (mode === CaptureMode.AREA) {
       const screenBounds = getWholeScreenBounds();
 
+      onActiveScreenBoundsChange(screenBounds);
+
       this.captureOverlay?.show(screenBounds);
       this.controlPanel?.show();
-
-      onActiveScreenBoundsChange(screenBounds);
 
       return;
     }
@@ -242,10 +242,10 @@ export class UiDirector implements IUiDirector {
           return;
         }
 
+        onActiveScreenBoundsChange(screen.bounds, screen.id);
+
         this.captureOverlay?.show(screen.bounds);
         this.controlPanel?.show();
-
-        onActiveScreenBoundsChange(screen.bounds, screen.id);
 
         lastScreenId = screen.id;
       }, 100);

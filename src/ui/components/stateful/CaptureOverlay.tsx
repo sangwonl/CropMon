@@ -4,6 +4,7 @@
 
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import classNames from 'classnames';
 
 import { CaptureMode } from '@core/entities/common';
 import { IBounds } from '@core/entities/screen';
@@ -25,6 +26,7 @@ import CaptureCountdown from '@ui/components/stateless/CaptureCountdown';
 import CaptureRecording from '@ui/components/stateless/CaptureRecording';
 import { getCursorScreenPoint } from '@utils/remote';
 import { emptyBounds, isEmptyBounds } from '@utils/bounds';
+import { isMac } from '@utils/process';
 
 import styles from '@ui/components/stateful/CaptureOverlay.css';
 
@@ -113,7 +115,7 @@ const CaptureCover = () => {
 
       startCountdown(() => dispatch(startCapture()));
     },
-    [controlPanel.captureMode]
+    [controlPanel.captureMode, captureOverlay.showCountdown]
   );
 
   const onCaptureCancel = useCallback(() => {
@@ -147,7 +149,11 @@ const CaptureCover = () => {
   }, [captureOverlay.show, selectedBounds, countdown]);
 
   return (
-    <div className={styles.cover}>
+    <div
+      className={classNames(styles.cover, {
+        [styles.coverHack]: isMac(),
+      })}
+    >
       {renderMode === RenderMode.TARGETING &&
         controlPanel.captureMode === CaptureMode.AREA && (
           <CaptureTargetingArea
