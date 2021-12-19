@@ -9,6 +9,7 @@ export type HookType =
   | 'prefs-loaded'
   | 'prefs-updated'
   | 'prefs-modal-opening'
+  | 'capture-shortcut-triggered'
   | 'capture-selection-starting'
   | 'capture-selection-finished'
   | 'capture-starting'
