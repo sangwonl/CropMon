@@ -14,6 +14,10 @@
   background-color: #58bb76 !important;
 }
 
+.btnCaptMode {
+  user-select: none;
+}
+
 .btnCaptMode img {
   padding-top: 4px;
   width: 32px;
@@ -27,6 +31,7 @@
   height: 30px;
   margin-right: -4px;
   flex-basis: 42px !important;
+  user-select: none;
 }
 
 .btnOutputMp4:not(.toggled) {
@@ -39,19 +44,21 @@
   border-left: 0px !important;
   height: 30px;
   flex-basis: 42px !important;
+  user-select: none;
 }
 
 .btnOutputGif:not(.toggled) {
   background-color: #474747 !important;
 }
 
-.close {
+.btnClose {
   font-size: 18px !important;
   height: 34px !important;
   flex-basis: 34px !important;
+  user-select: none;
 }
 
-.close img {
+.btnClose img {
   padding-top: 3px;
   width: 28px;
   height: 26px;
@@ -71,10 +78,6 @@
   color: #eee !important;
 }
 
-/* .container button:hover {
-  background-color: #20aa4a !important;
-} */
-
 .container button:hover:not(.toggled) {
   background-color: #565656 !important;
 }
@@ -82,14 +85,6 @@
 .container button:hover:not(.toggled) img {
   filter: invert(10%) !important;
 }
-
-/* .container button:active {
-  background-color: #4ba766 !important;
-}
-
-.container button:active img {
-  filter: invert(5%) !important;
-} */
 
 .container button:active:not(.toggled) {
   background-color: #58bb76 !important;
