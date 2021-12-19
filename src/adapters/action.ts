@@ -21,67 +21,67 @@ export class ActionDispatcher {
     @inject(TYPES.HookManager) private hookManager: IHookManager
   ) {}
 
-  initializeApp() {
+  initializeApp = () => {
     this.appUseCase.initializeApp();
-  }
+  };
 
-  checkForUpdates() {
+  checkForUpdates = () => {
     this.appUseCase.checkForUpdates();
-  }
+  };
 
-  downloadAndInstall() {
+  downloadAndInstall = () => {
     this.appUseCase.downloadAndInstall();
-  }
+  };
 
-  showAbout() {
+  showAbout = () => {
     this.appUseCase.showAboutPopup();
-  }
+  };
 
-  showHelp() {
+  showHelp = () => {
     this.appUseCase.showHelpPopup();
-  }
+  };
 
-  quitApplication() {
+  quitApplication = () => {
     this.appUseCase.quitApplication();
-  }
+  };
 
-  openPreferences() {
+  openPreferences = () => {
     this.prefsUseCase.openPreferencesModal();
-  }
+  };
 
-  toggleRecordOptions(recordOptions: IRecordOptions) {
+  toggleRecordOptions = (recordOptions: IRecordOptions) => {
     this.captureUseCase.toggleRecordOptions(recordOptions);
-  }
+  };
 
-  enableCaptureMode(captureMode?: CaptureMode) {
+  enableCaptureMode = (captureMode?: CaptureMode) => {
     this.captureUseCase.enableCaptureMode(captureMode);
-  }
+  };
 
-  disableCaptureMode() {
+  disableCaptureMode = () => {
     this.captureUseCase.disableCaptureMode();
-  }
+  };
 
-  changeCaptureOptions(options: ICaptureOptions) {
+  changeCaptureOptions = (options: ICaptureOptions) => {
     this.captureUseCase.changeCaptureOptions(options);
-  }
+  };
 
-  startTargetSelection() {
+  startTargetSelection = () => {
     this.captureUseCase.startTargetSelection();
-  }
+  };
 
-  finishTargetSelection(targetBounds: IBounds) {
+  finishTargetSelection = (targetBounds: IBounds) => {
     this.captureUseCase.finishTargetSelection(
       adjustSelectionBounds(targetBounds)
     );
-  }
+  };
 
-  startCapture() {
+  startCapture = () => {
     this.captureUseCase.startCapture();
-  }
+  };
 
-  finishCapture() {
+  finishCapture = () => {
     this.captureUseCase.finishCapture();
-  }
+  };
 
   onCaptureToggleShortcut = () => {
     this.hookManager.emit('capture-shortcut-triggered', {});
