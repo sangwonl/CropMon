@@ -62,6 +62,8 @@ export class ActionDispatcher {
   };
 
   changeCaptureOptions = (options: ICaptureOptions) => {
+    this.hookManager.emit('capture-options-changed', {});
+
     this.captureUseCase.changeCaptureOptions(options);
   };
 

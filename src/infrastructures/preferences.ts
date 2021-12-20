@@ -10,7 +10,7 @@ import Store from 'electron-store';
 import { CaptureMode, OutputFormat, RecordQualityMode } from '@core/entities/common';
 import { IPreferences, IAppearancesColors, DEFAULT_APPEAR_COLORS } from '@core/entities/preferences';
 import { IPreferencesStore } from '@core/interfaces/preferences';
-import { INITIAL_SHORTCUT } from '@utils/shortcut';
+import { DEFAULT_SHORTCUT_CAPTURE } from '@utils/shortcut';
 
 import { version as curVersion } from '../package.json';
 
@@ -45,7 +45,7 @@ export class PreferencesStore implements IPreferencesStore {
             version: store.get('version') as string,
             runAtStartup: store.get('runAtStartup', true) as boolean,
             showCountdown: true, // newly added on 0.6.2
-            shortcut: store.get('shortcut', INITIAL_SHORTCUT) as string,
+            shortcut: store.get('shortcut', DEFAULT_SHORTCUT_CAPTURE) as string,
             recordHome: store.get('recordHomeDir', app.getPath('videos')) as string,
             openRecordHomeWhenRecordCompleted: store.get('openRecordHomeDirWhenRecordCompleted', true) as boolean,
             recordMicrophone: store.get('recordMicrophone', false) as boolean,
@@ -119,7 +119,7 @@ export class PreferencesStore implements IPreferencesStore {
       initialLoaded: true,
       version: curVersion,
       runAtStartup: true,
-      shortcut: INITIAL_SHORTCUT,
+      shortcut: DEFAULT_SHORTCUT_CAPTURE,
       recordHome: app.getPath('videos'),
       openRecordHomeWhenRecordCompleted: true,
       showCountdown: true,
@@ -142,7 +142,7 @@ export class PreferencesStore implements IPreferencesStore {
       initialLoaded: false,
       version: this.store.get(PREFS_VERSION) as string,
       runAtStartup: this.store.get(PREFS_GENERAL_RUNATSTARTUP, true) as boolean,
-      shortcut: this.store.get(PREFS_GENERAL_SHORTCUT, INITIAL_SHORTCUT) as string,
+      shortcut: this.store.get(PREFS_GENERAL_SHORTCUT, DEFAULT_SHORTCUT_CAPTURE) as string,
       recordHome: this.store.get(PREFS_GENERAL_RECORDHOME, app.getPath('videos')) as string,
       openRecordHomeWhenRecordCompleted: this.store.get(PREFS_GENERAL_REVEALRECORDEDFILE, true) as boolean,
       showCountdown: this.store.get(PREFS_GENERAL_SHOWCOUNTDOWN, true) as boolean,

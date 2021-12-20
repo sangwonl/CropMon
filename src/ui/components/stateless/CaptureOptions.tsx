@@ -7,6 +7,13 @@ import classNames from 'classnames';
 
 import { CaptureMode } from '@core/entities/common';
 import { IRecordOptions } from '@core/entities/capture';
+import {
+  shortcutForDisplay,
+  SHORTCUT_CAPTURE_MODE_AREA,
+  SHORTCUT_CAPTURE_MODE_SCREEN,
+  SHORTCUT_OUTPUT_GIF,
+  SHORTCUT_OUTPUT_MP4,
+} from '@utils/shortcut';
 
 import styles from '@ui/components/stateless/CaptureOptions.css';
 import screenIcon from '@assets/screen.png';
@@ -61,7 +68,9 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
     <div className={styles.container}>
       <button
         type="button"
-        title="Record Screen"
+        title={`Record Screen (${shortcutForDisplay(
+          SHORTCUT_CAPTURE_MODE_SCREEN
+        )})`}
         className={classNames(styles.btnCaptMode, {
           [styles.toggled]: captMode === CaptureMode.SCREEN,
         })}
@@ -71,7 +80,9 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
       </button>
       <button
         type="button"
-        title="Record Selected Area"
+        title={`Record Selected Area (${shortcutForDisplay(
+          SHORTCUT_CAPTURE_MODE_AREA
+        )})`}
         className={classNames(styles.btnCaptMode, {
           [styles.toggled]: captMode === CaptureMode.AREA,
         })}
@@ -82,7 +93,7 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
       <div className={styles.divider} />
       <button
         type="button"
-        title="Output as MP4"
+        title={`Output as MP4 (${shortcutForDisplay(SHORTCUT_OUTPUT_MP4)})`}
         className={classNames(styles.btnOutputMp4, {
           [styles.toggled]: !recOpts.enableOutputAsGif,
         })}
@@ -97,7 +108,7 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
       </button>
       <button
         type="button"
-        title="Output as GIF"
+        title={`Output as GIF (${shortcutForDisplay(SHORTCUT_OUTPUT_GIF)})`}
         className={classNames(styles.btnOutputGif, {
           [styles.toggled]: recOpts.enableOutputAsGif,
         })}

@@ -10,7 +10,7 @@ import { IAnalyticsTracker } from '@core/interfaces/tracker';
 import { IUiDirector } from '@core/interfaces/director';
 import { CaptureUseCase } from '@core/usecases/capture';
 import { PreferencesUseCase } from '@core/usecases/preferences';
-import { INITIAL_SHORTCUT } from '@utils/shortcut';
+import { DEFAULT_SHORTCUT_CAPTURE } from '@utils/shortcut';
 
 describe('CaptureUseCase', () => {
   let mockedPrefsUseCase: PreferencesUseCase;
@@ -56,7 +56,7 @@ describe('CaptureUseCase', () => {
       version: '0.0.1',
       recordHome: '/tmp/recordhome',
       openRecordHomeWhenRecordCompleted: true,
-      shortcut: INITIAL_SHORTCUT,
+      shortcut: DEFAULT_SHORTCUT_CAPTURE,
     };
     when(mockedPrefsUseCase.fetchUserPreferences()).thenResolve(mockPrefs);
   });
