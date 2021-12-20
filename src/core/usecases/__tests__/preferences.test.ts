@@ -9,7 +9,7 @@ import { IPreferences } from '@core/entities/preferences';
 import { IPreferencesStore } from '@core/interfaces/preferences';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { IHookManager } from '@core/interfaces/hook';
-import { INITIAL_SHORTCUT } from '@utils/shortcut';
+import { DEFAULT_SHORTCUT_CAPTURE } from '@utils/shortcut';
 import { IUiDirector } from '@core/interfaces/director';
 
 describe('PreferenceUseCase', () => {
@@ -46,7 +46,7 @@ describe('PreferenceUseCase', () => {
         version: '0.0.1',
         openRecordHomeWhenRecordCompleted: true,
         recordHome: '/temp/records',
-        shortcut: INITIAL_SHORTCUT,
+        shortcut: DEFAULT_SHORTCUT_CAPTURE,
       };
 
       when(mockedPreferencesStore.loadPreferences()).thenReturn(
@@ -75,7 +75,7 @@ describe('PreferenceUseCase', () => {
         version: '0.0.1',
         openRecordHomeWhenRecordCompleted: true,
         recordHome: '/temp/records',
-        shortcut: INITIAL_SHORTCUT,
+        shortcut: DEFAULT_SHORTCUT_CAPTURE,
       };
 
       await useCase.updateUserPreference(mockPrefs);

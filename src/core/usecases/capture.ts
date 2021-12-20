@@ -103,7 +103,7 @@ export class CaptureUseCase {
       prefs.captureMode = options.target.mode;
     }
 
-    this.applyRecOptionsToPrefs(prefs, options.recordOptions);
+    this.prefsUseCase.applyRecOptionsToPrefs(prefs, options.recordOptions);
 
     await this.prefsUseCase.updateUserPreference(prefs);
 
@@ -252,27 +252,10 @@ export class CaptureUseCase {
   async toggleRecordOptions(recordOptions: IRecordOptions): Promise<void> {
     const prefs = await this.prefsUseCase.fetchUserPreferences();
 
-    this.applyRecOptionsToPrefs(prefs, recordOptions);
+    this.prefsUseCase.applyRecOptionsToPrefs(prefs, recordOptions);
 
     await this.prefsUseCase.updateUserPreference(prefs);
   }
-
-  private applyRecOptionsToPrefs = (
-    prefs: IPreferences,
-    recOpts: IRecordOptions
-  ) => {
-    if (recOpts.enableLowQualityMode !== undefined) {
-      prefs.recordQualityMode = recOpts.enableLowQualityMode ? 'low' : 'normal';
-    }
-
-    if (recOpts.enableOutputAsGif !== undefined) {
-      prefs.outputFormat = recOpts.enableOutputAsGif ? 'gif' : 'mp4';
-    }
-
-    if (recOpts.enableMicrophone !== undefined) {
-      prefs.recordMicrophone = recOpts.enableMicrophone;
-    }
-  };
 
   private createCaptureContext = (
     options: ICaptureOptions,

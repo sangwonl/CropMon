@@ -7,6 +7,7 @@ import { injectable, inject } from 'inversify';
 
 import { TYPES } from '@di/types';
 import { IPreferences } from '@core/entities/preferences';
+import { IRecordOptions } from '@core/entities/capture';
 import { IPreferencesStore } from '@core/interfaces/preferences';
 import { IHookManager } from '@core/interfaces/hook';
 import { IUiDirector } from '@core/interfaces/director';
@@ -59,4 +60,26 @@ export class PreferencesUseCase {
 
     this.hookManager.emit('prefs-updated', { prevPrefs, newPrefs });
   }
+
+  applyRecOptionsToPrefs = (prefs: IPreferences, recOpts: IRecordOptions) => {
+    if (recOpts.enableLowQualityMode !== undefined) {
+      prefs.recordQualityMode = recOpts.enableLowQualityMode ? 'low' : 'normal';
+    }
+
+    if (recOpts.enableOutputAsGif !== undefined) {
+      prefs.outputFormat = recOpts.enableOutputAsGif ? 'gif' : 'mp4';
+    }
+
+    if (recOpts.enableMicrophone !== undefined) {
+      prefs.recordMicrophone = recOpts.enableMicrophone;
+    }
+  };
+
+  getRecOptionsFromPrefs = (prefs: IPreferences): IRecordOptions => {
+    return {
+      enableOutputAsGif: prefs.outputFormat === 'gif',
+      enableLowQualityMode: prefs.recordQualityMode === 'low',
+      enableMicrophone: prefs.recordMicrophone,
+    };
+  };
 }

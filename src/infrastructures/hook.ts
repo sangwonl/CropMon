@@ -11,7 +11,7 @@ import { inject, injectable } from 'inversify';
 import { app, desktopCapturer, globalShortcut, systemPreferences } from 'electron';
 
 import { TYPES } from '@di/types';
-import { CaptureStatus } from '@core/entities/common';
+import { CaptureMode, CaptureStatus, OutputFormat } from '@core/entities/common';
 import { ICaptureContext } from '@core/entities/capture';
 import { IPreferences } from '@core/entities/preferences';
 import { HookType, IHookManager } from '@core/interfaces/hook';
@@ -22,6 +22,7 @@ import { IUiDirector } from '@core/interfaces/director';
 import { ActionDispatcher } from '@adapters/action';
 import { getPlatform, isDebugMode, isMac } from '@utils/process';
 import { getTimeInSeconds } from '@utils/date';
+import { SHORTCUT_CAPTURE_MODE_AREA, SHORTCUT_CAPTURE_MODE_SCREEN, SHORTCUT_OUTPUT_GIF, SHORTCUT_OUTPUT_MP4 } from '@utils/shortcut';
 
 type HookHandler = (args: any) => void;
 
@@ -108,6 +109,7 @@ export class BuiltinHooks {
     this.hookManager.on('prefs-loaded', this.onPrefsLoaded);
     this.hookManager.on('prefs-updated', this.onPrefsUpdated);
     this.hookManager.on('prefs-modal-opening', this.onPrefsModalOpening);
+    this.hookManager.on('capture-options-changed', this.onCaptureOptionsChanged);
     this.hookManager.on('capture-shortcut-triggered', this.onCaptureShortcutTriggered);
     this.hookManager.on('capture-selection-starting', this.onCaptureSelectionStarting);
     this.hookManager.on('capture-selection-finished', this.onCaptureSelectionFinished);
@@ -160,6 +162,12 @@ export class BuiltinHooks {
 
   onPrefsModalOpening = async () => {
     this.tracker.view('preferences-modal');
+  }
+
+  onCaptureOptionsChanged = async () => {
+    const prefs = await this.prefsUseCase.fetchUserPreferences();
+    this.tracker.eventL('capture', 'options-changed', `mode:${prefs.captureMode}`);
+    this.tracker.eventL('capture', 'options-changed', `outfmt:${prefs.outputFormat}`);
   }
 
   onCaptureShortcutTriggered = async () => {
@@ -243,12 +251,47 @@ export class BuiltinHooks {
     await this.uiDirector.refreshTrayState(newPrefs);
   };
 
+  private handleShortcutCaptureOpts = (prefs: IPreferences, mode?: CaptureMode, fmt?: OutputFormat) => {
+    const recOpts = this.prefsUseCase.getRecOptionsFromPrefs(prefs);
+    this.actionDispatcher.changeCaptureOptions({
+      target: { mode: mode ?? prefs.captureMode },
+      recordOptions: { ...recOpts, enableOutputAsGif: (fmt?? prefs.outputFormat) === 'gif' },
+    });
+  };
+
   private setupShortcut = (
     newPrefs: IPreferences,
     prevPrefs?: IPreferences
   ): void => {
-    if (prevPrefs === undefined || prevPrefs.shortcut !== newPrefs.shortcut) {
+    if (prevPrefs === undefined) {
       globalShortcut.unregisterAll();
+
+      globalShortcut.register(
+        SHORTCUT_CAPTURE_MODE_SCREEN,
+        () => this.handleShortcutCaptureOpts(newPrefs, CaptureMode.SCREEN)
+      );
+
+      globalShortcut.register(
+        SHORTCUT_CAPTURE_MODE_AREA,
+        () => this.handleShortcutCaptureOpts(newPrefs, CaptureMode.AREA)
+      );
+
+      globalShortcut.register(
+        SHORTCUT_OUTPUT_MP4,
+        () => this.handleShortcutCaptureOpts(newPrefs, undefined, 'mp4')
+      );
+
+      globalShortcut.register(
+        SHORTCUT_OUTPUT_GIF,
+        () => this.handleShortcutCaptureOpts(newPrefs, undefined, 'gif')
+      );
+
+      globalShortcut.register(
+        newPrefs.shortcut.replace(/Win|Cmd/, 'Meta'),
+        this.actionDispatcher.onCaptureToggleShortcut
+      );
+    } else if (prevPrefs.shortcut !== newPrefs.shortcut) {
+      globalShortcut.unregister(newPrefs.shortcut.replace(/Win|Cmd/, 'Meta'));
       globalShortcut.register(
         newPrefs.shortcut.replace(/Win|Cmd/, 'Meta'),
         this.actionDispatcher.onCaptureToggleShortcut
