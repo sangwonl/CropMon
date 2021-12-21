@@ -75,7 +75,7 @@ export class CaptureUseCase {
       }
     );
 
-    this.hookManager.emit('capture-selection-starting', {
+    this.hookManager.emit('capture-mode-enabled', {
       captureMode: activeCaptureMode,
     });
   }
@@ -91,6 +91,8 @@ export class CaptureUseCase {
         },
       };
     });
+
+    this.hookManager.emit('capture-mode-disabled', {});
   }
 
   async changeCaptureOptions(options: ICaptureOptions) {
@@ -135,6 +137,8 @@ export class CaptureUseCase {
         },
       };
     });
+
+    this.hookManager.emit('capture-selection-starting', {});
   }
 
   async finishTargetSelection(targetBounds: IBounds) {

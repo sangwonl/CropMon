@@ -111,6 +111,8 @@ export class BuiltinHooks {
     this.hookManager.on('prefs-modal-opening', this.onPrefsModalOpening);
     this.hookManager.on('capture-options-changed', this.onCaptureOptionsChanged);
     this.hookManager.on('capture-shortcut-triggered', this.onCaptureShortcutTriggered);
+    this.hookManager.on('capture-mode-enabled', this.onCaptureModeEnabled);
+    this.hookManager.on('capture-mode-disabled', this.onCaptureModeDisabled);
     this.hookManager.on('capture-selection-starting', this.onCaptureSelectionStarting);
     this.hookManager.on('capture-selection-finished', this.onCaptureSelectionFinished);
     this.hookManager.on('capture-starting', this.onCaptureStarting);
@@ -175,10 +177,16 @@ export class BuiltinHooks {
     this.tracker.eventL('capture', 'shortcut-triggered', prefs.shortcut);
   };
 
+  onCaptureModeEnabled = async () => {
+    await this.setupInSelectionShortcut(true);
+  };
+
+  onCaptureModeDisabled = async () => {
+    await this.setupInSelectionShortcut(false);
+  };
+
   onCaptureSelectionStarting = async () => {
     this.tracker.view('capture-area-selection');
-
-    await this.setupInSelectionShortcut(true);
   };
 
   onCaptureSelectionFinished = async () => {};

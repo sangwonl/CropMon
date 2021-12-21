@@ -11,6 +11,8 @@ export type HookType =
   | 'prefs-modal-opening'
   | 'capture-options-changed'
   | 'capture-shortcut-triggered'
+  | 'capture-mode-enabled'
+  | 'capture-mode-disabled'
   | 'capture-selection-starting'
   | 'capture-selection-finished'
   | 'capture-starting'
