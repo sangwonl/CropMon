@@ -53,7 +53,6 @@ class CaptureOverlayWrap {
       this.widget?.setBounds(screenBounds);
       this.widget?.setBounds(screenBounds);
       this.widget?.setBounds(screenBounds);
-      this.widget?.setBounds(screenBounds);
     });
 
     this.widget?.setIgnoreMouseEvents(false);

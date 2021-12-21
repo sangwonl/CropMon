@@ -234,14 +234,14 @@ const handleMouseMove = (
 
 interface PropTypes {
   areaColors: ICaptureAreaColors;
-  getCursorPoint: () => IPoint;
   onStart: () => void;
   onCancel: () => void;
   onFinish: (boundsForUi: IBounds, boundsForCapture: IBounds) => void;
+  getCursorPoint: () => IPoint;
 }
 
 const CaptureTargetingArea: FC<PropTypes> = (props: PropTypes) => {
-  const { areaColors, getCursorPoint, onStart, onFinish, onCancel } = props;
+  const { areaColors, onStart, onFinish, onCancel, getCursorPoint } = props;
 
   const [selCtx, setSelCtx] = useState<IAreaSelectionCtx>(initialSelCtx);
 
