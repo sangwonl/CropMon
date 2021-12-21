@@ -7,6 +7,7 @@ import Color from 'color';
 
 import { IBounds } from '@core/entities/screen';
 import { ICaptureAreaColors } from '@core/entities/ui';
+
 import styles from '@ui/components/stateless/CaptureCountdown.css';
 
 const COUNTDOWN_FONT_SMALL = 16;
@@ -69,26 +70,10 @@ interface PropTypes {
   selectedBounds: IBounds;
   countdown: number;
   areaColors: ICaptureAreaColors;
-  onCancel: () => void;
 }
 
 const CaptureCountdown: FC<PropTypes> = (props: PropTypes) => {
-  const { selectedBounds, countdown, areaColors, onCancel } = props;
-
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      if (e.code === 'Escape') {
-        onCancel();
-      }
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => {
-      window.removeEventListener('keydown', onKeyDown);
-    };
-  }, [onCancel]);
+  const { selectedBounds, countdown, areaColors } = props;
 
   return (
     <div className={styles.wrapper}>

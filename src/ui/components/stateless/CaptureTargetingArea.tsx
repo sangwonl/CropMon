@@ -15,7 +15,6 @@ import Color from 'color';
 import { IBounds, IPoint } from '@core/entities/screen';
 import { ICaptureAreaColors } from '@core/entities/ui';
 import { isEmptyBounds, isCapturableBounds } from '@utils/bounds';
-import useOnEscape from '@ui/hooks/key';
 
 import styles from '@ui/components/stateless/CaptureTargetingArea.css';
 
@@ -247,13 +246,6 @@ const CaptureTargetingArea: FC<PropTypes> = (props: PropTypes) => {
   const [selCtx, setSelCtx] = useState<IAreaSelectionCtx>(initialSelCtx);
 
   const calcBounds = calcSelectedBounds(selCtx);
-
-  useOnEscape(() => {
-    if (!selCtx.selected) {
-      setSelCtx(initialSelCtx);
-      onCancel();
-    }
-  }, [selCtx.selected, onCancel]);
 
   return (
     <div

@@ -22,7 +22,7 @@ import { IUiDirector } from '@core/interfaces/director';
 import { ActionDispatcher } from '@adapters/action';
 import { getPlatform, isDebugMode, isMac } from '@utils/process';
 import { getTimeInSeconds } from '@utils/date';
-import { SHORTCUT_CAPTURE_MODE_AREA, SHORTCUT_CAPTURE_MODE_SCREEN, SHORTCUT_OUTPUT_GIF, SHORTCUT_OUTPUT_MP4 } from '@utils/shortcut';
+import { SHORTCUT_CAPTURE_MODE_AREA, SHORTCUT_CAPTURE_MODE_SCREEN, SHORTCUT_ESCAPE, SHORTCUT_OUTPUT_GIF, SHORTCUT_OUTPUT_MP4 } from '@utils/shortcut';
 
 type HookHandler = (args: any) => void;
 
@@ -178,17 +178,17 @@ export class BuiltinHooks {
   onCaptureSelectionStarting = async () => {
     this.tracker.view('capture-area-selection');
 
-    await this.setupCaptureOptsShortcut(true);
+    await this.setupInSelectionShortcut(true);
   };
 
-  onCaptureSelectionFinished = async () => {
-    await this.setupCaptureOptsShortcut(false);
-  };
+  onCaptureSelectionFinished = async () => {};
 
   onCaptureStarting = async (args: HookArgsCaptureStarting) => {
-    const { status } = args.captureContext;
+    // disable in selection shortcut
+    await this.setupInSelectionShortcut(false);
 
     // refresh tray
+    const { status } = args.captureContext;
     await this.uiDirector.refreshTrayState(
       await this.prefsUseCase.fetchUserPreferences(),
       undefined,
@@ -263,9 +263,14 @@ export class BuiltinHooks {
     });
   };
 
-  private setupCaptureOptsShortcut = async (enable: boolean) => {
+  private setupInSelectionShortcut = async (enable: boolean) => {
     const prefs = await this.prefsUseCase.fetchUserPreferences();
     if (enable) {
+      globalShortcut.register(
+        SHORTCUT_ESCAPE,
+        () => this.actionDispatcher.disableCaptureMode()
+      );
+
       globalShortcut.register(
         SHORTCUT_CAPTURE_MODE_SCREEN,
         () => this.handleShortcutCaptureOpts(prefs, CaptureMode.SCREEN)
@@ -286,6 +291,7 @@ export class BuiltinHooks {
         () => this.handleShortcutCaptureOpts(prefs, undefined, 'gif')
       );
     } else {
+      globalShortcut.unregister(SHORTCUT_ESCAPE);
       globalShortcut.unregister(SHORTCUT_CAPTURE_MODE_SCREEN);
       globalShortcut.unregister(SHORTCUT_CAPTURE_MODE_AREA);
       globalShortcut.unregister(SHORTCUT_OUTPUT_MP4);

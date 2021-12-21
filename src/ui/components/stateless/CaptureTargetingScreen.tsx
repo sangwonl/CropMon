@@ -9,7 +9,6 @@ import Color from 'color';
 import { IBounds } from '@core/entities/screen';
 import { ICaptureAreaColors } from '@core/entities/ui';
 import { isCapturableBounds } from '@utils/bounds';
-import useOnEscape from '@ui/hooks/key';
 
 import styles from '@ui/components/stateless/CaptureTargetingScreen.css';
 
@@ -69,8 +68,6 @@ const CaptureTargetingScreen: FC<PropTypes> = (props: PropTypes) => {
     },
     [screenBounds]
   );
-
-  useOnEscape(onCancel, [onCancel]);
 
   return (
     <div

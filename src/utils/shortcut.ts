@@ -5,6 +5,7 @@ import { isMac } from '@utils/process';
 import { capitalize } from '@utils/strings';
 
 export const DEFAULT_SHORTCUT_CAPTURE = `Meta + Shift + E`;
+export const SHORTCUT_ESCAPE = 'Escape';
 export const SHORTCUT_CAPTURE_MODE_SCREEN = isMac() ? 'Meta + 1' : 'Ctrl + 1';
 export const SHORTCUT_CAPTURE_MODE_AREA = isMac() ? 'Meta + 2' : 'Ctrl + 2';
 export const SHORTCUT_OUTPUT_MP4 = isMac() ? 'Meta + 3' : 'Ctrl + 3';

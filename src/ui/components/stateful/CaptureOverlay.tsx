@@ -119,8 +119,6 @@ const CaptureCover = () => {
   );
 
   const onCaptureCancel = useCallback(() => {
-    stopCountdown();
-
     dispatch(disableCaptureMode());
   }, []);
 
@@ -129,6 +127,7 @@ const CaptureCover = () => {
       adjustBodySize(captureOverlay.bounds);
       setSelectedBounds(emptyBounds());
     } else {
+      stopCountdown();
       changeRenderMode(RenderMode.IDLE);
       setSelectedBounds(null);
     }
@@ -182,7 +181,6 @@ const CaptureCover = () => {
             selectedBounds={selectedBounds}
             countdown={countdown}
             areaColors={captureAreaColors}
-            onCancel={onCaptureCancel}
           />
         )}
       {renderMode === RenderMode.RECORDING && selectedBounds && (

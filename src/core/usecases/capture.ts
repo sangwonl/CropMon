@@ -91,8 +91,6 @@ export class CaptureUseCase {
         },
       };
     });
-
-    this.hookManager.emit('capture-selection-finished', {});
   }
 
   async changeCaptureOptions(options: ICaptureOptions) {
@@ -166,6 +164,8 @@ export class CaptureUseCase {
         },
       };
     });
+
+    this.hookManager.emit('capture-selection-finished', {});
   }
 
   async startCapture(): Promise<void> {
