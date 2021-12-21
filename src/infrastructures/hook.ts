@@ -177,9 +177,13 @@ export class BuiltinHooks {
 
   onCaptureSelectionStarting = async () => {
     this.tracker.view('capture-area-selection');
+
+    await this.setupCaptureOptsShortcut(true);
   };
 
-  onCaptureSelectionFinished = async () => {};
+  onCaptureSelectionFinished = async () => {
+    await this.setupCaptureOptsShortcut(false);
+  };
 
   onCaptureStarting = async (args: HookArgsCaptureStarting) => {
     const { status } = args.captureContext;
@@ -245,7 +249,7 @@ export class BuiltinHooks {
     newPrefs: IPreferences,
     prevPrefs?: IPreferences
   ): Promise<void> => {
-    this.setupShortcut(newPrefs, prevPrefs);
+    this.setupCaptureShortcut(newPrefs, prevPrefs);
     this.setupRunAtStartup(newPrefs);
     await this.askMediaAccess(newPrefs);
     await this.uiDirector.refreshTrayState(newPrefs);
@@ -259,38 +263,41 @@ export class BuiltinHooks {
     });
   };
 
-  private setupShortcut = (
-    newPrefs: IPreferences,
-    prevPrefs?: IPreferences
-  ): void => {
-    if (prevPrefs === undefined) {
-      globalShortcut.unregisterAll();
-
+  private setupCaptureOptsShortcut = async (enable: boolean) => {
+    const prefs = await this.prefsUseCase.fetchUserPreferences();
+    if (enable) {
       globalShortcut.register(
         SHORTCUT_CAPTURE_MODE_SCREEN,
-        () => this.handleShortcutCaptureOpts(newPrefs, CaptureMode.SCREEN)
+        () => this.handleShortcutCaptureOpts(prefs, CaptureMode.SCREEN)
       );
 
       globalShortcut.register(
         SHORTCUT_CAPTURE_MODE_AREA,
-        () => this.handleShortcutCaptureOpts(newPrefs, CaptureMode.AREA)
+        () => this.handleShortcutCaptureOpts(prefs, CaptureMode.AREA)
       );
 
       globalShortcut.register(
         SHORTCUT_OUTPUT_MP4,
-        () => this.handleShortcutCaptureOpts(newPrefs, undefined, 'mp4')
+        () => this.handleShortcutCaptureOpts(prefs, undefined, 'mp4')
       );
 
       globalShortcut.register(
         SHORTCUT_OUTPUT_GIF,
-        () => this.handleShortcutCaptureOpts(newPrefs, undefined, 'gif')
+        () => this.handleShortcutCaptureOpts(prefs, undefined, 'gif')
       );
+    } else {
+      globalShortcut.unregister(SHORTCUT_CAPTURE_MODE_SCREEN);
+      globalShortcut.unregister(SHORTCUT_CAPTURE_MODE_AREA);
+      globalShortcut.unregister(SHORTCUT_OUTPUT_MP4);
+      globalShortcut.unregister(SHORTCUT_OUTPUT_GIF);
+    }
+  }
 
-      globalShortcut.register(
-        newPrefs.shortcut.replace(/Win|Cmd/, 'Meta'),
-        this.actionDispatcher.onCaptureToggleShortcut
-      );
-    } else if (prevPrefs.shortcut !== newPrefs.shortcut) {
+  private setupCaptureShortcut = (
+    newPrefs: IPreferences,
+    prevPrefs?: IPreferences
+  ): void => {
+    if (!prevPrefs || prevPrefs.shortcut !== newPrefs.shortcut) {
       globalShortcut.unregister(newPrefs.shortcut.replace(/Win|Cmd/, 'Meta'));
       globalShortcut.register(
         newPrefs.shortcut.replace(/Win|Cmd/, 'Meta'),
