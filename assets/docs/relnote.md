@@ -1,5 +1,12 @@
 ## Release Notes
 
+### v0.7.0
+
+_23 Dec 2021_
+
+- Quick toolbar for capture options
+- Support full screen recording without framerate degression
+
 ### v0.6.6
 
 _4 Nov 2021_
