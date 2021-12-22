@@ -16,8 +16,6 @@ import {
 } from '@utils/shortcut';
 
 import styles from '@ui/components/stateless/CaptureOptions.css';
-import screenIcon from '@assets/screen.png';
-import cropIcon from '@assets/crop.png';
 import closeIcon from '@assets/close.png';
 
 export interface CaptureOptionsProps {
@@ -68,33 +66,33 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
     <div className={styles.container}>
       <button
         type="button"
-        title={`Record Screen (${shortcutForDisplay(
+        title={`Record Full Screen (${shortcutForDisplay(
           SHORTCUT_CAPTURE_MODE_SCREEN
         )})`}
-        className={classNames(styles.btnCaptMode, {
+        className={classNames(styles.btnToggleLeft, {
           [styles.toggled]: captMode === CaptureMode.SCREEN,
         })}
         onClick={() => handleCaptModeChange(CaptureMode.SCREEN)}
       >
-        <img src={screenIcon} />
+        Full
       </button>
       <button
         type="button"
         title={`Record Selected Area (${shortcutForDisplay(
           SHORTCUT_CAPTURE_MODE_AREA
         )})`}
-        className={classNames(styles.btnCaptMode, {
+        className={classNames(styles.btnToggleRight, {
           [styles.toggled]: captMode === CaptureMode.AREA,
         })}
         onClick={() => handleCaptModeChange(CaptureMode.AREA)}
       >
-        <img src={cropIcon} />
+        Selection
       </button>
       <div className={styles.divider} />
       <button
         type="button"
         title={`Output as MP4 (${shortcutForDisplay(SHORTCUT_OUTPUT_MP4)})`}
-        className={classNames(styles.btnOutputMp4, {
+        className={classNames(styles.btnToggleLeft, {
           [styles.toggled]: !recOpts.enableOutputAsGif,
         })}
         onClick={() =>
@@ -109,7 +107,7 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
       <button
         type="button"
         title={`Output as GIF (${shortcutForDisplay(SHORTCUT_OUTPUT_GIF)})`}
-        className={classNames(styles.btnOutputGif, {
+        className={classNames(styles.btnToggleRight, {
           [styles.toggled]: recOpts.enableOutputAsGif,
         })}
         onClick={() =>

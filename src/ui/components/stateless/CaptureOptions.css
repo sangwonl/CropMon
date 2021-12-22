@@ -14,40 +14,30 @@
   background-color: #58bb76 !important;
 }
 
-.btnCaptMode {
-  user-select: none;
-}
-
-.btnCaptMode img {
-  padding-top: 4px;
-  width: 32px;
-  height: 28px;
-}
-
-.btnOutputMp4 {
+.btnToggleLeft {
   border-top-right-radius: 0px !important;
   border-bottom-right-radius: 0px !important;
   border-right: 0px !important;
   height: 30px;
   margin-right: -4px;
-  flex-basis: 42px !important;
+  flex-basis: 58px !important;
   user-select: none;
 }
 
-.btnOutputMp4:not(.toggled) {
+.btnToggleLeft:not(.toggled) {
   background-color: #474747 !important;
 }
 
-.btnOutputGif {
+.btnToggleRight {
   border-top-left-radius: 0px !important;
   border-bottom-left-radius: 0px !important;
   border-left: 0px !important;
   height: 30px;
-  flex-basis: 42px !important;
+  flex-basis: 58px !important;
   user-select: none;
 }
 
-.btnOutputGif:not(.toggled) {
+.btnToggleRight:not(.toggled) {
   background-color: #474747 !important;
 }
 

@@ -8,7 +8,7 @@ import { assetPathResolver } from '@utils/asset';
 import { WidgetType } from '@ui/widgets/types';
 import { Widget } from '@ui/widgets/widget';
 
-const WIDGET_WIDTH = 280;
+const WIDGET_WIDTH = 354;
 const WIDGET_HEIGHT = 60;
 const WIDGET_TOP = 16;
 
