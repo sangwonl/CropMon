@@ -81,6 +81,10 @@ export class ActionDispatcher {
     this.captureUseCase.startCapture();
   };
 
+  startCaptureWithCurrentStates = () => {
+    this.captureUseCase.startCaptureWithCurrentStates();
+  };
+
   finishCapture = () => {
     this.captureUseCase.finishCapture();
   };

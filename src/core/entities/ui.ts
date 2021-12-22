@@ -15,6 +15,7 @@ export interface IControlPanel {
   outputAsGif: boolean;
   lowQualityMode: boolean;
   microphone: boolean;
+  confirmedToCaptureAsIs: boolean;
 }
 
 export interface ICaptureOverlay {
@@ -46,6 +47,7 @@ export const INITIAL_UI_STATE: IUiState = {
     lowQualityMode: false,
     microphone: false,
     outputAsGif: false,
+    confirmedToCaptureAsIs: false,
   },
   captureOverlay: {
     show: false,

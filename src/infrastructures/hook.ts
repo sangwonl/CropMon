@@ -22,7 +22,7 @@ import { IUiDirector } from '@core/interfaces/director';
 import { ActionDispatcher } from '@adapters/action';
 import { getPlatform, isDebugMode, isMac } from '@utils/process';
 import { getTimeInSeconds } from '@utils/date';
-import { SHORTCUT_CAPTURE_MODE_AREA, SHORTCUT_CAPTURE_MODE_SCREEN, SHORTCUT_ESCAPE, SHORTCUT_OUTPUT_GIF, SHORTCUT_OUTPUT_MP4 } from '@utils/shortcut';
+import { SHORTCUT_CAPTURE_MODE_AREA, SHORTCUT_CAPTURE_MODE_SCREEN, SHORTCUT_ENTER, SHORTCUT_ESCAPE, SHORTCUT_OUTPUT_GIF, SHORTCUT_OUTPUT_MP4 } from '@utils/shortcut';
 
 type HookHandler = (args: any) => void;
 
@@ -263,7 +263,8 @@ export class BuiltinHooks {
     await this.uiDirector.refreshTrayState(newPrefs);
   };
 
-  private handleShortcutCaptureOpts = (prefs: IPreferences, mode?: CaptureMode, fmt?: OutputFormat) => {
+  private handleShortcutCaptureOpts = async (mode?: CaptureMode, fmt?: OutputFormat) => {
+    const prefs = await this.prefsUseCase.fetchUserPreferences();
     const recOpts = this.prefsUseCase.getRecOptionsFromPrefs(prefs);
     this.actionDispatcher.changeCaptureOptions({
       target: { mode: mode ?? prefs.captureMode },
@@ -272,8 +273,12 @@ export class BuiltinHooks {
   };
 
   private setupInSelectionShortcut = async (enable: boolean) => {
-    const prefs = await this.prefsUseCase.fetchUserPreferences();
     if (enable) {
+      globalShortcut.register(
+        SHORTCUT_ENTER,
+        () => this.actionDispatcher.startCaptureWithCurrentStates()
+      );
+
       globalShortcut.register(
         SHORTCUT_ESCAPE,
         () => this.actionDispatcher.disableCaptureMode()
@@ -281,24 +286,25 @@ export class BuiltinHooks {
 
       globalShortcut.register(
         SHORTCUT_CAPTURE_MODE_SCREEN,
-        () => this.handleShortcutCaptureOpts(prefs, CaptureMode.SCREEN)
+        () => this.handleShortcutCaptureOpts(CaptureMode.SCREEN)
       );
 
       globalShortcut.register(
         SHORTCUT_CAPTURE_MODE_AREA,
-        () => this.handleShortcutCaptureOpts(prefs, CaptureMode.AREA)
+        () => this.handleShortcutCaptureOpts(CaptureMode.AREA)
       );
 
       globalShortcut.register(
         SHORTCUT_OUTPUT_MP4,
-        () => this.handleShortcutCaptureOpts(prefs, undefined, 'mp4')
+        () => this.handleShortcutCaptureOpts(undefined, 'mp4')
       );
 
       globalShortcut.register(
         SHORTCUT_OUTPUT_GIF,
-        () => this.handleShortcutCaptureOpts(prefs, undefined, 'gif')
+        () => this.handleShortcutCaptureOpts(undefined, 'gif')
       );
     } else {
+      globalShortcut.unregister(SHORTCUT_ENTER);
       globalShortcut.unregister(SHORTCUT_ESCAPE);
       globalShortcut.unregister(SHORTCUT_CAPTURE_MODE_SCREEN);
       globalShortcut.unregister(SHORTCUT_CAPTURE_MODE_AREA);

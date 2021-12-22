@@ -146,6 +146,23 @@ const CaptureCover = () => {
     }
   }, [captureOverlay.show, selectedBounds, countdown]);
 
+  useEffect(() => {
+    if (
+      isEmptyBounds(selectedBounds) &&
+      controlPanel.captureMode === CaptureMode.SCREEN &&
+      controlPanel.confirmedToCaptureAsIs &&
+      captureOverlay.bounds
+    ) {
+      onSelectionStart();
+      onSelectionFinish(captureOverlay.bounds, captureOverlay.bounds);
+    }
+  }, [
+    selectedBounds,
+    controlPanel.captureMode,
+    controlPanel.confirmedToCaptureAsIs,
+    captureOverlay.bounds,
+  ]);
+
   return (
     renderMode !== RenderMode.IDLE && (
       <div

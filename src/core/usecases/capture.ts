@@ -57,6 +57,7 @@ export class CaptureUseCase {
           return {
             ...state,
             controlPanel: {
+              ...INITIAL_UI_STATE.controlPanel,
               captureMode: activeCaptureMode,
               outputAsGif: prefs.outputFormat === 'gif',
               lowQualityMode: prefs.recordQualityMode === 'low',
@@ -120,6 +121,7 @@ export class CaptureUseCase {
             prefs.recordQualityMode === 'low',
           microphone:
             options.recordOptions.enableMicrophone ?? prefs.recordMicrophone,
+          confirmedToCaptureAsIs: false,
         },
       };
     });
@@ -148,7 +150,6 @@ export class CaptureUseCase {
         captureOverlay: {
           ...state.captureOverlay,
           selectedBounds: targetBounds,
-          selectedScreenId: state.captureOverlay.selectedScreenId,
           isSelecting: false,
         },
       };
@@ -212,6 +213,18 @@ export class CaptureUseCase {
 
     // hook
     this.hookManager.emit('capture-starting', { captureContext: newCtx });
+  }
+
+  async startCaptureWithCurrentStates(): Promise<void> {
+    this.stateManager.updateUiState((state: IUiState): IUiState => {
+      return {
+        ...state,
+        controlPanel: {
+          ...state.controlPanel,
+          confirmedToCaptureAsIs: true,
+        },
+      };
+    });
   }
 
   async finishCapture(): Promise<void> {
