@@ -8,7 +8,7 @@ import Color from 'color';
 
 import { IBounds } from '@core/entities/screen';
 import { ICaptureAreaColors } from '@core/entities/ui';
-import { isCapturableBounds } from '@utils/bounds';
+import { getBoundsFromZero, isCapturableBounds } from '@utils/bounds';
 
 import styles from '@ui/components/stateless/CaptureTargetingScreen.css';
 
@@ -54,13 +54,7 @@ const CaptureTargetingScreen: FC<PropTypes> = (props: PropTypes) => {
         if (isDown) {
           onStart();
         } else {
-          const boundsFromZero = {
-            x: 0,
-            y: 0,
-            width: screenBounds.width,
-            height: screenBounds.height,
-          };
-          onFinish(boundsFromZero, screenBounds);
+          onFinish(getBoundsFromZero(screenBounds), screenBounds);
         }
       } else if (e.button === 2 && !isDown) {
         onCancel();

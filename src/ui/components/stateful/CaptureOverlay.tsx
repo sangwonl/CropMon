@@ -25,7 +25,7 @@ import CaptureTargetingScreen from '@ui/components/stateless/CaptureTargetingScr
 import CaptureCountdown from '@ui/components/stateless/CaptureCountdown';
 import CaptureRecording from '@ui/components/stateless/CaptureRecording';
 import { getCursorScreenPoint } from '@utils/remote';
-import { isEmptyBounds } from '@utils/bounds';
+import { getBoundsFromZero, isEmptyBounds } from '@utils/bounds';
 import { isMac } from '@utils/process';
 
 import styles from '@ui/components/stateful/CaptureOverlay.css';
@@ -154,7 +154,10 @@ const CaptureCover = () => {
       captureOverlay.bounds
     ) {
       onSelectionStart();
-      onSelectionFinish(captureOverlay.bounds, captureOverlay.bounds);
+      onSelectionFinish(
+        getBoundsFromZero(captureOverlay.bounds),
+        captureOverlay.bounds
+      );
     }
   }, [
     selectedBounds,

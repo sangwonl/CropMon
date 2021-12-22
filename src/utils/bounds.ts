@@ -62,6 +62,15 @@ export const isPointInsideBounds = (pt: IPoint, bounds: IBounds): boolean => {
   );
 };
 
+export const getBoundsFromZero = (bounds: IBounds): IBounds => {
+  return {
+    x: 0,
+    y: 0,
+    width: bounds.width,
+    height: bounds.height,
+  };
+};
+
 export const getAllScreensFromLeftTop = (): IScreen[] => {
   const screens = getAllScreens();
   const screenBounds = calcScreenBounds(screens);
