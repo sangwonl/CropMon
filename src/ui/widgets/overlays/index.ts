@@ -5,6 +5,9 @@
 import { assetPathResolver } from '@utils/asset';
 import { WidgetType } from '@ui/widgets/types';
 import { Widget } from '@ui/widgets/widget';
+import { isMac } from '@utils/process';
+
+const TRAFFIC_LIGHT_OFFSET_FOR_HIDING = { x: -256, y: -256 };
 
 export default class CaptureOverlay extends Widget {
   constructor() {
@@ -30,5 +33,10 @@ export default class CaptureOverlay extends Widget {
     this.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     this.setAlwaysOnTop(true, 'screen-saver', 1);
     this.setHasShadow(false);
+
+    // Not to expose traffic light buttons
+    if (isMac()) {
+      this.setTrafficLightPosition(TRAFFIC_LIGHT_OFFSET_FOR_HIDING);
+    }
   }
 }
