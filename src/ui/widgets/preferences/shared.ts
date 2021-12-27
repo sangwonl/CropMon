@@ -11,7 +11,8 @@ export const IPC_EVT_ON_RECORD_HOME_SELECTION = 'on-rec-home-selection';
 export const IPC_EVT_ON_CLOSE = 'on-close';
 
 export interface IpcEvtOnPrefsUpdated {
-  preferences: IPreferences;
+  oldPrefs: IPreferences;
+  newPrefs: IPreferences;
 }
 
 export interface IpcEvtOnClose {

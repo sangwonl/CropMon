@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable import/prefer-default-export */
 
-import { Widget } from './widget';
+import { Widget } from '@ui/widgets/widget';
 
 export default class CachedWidget<W extends Widget, C, R> {
   private loaded = false;

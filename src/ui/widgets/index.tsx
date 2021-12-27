@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import ReactDOM from 'react-dom';
 
 import { WidgetType } from '@ui/widgets/types';
@@ -7,14 +9,14 @@ import preferencesModalCreator from '@ui/widgets/preferences/creator';
 import overlaysCreator from '@ui/widgets/overlays/creator';
 import controlPanelCreator from '@ui/widgets/ctrlpanel/creator';
 
-import { getCurWidgetCustomData } from '@utils/remote';
+import { ipcRenderer } from 'electron';
 
-type WinCreator = () => JSX.Element;
-interface WinCreatorMap {
-  [winType: number]: WinCreator;
+type WidgetCreator = (options: any) => JSX.Element;
+interface WidgetCreatorMap {
+  [widgetType: number]: WidgetCreator;
 }
 
-const creators: WinCreatorMap = {
+const creators: WidgetCreatorMap = {
   [WidgetType.PROGRESS_DIALOG]: progressDialogCreator,
   [WidgetType.STATIC_PAGE_POPUP]: staticPagePopupCreator,
   [WidgetType.PREFERENECS_MODAL]: preferencesModalCreator,
@@ -22,5 +24,10 @@ const creators: WinCreatorMap = {
   [WidgetType.CONTROL_PANEL]: controlPanelCreator,
 };
 
-const winType = getCurWidgetCustomData<WidgetType>('type');
-ReactDOM.render(creators[winType](), document.getElementById('root'));
+ipcRenderer.on('aaa', (_event, data) => {
+  const { type: widgetType, options } = data;
+  ReactDOM.render(
+    creators[widgetType](options),
+    document.getElementById('root')
+  );
+});

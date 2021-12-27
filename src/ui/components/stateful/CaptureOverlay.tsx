@@ -166,49 +166,47 @@ const CaptureCover = () => {
     captureOverlay.bounds,
   ]);
 
-  return (
-    renderMode !== RenderMode.IDLE && (
-      <div
-        className={classNames(styles.cover, {
-          [styles.coverHack]: isMac(),
-        })}
-      >
-        {renderMode === RenderMode.TARGETING &&
-          controlPanel.captureMode === CaptureMode.AREA && (
-            <CaptureTargetingArea
-              areaColors={captureAreaColors}
-              onStart={onSelectionStart}
-              onCancel={onCaptureCancel}
-              onFinish={onSelectionFinish}
-              getCursorPoint={getCursorScreenPoint}
-            />
-          )}
-        {renderMode === RenderMode.TARGETING &&
-          controlPanel.captureMode === CaptureMode.SCREEN &&
-          captureOverlay.bounds && (
-            <CaptureTargetingScreen
-              areaColors={captureAreaColors}
-              screenBounds={captureOverlay.bounds}
-              onStart={onSelectionStart}
-              onCancel={onCaptureCancel}
-              onFinish={onSelectionFinish}
-            />
-          )}
-        {renderMode === RenderMode.COUNTDOWN &&
-          countdown > 0 &&
-          selectedBounds && (
-            <CaptureCountdown
-              selectedBounds={selectedBounds}
-              countdown={countdown}
-              areaColors={captureAreaColors}
-            />
-          )}
-        {renderMode === RenderMode.RECORDING && selectedBounds && (
-          <CaptureRecording selectedBounds={selectedBounds} />
+  return renderMode !== RenderMode.IDLE ? (
+    <div
+      className={classNames(styles.cover, {
+        [styles.coverHack]: isMac(),
+      })}
+    >
+      {renderMode === RenderMode.TARGETING &&
+        controlPanel.captureMode === CaptureMode.AREA && (
+          <CaptureTargetingArea
+            areaColors={captureAreaColors}
+            onStart={onSelectionStart}
+            onCancel={onCaptureCancel}
+            onFinish={onSelectionFinish}
+            getCursorPoint={getCursorScreenPoint}
+          />
         )}
-      </div>
-    )
-  );
+      {renderMode === RenderMode.TARGETING &&
+        controlPanel.captureMode === CaptureMode.SCREEN &&
+        captureOverlay.bounds && (
+          <CaptureTargetingScreen
+            areaColors={captureAreaColors}
+            screenBounds={captureOverlay.bounds}
+            onStart={onSelectionStart}
+            onCancel={onCaptureCancel}
+            onFinish={onSelectionFinish}
+          />
+        )}
+      {renderMode === RenderMode.COUNTDOWN &&
+        countdown > 0 &&
+        selectedBounds && (
+          <CaptureCountdown
+            selectedBounds={selectedBounds}
+            countdown={countdown}
+            areaColors={captureAreaColors}
+          />
+        )}
+      {renderMode === RenderMode.RECORDING && selectedBounds && (
+        <CaptureRecording selectedBounds={selectedBounds} />
+      )}
+    </div>
+  ) : null;
 };
 
 export default CaptureCover;
