@@ -318,7 +318,9 @@ export class BuiltinHooks {
     prevPrefs?: IPreferences
   ): void => {
     if (!prevPrefs || prevPrefs.shortcut !== newPrefs.shortcut) {
-      globalShortcut.unregister(newPrefs.shortcut.replace(/Win|Cmd/, 'Meta'));
+      if (prevPrefs) {
+        globalShortcut.unregister(prevPrefs.shortcut.replace(/Win|Cmd/, 'Meta'));
+      }
       globalShortcut.register(
         newPrefs.shortcut.replace(/Win|Cmd/, 'Meta'),
         this.actionDispatcher.onCaptureToggleShortcut
