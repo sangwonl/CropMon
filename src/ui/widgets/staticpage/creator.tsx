@@ -4,22 +4,24 @@
 /* eslint-disable react/display-name */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React from 'react';
+import React, { FC } from 'react';
 
-import { getCurWidgetCustomData } from '@utils/remote';
 import { StaticPage } from '@ui/components/stateless/StaticPage';
 import { preventZoomKeyEvent } from '@ui/widgets/utils';
 
 import { StaticPagePopupOptions } from './shared';
 
-const options = getCurWidgetCustomData<StaticPagePopupOptions>('options');
+interface PropTypes {
+  options: StaticPagePopupOptions;
+}
 
-const Wrapper = () => (
-  <StaticPage markdown={options.markdown} html={options.html} />
-);
+const Wrapper: FC<PropTypes> = (props: PropTypes) => {
+  const { options } = props;
+  return <StaticPage markdown={options.markdown} html={options.html} />;
+};
 
-export default () => {
-  return <Wrapper />;
+export default (options: StaticPagePopupOptions) => {
+  return <Wrapper options={options} />;
 };
 
 preventZoomKeyEvent();

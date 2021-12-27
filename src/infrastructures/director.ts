@@ -22,7 +22,6 @@ import { IBounds } from '@core/entities/screen';
 import { IPreferences } from '@core/entities/preferences';
 import { IUiDirector } from '@core/interfaces/director';
 
-import { StaticPagePopupOptions } from '@ui/widgets/staticpage/shared';
 import CachedWidget from '@ui/widgets/cached';
 import AppTray from '@ui/widgets/tray';
 import ControlPanel from '@ui/widgets/ctrlpanel';
@@ -30,6 +29,8 @@ import CaptureOverlay from '@ui/widgets/overlays';
 import PreferencesModal from '@ui/widgets/preferences';
 import ProgressDialog from '@ui/widgets/progressdialog';
 import StaticPagePopup from '@ui/widgets/staticpage';
+import { StaticPagePopupOptions } from '@ui/widgets/staticpage/shared';
+import { PreferencesModalOptions } from '@ui/widgets/preferences/shared';
 
 import { assetPathResolver } from '@utils/asset';
 import { getScreenOfCursor, getWholeScreenBounds } from '@utils/bounds';
@@ -87,7 +88,7 @@ class CachedStaticPagePopup extends CachedWidget<
 
 class CachedPreferencesModal extends CachedWidget<
   PreferencesModal,
-  IPreferences,
+  PreferencesModalOptions,
   IPreferences
 > {}
 
@@ -212,10 +213,10 @@ export class UiDirector implements IUiDirector {
   }
 
   async openPreferencesModal(
-    prefs: IPreferences,
+    preferences: IPreferences,
     onSave: (updatedPrefs: IPreferences) => void
   ): Promise<void> {
-    await this.preferencesModal?.openAsModal(prefs, onSave);
+    await this.preferencesModal?.openAsModal({ preferences }, onSave);
   }
 
   enableCaptureMode(

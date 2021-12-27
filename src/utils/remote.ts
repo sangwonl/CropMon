@@ -1,11 +1,6 @@
 import { remote } from 'electron';
 
-import { Widget } from '@ui/widgets/widget';
 import { isMac } from '@utils/process';
-
-export function getCurWidgetCustomData<T>(name: string): T {
-  return (remote.getCurrentWindow() as Widget).getCustomData(name);
-}
 
 export function getAppPath(
   name:

@@ -12,20 +12,19 @@ import { IPreferences } from '@core/entities/preferences';
 import { assetPathResolver } from '@utils/asset';
 import { WidgetType } from '@ui/widgets/types';
 import { Widget } from '@ui/widgets/widget';
-
 import {
   IPC_EVT_ON_RECORD_HOME_SELECTION,
   IPC_EVT_ON_CLOSE,
   IPC_EVT_ON_PREFS_UPDATED,
   IpcEvtOnClose,
-} from './shared';
+  PreferencesModalOptions,
+} from '@ui/widgets/preferences/shared';
 
 export default class PreferencesModal extends Widget {
   private loaded = false;
-  private prefs?: IPreferences;
   private closeResolver?: any;
 
-  constructor() {
+  constructor(options: PreferencesModalOptions) {
     super(WidgetType.PREFERENECS_MODAL, {
       icon: assetPathResolver('icon.png'),
       show: false,
@@ -34,20 +33,25 @@ export default class PreferencesModal extends Widget {
       resizable: false,
       minimizable: false,
       maximizable: false,
+      options,
     });
 
     this.loadURL(`file://${__dirname}/../preferences/index.html`);
 
-    const onRecordHomeSel = async (_event: any, _data: any) => {
+    const onRecordHomeSel = async (_event: any, data: any) => {
+      const { prefs } = data;
       const { filePaths } = await dialog.showOpenDialog(this, {
-        defaultPath: this.prefs!.recordHome ?? app.getPath('videos'),
+        defaultPath: prefs.recordHome ?? app.getPath('videos'),
         properties: ['openDirectory'],
       });
 
       if (filePaths.length > 0) {
         const [selectedFilePath] = filePaths;
-        this.prefs!.recordHome = selectedFilePath;
-        this.notifyPrefsUpdated();
+        const newPrefs: IPreferences = {
+          ...prefs,
+          recordHome: selectedFilePath,
+        };
+        this.notifyPrefsUpdated(newPrefs, prefs);
       }
     };
 
@@ -72,14 +76,7 @@ export default class PreferencesModal extends Widget {
     prefs: IPreferences,
     onSave: (updatedPrefs: IPreferences) => void
   ): Promise<IPreferences | undefined> {
-    this.prefs = { ...prefs };
-
-    const refreshPrefsData = (prefsData: IPreferences) => {
-      this.setCustomData<IPreferences>('initialPrefs', { ...prefsData });
-      this.notifyPrefsUpdated();
-    };
-
-    refreshPrefsData(prefs);
+    this.notifyPrefsUpdated(prefs);
 
     if (this.loaded) {
       this.show();
@@ -94,7 +91,7 @@ export default class PreferencesModal extends Widget {
       this.closeResolver = (result?: IPreferences) => {
         if (result) {
           onSave(result);
-          refreshPrefsData(result);
+          this.notifyPrefsUpdated(result);
         } else {
           resolve(result);
           this.hide();
@@ -103,9 +100,10 @@ export default class PreferencesModal extends Widget {
     });
   }
 
-  private notifyPrefsUpdated() {
+  private notifyPrefsUpdated(newPrefs: IPreferences, oldPrefs?: IPreferences) {
     this.webContents.send(IPC_EVT_ON_PREFS_UPDATED, {
-      preferences: this.prefs,
+      oldPrefs: oldPrefs ?? newPrefs,
+      newPrefs,
     });
   }
 }

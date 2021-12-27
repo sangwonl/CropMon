@@ -25,16 +25,19 @@
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
     "paths": {
-      "@core/*": ["./src/core/*"],
-      "@adapters/*": ["./src/adapters/*"],
-      "@infrastructures/*": ["./src/infrastructures/*"],
-      "@ui/*": ["./src/ui/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@di/*": ["./src/di/*"],
-      "@assets/*": ["./src/assets/*"]
-    }
+      "@core/*": ["src/core/*"],
+      "@adapters/*": ["src/adapters/*"],
+      "@infrastructures/*": ["src/infrastructures/*"],
+      "@ui/*": ["src/ui/*"],
+      "@utils/*": ["src/utils/*"],
+      "@di/*": ["src/di/*"],
+      "@assets/*": ["src/assets/*"],
+    },
+    /* Don't know why but it needs for global.d.ts */
+    "typeRoots": []
   },
   "exclude": [
+    "node_modules",
     "test",
     "release",
     "src/main/main.prod.js",

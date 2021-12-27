@@ -2,41 +2,44 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/display-name */
 
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { ipcRenderer } from 'electron';
 
 import { IPreferences } from '@core/entities/preferences';
 import { Preferences } from '@ui/components/stateless/Preferences';
 import { preventZoomKeyEvent } from '@ui/widgets/utils';
-import { getCurWidgetCustomData } from '@utils/remote';
 
 import {
   IPC_EVT_ON_CLOSE,
   IPC_EVT_ON_PREFS_UPDATED,
   IPC_EVT_ON_RECORD_HOME_SELECTION,
   IpcEvtOnPrefsUpdated,
-} from './shared';
+  PreferencesModalOptions,
+} from '@ui/widgets/preferences/shared';
 
-const getInitialPrefs = (): IPreferences => {
-  return getCurWidgetCustomData<IPreferences>('initialPrefs');
-};
+interface PropTypes {
+  initialPrefs: IPreferences;
+}
 
-const Wrapper = () => {
+const Wrapper: FC<PropTypes> = (props: PropTypes) => {
+  const { initialPrefs } = props;
+
   const [readyToShow, setReadyToShow] = useState<boolean>(true);
-  const [origPrefs, setOrigPrefs] = useState<IPreferences>(getInitialPrefs());
+  const [origPrefs, setOrigPrefs] = useState<IPreferences>(initialPrefs);
   const [prefs, setPrefs] = useState<IPreferences>(origPrefs);
 
   useEffect(() => {
     const handlePrefsUpdated = (_event: any, data: IpcEvtOnPrefsUpdated) => {
-      setPrefs(data.preferences);
-      setOrigPrefs(getInitialPrefs());
+      const { oldPrefs, newPrefs } = data;
+      setOrigPrefs(oldPrefs);
+      setPrefs(newPrefs);
       setReadyToShow(true);
     };
     ipcRenderer.on(IPC_EVT_ON_PREFS_UPDATED, handlePrefsUpdated);
     return () => {
       ipcRenderer.off(IPC_EVT_ON_PREFS_UPDATED, handlePrefsUpdated);
     };
-  }, [setPrefs]);
+  }, [initialPrefs, setPrefs]);
 
   return readyToShow ? (
     <Preferences
@@ -46,14 +49,15 @@ const Wrapper = () => {
         ipcRenderer.send(IPC_EVT_ON_CLOSE, { preferences });
       }}
       onChooseRecordHome={() => {
-        ipcRenderer.send(IPC_EVT_ON_RECORD_HOME_SELECTION, {});
+        ipcRenderer.send(IPC_EVT_ON_RECORD_HOME_SELECTION, { prefs });
       }}
     />
   ) : null;
 };
 
-export default () => {
-  return <Wrapper />;
+export default (options: PreferencesModalOptions) => {
+  const { preferences } = options;
+  return <Wrapper initialPrefs={preferences} />;
 };
 
 preventZoomKeyEvent();

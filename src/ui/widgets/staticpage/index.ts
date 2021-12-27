@@ -13,8 +13,6 @@ import { Widget } from '@ui/widgets/widget';
 import { StaticPagePopupOptions } from './shared';
 
 export default class StaticPagePopup extends Widget {
-  options?: StaticPagePopupOptions;
-
   constructor(options: StaticPagePopupOptions) {
     super(WidgetType.STATIC_PAGE_POPUP, {
       icon: assetPathResolver('icon.png'),
@@ -28,7 +26,6 @@ export default class StaticPagePopup extends Widget {
       skipTaskbar: true,
       options,
     });
-    this.options = options;
 
     this.loadURL(`file://${__dirname}/../staticpage/index.html`);
   }

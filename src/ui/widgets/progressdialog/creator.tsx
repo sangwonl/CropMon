@@ -5,11 +5,10 @@
 /* eslint-disable react/display-name */
 
 import { ipcRenderer } from 'electron';
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 
 import { ProgressDialog } from '@ui/components/stateless/ProgressDialog';
 import { preventZoomKeyEvent } from '@ui/widgets/utils';
-import { getCurWidgetCustomData } from '@utils/remote';
 
 import {
   ProgressDialogOptions,
@@ -17,11 +16,14 @@ import {
   IPC_EVT_SET_PROGRESS,
   IPC_EVT_ON_ACTION,
   IPC_EVT_ON_CANCEL,
-} from './shared';
+} from '@ui/widgets/progressdialog/shared';
 
-const options = getCurWidgetCustomData<ProgressDialogOptions>('options');
+interface PropTypes {
+  options: ProgressDialogOptions;
+}
 
-const Wrapper = () => {
+const Wrapper: FC<PropTypes> = (props: PropTypes) => {
+  const { options } = props;
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -51,8 +53,8 @@ const Wrapper = () => {
   );
 };
 
-export default () => {
-  return <Wrapper />;
+export default (options: ProgressDialogOptions) => {
+  return <Wrapper options={options} />;
 };
 
 preventZoomKeyEvent();

@@ -53,14 +53,11 @@ export class Widget extends BrowserWindow {
       webPreferences: {
         devTools: isDebugMode(),
         nodeIntegration: true,
-        enableRemoteModule: true,
         contextIsolation: false,
       },
     });
 
     this.removeMenu();
-    this.setCustomData('type', type);
-    this.setCustomData('options', options?.options);
 
     this.on('close', (event) => {
       if (!this.forceClose) {
@@ -76,19 +73,15 @@ export class Widget extends BrowserWindow {
       this.webContents.setZoomFactor(1.0);
       this.webContents.setZoomLevel(0.0);
       this.webContents.setVisualZoomLevelLimits(1.0, 1.0);
+      this.webContents.send('aaa', {
+        type,
+        options: options?.options,
+      });
     });
   }
 
   close(): void {
     this.forceClose = true;
     super.close();
-  }
-
-  setCustomData<T>(name: string, value: T) {
-    (this as any)[name] = value;
-  }
-
-  getCustomData<T>(name: string): T {
-    return (this as any)[name] as T;
   }
 }
