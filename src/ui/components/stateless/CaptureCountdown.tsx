@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import Color from 'color';
 
 import { IBounds } from '@core/entities/screen';
