@@ -226,24 +226,30 @@ export default merge(baseConfig, {
   },
 
   devServer: {
+    host: 'localhost',
     port,
-    publicPath,
     compress: true,
-    noInfo: false,
-    stats: 'errors-only',
-    inline: true,
-    lazy: false,
-    hot: true,
+    hot: false,
+    liveReload: true,
     headers: { 'Access-Control-Allow-Origin': '*' },
-    contentBase: path.join(__dirname, 'dist'),
-    watchOptions: {
-      aggregateTimeout: 300,
-      ignored: /node_modules/,
-      poll: 100,
+    static: {
+      directory: path.join(__dirname, 'dist'),
+      watch: {
+        usePolling: false,
+        interval: 100,
+        ignored: /node_modules/,
+      },
+    },
+    devMiddleware: {
+      publicPath,
+      stats: 'errors-only',
     },
     historyApiFallback: {
       verbose: true,
       disableDotRule: false,
+    },
+    client: {
+      logging: 'info',
     },
   },
 });

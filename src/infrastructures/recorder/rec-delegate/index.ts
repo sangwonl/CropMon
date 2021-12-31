@@ -19,7 +19,6 @@ export class RecorderDelegate extends BrowserWindow {
       webPreferences: {
         devTools: isDebugMode(),
         nodeIntegration: true,
-        enableRemoteModule: true,
         contextIsolation: false,
         backgroundThrottling: false,
         offscreen: true,

@@ -31,10 +31,8 @@
       "@ui/*": ["src/ui/*"],
       "@utils/*": ["src/utils/*"],
       "@di/*": ["src/di/*"],
-      "@assets/*": ["src/assets/*"],
-    },
-    /* Don't know why but it needs for global.d.ts */
-    "typeRoots": []
+      "@assets/*": ["src/assets/*"]
+    }
   },
   "exclude": [
     "node_modules",

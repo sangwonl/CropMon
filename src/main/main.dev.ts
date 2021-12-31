@@ -14,20 +14,15 @@ import 'regenerator-runtime/runtime';
 import { app } from 'electron';
 import log from 'electron-log';
 
-import { diContainer } from '@di/container';
-import { ActionDispatcher } from '@adapters/action';
+import { diContainer } from '@di/containers/main';
+import { ActionDispatcher } from '@adapters/actions/dispatcher';
 
-import { initializeSaga } from './store-main';
 import { initializeDevEnv } from './devenv';
-
-const actionDispatcher = diContainer.get(ActionDispatcher);
 
 const start = async () => {
   await initializeDevEnv();
 
-  await initializeSaga();
-
-  await actionDispatcher.initializeApp();
+  await diContainer.get(ActionDispatcher).initializeApp();
 
   app.on('before-quit', () => {
     app.quit();

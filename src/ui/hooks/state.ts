@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/prefer-default-export */
 
+import { ipcRenderer, IpcRendererEvent } from 'electron';
 import { useState, useRef, useEffect, SetStateAction, Dispatch } from 'react';
+
+import { INITIAL_UI_STATE, IUiState } from '@core/entities/ui';
 
 export const useStateWithGetter = <S>(
   initialState: S
@@ -13,4 +16,21 @@ export const useStateWithGetter = <S>(
   }, [state]);
 
   return [state, () => stateRef.current, setState];
+};
+
+export const useRootUiState = (): IUiState => {
+  const [uiState, setUiState] = useState<IUiState>(INITIAL_UI_STATE);
+
+  useEffect(() => {
+    const handleSyncStates = (_event: IpcRendererEvent, newState: IUiState) => {
+      setUiState(newState);
+    };
+    ipcRenderer.on('syncStates', handleSyncStates);
+    ipcRenderer.send('joinForSynStates');
+    return () => {
+      ipcRenderer.removeListener('syncStates', handleSyncStates);
+    };
+  }, []);
+
+  return uiState;
 };

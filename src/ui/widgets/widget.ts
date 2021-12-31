@@ -4,6 +4,7 @@
 /* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import path from 'path';
 import { BrowserWindow, NativeImage } from 'electron';
 
 import { isDebugMode } from '@utils/process';
@@ -73,7 +74,7 @@ export class Widget extends BrowserWindow {
       this.webContents.setZoomFactor(1.0);
       this.webContents.setZoomLevel(0.0);
       this.webContents.setVisualZoomLevelLimits(1.0, 1.0);
-      this.webContents.send('aaa', {
+      this.webContents.send('loadWidget', {
         type,
         options: options?.options,
       });

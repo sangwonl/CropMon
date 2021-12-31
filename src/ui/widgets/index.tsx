@@ -24,7 +24,7 @@ const creators: WidgetCreatorMap = {
   [WidgetType.CONTROL_PANEL]: controlPanelCreator,
 };
 
-ipcRenderer.on('aaa', (_event, data) => {
+ipcRenderer.on('loadWidget', (_event, data) => {
   const { type: widgetType, options } = data;
   ReactDOM.render(
     creators[widgetType](options),

@@ -3,28 +3,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import React, { useCallback, useEffect, useState, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 
 import { CaptureMode } from '@core/entities/common';
 import { IBounds } from '@core/entities/screen';
-import {
-  ICaptureAreaColors,
-  ICaptureOverlay,
-  IControlPanel,
-} from '@core/entities/ui';
-import { RootState } from '@ui/redux/store';
-import {
-  startTargetSelection,
-  finishTargetSelection,
-  disableCaptureMode,
-  startCapture,
-} from '@ui/redux/slice';
 import CaptureTargetingArea from '@ui/components/stateless/CaptureTargetingArea';
 import CaptureTargetingScreen from '@ui/components/stateless/CaptureTargetingScreen';
 import CaptureCountdown from '@ui/components/stateless/CaptureCountdown';
 import CaptureRecording from '@ui/components/stateless/CaptureRecording';
-import { getCursorScreenPoint } from '@utils/remote';
+import { useRootUiState } from '@ui/hooks/state';
+import { useActionDispatcher } from '@ui/hooks/dispatcher';
+import { useRemote } from '@ui/hooks/remote';
 import { getBoundsFromZero, isEmptyBounds } from '@utils/bounds';
 import { isMac } from '@utils/process';
 
@@ -52,19 +41,9 @@ const adjustBodySize = (overlayBounds: IBounds | null) => {
 };
 
 const CaptureCover = () => {
-  const dispatch = useDispatch();
-
-  const controlPanel: IControlPanel = useSelector(
-    (state: RootState) => state.ui.root.controlPanel
-  );
-
-  const captureOverlay: ICaptureOverlay = useSelector(
-    (state: RootState) => state.ui.root.captureOverlay
-  );
-
-  const captureAreaColors: ICaptureAreaColors = useSelector(
-    (state: RootState) => state.ui.root.captureAreaColors
-  );
+  const { controlPanel, captureOverlay, captureAreaColors } = useRootUiState();
+  const dispatcher = useActionDispatcher();
+  const remote = useRemote();
 
   const [renderMode, setRenderMode] = useState<RenderMode>(RenderMode.IDLE);
   const [selectedBounds, setSelectedBounds] = useState<IBounds | null>(null);
@@ -104,22 +83,22 @@ const CaptureCover = () => {
   };
 
   const onSelectionStart = useCallback(() => {
-    dispatch(startTargetSelection());
+    dispatcher.startTargetSelection();
   }, []);
 
   const onSelectionFinish = useCallback(
     (boundsForUi: IBounds, boundsForCapture: IBounds) => {
       setSelectedBounds(boundsForUi);
 
-      dispatch(finishTargetSelection(boundsForCapture));
+      dispatcher.finishTargetSelection(boundsForCapture);
 
-      startCountdown(() => dispatch(startCapture()));
+      startCountdown(() => dispatcher.startCapture());
     },
     [controlPanel.captureMode, captureOverlay.showCountdown]
   );
 
   const onCaptureCancel = useCallback(() => {
-    dispatch(disableCaptureMode());
+    dispatcher.disableCaptureMode();
   }, []);
 
   useEffect(() => {
@@ -179,7 +158,7 @@ const CaptureCover = () => {
             onStart={onSelectionStart}
             onCancel={onCaptureCancel}
             onFinish={onSelectionFinish}
-            getCursorPoint={getCursorScreenPoint}
+            getCursorPoint={remote.getCursorScreenPoint}
           />
         )}
       {renderMode === RenderMode.TARGETING &&
