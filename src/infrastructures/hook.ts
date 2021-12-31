@@ -14,12 +14,12 @@ import { TYPES } from '@di/types';
 import { CaptureMode, CaptureStatus, OutputFormat } from '@core/entities/common';
 import { ICaptureContext } from '@core/entities/capture';
 import { IPreferences } from '@core/entities/preferences';
-import { HookType, IHookManager } from '@core/interfaces/hook';
 import { IAnalyticsTracker } from '@core/interfaces/tracker';
+import { IUiDirector } from '@core/interfaces/director';
+import { HookType, IHookManager } from '@core/interfaces/hook';
 import { AppUseCase } from '@core/usecases/app';
 import { PreferencesUseCase } from '@core/usecases/preferences';
-import { IUiDirector } from '@core/interfaces/director';
-import { ActionDispatcher } from '@adapters/action';
+import { ActionDispatcher } from '@adapters/actions/dispatcher';
 import { getPlatform, isDebugMode, isMac } from '@utils/process';
 import { getTimeInSeconds } from '@utils/date';
 import { SHORTCUT_CAPTURE_MODE_AREA, SHORTCUT_CAPTURE_MODE_SCREEN, SHORTCUT_ENTER, SHORTCUT_ESCAPE, SHORTCUT_OUTPUT_GIF, SHORTCUT_OUTPUT_MP4 } from '@utils/shortcut';
@@ -97,9 +97,9 @@ export class BuiltinHooks {
     @inject(TYPES.HookManager) private hookManager: IHookManager,
     @inject(TYPES.UiDirector) private uiDirector: IUiDirector,
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker,
+    private actionDispatcher: ActionDispatcher,
     private appUseCase: AppUseCase,
     private prefsUseCase: PreferencesUseCase,
-    private actionDispatcher: ActionDispatcher
   ) {
     this.hookManager.on('app-launched', this.onAppLaunched);
     this.hookManager.on('app-quit', this.onAppQuit);

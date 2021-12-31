@@ -3,24 +3,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { CaptureMode } from '@core/entities/common';
-import { IControlPanel } from '@core/entities/ui';
 import { IRecordOptions } from '@core/entities/capture';
 
-import { RootState } from '@ui/redux/store';
 import { CaptureOptions } from '@ui/components/stateless/CaptureOptions';
-import { changeCaptureOptions, disableCaptureMode } from '@ui/redux/slice';
+import { useActionDispatcher } from '@ui/hooks/dispatcher';
+import { useRootUiState } from '@ui/hooks/state';
 
 import styles from '@ui/components/stateful/ControlPanel.css';
 
 const ControlPanel = () => {
-  const dispatch = useDispatch();
+  const dispatcher = useActionDispatcher();
 
-  const controlPanel: IControlPanel = useSelector(
-    (state: RootState) => state.ui.root.controlPanel
-  );
+  const { controlPanel } = useRootUiState();
 
   const composeOptions = useCallback(
     (mode?: CaptureMode, recOpts?: IRecordOptions) => {
@@ -43,20 +39,20 @@ const ControlPanel = () => {
 
   const handleCaptureModeChange = useCallback(
     (mode: CaptureMode) => {
-      dispatch(changeCaptureOptions(composeOptions(mode)));
+      dispatcher.changeCaptureOptions(composeOptions(mode));
     },
     [controlPanel]
   );
 
   const handleRecOptionsChange = useCallback(
     (recOpts: IRecordOptions) => {
-      dispatch(changeCaptureOptions(composeOptions(undefined, recOpts)));
+      dispatcher.changeCaptureOptions(composeOptions(undefined, recOpts));
     },
     [controlPanel]
   );
 
   const handleCaptureCancel = useCallback(() => {
-    dispatch(disableCaptureMode());
+    dispatcher.disableCaptureMode();
   }, []);
 
   return (

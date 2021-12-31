@@ -10,13 +10,15 @@ import path from 'path';
 import { desktopCapturer, ipcRenderer } from 'electron';
 import log from 'electron-log';
 
+import { diContainer } from '@di/containers/renderer';
+import { TYPES } from '@di/types';
 import { CaptureMode } from '@core/entities/common';
 import { IBounds } from '@core/entities/screen';
 import {
   IRecordContext,
   ITargetSlice,
 } from '@infrastructures/recorder/rec-delegate/types';
-import { getAppPath } from '@utils/remote';
+import { IRemote } from '@adapters/remote/types';
 import { getNowAsYYYYMMDDHHmmss } from '@utils/date';
 
 const MEDIA_MIME_TYPE = 'video/webm; codecs=h264,opus';
@@ -47,6 +49,8 @@ interface IDrawContext {
   drawables: IDrawable[];
 }
 
+const remote = diContainer.get<IRemote>(TYPES.Remote);
+
 const recorderOpts = (mimeType?: string, videoBitrates?: number) => {
   const mType = mimeType ?? MEDIA_MIME_TYPE;
   if (videoBitrates !== undefined) {
@@ -61,7 +65,7 @@ const recorderOpts = (mimeType?: string, videoBitrates?: number) => {
 const getTempOutputPath = () => {
   const fileName = getNowAsYYYYMMDDHHmmss();
   return path.join(
-    getAppPath('temp'),
+    remote.getAppPath('temp'),
     'kropsaurus',
     'recording',
     `tmp-${fileName}.webm`

@@ -2,28 +2,27 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Electron: Renderer",
+      "type": "node",
+      "request": "launch",
+      "protocol": "inspector",
+      "sourceMaps": true,
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:renderer"]
+    },
+    {
       "name": "Electron: Main",
       "type": "node",
       "request": "launch",
       "protocol": "inspector",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "start:main"],
-      "preLaunchTask": "Start Webpack Dev"
-    },
-    {
-      "name": "Electron: Renderer",
-      "type": "chrome",
-      "request": "attach",
-      "port": 9223,
-      "protocol": "inspector",
-      "webRoot": "${workspaceFolder}",
-      "timeout": 30000
+      "runtimeArgs": ["run", "start:main"]
     }
   ],
   "compounds": [
     {
       "name": "Electron: All",
-      "configurations": ["Electron: Main", "Electron: Renderer"]
+      "configurations": ["Electron: Renderer", "Electron: Main"]
     }
   ]
 }

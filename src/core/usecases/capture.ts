@@ -125,6 +125,8 @@ export class CaptureUseCase {
         },
       };
     });
+
+    this.hookManager.emit('capture-options-changed', {});
   }
 
   startTargetSelection() {

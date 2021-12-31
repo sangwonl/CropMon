@@ -42,8 +42,9 @@ export default {
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production',
     }),
+
     new webpack.DefinePlugin({
-      'process.env.FLUENTFFMPEG_COV': false
+      'process.env.FLUENTFFMPEG_COV': JSON.stringify(false),
     }),
   ],
 };

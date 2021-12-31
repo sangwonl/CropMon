@@ -14,31 +14,22 @@ import {
   MenuItemConstructorOptions,
 } from 'electron';
 
-import store from '@ui/redux/store';
-import {
-  showAbout,
-  showHelp,
-  openPreferences,
-  quitApplication,
-  checkForUpdates,
-  downloadAndInstall,
-  enableCaptureMode,
-  finishCapture,
-  toggleRecOptions,
-} from '@ui/redux/slice';
-import { assetPathResolver } from '@utils/asset';
+import { diContainer } from '@di/containers/main';
 import { IRecordOptions } from '@core/entities/capture';
+import { ActionDispatcher } from '@adapters/actions/dispatcher';
+import { assetPathResolver } from '@utils/asset';
 import { isMac } from '@utils/process';
 
 const TOOLTIP_GREETING = "Roar! I'm here to help you record the screen";
 const TOOLTIP_UPDATE = 'New update available, please make me stronger!';
-const TOOLTIP_RECORDING = 'Now recording.. Click to stop';
+const TOOLTIP_RECORDING = 'Now recording. Click to stop';
 
 export default abstract class AppTray {
   tray: Tray;
   menu: Menu | null = null;
   isRecording = false;
   isUpdatable = false;
+  dispatcher: ActionDispatcher;
 
   constructor(
     private iconDefault: NativeImage,
@@ -47,6 +38,7 @@ export default abstract class AppTray {
   ) {
     this.tray = new Tray(this.iconDefault);
     this.tray.setToolTip(TOOLTIP_GREETING);
+    this.dispatcher = diContainer.get(ActionDispatcher);
 
     this.setupClickHandler();
   }
@@ -57,63 +49,57 @@ export default abstract class AppTray {
 
   protected abstract setupClickHandler(): void;
 
-  protected onAbout() {
-    store.dispatch(showAbout());
-  }
+  protected onAbout = () => {
+    this.dispatcher.showAbout();
+  };
 
-  protected onHelp() {
-    store.dispatch(showHelp());
-  }
+  protected onHelp = () => {
+    this.dispatcher.showHelp();
+  };
 
-  protected onCheckForUpdates() {
-    store.dispatch(checkForUpdates());
-  }
+  protected onCheckForUpdates = () => {
+    this.dispatcher.checkForUpdates();
+  };
 
-  protected onDownloadAndInstall() {
-    store.dispatch(downloadAndInstall());
-  }
+  protected onDownloadAndInstall = () => {
+    this.dispatcher.downloadAndInstall();
+  };
 
-  protected onStartRecording() {
-    store.dispatch(enableCaptureMode());
-  }
+  protected onStartRecording = () => {
+    this.dispatcher.enableCaptureMode();
+  };
 
-  protected onStopRecording() {
-    store.dispatch(finishCapture());
-  }
+  protected onStopRecording = () => {
+    this.dispatcher.finishCapture();
+  };
 
-  protected onPreferences() {
-    store.dispatch(openPreferences());
-  }
+  protected onPreferences = () => {
+    this.dispatcher.openPreferences();
+  };
 
-  protected onToggleLowQual(m: MenuItem) {
-    store.dispatch(
-      toggleRecOptions({
-        enableLowQualityMode: m.checked,
-      })
-    );
-  }
+  protected onToggleLowQual = (m: MenuItem) => {
+    this.dispatcher.toggleRecordOptions({
+      enableLowQualityMode: m.checked,
+    });
+  };
 
-  protected onToggleOutGif(m: MenuItem) {
-    store.dispatch(
-      toggleRecOptions({
-        enableOutputAsGif: m.checked,
-        enableMicrophone: false,
-      })
-    );
-  }
+  protected onToggleOutGif = (m: MenuItem) => {
+    this.dispatcher.toggleRecordOptions({
+      enableOutputAsGif: m.checked,
+      enableMicrophone: false,
+    });
+  };
 
-  protected onToggleMic(m: MenuItem) {
-    store.dispatch(
-      toggleRecOptions({
-        enableMicrophone: m.checked,
-        enableOutputAsGif: false,
-      })
-    );
-  }
+  protected onToggleMic = (m: MenuItem) => {
+    this.dispatcher.toggleRecordOptions({
+      enableMicrophone: m.checked,
+      enableOutputAsGif: false,
+    });
+  };
 
-  protected onQuit() {
-    store.dispatch(quitApplication());
-  }
+  protected onQuit = () => {
+    this.dispatcher.quitApplication();
+  };
 
   private getMenuItemTemplById(
     contextMenuTempl: any,
@@ -231,27 +217,27 @@ class WinAppTray extends AppTray {
       {
         id: 'check-update',
         label: 'Check for &Updates',
-        click: super.onCheckForUpdates,
+        click: this.onCheckForUpdates,
       },
       {
         id: 'update',
         label: 'Download and Install',
-        click: super.onDownloadAndInstall,
+        click: this.onDownloadAndInstall,
       },
       {
         type: 'separator',
       },
       {
         label: '&About',
-        click: super.onAbout,
+        click: this.onAbout,
       },
       {
         label: '&Help',
-        click: super.onHelp,
+        click: this.onHelp,
       },
       {
         label: '&Preferences',
-        click: super.onPreferences,
+        click: this.onPreferences,
       },
       {
         type: 'separator',
@@ -259,12 +245,12 @@ class WinAppTray extends AppTray {
       {
         id: 'start-capture',
         label: 'Start &Recording',
-        click: super.onStartRecording,
+        click: this.onStartRecording,
       },
       {
         id: 'stop-capture',
         label: 'Stop &Recording',
-        click: super.onStopRecording,
+        click: this.onStopRecording,
         visible: false,
       },
       {
@@ -275,19 +261,19 @@ class WinAppTray extends AppTray {
             id: 'low-qual',
             type: 'checkbox',
             label: 'Low Quality Mode',
-            click: super.onToggleLowQual,
+            click: this.onToggleLowQual,
           },
           {
             id: 'out-gif',
             type: 'checkbox',
             label: 'Output as GIF',
-            click: super.onToggleOutGif,
+            click: this.onToggleOutGif,
           },
           {
             id: 'record-mic',
             type: 'checkbox',
             label: 'Record Microphone',
-            click: super.onToggleMic,
+            click: this.onToggleMic,
           },
         ],
       },
@@ -296,7 +282,7 @@ class WinAppTray extends AppTray {
       },
       {
         label: '&Quit',
-        click: super.onQuit,
+        click: this.onQuit,
       },
     ];
   }
@@ -304,7 +290,7 @@ class WinAppTray extends AppTray {
   protected setupClickHandler(): void {
     this.tray.on('click', () => {
       if (this.isRecording) {
-        store.dispatch(finishCapture());
+        this.dispatcher.finishCapture();
       }
     });
   }
@@ -331,27 +317,27 @@ class MacAppTray extends AppTray {
       {
         id: 'check-update',
         label: 'Check for Updates',
-        click: super.onCheckForUpdates,
+        click: this.onCheckForUpdates,
       },
       {
         id: 'update',
         label: 'Download and Install',
-        click: super.onDownloadAndInstall,
+        click: this.onDownloadAndInstall,
       },
       {
         type: 'separator',
       },
       {
         label: 'About',
-        click: super.onAbout,
+        click: this.onAbout,
       },
       {
         label: 'Help',
-        click: super.onHelp,
+        click: this.onHelp,
       },
       {
         label: 'Preferences',
-        click: super.onPreferences,
+        click: this.onPreferences,
       },
       {
         type: 'separator',
@@ -359,12 +345,12 @@ class MacAppTray extends AppTray {
       {
         id: 'start-capture',
         label: 'Start Recording',
-        click: super.onStartRecording,
+        click: this.onStartRecording,
       },
       {
         id: 'stop-capture',
         label: 'Stop Recording',
-        click: super.onStopRecording,
+        click: this.onStopRecording,
         visible: false,
       },
       {
@@ -375,19 +361,19 @@ class MacAppTray extends AppTray {
             id: 'low-qual',
             type: 'checkbox',
             label: 'Low Quality Mode',
-            click: super.onToggleLowQual,
+            click: this.onToggleLowQual,
           },
           {
             id: 'out-gif',
             type: 'checkbox',
             label: 'Output as GIF',
-            click: super.onToggleOutGif,
+            click: this.onToggleOutGif,
           },
           {
             id: 'record-mic',
             type: 'checkbox',
             label: 'Record Microphone',
-            click: super.onToggleMic,
+            click: this.onToggleMic,
           },
         ],
       },
@@ -396,7 +382,7 @@ class MacAppTray extends AppTray {
       },
       {
         label: 'Quit',
-        click: super.onQuit,
+        click: this.onQuit,
       },
     ];
   }
@@ -405,7 +391,7 @@ class MacAppTray extends AppTray {
     this.tray.on('click', () => {
       if (this.isRecording) {
         this.tray.setContextMenu(null);
-        store.dispatch(finishCapture());
+        this.dispatcher.finishCapture();
       } else {
         this.tray.setContextMenu(this.menu);
         this.tray.popUpContextMenu();

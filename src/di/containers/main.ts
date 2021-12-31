@@ -18,13 +18,16 @@ import { PreferencesUseCase } from '@core/usecases/preferences';
 import { ElectronScreenRecorder } from '@infrastructures/recorder/recorder';
 import { PreferencesStore } from '@infrastructures/preferences';
 import { GoogleAnalyticsTracker } from '@infrastructures/tracker';
+import { ActionDispatcherProxy } from '@adapters/actions/proxy';
 import { HookManager, BuiltinHooks } from '@infrastructures/hook';
 import { AppUpdater } from '@infrastructures/updater';
 import { UiDirector } from '@infrastructures/director';
-import { ActionDispatcher } from '@adapters/action';
 import { UiStateApplier } from '@infrastructures/state';
+import { ActionDispatcher } from '@adapters/actions/dispatcher';
+import { RemoteProxy } from '@adapters/remote/proxy';
+import { IRemote } from '@adapters/remote/types';
 
-import { TYPES } from './types';
+import { TYPES } from '@di/types';
 
 const diContainer = new Container();
 
@@ -64,12 +67,22 @@ diContainer
   .inSingletonScope();
 
 diContainer
-  .bind<StateManager>(StateManager)
-  .toSelf()
+  .bind<IRemote>(TYPES.Remote)
+  .to(RemoteProxy)
   .inSingletonScope();
 
 diContainer
   .bind<ActionDispatcher>(ActionDispatcher)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<ActionDispatcherProxy>(ActionDispatcherProxy)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<StateManager>(StateManager)
   .toSelf()
   .inSingletonScope();
 
@@ -92,6 +105,12 @@ diContainer
   .bind<PreferencesUseCase>(PreferencesUseCase)
   .toSelf()
   .inSingletonScope();
+
+diContainer
+  .get<IRemote>(TYPES.Remote);
+
+diContainer
+  .get(ActionDispatcherProxy);
 
 diContainer
   .get(BuiltinHooks);

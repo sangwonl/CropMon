@@ -9,6 +9,7 @@ const TYPES = {
   AnalyticsTracker: Symbol.for('AnalyticsTracker'),
   ShortcutManager: Symbol.for('ShortcutManager'),
   HookManager: Symbol.for('HookManager'),
+  Remote: Symbol.for('Remote'),
 };
 
 export { TYPES };

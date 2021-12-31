@@ -10,10 +10,11 @@ import { AppUseCase } from '@core/usecases/app';
 import { PreferencesUseCase } from '@core/usecases/preferences';
 import { CaptureUseCase } from '@core/usecases/capture';
 import { IHookManager } from '@core/interfaces/hook';
+import { IActionDispatcher } from '@adapters/actions/types';
 import { adjustSelectionBounds } from '@utils/bounds';
 
 @injectable()
-export class ActionDispatcher {
+export class ActionDispatcher implements IActionDispatcher {
   constructor(
     private appUseCase: AppUseCase,
     private prefsUseCase: PreferencesUseCase,
@@ -62,8 +63,6 @@ export class ActionDispatcher {
   };
 
   changeCaptureOptions = (options: ICaptureOptions) => {
-    this.hookManager.emit('capture-options-changed', {});
-
     this.captureUseCase.changeCaptureOptions(options);
   };
 
@@ -90,13 +89,13 @@ export class ActionDispatcher {
   };
 
   onCaptureToggleShortcut = () => {
-    this.hookManager.emit('capture-shortcut-triggered', {});
-
     const captCtx = this.captureUseCase.curCaptureContext();
     if (captCtx?.status === CaptureStatus.IN_PROGRESS) {
       this.finishCapture();
     } else {
       this.enableCaptureMode();
+
+      this.hookManager.emit('capture-shortcut-triggered', {});
     }
   };
 }
