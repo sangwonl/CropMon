@@ -4,7 +4,6 @@
 /* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import path from 'path';
 import { BrowserWindow, NativeImage } from 'electron';
 
 import { isDebugMode } from '@utils/process';

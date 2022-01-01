@@ -2,18 +2,20 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable import/prefer-default-export */
 
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { ipcMain } from 'electron';
 
+import { TYPES } from '@di/types';
 import { IRecordOptions, ICaptureOptions } from '@core/entities/capture';
 import { CaptureMode } from '@core/entities/common';
 import { IBounds } from '@core/entities/screen';
 import { IActionDispatcher } from '@adapters/actions/types';
-import { ActionDispatcher } from '@adapters/actions/dispatcher';
 
 @injectable()
 export class ActionDispatcherProxy implements IActionDispatcher {
-  constructor(private actionDispatcher: ActionDispatcher) {
+  constructor(
+    @inject(TYPES.ActionDispatcher) private actionDispatcher: IActionDispatcher
+  ) {
     ipcMain.on('disableCaptureMode', () => this.disableCaptureMode());
     ipcMain.on('startTargetSelection', () => this.startTargetSelection());
     ipcMain.on('finishTargetSelection', (_event, targetBounds): void => {

@@ -16,9 +16,10 @@ import {
 
 import { diContainer } from '@di/containers/main';
 import { IRecordOptions } from '@core/entities/capture';
-import { ActionDispatcher } from '@adapters/actions/dispatcher';
+import { IActionDispatcher } from '@adapters/actions/types';
 import { assetPathResolver } from '@utils/asset';
 import { isMac } from '@utils/process';
+import { TYPES } from '@di/types';
 
 const TOOLTIP_GREETING = "Roar! I'm here to help you record the screen";
 const TOOLTIP_UPDATE = 'New update available, please make me stronger!';
@@ -29,7 +30,7 @@ export default abstract class AppTray {
   menu: Menu | null = null;
   isRecording = false;
   isUpdatable = false;
-  dispatcher: ActionDispatcher;
+  dispatcher: IActionDispatcher;
 
   constructor(
     private iconDefault: NativeImage,
@@ -38,7 +39,9 @@ export default abstract class AppTray {
   ) {
     this.tray = new Tray(this.iconDefault);
     this.tray.setToolTip(TOOLTIP_GREETING);
-    this.dispatcher = diContainer.get(ActionDispatcher);
+    this.dispatcher = diContainer.get<IActionDispatcher>(
+      TYPES.ActionDispatcher
+    );
 
     this.setupClickHandler();
   }
