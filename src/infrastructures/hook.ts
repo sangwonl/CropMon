@@ -19,7 +19,7 @@ import { IUiDirector } from '@core/interfaces/director';
 import { HookType, IHookManager } from '@core/interfaces/hook';
 import { AppUseCase } from '@core/usecases/app';
 import { PreferencesUseCase } from '@core/usecases/preferences';
-import { ActionDispatcher } from '@adapters/actions/dispatcher';
+import { IActionDispatcher } from '@adapters/actions/types';
 import { getPlatform, isDebugMode, isMac } from '@utils/process';
 import { getTimeInSeconds } from '@utils/date';
 import { SHORTCUT_CAPTURE_MODE_AREA, SHORTCUT_CAPTURE_MODE_SCREEN, SHORTCUT_ENTER, SHORTCUT_ESCAPE, SHORTCUT_OUTPUT_GIF, SHORTCUT_OUTPUT_MP4 } from '@utils/shortcut';
@@ -97,7 +97,7 @@ export class BuiltinHooks {
     @inject(TYPES.HookManager) private hookManager: IHookManager,
     @inject(TYPES.UiDirector) private uiDirector: IUiDirector,
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker,
-    private actionDispatcher: ActionDispatcher,
+    @inject(TYPES.ActionDispatcher) private actionDispatcher: IActionDispatcher,
     private appUseCase: AppUseCase,
     private prefsUseCase: PreferencesUseCase,
   ) {

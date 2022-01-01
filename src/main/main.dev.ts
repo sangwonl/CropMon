@@ -15,14 +15,17 @@ import { app } from 'electron';
 import log from 'electron-log';
 
 import { diContainer } from '@di/containers/main';
-import { ActionDispatcher } from '@adapters/actions/dispatcher';
+import { TYPES } from '@di/types';
+import { IActionDispatcher } from '@adapters/actions/types';
 
 import { initializeDevEnv } from './devenv';
 
 const start = async () => {
   await initializeDevEnv();
 
-  await diContainer.get(ActionDispatcher).initializeApp();
+  await diContainer
+    .get<IActionDispatcher>(TYPES.ActionDispatcher)
+    .initializeApp();
 
   app.on('before-quit', () => {
     app.quit();

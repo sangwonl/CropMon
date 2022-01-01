@@ -18,14 +18,15 @@ import { PreferencesUseCase } from '@core/usecases/preferences';
 import { ElectronScreenRecorder } from '@infrastructures/recorder/recorder';
 import { PreferencesStore } from '@infrastructures/preferences';
 import { GoogleAnalyticsTracker } from '@infrastructures/tracker';
-import { ActionDispatcherProxy } from '@adapters/actions/proxy';
 import { HookManager, BuiltinHooks } from '@infrastructures/hook';
 import { AppUpdater } from '@infrastructures/updater';
 import { UiDirector } from '@infrastructures/director';
 import { UiStateApplier } from '@infrastructures/state';
+import { IActionDispatcher } from '@adapters/actions/types';
 import { ActionDispatcher } from '@adapters/actions/dispatcher';
-import { RemoteProxy } from '@adapters/remote/proxy';
+import { ActionDispatcherProxy } from '@adapters/actions/proxy';
 import { IRemote } from '@adapters/remote/types';
+import { RemoteProxy } from '@adapters/remote/proxy';
 
 import { TYPES } from '@di/types';
 
@@ -72,8 +73,8 @@ diContainer
   .inSingletonScope();
 
 diContainer
-  .bind<ActionDispatcher>(ActionDispatcher)
-  .toSelf()
+  .bind<IActionDispatcher>(TYPES.ActionDispatcher)
+  .to(ActionDispatcher)
   .inSingletonScope();
 
 diContainer
