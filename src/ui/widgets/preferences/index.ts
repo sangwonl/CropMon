@@ -73,10 +73,10 @@ export default class PreferencesModal extends Widget {
   }
 
   async open(
-    prefs: IPreferences,
+    options: PreferencesModalOptions,
     onSave: (updatedPrefs: IPreferences) => void
   ): Promise<IPreferences | undefined> {
-    this.notifyPrefsUpdated(prefs);
+    this.notifyPrefsUpdated(options.preferences);
 
     if (this.loaded) {
       this.show();
