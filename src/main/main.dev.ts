@@ -26,14 +26,6 @@ const start = async () => {
   await diContainer
     .get<IActionDispatcher>(TYPES.ActionDispatcher)
     .initializeApp();
-
-  app.on('before-quit', () => {
-    app.quit();
-  });
-
-  app.on('window-all-closed', () => {
-    app.quit();
-  });
 };
 
 const instanceLock = app.requestSingleInstanceLock();
