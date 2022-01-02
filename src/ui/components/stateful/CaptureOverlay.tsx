@@ -29,8 +29,8 @@ enum RenderMode {
 }
 
 const stretchBodySize = (w: number, h: number) => {
-  document.body.style.width = `${w}px`;
-  document.body.style.height = `${h}px`;
+  const curCssText = document.body.style.cssText;
+  document.body.style.cssText = `${curCssText}; width: ${w}px; height: ${h}px;`;
 };
 
 const adjustBodySize = (overlayBounds: IBounds | null) => {
