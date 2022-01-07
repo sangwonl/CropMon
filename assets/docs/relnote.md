@@ -1,5 +1,13 @@
 ## Release Notes
 
+### v0.7.1
+
+_6 Jan 2022_
+
+- Fix bug in shortcut registration
+- Reduce and update dependencies
+- Optimize internal state management
+
 ### v0.7.0
 
 _23 Dec 2021_
