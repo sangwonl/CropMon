@@ -11,7 +11,6 @@ import { isDebugMode } from '@utils/process';
 import { WidgetType } from './types';
 
 export interface WidgetOptions {
-  hideWhenClose?: boolean;
   icon?: NativeImage | string;
   show?: boolean;
   width?: number;
@@ -31,8 +30,6 @@ export interface WidgetOptions {
 }
 
 export class Widget extends BrowserWindow {
-  private forceClose = false;
-
   constructor(type: WidgetType, options?: WidgetOptions) {
     super({
       icon: options?.icon,
@@ -59,15 +56,6 @@ export class Widget extends BrowserWindow {
 
     this.removeMenu();
 
-    this.on('close', (event) => {
-      if (!this.forceClose) {
-        event.preventDefault();
-      }
-      if (options?.hideWhenClose ?? true) {
-        this.hide();
-      }
-    });
-
     // be sure window scaled as default
     this.webContents.on('did-finish-load', () => {
       this.webContents.setZoomFactor(1.0);
@@ -78,10 +66,5 @@ export class Widget extends BrowserWindow {
         options: options?.options,
       });
     });
-  }
-
-  close(): void {
-    this.forceClose = true;
-    super.close();
   }
 }

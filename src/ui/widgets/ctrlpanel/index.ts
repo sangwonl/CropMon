@@ -26,7 +26,6 @@ export default class ControlPanel extends Widget {
       minimizable: false,
       focusable: true,
       skipTaskbar: true,
-      hideWhenClose: false,
     });
 
     this.loadURL(`file://${__dirname}/../ctrlpanel/index.html`);

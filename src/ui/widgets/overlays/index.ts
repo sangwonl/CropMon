@@ -22,7 +22,6 @@ export default class CaptureOverlay extends Widget {
       focusable: true,
       skipTaskbar: true,
       transparent: true,
-      hideWhenClose: false,
       titleBarStyle: 'customButtonsOnHover', // for MacOS, with frame: false
       enableLargerThanScreen: true, // for MacOS, margin workaround
     });

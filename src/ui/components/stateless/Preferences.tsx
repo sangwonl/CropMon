@@ -20,7 +20,8 @@ export interface PreferencesProps {
   origPrefs: IPreferences;
   selectedRecordHome: string;
   onChooseRecordHome: () => void;
-  onClose: (preferences?: IPreferences) => void;
+  onSave: (preferences: IPreferences) => void;
+  onClose: () => void;
 }
 
 const TAB_GENERAL = 'general';
@@ -36,6 +37,7 @@ export const Preferences = ({
   origPrefs,
   selectedRecordHome,
   onChooseRecordHome,
+  onSave,
   onClose,
 }: PreferencesProps) => {
   const [curTabId, setCurTabId] = useState<string>(TAB_GENERAL);
@@ -46,9 +48,9 @@ export const Preferences = ({
 
   const handleSave = useCallback(
     (prefs: IPreferences) => {
-      onClose(prefs);
+      onSave(prefs);
     },
-    [onClose]
+    [onSave]
   );
 
   const handleCancel = useCallback(() => {

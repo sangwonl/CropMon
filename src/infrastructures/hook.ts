@@ -145,11 +145,11 @@ export class BuiltinHooks {
   };
 
   onAppUpdated = async (_args: HookArgsAppUpdated) => {
-    await this.uiDirector.openReleaseNotesPopup();
+    await this.uiDirector.openReleaseNotesModal();
   };
 
   onInitialPrefsLoaded = async (_args: HookArgsInitialPrefsLoaded) => {
-    await this.uiDirector.openHelpPagePopup();
+    await this.uiDirector.openHelpPageModal();
 
     this.tracker.eventL('app-lifecycle', 'initial-launch', getPlatform());
   };
