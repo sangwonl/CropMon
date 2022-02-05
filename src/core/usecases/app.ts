@@ -54,11 +54,11 @@ export class AppUseCase {
 
   async showAboutPopup() {
     const prefs = await this.prefsUseCase.fetchUserPreferences();
-    await this.uiDirector.openAboutPagePopup(prefs);
+    await this.uiDirector.openAboutPageModal(prefs);
   }
 
   async showHelpPopup() {
-    await this.uiDirector.openHelpPagePopup();
+    await this.uiDirector.openHelpPageModal();
   }
 
   quitApplication() {

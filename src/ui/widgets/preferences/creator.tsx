@@ -13,6 +13,7 @@ import {
   IPC_EVT_ON_CLOSE,
   IPC_EVT_ON_PREFS_UPDATED,
   IPC_EVT_ON_RECORD_HOME_SELECTION,
+  IPC_EVT_ON_SAVE,
   IpcEvtOnPrefsUpdated,
   PreferencesModalOptions,
 } from '@ui/widgets/preferences/shared';
@@ -45,8 +46,11 @@ const Wrapper: FC<PropTypes> = (props: PropTypes) => {
     <Preferences
       origPrefs={origPrefs}
       selectedRecordHome={prefs.recordHome}
-      onClose={(preferences?: IPreferences) => {
-        ipcRenderer.send(IPC_EVT_ON_CLOSE, { preferences });
+      onSave={(preferences: IPreferences) => {
+        ipcRenderer.send(IPC_EVT_ON_SAVE, { preferences });
+      }}
+      onClose={() => {
+        ipcRenderer.send(IPC_EVT_ON_CLOSE);
       }}
       onChooseRecordHome={() => {
         ipcRenderer.send(IPC_EVT_ON_RECORD_HOME_SELECTION, { prefs });

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
-export interface StaticPagePopupOptions {
+export interface StaticPageModalOptions {
   markdown?: string;
   html?: string;
   width?: number;

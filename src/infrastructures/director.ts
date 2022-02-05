@@ -22,15 +22,12 @@ import { IBounds } from '@core/entities/screen';
 import { IPreferences } from '@core/entities/preferences';
 import { IUiDirector } from '@core/interfaces/director';
 
-import CachedWidget from '@ui/widgets/cached';
 import AppTray from '@ui/widgets/tray';
 import ControlPanel from '@ui/widgets/ctrlpanel';
 import CaptureOverlay from '@ui/widgets/overlays';
-import PreferencesModal from '@ui/widgets/preferences';
 import ProgressDialog from '@ui/widgets/progressdialog';
-import StaticPagePopup from '@ui/widgets/staticpage';
-import { StaticPagePopupOptions } from '@ui/widgets/staticpage/shared';
-import { PreferencesModalOptions } from '@ui/widgets/preferences/shared';
+import StaticPageModal from '@ui/widgets/staticpage';
+import PreferencesModal from '@ui/widgets/preferences';
 
 import { assetPathResolver } from '@utils/asset';
 import { getScreenOfCursor, getWholeScreenBounds } from '@utils/bounds';
@@ -80,31 +77,18 @@ class CaptureOverlayWrap {
   }
 }
 
-class CachedStaticPagePopup extends CachedWidget<
-  StaticPagePopup,
-  StaticPagePopupOptions,
-  void
-> {}
-
-class CachedPreferencesModal extends CachedWidget<
-  PreferencesModal,
-  PreferencesModalOptions,
-  IPreferences
-> {}
-
 @injectable()
 export class UiDirector implements IUiDirector {
   private appTray?: AppTray;
   private controlPanel?: ControlPanel;
   private captureOverlay?: CaptureOverlayWrap;
+
+  private aboutModal?: StaticPageModal;
+  private helpModal?: StaticPageModal;
+  private relNoteModal?: StaticPageModal;
+  private prefsModal?: PreferencesModal;
   private updateProgressDialog?: ProgressDialog;
-  private preferencesModal?: CachedPreferencesModal;
-  private aboutPopup?: CachedStaticPagePopup;
-  private aboutContent?: string;
-  private relNotePopup?: CachedStaticPagePopup;
-  private relNoteContent?: string;
-  private helpPopup?: CachedStaticPagePopup;
-  private helpContent?: string;
+
   private recTimeHandle?: NodeJS.Timer;
   private recTimeStart?: number;
   private screenBoundsDetector?: NodeJS.Timer;
@@ -113,10 +97,6 @@ export class UiDirector implements IUiDirector {
     this.appTray = AppTray.create();
     this.controlPanel = new ControlPanel();
     this.captureOverlay = new CaptureOverlayWrap();
-    this.preferencesModal = new CachedPreferencesModal(PreferencesModal, 600);
-    this.aboutPopup = new CachedStaticPagePopup(StaticPagePopup, 300);
-    this.relNotePopup = new CachedStaticPagePopup(StaticPagePopup, 300);
-    this.helpPopup = new CachedStaticPagePopup(StaticPagePopup, 300);
   }
 
   async refreshTrayState(
@@ -159,64 +139,87 @@ export class UiDirector implements IUiDirector {
   }
 
   quitApplication(): void {
-    this.controlPanel?.close();
-    this.captureOverlay?.close();
-    this.preferencesModal?.close();
-    this.aboutPopup?.close();
-    this.relNotePopup?.close();
-    this.helpPopup?.close();
-
     app.quit();
   }
 
-  async openAboutPagePopup(prefs: IPreferences): Promise<void> {
-    if (this.aboutContent === undefined) {
-      const aboutHtmlPath = assetPathResolver('docs/about.html');
-      this.aboutContent = (await fs.promises.readFile(aboutHtmlPath, 'utf-8'))
-        .replace('__shortcut__', shortcutForDisplay(prefs.shortcut))
-        .replace('__version__', curVersion);
+  async openAboutPageModal(prefs: IPreferences): Promise<void> {
+    if (this.aboutModal) {
+      this.aboutModal.focus();
+      return;
     }
 
-    this.aboutPopup?.open({
+    const aboutHtmlPath = assetPathResolver('docs/about.html');
+    const aboutContent = (await fs.promises.readFile(aboutHtmlPath, 'utf-8'))
+      .replace('__shortcut__', shortcutForDisplay(prefs.shortcut))
+      .replace('__version__', curVersion);
+
+    this.aboutModal = StaticPageModal.create({
       width: 300,
       height: 240,
-      html: this.aboutContent,
+      html: aboutContent,
     });
+
+    await this.aboutModal.doModal();
+
+    this.aboutModal = undefined;
   }
 
-  async openReleaseNotesPopup(): Promise<void> {
-    if (this.relNoteContent === undefined) {
-      const relNotePath = assetPathResolver('docs/relnote.md');
-      this.relNoteContent = await fs.promises.readFile(relNotePath, 'utf-8');
+  async openReleaseNotesModal(): Promise<void> {
+    if (this.relNoteModal) {
+      this.relNoteModal.focus();
+      return;
     }
 
-    this.relNotePopup?.open({
+    const relNotePath = assetPathResolver('docs/relnote.md');
+    const relNoteContent = await fs.promises.readFile(relNotePath, 'utf-8');
+
+    this.relNoteModal = StaticPageModal.create({
       width: 440,
       height: 480,
-      markdown: this.relNoteContent,
+      markdown: relNoteContent,
     });
+
+    await this.relNoteModal.doModal();
+
+    this.relNoteModal = undefined;
   }
 
-  async openHelpPagePopup(): Promise<void> {
-    if (this.helpContent === undefined) {
-      const helpHtmlPath = assetPathResolver('docs/help.html');
-      this.helpContent = (
-        await fs.promises.readFile(helpHtmlPath, 'utf-8')
-      ).replace('__assets__', assetPathResolver(''));
+  async openHelpPageModal(): Promise<void> {
+    if (this.helpModal) {
+      this.helpModal.focus();
+      return;
     }
 
-    this.helpPopup?.open({
+    const helpHtmlPath = assetPathResolver('docs/help.html');
+    const helpContent = (
+      await fs.promises.readFile(helpHtmlPath, 'utf-8')
+    ).replace('__assets__', assetPathResolver(''));
+
+    this.helpModal = StaticPageModal.create({
       width: 600,
       height: 800,
-      html: this.helpContent,
+      html: helpContent,
     });
+
+    await this.helpModal.doModal();
+
+    this.helpModal = undefined;
   }
 
   async openPreferencesModal(
     preferences: IPreferences,
     onSave: (updatedPrefs: IPreferences) => void
   ): Promise<void> {
-    await this.preferencesModal?.openAsModal({ preferences }, onSave);
+    if (this.prefsModal) {
+      this.prefsModal.focus();
+      return;
+    }
+
+    this.prefsModal = PreferencesModal.create({ preferences });
+
+    await this.prefsModal.doModal(onSave);
+
+    this.prefsModal = undefined;
   }
 
   enableCaptureMode(

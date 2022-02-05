@@ -11,9 +11,9 @@ export interface IUiDirector {
   ): Promise<void>;
   toggleRecordingTime(activate: boolean): void;
   quitApplication(): void;
-  openAboutPagePopup(prefs: IPreferences): Promise<void>;
-  openReleaseNotesPopup(): Promise<void>;
-  openHelpPagePopup(): Promise<void>;
+  openAboutPageModal(prefs: IPreferences): Promise<void>;
+  openReleaseNotesModal(): Promise<void>;
+  openHelpPageModal(): Promise<void>;
   openPreferencesModal(
     prefs: IPreferences,
     onSave: (updatedPrefs: IPreferences) => void

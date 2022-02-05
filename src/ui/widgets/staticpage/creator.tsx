@@ -9,10 +9,10 @@ import React, { FC } from 'react';
 import { StaticPage } from '@ui/components/stateless/StaticPage';
 import { preventZoomKeyEvent } from '@ui/widgets/utils';
 
-import { StaticPagePopupOptions } from './shared';
+import { StaticPageModalOptions } from './shared';
 
 interface PropTypes {
-  options: StaticPagePopupOptions;
+  options: StaticPageModalOptions;
 }
 
 const Wrapper: FC<PropTypes> = (props: PropTypes) => {
@@ -20,7 +20,7 @@ const Wrapper: FC<PropTypes> = (props: PropTypes) => {
   return <StaticPage markdown={options.markdown} html={options.html} />;
 };
 
-export default (options: StaticPagePopupOptions) => {
+export default (options: StaticPageModalOptions) => {
   return <Wrapper options={options} />;
 };
 

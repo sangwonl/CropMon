@@ -16,15 +16,17 @@ import {
   IPC_EVT_ON_RECORD_HOME_SELECTION,
   IPC_EVT_ON_CLOSE,
   IPC_EVT_ON_PREFS_UPDATED,
-  IpcEvtOnClose,
+  IPC_EVT_ON_SAVE,
+  IpcEvtOnSave,
   PreferencesModalOptions,
 } from '@ui/widgets/preferences/shared';
 
 export default class PreferencesModal extends Widget {
-  private loaded = false;
+  private options: PreferencesModalOptions;
+  private saveCallback?: (updatedPrefs: IPreferences) => void;
   private closeResolver?: any;
 
-  constructor(options: PreferencesModalOptions) {
+  private constructor(options: PreferencesModalOptions) {
     super(WidgetType.PREFERENECS_MODAL, {
       icon: assetPathResolver('icon.png'),
       show: false,
@@ -33,8 +35,11 @@ export default class PreferencesModal extends Widget {
       resizable: false,
       minimizable: false,
       maximizable: false,
+      closable: true,
       options,
     });
+
+    this.options = options;
 
     this.loadURL(`file://${__dirname}/../preferences/index.html`);
 
@@ -55,48 +60,44 @@ export default class PreferencesModal extends Widget {
       }
     };
 
-    const onClose = (_event: any, data: IpcEvtOnClose) => {
-      this.closeResolver?.(data.preferences);
+    const onSave = (_event: any, data: IpcEvtOnSave) => {
+      const { preferences } = data;
+      this.saveCallback?.(preferences);
+      this.notifyPrefsUpdated(preferences);
     };
 
-    ipcMain.on(IPC_EVT_ON_RECORD_HOME_SELECTION, onRecordHomeSel);
-    ipcMain.on(IPC_EVT_ON_CLOSE, onClose);
+    const onClose = () => {
+      this.close();
+    };
 
     this.on('close', () => {
       this.closeResolver?.();
     });
 
+    ipcMain.on(IPC_EVT_ON_RECORD_HOME_SELECTION, onRecordHomeSel);
+    ipcMain.on(IPC_EVT_ON_SAVE, onSave);
+    ipcMain.on(IPC_EVT_ON_CLOSE, onClose);
+
     this.on('closed', () => {
       ipcMain.off(IPC_EVT_ON_RECORD_HOME_SELECTION, onRecordHomeSel);
+      ipcMain.off(IPC_EVT_ON_SAVE, onSave);
       ipcMain.off(IPC_EVT_ON_CLOSE, onClose);
     });
   }
 
-  async open(
-    options: PreferencesModalOptions,
+  private async openAsModal(
     onSave: (updatedPrefs: IPreferences) => void
-  ): Promise<IPreferences | undefined> {
-    this.notifyPrefsUpdated(options.preferences);
+  ): Promise<void> {
+    this.notifyPrefsUpdated(this.options.preferences);
 
-    if (this.loaded) {
+    this.webContents.on('did-finish-load', () => {
       this.show();
-    } else {
-      this.webContents.on('did-finish-load', () => {
-        this.loaded = true;
-        this.show();
-      });
-    }
+      this.focus();
+    });
 
     return new Promise((resolve, _) => {
-      this.closeResolver = (result?: IPreferences) => {
-        if (result) {
-          onSave(result);
-          this.notifyPrefsUpdated(result);
-        } else {
-          resolve(result);
-          this.hide();
-        }
-      };
+      this.saveCallback = onSave;
+      this.closeResolver = resolve;
     });
   }
 
@@ -105,5 +106,13 @@ export default class PreferencesModal extends Widget {
       oldPrefs: oldPrefs ?? newPrefs,
       newPrefs,
     });
+  }
+
+  async doModal(onSave: (updatedPrefs: IPreferences) => void): Promise<void> {
+    await this.openAsModal(onSave);
+  }
+
+  static create(options: PreferencesModalOptions): PreferencesModal {
+    return new PreferencesModal(options);
   }
 }
