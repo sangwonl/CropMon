@@ -106,7 +106,8 @@
       "extendInfo": {
         "NSMicrophoneUsageDescription": "This app requires microphone access to record audio."
       },
-      "gatekeeperAssess": false
+      "gatekeeperAssess": false,
+      "darkModeSupport": true
     },
     "dmg": {
       "contents": [

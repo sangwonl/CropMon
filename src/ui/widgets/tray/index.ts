@@ -7,11 +7,11 @@
 
 import {
   Tray,
-  nativeImage,
   Menu,
   NativeImage,
   MenuItem,
   MenuItemConstructorOptions,
+  nativeImage,
 } from 'electron';
 
 import { diContainer } from '@di/containers/main';
@@ -25,20 +25,44 @@ const TOOLTIP_GREETING = "Roar! I'm here to help you record the screen";
 const TOOLTIP_UPDATE = 'New update available, please make me stronger!';
 const TOOLTIP_RECORDING = 'Now recording. Click to stop';
 
+type TrayIconType = 'default' | 'recording' | 'updatable';
+class TrayIconProvider {
+  private iconCaches: any = {};
+
+  icon(iconType: TrayIconType): NativeImage {
+    const iconPath = `icon-tray-${iconType}.png`;
+
+    let iconImage: NativeImage = this.iconCaches[iconPath];
+    if (!iconImage) {
+      iconImage = nativeImage.createFromPath(assetPathResolver(iconPath));
+      if (isMac()) {
+        iconImage = iconImage.resize({ width: 18, height: 16 });
+        iconImage.setTemplateImage(true);
+      }
+      this.iconCaches[iconPath] = iconImage;
+    }
+
+    return iconImage;
+  }
+}
+
 export default abstract class AppTray {
+  iconProvider: TrayIconProvider;
+
   tray: Tray;
   menu: Menu | null = null;
+
   isRecording = false;
   isUpdatable = false;
+
   dispatcher: IActionDispatcher;
 
-  constructor(
-    private iconDefault: NativeImage,
-    private iconUpdatable: NativeImage,
-    private iconRecStop: NativeImage
-  ) {
-    this.tray = new Tray(this.iconDefault);
+  constructor() {
+    this.iconProvider = new TrayIconProvider();
+
+    this.tray = new Tray(this.iconProvider.icon('default'));
     this.tray.setToolTip(TOOLTIP_GREETING);
+
     this.dispatcher = diContainer.get<IActionDispatcher>(
       TYPES.ActionDispatcher
     );
@@ -175,12 +199,12 @@ export default abstract class AppTray {
 
   private chooseTrayIcon = (): NativeImage => {
     if (this.isRecording) {
-      return this.iconRecStop;
+      return this.iconProvider.icon('recording');
     }
     if (this.isUpdatable) {
-      return this.iconUpdatable;
+      return this.iconProvider.icon('updatable');
     }
-    return this.iconDefault;
+    return this.iconProvider.icon('default');
   };
 
   private chooseTrayTooltip = (): string => {
@@ -206,14 +230,6 @@ export default abstract class AppTray {
 }
 
 class WinAppTray extends AppTray {
-  constructor() {
-    super(
-      nativeImage.createFromPath(assetPathResolver('icon-tray-default.png')),
-      nativeImage.createFromPath(assetPathResolver('icon-tray-updatable.png')),
-      nativeImage.createFromPath(assetPathResolver('icon-tray-recstop.png'))
-    );
-  }
-
   // eslint-disable-next-line class-methods-use-this
   protected buildMenuTempl(): Array<MenuItemConstructorOptions | MenuItem> {
     return [
@@ -300,20 +316,6 @@ class WinAppTray extends AppTray {
 }
 
 class MacAppTray extends AppTray {
-  constructor() {
-    super(
-      nativeImage
-        .createFromPath(assetPathResolver('icon-tray-default.png'))
-        .resize({ width: 18, height: 16 }),
-      nativeImage
-        .createFromPath(assetPathResolver('icon-tray-updatable.png'))
-        .resize({ width: 18, height: 16 }),
-      nativeImage
-        .createFromPath(assetPathResolver('icon-tray-recstop.png'))
-        .resize({ width: 18, height: 16 })
-    );
-  }
-
   // eslint-disable-next-line class-methods-use-this
   protected buildMenuTempl(): Array<MenuItemConstructorOptions | MenuItem> {
     return [
