@@ -1,5 +1,12 @@
 ## Release Notes
 
+### v0.7.2
+
+_24 Feb 2022_
+
+- Update tray icon for color theme
+- Improve logic of modal window lifecycle
+
 ### v0.7.1
 
 _6 Jan 2022_
