@@ -27,7 +27,7 @@ export interface ICaptureContext {
   status: CaptureStatus;
   createdAt: number;
   finishedAt?: number;
-  outputPath?: string;
+  outputPath: string;
   outputFormat: OutputFormat;
   lowQualityMode: boolean;
   recordMicrophone: boolean;

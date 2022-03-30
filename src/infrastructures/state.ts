@@ -1,15 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable import/prefer-default-export */
-
 import { injectable } from 'inversify';
 import { ipcMain, WebContents } from 'electron';
 
-import { IUiStateApplier } from '@core/interfaces/state';
+import { IUiStateApplier } from '@core/services/state';
 import { IUiState } from '@core/entities/ui';
 
 @injectable()
-export class UiStateApplier implements IUiStateApplier {
+export default class UiStateApplier implements IUiStateApplier {
   private webContents: Map<number, WebContents> = new Map();
 
   constructor() {

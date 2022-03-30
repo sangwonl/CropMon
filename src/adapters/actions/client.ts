@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable import/prefer-default-export */
-
 import { injectable } from 'inversify';
 import { ipcRenderer } from 'electron';
 
@@ -11,7 +7,7 @@ import { IBounds } from '@core/entities/screen';
 import { IActionDispatcher } from '@adapters/actions/types';
 
 @injectable()
-export class ActionDispatcherClient implements IActionDispatcher {
+export default class ActionDispatcherClient implements IActionDispatcher {
   initializeApp(): void {
     throw new Error('Method not implemented.');
   }

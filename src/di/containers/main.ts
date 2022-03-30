@@ -1,34 +1,32 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable import/prefer-default-export */
 
 import 'reflect-metadata';
 
 import { Container } from 'inversify';
 
-import { IUiStateApplier, StateManager } from '@core/interfaces/state';
-import { IScreenRecorder } from '@core/interfaces/recorder';
-import { IPreferencesStore } from '@core/interfaces/preferences';
-import { IUiDirector } from '@core/interfaces/director';
-import { IAnalyticsTracker } from '@core/interfaces/tracker';
-import { IHookManager } from '@core/interfaces/hook';
-import { IAppUpdater } from '@core/interfaces/updater';
-import { AppUseCase } from '@core/usecases/app';
-import { CaptureUseCase } from '@core/usecases/capture';
-import { PreferencesUseCase } from '@core/usecases/preferences';
-import { ElectronScreenRecorder } from '@infrastructures/recorder/recorder';
-import { PreferencesStore } from '@infrastructures/preferences';
-import { GoogleAnalyticsTracker } from '@infrastructures/tracker';
-import { HookManager, BuiltinHooks } from '@infrastructures/hook';
-import { AppUpdater } from '@infrastructures/updater';
-import { UiDirector } from '@infrastructures/director';
-import { UiStateApplier } from '@infrastructures/state';
+import TYPES from '@di/types';
+import { IUiStateApplier, StateManager } from '@core/services/state';
+import { IScreenRecorder } from '@core/services/recorder';
+import { IPreferencesStore } from '@core/services/preferences';
+import { IUiDirector } from '@core/services/director';
+import { IAnalyticsTracker } from '@core/services/tracker';
+import { IAppUpdater } from '@core/services/updater';
+import HookManager from '@core/services/hook';
+import AppUseCase from '@core/usecases/app';
+import CaptureUseCase from '@core/usecases/capture';
+import PreferencesUseCase from '@core/usecases/preferences';
+import ElectronScreenRecorder from '@infrastructures/recorder/recorder';
+import PreferencesStore from '@infrastructures/preferences';
+import GoogleAnalyticsTracker from '@infrastructures/tracker';
+import AppUpdater from '@infrastructures/updater';
+import UiDirector from '@infrastructures/director';
+import UiStateApplier from '@infrastructures/state';
+import BuiltinHooks from '@infrastructures/hook/builtin';
 import { IActionDispatcher } from '@adapters/actions/types';
-import { ActionDispatcher } from '@adapters/actions/dispatcher';
-import { ActionDispatcherProxy } from '@adapters/actions/proxy';
+import ActionDispatcher from '@adapters/actions/dispatcher';
+import ActionDispatcherProxy from '@adapters/actions/proxy';
 import { IRemote } from '@adapters/remote/types';
-import { RemoteProxy } from '@adapters/remote/proxy';
-
-import { TYPES } from '@di/types';
+import RemoteProxy from '@adapters/remote/proxy';
 
 const diContainer = new Container();
 
@@ -58,19 +56,13 @@ diContainer
   .inSingletonScope();
 
 diContainer
-  .bind<IHookManager>(TYPES.HookManager)
-  .to(HookManager)
-  .inSingletonScope();
-
-diContainer
   .bind<IAppUpdater>(TYPES.AppUpdater)
   .to(AppUpdater)
   .inSingletonScope();
 
 diContainer
   .bind<IRemote>(TYPES.Remote)
-  .to(RemoteProxy)
-  .inSingletonScope();
+  .to(RemoteProxy).inSingletonScope();
 
 diContainer
   .bind<IActionDispatcher>(TYPES.ActionDispatcher)
@@ -84,6 +76,11 @@ diContainer
 
 diContainer
   .bind<StateManager>(StateManager)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<HookManager>(HookManager)
   .toSelf()
   .inSingletonScope();
 
@@ -107,13 +104,10 @@ diContainer
   .toSelf()
   .inSingletonScope();
 
-diContainer
-  .get<IRemote>(TYPES.Remote);
+diContainer.get<IRemote>(TYPES.Remote);
 
-diContainer
-  .get(ActionDispatcherProxy);
+diContainer.get(ActionDispatcherProxy);
 
-diContainer
-  .get(BuiltinHooks);
+diContainer.get(BuiltinHooks);
 
-export { diContainer };
+export default diContainer;

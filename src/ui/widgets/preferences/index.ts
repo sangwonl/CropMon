@@ -1,10 +1,4 @@
-/* eslint-disable class-methods-use-this */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable promise/param-names */
-/* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { app, dialog, ipcMain } from 'electron';
 
@@ -95,7 +89,7 @@ export default class PreferencesModal extends Widget {
       this.focus();
     });
 
-    return new Promise((resolve, _) => {
+    return new Promise((resolve) => {
       this.saveCallback = onSave;
       this.closeResolver = resolve;
     });

@@ -1,18 +1,3 @@
-/* eslint-disable @typescript-eslint/return-await */
-/* eslint-disable no-plusplus */
-/* eslint-disable new-cap */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable max-classes-per-file */
-/* eslint-disable @typescript-eslint/no-shadow */
-/* eslint-disable no-return-await */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable @typescript-eslint/lines-between-class-members */
-/* eslint-disable import/prefer-default-export */
-
-import 'reflect-metadata';
-
 import fs from 'fs';
 import { injectable } from 'inversify';
 import { app, shell } from 'electron';
@@ -20,11 +5,11 @@ import { app, shell } from 'electron';
 import { CaptureMode } from '@core/entities/common';
 import { IBounds } from '@core/entities/screen';
 import { IPreferences } from '@core/entities/preferences';
-import { IUiDirector } from '@core/interfaces/director';
+import { IUiDirector } from '@core/services/director';
 
-import AppTray from '@ui/widgets/tray';
+import CaptureOverlayWrap from '@infrastructures/director/overlay';
+import AppTray, { createTray } from '@ui/widgets/tray';
 import ControlPanel from '@ui/widgets/ctrlpanel';
-import CaptureOverlay from '@ui/widgets/overlays';
 import ProgressDialog from '@ui/widgets/progressdialog';
 import StaticPageModal from '@ui/widgets/staticpage';
 import PreferencesModal from '@ui/widgets/preferences';
@@ -35,50 +20,10 @@ import { shortcutForDisplay } from '@utils/shortcut';
 import { isMac } from '@utils/process';
 import { getTimeInSeconds } from '@utils/date';
 
-import { version as curVersion } from '../package.json';
-
-class CaptureOverlayWrap {
-  private widget?: CaptureOverlay;
-
-  constructor() {
-    this.widget = new CaptureOverlay();
-  }
-
-  show(screenBounds: IBounds) {
-    setImmediate(() => {
-      // WORKAROUND: https://github.com/electron/electron/issues/10862
-      this.widget?.setBounds(screenBounds);
-      this.widget?.setBounds(screenBounds);
-      this.widget?.setBounds(screenBounds);
-      this.widget?.setBounds(screenBounds);
-    });
-
-    this.widget?.setIgnoreMouseEvents(false);
-    this.widget?.show();
-  }
-
-  hide() {
-    // should wait for react component rerender
-    setTimeout(() => {
-      this.widget?.hide();
-    }, 500);
-  }
-
-  close() {
-    this.widget?.close();
-  }
-
-  ignoreMouseEvents() {
-    this.widget?.setIgnoreMouseEvents(true);
-  }
-
-  blur() {
-    this.widget?.blur();
-  }
-}
+import { version as curVersion } from '../../package.json';
 
 @injectable()
-export class UiDirector implements IUiDirector {
+export default class UiDirector implements IUiDirector {
   private appTray?: AppTray;
   private controlPanel?: ControlPanel;
   private captureOverlay?: CaptureOverlayWrap;
@@ -94,7 +39,7 @@ export class UiDirector implements IUiDirector {
   private screenBoundsDetector?: NodeJS.Timer;
 
   initialize(): void {
-    this.appTray = AppTray.create();
+    this.appTray = createTray();
     this.controlPanel = new ControlPanel();
     this.captureOverlay = new CaptureOverlayWrap();
   }

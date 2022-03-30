@@ -1,13 +1,12 @@
-import {
-  CaptureMode,
-  ICaptureTarget,
-  createCaptureContext,
-} from '@core/entities/capture';
+/* eslint-disable @typescript-eslint/dot-notation */
+
+import { CaptureMode } from '@core/entities/common';
+import { ICaptureTarget } from '@core/entities/capture';
 
 describe('Entities', () => {
   it('should still expose private fields when serialization', () => {
     const target: ICaptureTarget = {
-      mode: CaptureMode.FULLSCREEN,
+      mode: CaptureMode.SCREEN,
       bounds: undefined,
     };
 
@@ -16,7 +15,6 @@ describe('Entities', () => {
     const serialized = JSON.parse(JSON.stringify(ctx));
     expect(serialized).toHaveProperty('createdAt');
 
-    // eslint-disable-next-line @typescript-eslint/dot-notation
     const createdAt = new Date(serialized['createdAt']);
     expect(createdAt).toBeDefined();
     expect(createdAt).toBeInstanceOf(Date);

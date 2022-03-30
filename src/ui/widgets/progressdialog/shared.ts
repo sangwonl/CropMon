@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-interface */
-
 export interface ProgressDialogButtons {
   cancelTitle: string;
   actionTitle: string;

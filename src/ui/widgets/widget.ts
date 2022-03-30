@@ -1,14 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable promise/param-names */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable @typescript-eslint/lines-between-class-members */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { BrowserWindow, NativeImage } from 'electron';
 
 import { isDebugMode } from '@utils/process';
 
-import { WidgetType } from './types';
+import { WidgetType } from '@ui/widgets/types';
 
 export interface WidgetOptions {
   icon?: NativeImage | string;

@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-use-before-define */
-/* eslint-disable import/prefer-default-export */
-
 import { Display, Rectangle, screen } from 'electron';
 
 import { IBounds, IPoint, IScreen } from '@core/entities/screen';
@@ -71,6 +66,44 @@ export const getBoundsFromZero = (bounds: IBounds): IBounds => {
   };
 };
 
+const mapDisplayToScreen = ({ id, bounds, scaleFactor }: Display): IScreen => {
+  return { id, bounds, scaleFactor };
+};
+
+const getAllScreens = (): IScreen[] => {
+  const screens = screen.getAllDisplays().map(mapDisplayToScreen);
+  if (isMac()) {
+    return screens;
+  }
+  return screens.map((s: IScreen) => {
+    return {
+      ...s,
+      bounds: screen.dipToScreenRect(null, s.bounds as Rectangle) as IBounds,
+    };
+  });
+};
+
+const calcScreenBounds = (screens: IScreen[]): IBounds => {
+  let left = Number.MAX_SAFE_INTEGER;
+  let top = Number.MAX_SAFE_INTEGER;
+  let right = Number.MIN_SAFE_INTEGER;
+  let bottom = Number.MIN_SAFE_INTEGER;
+
+  screens.forEach(({ bounds }: IScreen) => {
+    left = Math.min(left, bounds.x);
+    top = Math.min(top, bounds.y);
+    right = Math.max(right, bounds.x + bounds.width);
+    bottom = Math.max(bottom, bounds.y + bounds.height);
+  });
+
+  return {
+    x: left,
+    y: top,
+    width: right - left,
+    height: bottom - top,
+  };
+};
+
 export const getAllScreensFromLeftTop = (): IScreen[] => {
   const screens = getAllScreens();
   const screenBounds = calcScreenBounds(screens);
@@ -99,61 +132,24 @@ export const adjustSelectionBounds = (bounds: IBounds): IBounds => {
   };
 };
 
-export const getScreenOfCursor = (): IScreen => {
-  const cursorPoint = getCursorScreenPoint();
-  return screen
-    .getAllDisplays()
-    .map(mapDisplayToScreen)
-    .find((s) => {
-      return isPointInsideBounds(
-        cursorPoint,
-        isMac() ? s.bounds : screen.dipToScreenRect(null, s.bounds as Rectangle)
-      );
-    })!;
-};
-
-const getAllScreens = (): IScreen[] => {
-  const screens = screen.getAllDisplays().map(mapDisplayToScreen);
-  if (isMac()) {
-    return screens;
-  }
-  return screens.map((s: IScreen) => {
-    return {
-      ...s,
-      bounds: screen.dipToScreenRect(null, s.bounds as Rectangle) as IBounds,
-    };
-  });
-};
-
-const mapDisplayToScreen = ({ id, bounds, scaleFactor }: Display): IScreen => {
-  return { id, bounds, scaleFactor };
-};
-
-const calcScreenBounds = (screens: IScreen[]): IBounds => {
-  let left = Number.MAX_SAFE_INTEGER;
-  let top = Number.MAX_SAFE_INTEGER;
-  let right = Number.MIN_SAFE_INTEGER;
-  let bottom = Number.MIN_SAFE_INTEGER;
-
-  screens.forEach(({ bounds }: IScreen) => {
-    left = Math.min(left, bounds.x);
-    top = Math.min(top, bounds.y);
-    right = Math.max(right, bounds.x + bounds.width);
-    bottom = Math.max(bottom, bounds.y + bounds.height);
-  });
-
-  return {
-    x: left,
-    y: top,
-    width: right - left,
-    height: bottom - top,
-  };
-};
-
 const getCursorScreenPoint = () => {
   if (isMac()) {
     // because mac doesn't support dipToScreenPoint
     return screen.getCursorScreenPoint();
   }
   return screen.dipToScreenPoint(screen.getCursorScreenPoint());
+};
+
+export const getScreenOfCursor = (): IScreen => {
+  const cursorPoint = getCursorScreenPoint();
+  const screens = screen.getAllDisplays().map(mapDisplayToScreen);
+
+  const foundScreen = screens.find((s) => {
+    return isPointInsideBounds(
+      cursorPoint,
+      isMac() ? s.bounds : screen.dipToScreenRect(null, s.bounds as Rectangle)
+    );
+  });
+
+  return foundScreen ?? screens[0];
 };

@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react/display-name */
 
 import React, { FC, useEffect, useState } from 'react';
 import { ipcRenderer } from 'electron';

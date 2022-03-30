@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { MouseEvent, FC, useCallback } from 'react';
@@ -25,12 +24,12 @@ const getAreaStyles = (bounds: IBounds, colors: ICaptureAreaColors): any => {
 
   if (isCapturableBounds(bounds)) {
     const color = Color(colors.selectingBackground);
+    const bgColor = color.alpha(COLOR_ALPHA_AREA).string();
+    const shadowColor = color.alpha(COLOR_ALPHA_AREA_SHADOW).string();
     return {
       ...layoutStyle,
-      backgroundColor: color.alpha(COLOR_ALPHA_AREA).string(),
-      boxShadow: `inset 0 0 1px ${color
-        .alpha(COLOR_ALPHA_AREA_SHADOW)
-        .string()}`,
+      backgroundColor: bgColor,
+      boxShadow: `inset 0 0 1px ${shadowColor}`,
     };
   }
 

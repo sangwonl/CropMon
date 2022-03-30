@@ -1,15 +1,14 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable import/prefer-default-export */
 
 import 'reflect-metadata';
 
 import { Container } from 'inversify';
 
-import { TYPES } from '@di/types';
+import TYPES from '@di/types';
 import { IRemote } from '@adapters/remote/types';
-import { RemoteClient } from '@adapters/remote/client';
+import RemoteClient from '@adapters/remote/client';
 import { IActionDispatcher } from '@adapters/actions/types';
-import { ActionDispatcherClient } from '@adapters/actions/client';
+import ActionDispatcherClient from '@adapters/actions/client';
 
 const diContainer = new Container();
 
@@ -23,4 +22,4 @@ diContainer
   .to(RemoteClient)
   .inSingletonScope();
 
-export { diContainer };
+export default diContainer;

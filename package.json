@@ -368,8 +368,7 @@
           "parser": "json"
         }
       }
-    ],
-    "singleQuote": true
+    ]
   },
   "renovate": {
     "extends": [

@@ -1,18 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable import/prefer-default-export */
-
 import { inject, injectable } from 'inversify';
 import { ipcMain } from 'electron';
 
-import { TYPES } from '@di/types';
+import TYPES from '@di/types';
 import { IRecordOptions, ICaptureOptions } from '@core/entities/capture';
 import { CaptureMode } from '@core/entities/common';
 import { IBounds } from '@core/entities/screen';
 import { IActionDispatcher } from '@adapters/actions/types';
 
 @injectable()
-export class ActionDispatcherProxy implements IActionDispatcher {
+export default class ActionDispatcherProxy implements IActionDispatcher {
   constructor(
     @inject(TYPES.ActionDispatcher) private actionDispatcher: IActionDispatcher
   ) {

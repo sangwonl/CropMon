@@ -1,105 +1,60 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable max-classes-per-file */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-useless-constructor */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable import/prefer-default-export */
 
 import { inject, injectable } from 'inversify';
-import { app, desktopCapturer, globalShortcut, systemPreferences } from 'electron';
+import {
+  app,
+  desktopCapturer,
+  globalShortcut,
+  systemPreferences,
+} from 'electron';
 
-import { TYPES } from '@di/types';
-import { CaptureMode, CaptureStatus, OutputFormat } from '@core/entities/common';
-import { ICaptureContext } from '@core/entities/capture';
+import TYPES from '@di/types';
+import {
+  CaptureMode,
+  CaptureStatus,
+  OutputFormat,
+} from '@core/entities/common';
 import { IPreferences } from '@core/entities/preferences';
-import { IAnalyticsTracker } from '@core/interfaces/tracker';
-import { IUiDirector } from '@core/interfaces/director';
-import { HookType, IHookManager } from '@core/interfaces/hook';
-import { AppUseCase } from '@core/usecases/app';
-import { PreferencesUseCase } from '@core/usecases/preferences';
+import { IAnalyticsTracker } from '@core/services/tracker';
+import { IUiDirector } from '@core/services/director';
+import HookManager, {
+  HookArgsAppUpdateChecked,
+  HookArgsAppUpdated,
+  HookArgsCaptureFinished,
+  HookArgsCaptureFinishing,
+  HookArgsCaptureStarting,
+  HookArgsInitialPrefsLoaded,
+  HookArgsPrefsLoaded,
+  HookArgsPrefsUpdated,
+} from '@core/services/hook';
+import AppUseCase from '@core/usecases/app';
+import PreferencesUseCase from '@core/usecases/preferences';
 import { IActionDispatcher } from '@adapters/actions/types';
 import { getPlatform, isDebugMode, isMac } from '@utils/process';
 import { getTimeInSeconds } from '@utils/date';
-import { SHORTCUT_CAPTURE_MODE_AREA, SHORTCUT_CAPTURE_MODE_SCREEN, SHORTCUT_ENTER, SHORTCUT_ESCAPE, SHORTCUT_OUTPUT_GIF, SHORTCUT_OUTPUT_MP4 } from '@utils/shortcut';
-
-type HookHandler = (args: any) => void;
-
-@injectable()
-export class HookManager implements IHookManager {
-  private hooks: Map<HookType, Array<HookHandler>> = new Map();
-
-  on(hook: HookType, handler: HookHandler): this {
-    let handlers = this.hooks.get(hook);
-    if (handlers === undefined) {
-      handlers = new Array(0);
-      this.hooks.set(hook, handlers);
-    }
-
-    if (handlers.find((h) => h === handler) === undefined) {
-      handlers.push(handler);
-    }
-
-    return this;
-  }
-
-  emit(hook: HookType, args: any): void {
-    const handlers = this.hooks.get(hook);
-    if (handlers !== undefined) {
-      handlers.forEach((h) => setTimeout(() => h(args), 0));
-    }
-  }
-}
-
-interface HookArgsAppUpdateChecked {
-  updateAvailable: boolean;
-}
-
-interface HookArgsAppUpdated {
-  oldVersion: string;
-  curVersion: string;
-}
-
-interface HookArgsInitialPrefsLoaded {
-  loadedPrefs: IPreferences;
-}
-
-interface HookArgsPrefsLoaded {
-  loadedPrefs: IPreferences;
-}
-
-interface HookArgsPrefsUpdated {
-  prevPrefs: IPreferences;
-  newPrefs: IPreferences;
-}
-
-interface HookArgsCaptureStarting {
-  captureContext: ICaptureContext;
-}
-
-interface HookArgsCaptureFinishing {
-  captureContext: ICaptureContext;
-}
-
-interface HookArgsCaptureFinished {
-  captureContext: ICaptureContext;
-}
+import {
+  SHORTCUT_CAPTURE_MODE_AREA,
+  SHORTCUT_CAPTURE_MODE_SCREEN,
+  SHORTCUT_ENTER,
+  SHORTCUT_ESCAPE,
+  SHORTCUT_OUTPUT_GIF,
+  SHORTCUT_OUTPUT_MP4,
+} from '@utils/shortcut';
 
 const UPDATE_CHECK_DELAY = 5 * 60 * 1000;
 const UPDATE_CHECK_INTERVAL = 4 * 60 * 60 * 1000;
 
 @injectable()
-export class BuiltinHooks {
+export default class BuiltinHooks {
   private lastUpdateCheckedAt?: number;
 
   constructor(
-    @inject(TYPES.HookManager) private hookManager: IHookManager,
     @inject(TYPES.UiDirector) private uiDirector: IUiDirector,
     @inject(TYPES.AnalyticsTracker) private tracker: IAnalyticsTracker,
     @inject(TYPES.ActionDispatcher) private actionDispatcher: IActionDispatcher,
+    private hookManager: HookManager,
     private appUseCase: AppUseCase,
-    private prefsUseCase: PreferencesUseCase,
+    private prefsUseCase: PreferencesUseCase
   ) {
     this.hookManager.on('app-launched', this.onAppLaunched);
     this.hookManager.on('app-quit', this.onAppQuit);
@@ -164,13 +119,21 @@ export class BuiltinHooks {
 
   onPrefsModalOpening = async () => {
     this.tracker.view('preferences-modal');
-  }
+  };
 
   onCaptureOptionsChanged = async () => {
     const prefs = await this.prefsUseCase.fetchUserPreferences();
-    this.tracker.eventL('capture', 'options-changed', `mode:${prefs.captureMode}`);
-    this.tracker.eventL('capture', 'options-changed', `outfmt:${prefs.outputFormat}`);
-  }
+    this.tracker.eventL(
+      'capture',
+      'options-changed',
+      `mode:${prefs.captureMode}`
+    );
+    this.tracker.eventL(
+      'capture',
+      'options-changed',
+      `outfmt:${prefs.outputFormat}`
+    );
+  };
 
   onCaptureShortcutTriggered = async () => {
     const prefs = await this.prefsUseCase.fetchUserPreferences();
@@ -209,7 +172,9 @@ export class BuiltinHooks {
 
     // tracking
     if (status === CaptureStatus.IN_PROGRESS) {
-      const { target, outputFormat, recordMicrophone, lowQualityMode } = args.captureContext;
+      const { target, outputFormat, recordMicrophone, lowQualityMode } =
+        args.captureContext;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const { width, height } = target.bounds!;
       this.tracker.eventL('capture', 'start-capture', `mode:${target.mode}`);
       this.tracker.eventL('capture', 'start-capture', `area:${width}x${height}`);
@@ -245,6 +210,7 @@ export class BuiltinHooks {
 
     const { status, createdAt, finishedAt } = args.captureContext;
     if (status === CaptureStatus.FINISHED) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const duration = finishedAt! - createdAt;
       this.tracker.eventLV('capture', 'finish-capture', 'duration', duration);
     } else if (status === CaptureStatus.ERROR) {
@@ -263,45 +229,45 @@ export class BuiltinHooks {
     await this.uiDirector.refreshTrayState(newPrefs);
   };
 
-  private handleShortcutCaptureOpts = async (mode?: CaptureMode, fmt?: OutputFormat) => {
+  private handleShortcutCaptureOpts = async (
+    mode?: CaptureMode,
+    fmt?: OutputFormat
+  ) => {
     const prefs = await this.prefsUseCase.fetchUserPreferences();
     const recOpts = this.prefsUseCase.getRecOptionsFromPrefs(prefs);
     this.actionDispatcher.changeCaptureOptions({
       target: { mode: mode ?? prefs.captureMode },
-      recordOptions: { ...recOpts, enableOutputAsGif: (fmt?? prefs.outputFormat) === 'gif' },
+      recordOptions: {
+        ...recOpts,
+        enableOutputAsGif: (fmt ?? prefs.outputFormat) === 'gif',
+      },
     });
   };
 
   private setupInSelectionShortcut = async (enable: boolean) => {
     if (enable) {
-      globalShortcut.register(
-        SHORTCUT_ENTER,
-        () => this.actionDispatcher.startCaptureWithCurrentStates()
+      globalShortcut.register(SHORTCUT_ENTER, () =>
+        this.actionDispatcher.startCaptureWithCurrentStates()
       );
 
-      globalShortcut.register(
-        SHORTCUT_ESCAPE,
-        () => this.actionDispatcher.disableCaptureMode()
+      globalShortcut.register(SHORTCUT_ESCAPE, () =>
+        this.actionDispatcher.disableCaptureMode()
       );
 
-      globalShortcut.register(
-        SHORTCUT_CAPTURE_MODE_SCREEN,
-        () => this.handleShortcutCaptureOpts(CaptureMode.SCREEN)
+      globalShortcut.register(SHORTCUT_CAPTURE_MODE_SCREEN, () =>
+        this.handleShortcutCaptureOpts(CaptureMode.SCREEN)
       );
 
-      globalShortcut.register(
-        SHORTCUT_CAPTURE_MODE_AREA,
-        () => this.handleShortcutCaptureOpts(CaptureMode.AREA)
+      globalShortcut.register(SHORTCUT_CAPTURE_MODE_AREA, () =>
+        this.handleShortcutCaptureOpts(CaptureMode.AREA)
       );
 
-      globalShortcut.register(
-        SHORTCUT_OUTPUT_MP4,
-        () => this.handleShortcutCaptureOpts(undefined, 'mp4')
+      globalShortcut.register(SHORTCUT_OUTPUT_MP4, () =>
+        this.handleShortcutCaptureOpts(undefined, 'mp4')
       );
 
-      globalShortcut.register(
-        SHORTCUT_OUTPUT_GIF,
-        () => this.handleShortcutCaptureOpts(undefined, 'gif')
+      globalShortcut.register(SHORTCUT_OUTPUT_GIF, () =>
+        this.handleShortcutCaptureOpts(undefined, 'gif')
       );
     } else {
       globalShortcut.unregister(SHORTCUT_ENTER);
@@ -311,7 +277,7 @@ export class BuiltinHooks {
       globalShortcut.unregister(SHORTCUT_OUTPUT_MP4);
       globalShortcut.unregister(SHORTCUT_OUTPUT_GIF);
     }
-  }
+  };
 
   private setupCaptureShortcut = (
     newPrefs: IPreferences,
@@ -319,7 +285,9 @@ export class BuiltinHooks {
   ): void => {
     if (!prevPrefs || prevPrefs.shortcut !== newPrefs.shortcut) {
       if (prevPrefs) {
-        globalShortcut.unregister(prevPrefs.shortcut.replace(/Win|Cmd/, 'Meta'));
+        globalShortcut.unregister(
+          prevPrefs.shortcut.replace(/Win|Cmd/, 'Meta')
+        );
       }
       globalShortcut.register(
         newPrefs.shortcut.replace(/Win|Cmd/, 'Meta'),

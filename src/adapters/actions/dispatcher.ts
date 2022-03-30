@@ -1,25 +1,22 @@
-/* eslint-disable import/prefer-default-export */
+import { injectable } from 'inversify';
 
-import { inject, injectable } from 'inversify';
-
-import { TYPES } from '@di/types';
 import { CaptureMode, CaptureStatus } from '@core/entities/common';
 import { IBounds } from '@core/entities/screen';
 import { ICaptureOptions, IRecordOptions } from '@core/entities/capture';
-import { AppUseCase } from '@core/usecases/app';
-import { PreferencesUseCase } from '@core/usecases/preferences';
-import { CaptureUseCase } from '@core/usecases/capture';
-import { IHookManager } from '@core/interfaces/hook';
+import HookManager from '@core/services/hook';
+import AppUseCase from '@core/usecases/app';
+import PreferencesUseCase from '@core/usecases/preferences';
+import CaptureUseCase from '@core/usecases/capture';
 import { IActionDispatcher } from '@adapters/actions/types';
 import { adjustSelectionBounds } from '@utils/bounds';
 
 @injectable()
-export class ActionDispatcher implements IActionDispatcher {
+export default class ActionDispatcher implements IActionDispatcher {
   constructor(
+    private hookManager: HookManager,
     private appUseCase: AppUseCase,
     private prefsUseCase: PreferencesUseCase,
-    private captureUseCase: CaptureUseCase,
-    @inject(TYPES.HookManager) private hookManager: IHookManager
+    private captureUseCase: CaptureUseCase
   ) {}
 
   initializeApp = () => {

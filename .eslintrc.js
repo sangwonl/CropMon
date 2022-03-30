@@ -1,9 +1,16 @@
 module.exports = {
+  // https://github.com/electron-react-boilerplate/eslint-config-erb
   extends: 'erb',
   rules: {
     // A temporary hack related to IDE not resolving correct package.json
     'import/no-extraneous-dependencies': 'off',
     'compat/compat': 'off',
+    'class-methods-use-this': 'off',
+    'no-unused-vars': 'off',
+    'jsx-a11y/no-static-element-interactions': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/lines-between-class-members': 'off',
+    'prettier/prettier': ['error', { singleQuote: true, printWidth: 80 }],
   },
   parserOptions: {
     ecmaVersion: 2020,

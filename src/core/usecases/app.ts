@@ -1,25 +1,21 @@
-/* eslint-disable class-methods-use-this */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable import/prefer-default-export */
 
 import { inject, injectable } from 'inversify';
 import semver from 'semver';
 
-import { TYPES } from '@di/types';
-import { IUiDirector } from '@core/interfaces/director';
-import { IAppUpdater } from '@core/interfaces/updater';
-import { IHookManager } from '@core/interfaces/hook';
-
-import { PreferencesUseCase } from './preferences';
+import TYPES from '@di/types';
+import { IUiDirector } from '@core/services/director';
+import { IAppUpdater } from '@core/services/updater';
+import HookManager from '@core/services/hook';
+import PreferencesUseCase from '@core/usecases/preferences';
 
 @injectable()
-export class AppUseCase {
+export default class AppUseCase {
   constructor(
     private prefsUseCase: PreferencesUseCase,
     @inject(TYPES.UiDirector) private uiDirector: IUiDirector,
     @inject(TYPES.AppUpdater) private appUpdater: IAppUpdater,
-    @inject(TYPES.HookManager) private hookManager: IHookManager
+    private hookManager: HookManager
   ) {}
 
   async initializeApp() {

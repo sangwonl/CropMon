@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-
 const TYPES = {
   ScreenRecorder: Symbol.for('ScreenRecorder'),
   PreferencesStore: Symbol.for('PreferencesStore'),
@@ -8,9 +6,8 @@ const TYPES = {
   UiStateApplier: Symbol.for('UiStateApplier'),
   AnalyticsTracker: Symbol.for('AnalyticsTracker'),
   ShortcutManager: Symbol.for('ShortcutManager'),
-  HookManager: Symbol.for('HookManager'),
   ActionDispatcher: Symbol.for('ActionDispatcher'),
   Remote: Symbol.for('Remote'),
 };
 
-export { TYPES };
+export default TYPES;

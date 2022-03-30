@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 
-import { TYPES } from '@di/types';
+import TYPES from '@di/types';
 import { INITIAL_UI_STATE, IUiState } from '@core/entities/ui';
 
 export interface IUiStateApplier {

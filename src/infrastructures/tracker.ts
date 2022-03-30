@@ -1,20 +1,17 @@
 /* eslint-disable promise/always-return */
-/* eslint-disable promise/catch-or-return */
-/* eslint-disable @typescript-eslint/lines-between-class-members */
-/* eslint-disable import/prefer-default-export */
 
+import { injectable } from 'inversify';
 import { app, session, screen } from 'electron';
 import Store from 'electron-store';
 import ua from 'universal-analytics';
-import { injectable } from 'inversify';
 import { v4 as uuidv4 } from 'uuid';
 
-import { IAnalyticsTracker } from '@core/interfaces/tracker';
+import { IAnalyticsTracker } from '@core/services/tracker';
 
 import { version as curVersion, productName, appId } from '../package.json';
 
 @injectable()
-export class GoogleAnalyticsTracker implements IAnalyticsTracker {
+export default class GoogleAnalyticsTracker implements IAnalyticsTracker {
   store!: Store;
   tracker!: ua.Visitor;
 
@@ -29,11 +26,14 @@ export class GoogleAnalyticsTracker implements IAnalyticsTracker {
     this.tracker.set('aid', appId);
     this.tracker.set('an', productName);
     this.tracker.set('av', curVersion);
-    app.whenReady().then(() => {
-      this.tracker.set('ua', session.defaultSession.getUserAgent());
-      this.tracker.set('ul', app.getLocale());
-      this.tracker.set('sr', this.getScreenResolution());
-    });
+    app
+      .whenReady()
+      .then(() => {
+        this.tracker.set('ua', session.defaultSession.getUserAgent());
+        this.tracker.set('ul', app.getLocale());
+        this.tracker.set('sr', this.getScreenResolution());
+      })
+      .catch((_e) => {});
   }
 
   view(name: string): void {

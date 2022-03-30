@@ -14,11 +14,11 @@ import 'regenerator-runtime/runtime';
 import { app } from 'electron';
 import log from 'electron-log';
 
-import { diContainer } from '@di/containers/main';
-import { TYPES } from '@di/types';
+import diContainer from '@di/containers/main';
+import TYPES from '@di/types';
 import { IActionDispatcher } from '@adapters/actions/types';
 
-import { initializeDevEnv } from './devenv';
+import initializeDevEnv from './devenv';
 
 const start = async () => {
   await initializeDevEnv();

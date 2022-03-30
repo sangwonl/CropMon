@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable import/prefer-default-export */
-
 import { isMac } from '@utils/process';
 import { capitalize } from '@utils/strings';
 

@@ -1,17 +1,13 @@
-/* eslint-disable promise/always-return */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable import/first */
 /* eslint-disable import/order */
+/* eslint-disable import/first */
+/* eslint-disable promise/always-return */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable promise/valid-params */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable import/prefer-default-export */
 
 import { injectable } from 'inversify';
 import { app } from 'electron';
 import log from 'electron-log';
 
-import { IAppUpdater } from '@core/interfaces/updater';
+import { IAppUpdater } from '@core/services/updater';
 import { isProduction } from '@utils/process';
 
 import { version as curVersion } from '../package.json';
@@ -24,7 +20,7 @@ if (!isProduction()) {
 import { autoUpdater } from 'electron-updater';
 
 @injectable()
-export class AppUpdater implements IAppUpdater {
+export default class AppUpdater implements IAppUpdater {
   constructor() {
     autoUpdater.logger = log;
     autoUpdater.autoDownload = false;

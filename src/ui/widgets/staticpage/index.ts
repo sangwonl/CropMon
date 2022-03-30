@@ -1,11 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-use-before-define */
-/* eslint-disable @typescript-eslint/no-this-alias */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable promise/param-names */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable max-classes-per-file */
 
 import { assetPathResolver } from '@utils/asset';
 import { WidgetType } from '@ui/widgets/types';
@@ -42,7 +35,7 @@ export default class StaticPageModal extends Widget {
       this.focus();
     });
 
-    return new Promise((resolve, _) => {
+    return new Promise((resolve) => {
       this.closeResolver = resolve;
     });
   }

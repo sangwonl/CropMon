@@ -1,6 +1,4 @@
-/* eslint-disable jsx-a11y/alt-text */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable react-hooks/exhaustive-deps */
 
 import React, { FC, useEffect, useState, useCallback } from 'react';
 import classNames from 'classnames';
@@ -126,7 +124,7 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
         className={styles.btnClose}
         onClick={onCaptureCancel}
       >
-        <img src={closeIcon} />
+        <img src={closeIcon} alt="close" />
       </button>
     </div>
   );

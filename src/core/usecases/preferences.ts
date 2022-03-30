@@ -1,25 +1,20 @@
-/* eslint-disable no-useless-catch */
-/* eslint-disable import/prefer-default-export */
-
-import 'reflect-metadata';
-
 import { injectable, inject } from 'inversify';
 
-import { TYPES } from '@di/types';
+import TYPES from '@di/types';
 import { IPreferences } from '@core/entities/preferences';
 import { IRecordOptions } from '@core/entities/capture';
-import { IPreferencesStore } from '@core/interfaces/preferences';
-import { IHookManager } from '@core/interfaces/hook';
-import { IUiDirector } from '@core/interfaces/director';
+import { IPreferencesStore } from '@core/services/preferences';
+import HookManager from '@core/services/hook';
+import { IUiDirector } from '@core/services/director';
 
 @injectable()
-export class PreferencesUseCase {
+export default class PreferencesUseCase {
   private cachedUserPrefs?: IPreferences;
 
   public constructor(
     @inject(TYPES.PreferencesStore) private preferencesStore: IPreferencesStore,
     @inject(TYPES.UiDirector) private uiDirector: IUiDirector,
-    @inject(TYPES.HookManager) private hookManager: IHookManager
+    private hookManager: HookManager
   ) {}
 
   async openPreferencesModal(): Promise<void> {

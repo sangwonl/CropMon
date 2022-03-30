@@ -1,16 +1,7 @@
-/* eslint-disable @typescript-eslint/lines-between-class-members */
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable import/prefer-default-export */
-
-import 'reflect-metadata';
-
 import path from 'path';
 import { inject, injectable } from 'inversify';
 
-import { TYPES } from '@di/types';
+import TYPES from '@di/types';
 import { CaptureStatus, CaptureMode } from '@core/entities/common';
 import {
   ICaptureContext,
@@ -20,24 +11,24 @@ import {
 import { IPreferences } from '@core/entities/preferences';
 import { INITIAL_UI_STATE, IUiState } from '@core/entities/ui';
 import { IBounds } from '@core/entities/screen';
-import { StateManager } from '@core/interfaces/state';
-import { IScreenRecorder } from '@core/interfaces/recorder';
-import { IHookManager } from '@core/interfaces/hook';
-import { IUiDirector } from '@core/interfaces/director';
-import { PreferencesUseCase } from '@core/usecases/preferences';
+import { StateManager } from '@core/services/state';
+import { IScreenRecorder } from '@core/services/recorder';
+import HookManager from '@core/services/hook';
+import { IUiDirector } from '@core/services/director';
+import PreferencesUseCase from '@core/usecases/preferences';
 import { getNowAsYYYYMMDDHHmmss, getTimeInSeconds } from '@utils/date';
 
 @injectable()
-export class CaptureUseCase {
+export default class CaptureUseCase {
   private preparedCaptureOptions?: ICaptureOptions;
   private lastCaptureCtx?: ICaptureContext;
 
   constructor(
     private prefsUseCase: PreferencesUseCase,
     private stateManager: StateManager,
+    private hookManager: HookManager,
     @inject(TYPES.ScreenRecorder) private screenRecorder: IScreenRecorder,
-    @inject(TYPES.UiDirector) private uiDirector: IUiDirector,
-    @inject(TYPES.HookManager) private hookManager: IHookManager
+    @inject(TYPES.UiDirector) private uiDirector: IUiDirector
   ) {}
 
   curCaptureContext(): ICaptureContext | undefined {

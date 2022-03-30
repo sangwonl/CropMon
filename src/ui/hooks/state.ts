@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable import/prefer-default-export */
-
 import { ipcRenderer, IpcRendererEvent } from 'electron';
 import { useState, useRef, useEffect, SetStateAction, Dispatch } from 'react';
 

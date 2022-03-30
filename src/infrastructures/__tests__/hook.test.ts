@@ -1,16 +1,30 @@
 /* eslint-disable jest/expect-expect */
 
-import 'reflect-metadata';
-
-import { IHookManager } from '@core/interfaces/hook';
-import { HookManager } from '@infrastructures/hook';
+import { CaptureMode } from '@core/entities/common';
+import { IPreferences } from '@core/entities/preferences';
+import HookManager from '@core/services/hook';
 
 describe('HookManager', () => {
-  let hookMgr: IHookManager;
-
-  beforeEach(() => {
-    hookMgr = new HookManager();
-  });
+  const hookMgr: HookManager = new HookManager();
+  const defaultPrefs: IPreferences = {
+    initialLoaded: false,
+    version: '0.0.1',
+    runAtStartup: true,
+    shortcut: 'Ctrl+Shift+S',
+    recordHome: '/var/capture',
+    openRecordHomeWhenRecordCompleted: true,
+    showCountdown: false,
+    recordMicrophone: false,
+    recordQualityMode: 'normal',
+    outputFormat: 'mp4',
+    captureMode: CaptureMode.AREA,
+    colors: {
+      selectingBackground: '#fefefe',
+      selectingText: '#efefef',
+      countdownBackground: '#fefefe',
+      countdownText: '#efefef',
+    },
+  };
 
   it('should get hook handler registered by on chaining', () => {
     let prefsLoadedHookCalled = 0;
@@ -23,7 +37,7 @@ describe('HookManager', () => {
         prefsLoadedHookCalled += 1;
       });
 
-    hookMgr.emit('prefs-loaded', {});
+    hookMgr.emit('prefs-loaded', { loadedPrefs: defaultPrefs });
 
     expect(prefsLoadedHookCalled).toEqual(2);
   });
@@ -49,8 +63,11 @@ describe('HookManager', () => {
         prefsUpdatedHookCalled += 1;
       });
 
-    hookMgr.emit('prefs-loaded', {});
-    hookMgr.emit('prefs-updated', {});
+    hookMgr.emit('prefs-loaded', { loadedPrefs: defaultPrefs });
+    hookMgr.emit('prefs-updated', {
+      prevPrefs: defaultPrefs,
+      newPrefs: defaultPrefs,
+    });
 
     expect(prefsLoadedHookCalled).toEqual(2);
     expect(prefsUpdatedHookCalled).toEqual(3);
@@ -64,7 +81,7 @@ describe('HookManager', () => {
 
     hookMgr.on('prefs-loaded', handler).on('prefs-loaded', handler);
 
-    hookMgr.emit('prefs-loaded', {});
+    hookMgr.emit('prefs-loaded', { loadedPrefs: defaultPrefs });
 
     expect(prefsLoadedHookCalled).toEqual(1);
   });

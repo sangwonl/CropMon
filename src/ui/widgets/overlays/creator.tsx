@@ -1,5 +1,3 @@
-/* eslint-disable react/display-name */
-
 import React from 'react';
 
 import CaptureCover from '@ui/components/stateful/CaptureOverlay';

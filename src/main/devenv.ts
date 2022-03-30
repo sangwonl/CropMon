@@ -1,5 +1,5 @@
 /* eslint global-require: off, no-console: off */
-/* eslint-disable import/prefer-default-export */
+/* eslint-disable consistent-return */
 
 import { isDebugMode, isProduction } from '@utils/process';
 
@@ -19,7 +19,6 @@ const installDevTools = async () => {
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = ['REACT_DEVELOPER_TOOLS'];
 
-  // eslint-disable-next-line consistent-return
   return installer
     .default(
       extensions.map((name) => installer[name]),
@@ -28,6 +27,8 @@ const installDevTools = async () => {
     .catch(console.log);
 };
 
-export const initializeDevEnv = async () => {
+const initializeDevEnv = async () => {
   await installDevTools();
 };
+
+export default initializeDevEnv;

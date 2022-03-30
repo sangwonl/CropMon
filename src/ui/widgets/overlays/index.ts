@@ -1,7 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable @typescript-eslint/lines-between-class-members */
-/* eslint-disable max-classes-per-file */
-
 import { assetPathResolver } from '@utils/asset';
 import { WidgetType } from '@ui/widgets/types';
 import { Widget } from '@ui/widgets/widget';

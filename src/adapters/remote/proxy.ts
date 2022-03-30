@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable import/prefer-default-export */
-
 import { injectable } from 'inversify';
 import { app, screen, ipcMain } from 'electron';
 
@@ -10,7 +6,7 @@ import { IRemote, PathType } from '@adapters/remote/types';
 import { isMac } from '@utils/process';
 
 @injectable()
-export class RemoteProxy implements IRemote {
+export default class RemoteProxy implements IRemote {
   constructor() {
     ipcMain.on('getAppPath', (event, name) => {
       event.returnValue = this.getAppPath(name);

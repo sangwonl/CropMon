@@ -1,20 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable promise/catch-or-return */
-/* eslint-disable promise/always-return */
 /* eslint-disable @typescript-eslint/no-use-before-define */
-/* eslint-disable promise/param-names */
-/* eslint-disable @typescript-eslint/lines-between-class-members */
-/* eslint-disable radix */
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
+import { injectable } from 'inversify';
+import { app, ipcMain, systemPreferences } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import log from 'electron-log';
-import { app, ipcMain, systemPreferences } from 'electron';
-import { injectable } from 'inversify';
 import {
   createFFmpeg,
   CreateFFmpegOptions,
@@ -25,20 +16,21 @@ import {
 import { OutputFormat } from '@core/entities/common';
 import { IBounds, IScreen } from '@core/entities/screen';
 import { ICaptureContext } from '@core/entities/capture';
-import { IScreenRecorder } from '@core/interfaces/recorder';
-import { RecorderDelegate } from '@infrastructures/recorder/rec-delegate';
+import { IScreenRecorder } from '@core/services/recorder';
+import RecorderDelegate from '@infrastructures/recorder/rec-delegate';
 import {
   IRecordContext,
   ITargetSlice,
 } from '@infrastructures/recorder/rec-delegate/types';
 import { isProduction } from '@utils/process';
 import {
+  emptyBounds,
   getAllScreensFromLeftTop,
   getIntersection,
   isEmptyBounds,
 } from '@utils/bounds';
 
-type ScreenAndBoundsTuple = [IScreen, IBounds | undefined];
+type ScreenAndBoundsTuple = [IScreen, IBounds];
 
 const FRAMERATE = 30;
 const FRAMERATE_LOW = 30;
@@ -46,14 +38,17 @@ const VIDEO_BITRATES_LOW = 850000;
 const SCALE_DOWN_FACTOR_LOW = 0.65;
 
 @injectable()
-export class ElectronScreenRecorder implements IScreenRecorder {
+export default class ElectronScreenRecorder implements IScreenRecorder {
   ffmpeg?: FFmpeg;
   delegate?: RecorderDelegate;
 
   constructor() {
     this.initializeFFmpeg();
 
-    app.whenReady().then(() => this.renewBuildRenderer());
+    app
+      .whenReady()
+      .then(() => this.renewBuildRenderer())
+      .catch((_e) => {});
   }
 
   renewBuildRenderer() {
@@ -109,7 +104,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
       const onRecordingFileSaved = async (_event: any, data: any) => {
         await this.postProcess(
           data.tempFilePath,
-          outputPath!,
+          outputPath,
           outputFormat,
           enableMic
         );
@@ -158,12 +153,12 @@ export class ElectronScreenRecorder implements IScreenRecorder {
       .map(
         (screen): ScreenAndBoundsTuple => [
           screen,
-          getIntersection(screen.bounds, targetBounds),
+          getIntersection(screen.bounds, targetBounds) ?? emptyBounds(),
         ]
       )
       .filter(([_, bounds]: ScreenAndBoundsTuple) => !isEmptyBounds(bounds))
       .map(([screen, bounds]: ScreenAndBoundsTuple): ITargetSlice => {
-        return { screen, bounds: bounds! };
+        return { screen, bounds };
       });
 
     if (targetSlices.length === 0) {
@@ -217,7 +212,7 @@ export class ElectronScreenRecorder implements IScreenRecorder {
     }
 
     this.ffmpeg = createFFmpeg(ffmpegOptions);
-    this.ffmpeg!.load();
+    this.ffmpeg?.load();
   }
 
   private async postProcess(
@@ -244,9 +239,9 @@ export class ElectronScreenRecorder implements IScreenRecorder {
     const memOutputName = path.basename(outputPath);
 
     try {
-      this.ffmpeg!.FS('writeFile', memInputName, await fetchFile(tempPath));
+      this.ffmpeg?.FS('writeFile', memInputName, await fetchFile(tempPath));
 
-      await this.ffmpeg!.run(
+      await this.ffmpeg?.run(
         ...this.chooseFFmpegArgs(
           outputFormat,
           enableMic,
@@ -255,10 +250,10 @@ export class ElectronScreenRecorder implements IScreenRecorder {
         )
       );
 
-      await fs.promises.writeFile(
-        outputPath,
-        this.ffmpeg!.FS('readFile', memOutputName)
-      );
+      const outStream = this.ffmpeg?.FS('readFile', memOutputName);
+      if (outStream) {
+        await fs.promises.writeFile(outputPath, outStream);
+      }
     } catch (e) {
       log.error(e);
     } finally {

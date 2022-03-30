@@ -1,17 +1,13 @@
-/* eslint-disable no-console */
-/* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable radix */
+/* eslint-disable prefer-const */
 
 import fs from 'fs';
 import path from 'path';
 import { desktopCapturer, ipcRenderer } from 'electron';
 import log from 'electron-log';
 
-import { diContainer } from '@di/containers/renderer';
-import { TYPES } from '@di/types';
+import diContainer from '@di/containers/renderer';
+import TYPES from '@di/types';
 import { CaptureMode } from '@core/entities/common';
 import { IBounds } from '@core/entities/screen';
 import {
@@ -123,13 +119,15 @@ const createDrawContext = async (
   const drawables = await Promise.all(
     targetSlices.map(
       async ({ screen, bounds }: ITargetSlice): Promise<IDrawable> => {
-        const source = sources.find((src) => {
+        const matchedToTarget = (src: Electron.DesktopCapturerSource) => {
           if (targetScreenId) {
             return src.display_id === targetScreenId.toString();
           }
           return src.display_id === screen.id.toString();
-        });
-        const constraints = getVideoConstraint(source!.id, screen.bounds);
+        };
+
+        const source = sources.find(matchedToTarget) ?? sources[0];
+        const constraints = getVideoConstraint(source.id, screen.bounds);
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
         const videoElem = document.createElement('video') as HTMLVideoElement;
@@ -191,7 +189,7 @@ const createCanvasStream = (drawContext: IDrawContext): MediaStream => {
 
   // const offCanvas = canvasElem.transferControlToOffscreen();
   // const canvasCtx = offCanvas.getContext('2d')!;
-  const canvasCtx = canvasElem.getContext('2d')!;
+  const canvasCtx = canvasElem.getContext('2d');
   const canvasStream = canvasElem.captureStream(0);
   const [canvasTrack] = canvasStream.getVideoTracks();
 

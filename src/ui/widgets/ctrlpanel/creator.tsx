@@ -1,5 +1,3 @@
-/* eslint-disable react/display-name */
-
 import React from 'react';
 
 import ControlPanel from '@ui/components/stateful/ControlPanel';

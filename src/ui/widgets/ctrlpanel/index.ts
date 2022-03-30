@@ -1,7 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable @typescript-eslint/lines-between-class-members */
-/* eslint-disable max-classes-per-file */
-
 import { screen } from 'electron';
 
 import { assetPathResolver } from '@utils/asset';
