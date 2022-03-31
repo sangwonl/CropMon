@@ -18,7 +18,7 @@ export type PathType =
   | 'logs'
   | 'crashDumps';
 
-export interface IRemote {
+export interface PlatformApi {
   getAppPath(name: PathType): string;
   getCursorScreenPoint(): Point;
 }

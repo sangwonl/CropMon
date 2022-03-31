@@ -6,10 +6,10 @@ import { Container } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { IRemote } from '@application/ports/remote';
+import { PlatformApi } from '@application/ports/platform';
 import { ActionDispatcher } from '@application/ports/action';
 
-import RemoteClient from '@adapters/remote/client';
+import PlatformApiClient from '@adapters/platform/client';
 import ActionDispatcherClient from '@adapters/actions/client';
 
 const diContainer = new Container();
@@ -20,8 +20,8 @@ diContainer
   .inSingletonScope();
 
 diContainer
-  .bind<IRemote>(TYPES.Remote)
-  .to(RemoteClient)
+  .bind<PlatformApi>(TYPES.PlatformApi)
+  .to(PlatformApiClient)
   .inSingletonScope();
 
 export default diContainer;

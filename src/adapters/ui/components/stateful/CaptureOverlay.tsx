@@ -12,7 +12,7 @@ import CaptureCountdown from '@adapters/ui/components/stateless/CaptureCountdown
 import CaptureRecording from '@adapters/ui/components/stateless/CaptureRecording';
 import { useRootUiState } from '@adapters/ui/hooks/state';
 import { useActionDispatcher } from '@adapters/ui/hooks/dispatcher';
-import { useRemote } from '@adapters/ui/hooks/remote';
+import { usePlatformApi } from '@adapters/ui/hooks/platform';
 import { getBoundsFromZero, isEmptyBounds } from '@utils/bounds';
 import { isMac } from '@utils/process';
 
@@ -42,7 +42,7 @@ const adjustBodySize = (overlayBounds: Bounds | null) => {
 const CaptureCover = () => {
   const { controlPanel, captureOverlay, captureAreaColors } = useRootUiState();
   const dispatcher = useActionDispatcher();
-  const remote = useRemote();
+  const platformApi = usePlatformApi();
 
   const [renderMode, setRenderMode] = useState<RenderMode>(RenderMode.IDLE);
   const [selectedBounds, setSelectedBounds] = useState<Bounds | null>(null);
@@ -157,7 +157,7 @@ const CaptureCover = () => {
             onStart={onSelectionStart}
             onCancel={onCaptureCancel}
             onFinish={onSelectionFinish}
-            getCursorPoint={remote.getCursorScreenPoint}
+            getCursorPoint={platformApi.getCursorScreenPoint}
           />
         )}
       {renderMode === RenderMode.TARGETING &&

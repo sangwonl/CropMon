@@ -3,10 +3,10 @@ import { ipcRenderer } from 'electron';
 
 import { Point } from '@domain/models/screen';
 
-import { IRemote, PathType } from '@application/ports/remote';
+import { PlatformApi, PathType } from '@application/ports/platform';
 
 @injectable()
-export default class RemoteClient implements IRemote {
+export default class PlatformApiClient implements PlatformApi {
   getAppPath(name: PathType): string {
     return ipcRenderer.sendSync('getAppPath', name);
   }

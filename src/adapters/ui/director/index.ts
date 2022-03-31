@@ -13,7 +13,7 @@ import ControlPanel from '@adapters/ui/widgets/ctrlpanel';
 import ProgressDialog from '@adapters/ui/widgets/progressdialog';
 import StaticPageModal from '@adapters/ui/widgets/staticpage';
 import PreferencesModal from '@adapters/ui/widgets/preferences';
-import CaptureOverlayWrap from '@adapters/director/overlay';
+import CaptureOverlayWrap from '@adapters/ui/director/overlay';
 
 import { getScreenOfCursor, getWholeScreenBounds } from '@utils/bounds';
 import { shortcutForDisplay } from '@utils/shortcut';
@@ -21,7 +21,7 @@ import { getTimeInSeconds } from '@utils/date';
 import { assetPathResolver } from '@utils/asset';
 import { isMac } from '@utils/process';
 
-import { version as curVersion } from '../../package.json';
+import { version as curVersion } from '../../../package.json';
 
 @injectable()
 export default class ElectronUiDirector implements UiDirector {

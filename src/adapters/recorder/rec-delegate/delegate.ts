@@ -12,7 +12,7 @@ import TYPES from '@di/types';
 import { CaptureMode } from '@domain/models/common';
 import { Bounds } from '@domain/models/screen';
 
-import { IRemote } from '@application/ports/remote';
+import { PlatformApi } from '@application/ports/platform';
 
 import {
   IRecordContext,
@@ -49,7 +49,7 @@ interface IDrawContext {
   drawables: Drawable[];
 }
 
-const remote = diContainer.get<IRemote>(TYPES.Remote);
+const platformApi = diContainer.get<PlatformApi>(TYPES.PlatformApi);
 
 const recorderOpts = (mimeType?: string, videoBitrates?: number) => {
   const mType = mimeType ?? MEDIA_MIME_TYPE;
@@ -65,7 +65,7 @@ const recorderOpts = (mimeType?: string, videoBitrates?: number) => {
 const getTempOutputPath = () => {
   const fileName = getNowAsYYYYMMDDHHmmss();
   return path.join(
-    remote.getAppPath('temp'),
+    platformApi.getAppPath('temp'),
     'kropsaurus',
     'recording',
     `tmp-${fileName}.webm`

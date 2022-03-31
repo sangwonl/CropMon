@@ -6,7 +6,7 @@ const TYPES = {
   ActionDispatcher: Symbol.for('ActionDispatcher'),
   PreferencesStore: Symbol.for('PreferencesStore'),
   AnalyticsTracker: Symbol.for('AnalyticsTracker'),
-  Remote: Symbol.for('Remote'),
+  PlatformApi: Symbol.for('PlatformApi'),
 };
 
 export default TYPES;

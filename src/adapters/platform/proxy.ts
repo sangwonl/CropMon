@@ -3,12 +3,12 @@ import { app, screen, ipcMain } from 'electron';
 
 import { Point } from '@domain/models/screen';
 
-import { IRemote, PathType } from '@application/ports/remote';
+import { PlatformApi, PathType } from '@application/ports/platform';
 
 import { isMac } from '@utils/process';
 
 @injectable()
-export default class RemoteProxy implements IRemote {
+export default class PlatformApiProxy implements PlatformApi {
   constructor() {
     ipcMain.on('getAppPath', (event, name) => {
       event.returnValue = this.getAppPath(name);

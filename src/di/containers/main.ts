@@ -27,14 +27,14 @@ import { AnalyticsTracker } from '@application/ports/tracker';
 import { ScreenRecorder } from '@application/ports/recorder';
 import { ActionDispatcher } from '@application/ports/action';
 import { AppUpdater } from '@application/ports/updater';
-import { IRemote } from '@application/ports/remote';
+import { PlatformApi } from '@application/ports/platform';
 
 import ActionDispatcherProxy from '@adapters/actions/proxy';
-import RemoteProxy from '@adapters/remote/proxy';
+import PlatformApiProxy from '@adapters/platform/proxy';
 import BuiltinHooks from '@adapters/hook';
 import ElectronUiStateApplier from '@adapters/state';
 import ElectronPreferencesStore from '@adapters/preferences';
-import ElectronUiDirector from '@adapters/director';
+import ElectronUiDirector from '@adapters/ui/director';
 import ElectronAppUpdater from '@adapters/updater';
 import ElectronScreenRecorder from '@adapters/recorder/recorder';
 import GoogleAnalyticsTracker from '@adapters/tracker';
@@ -72,8 +72,8 @@ diContainer
   .inSingletonScope();
 
 diContainer
-  .bind<IRemote>(TYPES.Remote)
-  .to(RemoteProxy).inSingletonScope();
+  .bind<PlatformApi>(TYPES.PlatformApi)
+  .to(PlatformApiProxy).inSingletonScope();
 
 diContainer
   .bind<ActionDispatcher>(TYPES.ActionDispatcher)
@@ -150,7 +150,7 @@ diContainer
   .toSelf()
   .inSingletonScope();
 
-diContainer.get<IRemote>(TYPES.Remote);
+diContainer.get<PlatformApi>(TYPES.PlatformApi);
 
 diContainer.get(ActionDispatcherProxy);
 
