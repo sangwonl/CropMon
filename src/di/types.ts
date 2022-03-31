@@ -1,12 +1,11 @@
 const TYPES = {
-  ScreenRecorder: Symbol.for('ScreenRecorder'),
-  PreferencesStore: Symbol.for('PreferencesStore'),
   AppUpdater: Symbol.for('AppUpdater'),
   UiDirector: Symbol.for('UiDirector'),
   UiStateApplier: Symbol.for('UiStateApplier'),
-  AnalyticsTracker: Symbol.for('AnalyticsTracker'),
-  ShortcutManager: Symbol.for('ShortcutManager'),
+  ScreenRecorder: Symbol.for('ScreenRecorder'),
   ActionDispatcher: Symbol.for('ActionDispatcher'),
+  PreferencesStore: Symbol.for('PreferencesStore'),
+  AnalyticsTracker: Symbol.for('AnalyticsTracker'),
   Remote: Symbol.for('Remote'),
 };
 

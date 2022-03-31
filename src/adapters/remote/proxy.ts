@@ -1,8 +1,10 @@
 import { injectable } from 'inversify';
 import { app, screen, ipcMain } from 'electron';
 
-import { IPoint } from '@core/entities/screen';
-import { IRemote, PathType } from '@adapters/remote/types';
+import { Point } from '@domain/models/screen';
+
+import { IRemote, PathType } from '@application/ports/remote';
+
 import { isMac } from '@utils/process';
 
 @injectable()
@@ -21,7 +23,7 @@ export default class RemoteProxy implements IRemote {
     return app.getPath(name);
   }
 
-  getCursorScreenPoint(): IPoint {
+  getCursorScreenPoint(): Point {
     if (isMac()) {
       // because mac doesn't support dipToScreenPoint
       return screen.getCursorScreenPoint();

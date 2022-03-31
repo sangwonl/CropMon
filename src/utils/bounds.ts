@@ -1,11 +1,11 @@
 import { Display, Rectangle, screen } from 'electron';
 
-import { IBounds, IPoint, IScreen } from '@core/entities/screen';
+import { Bounds, Point, Screen } from '@domain/models/screen';
 import { isMac } from '@utils/process';
 
 export const MIN_REQUIRED_SIZE = 16; // limited by code macroblock size
 
-export const emptyBounds = (): IBounds => {
+export const emptyBounds = (): Bounds => {
   return {
     x: 0,
     y: 0,
@@ -14,7 +14,7 @@ export const emptyBounds = (): IBounds => {
   };
 };
 
-export const isEmptyBounds = (bounds?: IBounds | null): boolean => {
+export const isEmptyBounds = (bounds?: Bounds | null): boolean => {
   return (
     bounds === undefined ||
     bounds === null ||
@@ -23,16 +23,13 @@ export const isEmptyBounds = (bounds?: IBounds | null): boolean => {
   );
 };
 
-export const isCapturableBounds = (bounds: IBounds): boolean => {
+export const isCapturableBounds = (bounds: Bounds): boolean => {
   return (
     bounds.width >= MIN_REQUIRED_SIZE && bounds.height >= MIN_REQUIRED_SIZE
   );
 };
 
-export const getIntersection = (
-  a: IBounds,
-  b: IBounds
-): IBounds | undefined => {
+export const getIntersection = (a: Bounds, b: Bounds): Bounds | undefined => {
   const left = Math.max(a.x, b.x);
   const right = Math.min(a.x + a.width, b.x + b.width);
   const top = Math.max(a.y, b.y);
@@ -48,7 +45,7 @@ export const getIntersection = (
   };
 };
 
-export const isPointInsideBounds = (pt: IPoint, bounds: IBounds): boolean => {
+export const isPointInsideBounds = (pt: Point, bounds: Bounds): boolean => {
   return (
     bounds.x <= pt.x &&
     pt.x <= bounds.x + bounds.width &&
@@ -57,7 +54,7 @@ export const isPointInsideBounds = (pt: IPoint, bounds: IBounds): boolean => {
   );
 };
 
-export const getBoundsFromZero = (bounds: IBounds): IBounds => {
+export const getBoundsFromZero = (bounds: Bounds): Bounds => {
   return {
     x: 0,
     y: 0,
@@ -66,30 +63,30 @@ export const getBoundsFromZero = (bounds: IBounds): IBounds => {
   };
 };
 
-const mapDisplayToScreen = ({ id, bounds, scaleFactor }: Display): IScreen => {
+const mapDisplayToScreen = ({ id, bounds, scaleFactor }: Display): Screen => {
   return { id, bounds, scaleFactor };
 };
 
-const getAllScreens = (): IScreen[] => {
+const getAllScreens = (): Screen[] => {
   const screens = screen.getAllDisplays().map(mapDisplayToScreen);
   if (isMac()) {
     return screens;
   }
-  return screens.map((s: IScreen) => {
+  return screens.map((s: Screen) => {
     return {
       ...s,
-      bounds: screen.dipToScreenRect(null, s.bounds as Rectangle) as IBounds,
+      bounds: screen.dipToScreenRect(null, s.bounds as Rectangle) as Bounds,
     };
   });
 };
 
-const calcScreenBounds = (screens: IScreen[]): IBounds => {
+const calcScreenBounds = (screens: Screen[]): Bounds => {
   let left = Number.MAX_SAFE_INTEGER;
   let top = Number.MAX_SAFE_INTEGER;
   let right = Number.MIN_SAFE_INTEGER;
   let bottom = Number.MIN_SAFE_INTEGER;
 
-  screens.forEach(({ bounds }: IScreen) => {
+  screens.forEach(({ bounds }: Screen) => {
     left = Math.min(left, bounds.x);
     top = Math.min(top, bounds.y);
     right = Math.max(right, bounds.x + bounds.width);
@@ -104,10 +101,10 @@ const calcScreenBounds = (screens: IScreen[]): IBounds => {
   };
 };
 
-export const getAllScreensFromLeftTop = (): IScreen[] => {
+export const getAllScreensFromLeftTop = (): Screen[] => {
   const screens = getAllScreens();
   const screenBounds = calcScreenBounds(screens);
-  return screens.map((s: IScreen): IScreen => {
+  return screens.map((s: Screen): Screen => {
     return {
       ...s,
       bounds: {
@@ -119,11 +116,11 @@ export const getAllScreensFromLeftTop = (): IScreen[] => {
   });
 };
 
-export const getWholeScreenBounds = (): IBounds => {
+export const getWholeScreenBounds = (): Bounds => {
   return calcScreenBounds(getAllScreens());
 };
 
-export const adjustSelectionBounds = (bounds: IBounds): IBounds => {
+export const adjustSelectionBounds = (bounds: Bounds): Bounds => {
   const screenBounds = getWholeScreenBounds();
   return {
     ...bounds,
@@ -140,7 +137,7 @@ const getCursorScreenPoint = () => {
   return screen.dipToScreenPoint(screen.getCursorScreenPoint());
 };
 
-export const getScreenOfCursor = (): IScreen => {
+export const getScreenOfCursor = (): Screen => {
   const cursorPoint = getCursorScreenPoint();
   const screens = screen.getAllDisplays().map(mapDisplayToScreen);
 

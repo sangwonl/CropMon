@@ -2,15 +2,17 @@ import { inject, injectable } from 'inversify';
 import { ipcMain } from 'electron';
 
 import TYPES from '@di/types';
-import { IRecordOptions, ICaptureOptions } from '@core/entities/capture';
-import { CaptureMode } from '@core/entities/common';
-import { IBounds } from '@core/entities/screen';
-import { IActionDispatcher } from '@adapters/actions/types';
+
+import { CaptureMode } from '@domain/models/common';
+import { RecordOptions, CaptureOptions } from '@domain/models/capture';
+import { Bounds } from '@domain/models/screen';
+
+import { ActionDispatcher } from '@application/ports/action';
 
 @injectable()
-export default class ActionDispatcherProxy implements IActionDispatcher {
+export default class ActionDispatcherProxy implements ActionDispatcher {
   constructor(
-    @inject(TYPES.ActionDispatcher) private actionDispatcher: IActionDispatcher
+    @inject(TYPES.ActionDispatcher) private actionDispatcher: ActionDispatcher
   ) {
     ipcMain.on('disableCaptureMode', () => this.disableCaptureMode());
     ipcMain.on('startTargetSelection', () => this.startTargetSelection());
@@ -51,7 +53,7 @@ export default class ActionDispatcherProxy implements IActionDispatcher {
     throw new Error('Method not implemented.');
   }
 
-  toggleRecordOptions(_recordOptions: IRecordOptions): void {
+  toggleRecordOptions(_recordOptions: RecordOptions): void {
     throw new Error('Method not implemented.');
   }
 
@@ -63,7 +65,7 @@ export default class ActionDispatcherProxy implements IActionDispatcher {
     this.actionDispatcher.disableCaptureMode();
   }
 
-  changeCaptureOptions(options: ICaptureOptions): void {
+  changeCaptureOptions(options: CaptureOptions): void {
     this.actionDispatcher.changeCaptureOptions(options);
   }
 
@@ -71,7 +73,7 @@ export default class ActionDispatcherProxy implements IActionDispatcher {
     this.actionDispatcher.startTargetSelection();
   }
 
-  finishTargetSelection(targetBounds: IBounds): void {
+  finishTargetSelection(targetBounds: Bounds): void {
     this.actionDispatcher.finishTargetSelection(targetBounds);
   }
 

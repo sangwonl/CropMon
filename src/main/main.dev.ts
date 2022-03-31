@@ -16,7 +16,8 @@ import log from 'electron-log';
 
 import diContainer from '@di/containers/main';
 import TYPES from '@di/types';
-import { IActionDispatcher } from '@adapters/actions/types';
+
+import { ActionDispatcher } from '@application/ports/action';
 
 import initializeDevEnv from './devenv';
 
@@ -24,7 +25,7 @@ const start = async () => {
   await initializeDevEnv();
 
   await diContainer
-    .get<IActionDispatcher>(TYPES.ActionDispatcher)
+    .get<ActionDispatcher>(TYPES.ActionDispatcher)
     .initializeApp();
 };
 

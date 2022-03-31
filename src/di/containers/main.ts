@@ -5,59 +5,62 @@ import 'reflect-metadata';
 import { Container } from 'inversify';
 
 import TYPES from '@di/types';
-import { IUiStateApplier, StateManager } from '@core/services/state';
-import { IScreenRecorder } from '@core/services/recorder';
-import { IPreferencesStore } from '@core/services/preferences';
-import { IUiDirector } from '@core/services/director';
-import { IAnalyticsTracker } from '@core/services/tracker';
-import { IAppUpdater } from '@core/services/updater';
-import HookManager from '@core/services/hook';
-import AppUseCase from '@core/usecases/app';
-import CaptureUseCase from '@core/usecases/capture';
-import PreferencesUseCase from '@core/usecases/preferences';
-import ElectronScreenRecorder from '@infrastructures/recorder/recorder';
-import PreferencesStore from '@infrastructures/preferences';
-import GoogleAnalyticsTracker from '@infrastructures/tracker';
-import AppUpdater from '@infrastructures/updater';
-import UiDirector from '@infrastructures/director';
-import UiStateApplier from '@infrastructures/state';
-import BuiltinHooks from '@infrastructures/hook/builtin';
-import { IActionDispatcher } from '@adapters/actions/types';
-import ActionDispatcher from '@adapters/actions/dispatcher';
+
+import AppUseCase from '@application/usecases/app';
+import CaptureUseCase from '@application/usecases/capture';
+import PreferencesUseCase from '@application/usecases/preferences';
+import ActionDispatcherCore from '@application/services/dispatcher';
+import StateManager from '@application/services/state';
+import HookManager from '@application/services/hook';
+import { UiDirector } from '@application/ports/director';
+import { UiStateApplier } from '@application/ports/state';
+import { PreferencesStore } from '@application/ports/preferences';
+import { AnalyticsTracker } from '@application/ports/tracker';
+import { ScreenRecorder } from '@application/ports/recorder';
+import { ActionDispatcher } from '@application/ports/action';
+import { AppUpdater } from '@application/ports/updater';
+import { IRemote } from '@application/ports/remote';
+
 import ActionDispatcherProxy from '@adapters/actions/proxy';
-import { IRemote } from '@adapters/remote/types';
 import RemoteProxy from '@adapters/remote/proxy';
+import BuiltinHooks from '@adapters/hook';
+import ElectronUiStateApplier from '@adapters/state';
+import ElectronPreferencesStore from '@adapters/preferences';
+import ElectronUiDirector from '@adapters/director';
+import ElectronAppUpdater from '@adapters/updater';
+import ElectronScreenRecorder from '@adapters/recorder/recorder';
+import GoogleAnalyticsTracker from '@adapters/tracker';
 
 const diContainer = new Container();
 
 diContainer
-  .bind<IScreenRecorder>(TYPES.ScreenRecorder)
+  .bind<ScreenRecorder>(TYPES.ScreenRecorder)
   .to(ElectronScreenRecorder)
   .inSingletonScope();
 
 diContainer
-  .bind<IPreferencesStore>(TYPES.PreferencesStore)
-  .to(PreferencesStore)
+  .bind<PreferencesStore>(TYPES.PreferencesStore)
+  .to(ElectronPreferencesStore)
   .inSingletonScope();
 
 diContainer
-  .bind<IUiDirector>(TYPES.UiDirector)
-  .to(UiDirector)
+  .bind<UiDirector>(TYPES.UiDirector)
+  .to(ElectronUiDirector)
   .inSingletonScope();
 
 diContainer
-  .bind<IUiStateApplier>(TYPES.UiStateApplier)
-  .to(UiStateApplier)
+  .bind<UiStateApplier>(TYPES.UiStateApplier)
+  .to(ElectronUiStateApplier)
   .inSingletonScope();
 
 diContainer
-  .bind<IAnalyticsTracker>(TYPES.AnalyticsTracker)
+  .bind<AnalyticsTracker>(TYPES.AnalyticsTracker)
   .to(GoogleAnalyticsTracker)
   .inSingletonScope();
 
 diContainer
-  .bind<IAppUpdater>(TYPES.AppUpdater)
-  .to(AppUpdater)
+  .bind<AppUpdater>(TYPES.AppUpdater)
+  .to(ElectronAppUpdater)
   .inSingletonScope();
 
 diContainer
@@ -65,8 +68,8 @@ diContainer
   .to(RemoteProxy).inSingletonScope();
 
 diContainer
-  .bind<IActionDispatcher>(TYPES.ActionDispatcher)
-  .to(ActionDispatcher)
+  .bind<ActionDispatcher>(TYPES.ActionDispatcher)
+  .to(ActionDispatcherCore)
   .inSingletonScope();
 
 diContainer

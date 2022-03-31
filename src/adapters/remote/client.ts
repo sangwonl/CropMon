@@ -1,8 +1,9 @@
 import { injectable } from 'inversify';
 import { ipcRenderer } from 'electron';
 
-import { IPoint } from '@core/entities/screen';
-import { IRemote, PathType } from '@adapters/remote/types';
+import { Point } from '@domain/models/screen';
+
+import { IRemote, PathType } from '@application/ports/remote';
 
 @injectable()
 export default class RemoteClient implements IRemote {
@@ -10,7 +11,7 @@ export default class RemoteClient implements IRemote {
     return ipcRenderer.sendSync('getAppPath', name);
   }
 
-  getCursorScreenPoint(): IPoint {
+  getCursorScreenPoint(): Point {
     return ipcRenderer.sendSync('getCursorScreenPoint');
   }
 }

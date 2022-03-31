@@ -1,13 +1,14 @@
 import { injectable } from 'inversify';
 import { ipcRenderer } from 'electron';
 
-import { IRecordOptions, ICaptureOptions } from '@core/entities/capture';
-import { CaptureMode } from '@core/entities/common';
-import { IBounds } from '@core/entities/screen';
-import { IActionDispatcher } from '@adapters/actions/types';
+import { CaptureMode } from '@domain/models/common';
+import { RecordOptions, CaptureOptions } from '@domain/models/capture';
+import { Bounds } from '@domain/models/screen';
+
+import { ActionDispatcher } from '@application/ports/action';
 
 @injectable()
-export default class ActionDispatcherClient implements IActionDispatcher {
+export default class ActionDispatcherClient implements ActionDispatcher {
   initializeApp(): void {
     throw new Error('Method not implemented.');
   }
@@ -36,7 +37,7 @@ export default class ActionDispatcherClient implements IActionDispatcher {
     throw new Error('Method not implemented.');
   }
 
-  toggleRecordOptions(_recordOptions: IRecordOptions): void {
+  toggleRecordOptions(_recordOptions: RecordOptions): void {
     throw new Error('Method not implemented.');
   }
 
@@ -48,7 +49,7 @@ export default class ActionDispatcherClient implements IActionDispatcher {
     ipcRenderer.send('disableCaptureMode');
   }
 
-  changeCaptureOptions(options: ICaptureOptions): void {
+  changeCaptureOptions(options: CaptureOptions): void {
     ipcRenderer.send('changeCaptureOptions', options);
   }
 
@@ -56,7 +57,7 @@ export default class ActionDispatcherClient implements IActionDispatcher {
     ipcRenderer.send('startTargetSelection');
   }
 
-  finishTargetSelection(targetBounds: IBounds): void {
+  finishTargetSelection(targetBounds: Bounds): void {
     ipcRenderer.send('finishTargetSelection', targetBounds);
   }
 

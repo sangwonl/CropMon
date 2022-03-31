@@ -68,10 +68,9 @@ module.exports = (api) => {
         'module-resolver',
         {
           alias: {
-            '@core': './src/core',
+            '@domain': './src/domain',
+            '@application': './src/application',
             '@adapters': './src/adapters',
-            '@infrastructures': './src/infrastructures',
-            '@ui': './src/ui',
             '@utils': './src/utils',
             '@di': './src/di',
             '@assets': './assets',
