@@ -13,9 +13,9 @@ import { Preferences } from '@domain/models/preferences';
 import { Bounds } from '@domain/models/screen';
 import { INITIAL_UI_STATE, UiState } from '@domain/models/ui';
 
-import PreferencesUseCase from '@application/usecases/preferences';
 import StateManager from '@application/services/state';
 import HookManager from '@application/services/hook';
+import PreferencesRepository from '@application/repositories/preferences';
 import { UiDirector } from '@application/ports/director';
 import { ScreenRecorder } from '@application/ports/recorder';
 
@@ -27,7 +27,7 @@ export default class CaptureUseCase {
   private lastCaptureCtx?: CaptureContext;
 
   constructor(
-    private prefsUseCase: PreferencesUseCase,
+    private prefsRepo: PreferencesRepository,
     private stateManager: StateManager,
     private hookManager: HookManager,
     @inject(TYPES.ScreenRecorder) private screenRecorder: ScreenRecorder,
@@ -39,7 +39,7 @@ export default class CaptureUseCase {
   }
 
   async enableCaptureMode(captureMode?: CaptureMode) {
-    const prefs = await this.prefsUseCase.fetchUserPreferences();
+    const prefs = await this.prefsRepo.fetchUserPreferences();
 
     const lastCaptureMode = prefs.captureMode;
     const activeCaptureMode = captureMode ?? lastCaptureMode;
@@ -91,16 +91,16 @@ export default class CaptureUseCase {
   }
 
   async changeCaptureOptions(options: CaptureOptions) {
-    const prefs = await this.prefsUseCase.fetchUserPreferences();
+    const prefs = await this.prefsRepo.fetchUserPreferences();
 
     if (prefs.captureMode !== options.target.mode) {
       this.enableCaptureMode(options.target.mode);
       prefs.captureMode = options.target.mode;
     }
 
-    this.prefsUseCase.applyRecOptionsToPrefs(prefs, options.recordOptions);
+    this.prefsRepo.applyRecOptionsToPrefs(prefs, options.recordOptions);
 
-    await this.prefsUseCase.updateUserPreference(prefs);
+    await this.prefsRepo.updateUserPreference(prefs);
 
     this.stateManager.updateUiState((state: UiState): UiState => {
       return {
@@ -175,7 +175,7 @@ export default class CaptureUseCase {
     }
 
     // creating capture context and submit to recorder
-    const prefs = await this.prefsUseCase.fetchUserPreferences();
+    const prefs = await this.prefsRepo.fetchUserPreferences();
     const newCtx = this.createCaptureContext(
       this.preparedCaptureOptions,
       prefs
@@ -250,7 +250,7 @@ export default class CaptureUseCase {
     this.lastCaptureCtx = newCtx;
 
     // open folder where recoding file saved
-    const prefs = await this.prefsUseCase.fetchUserPreferences();
+    const prefs = await this.prefsRepo.fetchUserPreferences();
     if (
       newCtx.outputPath &&
       newCtx.status === CaptureStatus.FINISHED &&
@@ -263,11 +263,11 @@ export default class CaptureUseCase {
   }
 
   async toggleRecordOptions(recordOptions: RecordOptions): Promise<void> {
-    const prefs = await this.prefsUseCase.fetchUserPreferences();
+    const prefs = await this.prefsRepo.fetchUserPreferences();
 
-    this.prefsUseCase.applyRecOptionsToPrefs(prefs, recordOptions);
+    this.prefsRepo.applyRecOptionsToPrefs(prefs, recordOptions);
 
-    await this.prefsUseCase.updateUserPreference(prefs);
+    await this.prefsRepo.updateUserPreference(prefs);
   }
 
   private createCaptureContext = (

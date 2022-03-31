@@ -6,32 +6,16 @@ import { Preferences } from '@domain/models/preferences';
 import { RecordOptions } from '@domain/models/capture';
 
 import HookManager from '@application/services/hook';
-import { UiDirector } from '@application/ports/director';
 import { PreferencesStore } from '@application/ports/preferences';
 
 @injectable()
-export default class PreferencesUseCase {
+export default class PreferencesRepository {
   private cachedUserPrefs?: Preferences;
 
   public constructor(
     private hookManager: HookManager,
-    @inject(TYPES.UiDirector) private uiDirector: UiDirector,
     @inject(TYPES.PreferencesStore) private preferencesStore: PreferencesStore
   ) {}
-
-  async openPreferencesModal(): Promise<void> {
-    this.hookManager.emit('prefs-modal-opening', {});
-
-    const prefs = await this.fetchUserPreferences();
-    await this.uiDirector.openPreferencesModal(
-      prefs,
-      (updatedPrefs: Preferences) => {
-        if (updatedPrefs !== undefined) {
-          this.updateUserPreference(updatedPrefs);
-        }
-      }
-    );
-  }
 
   async fetchUserPreferences(): Promise<Preferences> {
     if (this.cachedUserPrefs === undefined) {

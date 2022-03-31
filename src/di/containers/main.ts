@@ -6,12 +6,20 @@ import { Container } from 'inversify';
 
 import TYPES from '@di/types';
 
-import AppUseCase from '@application/usecases/app';
+import InitializeAppUseCase from '@application/usecases/InitializeApp';
+import QuitAppUseCase from '@application/usecases/QuitApp';
+import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
+import CheckVersionUseCase from '@application/usecases/CheckVersion';
+import UpdateAppUseCase from '@application/usecases/UpdateApp';
+import OpenAboutPopupUseCase from '@application/usecases/OpenAboutPopup';
+import OpenHelpPopupUseCase from '@application/usecases/OpenHelpPopup';
+import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
+
 import CaptureUseCase from '@application/usecases/capture';
-import PreferencesUseCase from '@application/usecases/preferences';
 import ActionDispatcherCore from '@application/services/dispatcher';
 import StateManager from '@application/services/state';
 import HookManager from '@application/services/hook';
+import PreferencesRepository from '@application/repositories/preferences';
 import { UiDirector } from '@application/ports/director';
 import { UiStateApplier } from '@application/ports/state';
 import { PreferencesStore } from '@application/ports/preferences';
@@ -88,12 +96,12 @@ diContainer
   .inSingletonScope();
 
 diContainer
-  .bind<BuiltinHooks>(BuiltinHooks)
+  .bind<PreferencesRepository>(PreferencesRepository)
   .toSelf()
   .inSingletonScope();
 
 diContainer
-  .bind<AppUseCase>(AppUseCase)
+  .bind<BuiltinHooks>(BuiltinHooks)
   .toSelf()
   .inSingletonScope();
 
@@ -103,7 +111,42 @@ diContainer
   .inSingletonScope();
 
 diContainer
-  .bind<PreferencesUseCase>(PreferencesUseCase)
+  .bind<InitializeAppUseCase>(InitializeAppUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<QuitAppUseCase>(QuitAppUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<CheckUpdateUseCase>(CheckUpdateUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<UpdateAppUseCase>(UpdateAppUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<CheckVersionUseCase>(CheckVersionUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<OpenAboutPopupUseCase>(OpenAboutPopupUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<OpenHelpPopupUseCase>(OpenHelpPopupUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<OpenPrefsModalUseCase>(OpenPrefsModalUseCase)
   .toSelf()
   .inSingletonScope();
 

@@ -17,8 +17,9 @@ import {
 } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
 
-import AppUseCase from '@application/usecases/app';
-import PreferencesUseCase from '@application/usecases/preferences';
+import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
+import CheckVersionUseCase from '@application/usecases/CheckVersion';
+
 import HookManager, {
   HookArgsAppUpdateChecked,
   HookArgsAppUpdated,
@@ -29,6 +30,7 @@ import HookManager, {
   HookArgsPrefsLoaded,
   HookArgsPrefsUpdated,
 } from '@application/services/hook';
+import PreferencesRepository from '@application/repositories/preferences';
 import { AnalyticsTracker } from '@application/ports/tracker';
 import { UiDirector } from '@application/ports/director';
 import { ActionDispatcher } from '@application/ports/action';
@@ -52,9 +54,10 @@ export default class BuiltinHooks {
   private lastUpdateCheckedAt?: number;
 
   constructor(
-    private appUseCase: AppUseCase,
-    private prefsUseCase: PreferencesUseCase,
+    private checkUpdateUseCase: CheckUpdateUseCase,
+    private checkVersionUseCase: CheckVersionUseCase,
     private hookManager: HookManager,
+    private prefsRepo: PreferencesRepository,
     @inject(TYPES.UiDirector) private uiDirector: UiDirector,
     @inject(TYPES.AnalyticsTracker) private tracker: AnalyticsTracker,
     @inject(TYPES.ActionDispatcher) private actionDispatcher: ActionDispatcher
@@ -79,10 +82,10 @@ export default class BuiltinHooks {
   }
 
   onAppLaunched = async () => {
-    await this.appUseCase.checkAppVersions();
+    await this.checkVersionUseCase.execute();
 
     this.uiDirector.refreshTrayState(
-      await this.prefsUseCase.fetchUserPreferences()
+      await this.prefsRepo.fetchUserPreferences()
     );
 
     this.tracker.eventL('app-lifecycle', 'launch', getPlatform());
@@ -95,7 +98,7 @@ export default class BuiltinHooks {
 
   onAppUpdateChecked = async (args: HookArgsAppUpdateChecked) => {
     this.uiDirector.refreshTrayState(
-      await this.prefsUseCase.fetchUserPreferences(),
+      await this.prefsRepo.fetchUserPreferences(),
       args.updateAvailable
     );
 
@@ -125,7 +128,7 @@ export default class BuiltinHooks {
   };
 
   onCaptureOptionsChanged = async () => {
-    const prefs = await this.prefsUseCase.fetchUserPreferences();
+    const prefs = await this.prefsRepo.fetchUserPreferences();
     this.tracker.eventL(
       'capture',
       'options-changed',
@@ -139,7 +142,7 @@ export default class BuiltinHooks {
   };
 
   onCaptureShortcutTriggered = async () => {
-    const prefs = await this.prefsUseCase.fetchUserPreferences();
+    const prefs = await this.prefsRepo.fetchUserPreferences();
     this.tracker.eventL('capture', 'shortcut-triggered', prefs.shortcut);
   };
 
@@ -164,7 +167,7 @@ export default class BuiltinHooks {
     // refresh tray
     const { status } = args.captureContext;
     await this.uiDirector.refreshTrayState(
-      await this.prefsUseCase.fetchUserPreferences(),
+      await this.prefsRepo.fetchUserPreferences(),
       undefined,
       status === CaptureStatus.IN_PROGRESS
     );
@@ -192,7 +195,7 @@ export default class BuiltinHooks {
 
   onCaptureFinishing = async (_args: HookArgsCaptureFinishing) => {
     await this.uiDirector.refreshTrayState(
-      await this.prefsUseCase.fetchUserPreferences(),
+      await this.prefsRepo.fetchUserPreferences(),
       undefined,
       false
     );
@@ -207,7 +210,7 @@ export default class BuiltinHooks {
       now - this.lastUpdateCheckedAt > UPDATE_CHECK_INTERVAL
     ) {
       setTimeout(() => {
-        this.appUseCase.checkForUpdates();
+        this.checkUpdateUseCase.execute();
       }, UPDATE_CHECK_DELAY);
     }
 
@@ -236,8 +239,8 @@ export default class BuiltinHooks {
     mode?: CaptureMode,
     fmt?: OutputFormat
   ) => {
-    const prefs = await this.prefsUseCase.fetchUserPreferences();
-    const recOpts = this.prefsUseCase.getRecOptionsFromPrefs(prefs);
+    const prefs = await this.prefsRepo.fetchUserPreferences();
+    const recOpts = this.prefsRepo.getRecOptionsFromPrefs(prefs);
     this.actionDispatcher.changeCaptureOptions({
       target: { mode: mode ?? prefs.captureMode },
       recordOptions: {

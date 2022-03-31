@@ -4,8 +4,14 @@ import { CaptureMode, CaptureStatus } from '@domain/models/common';
 import { Bounds } from '@domain/models/screen';
 import { CaptureOptions, RecordOptions } from '@domain/models/capture';
 
-import AppUseCase from '@application/usecases/app';
-import PreferencesUseCase from '@application/usecases/preferences';
+import InitializeAppUseCase from '@application/usecases/InitializeApp';
+import QuitAppUseCase from '@application/usecases/QuitApp';
+import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
+import UpdateAppUseCase from '@application/usecases/UpdateApp';
+import OpenAboutPopupUseCase from '@application/usecases/OpenAboutPopup';
+import OpenHelpPopupUseCase from '@application/usecases/OpenHelpPopup';
+import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
+
 import CaptureUseCase from '@application/usecases/capture';
 import HookManager from '@application/services/hook';
 import { ActionDispatcher } from '@application/ports/action';
@@ -15,38 +21,45 @@ import { adjustSelectionBounds } from '@utils/bounds';
 @injectable()
 export default class ActionDispatcherCore implements ActionDispatcher {
   constructor(
-    private hookManager: HookManager,
-    private appUseCase: AppUseCase,
-    private prefsUseCase: PreferencesUseCase,
-    private captureUseCase: CaptureUseCase
+    private initializeAppUseCase: InitializeAppUseCase,
+    private quitAppUseCase: QuitAppUseCase,
+    private checkUpdateUseCase: CheckUpdateUseCase,
+    private updateAppUseCase: UpdateAppUseCase,
+    private openAboutPopupUseCase: OpenAboutPopupUseCase,
+    private openHelpPopupUseCase: OpenHelpPopupUseCase,
+    private openPrefsModalUseCase: OpenPrefsModalUseCase,
+
+    private captureUseCase: CaptureUseCase,
+
+    private hookManager: HookManager
   ) {}
 
   initializeApp = () => {
-    this.appUseCase.initializeApp();
+    this.initializeAppUseCase.execute();
   };
 
   checkForUpdates = () => {
-    this.appUseCase.checkForUpdates();
+    this.checkUpdateUseCase.execute();
   };
 
   downloadAndInstall = () => {
-    this.appUseCase.downloadAndInstall();
+    this.updateAppUseCase.execute();
   };
 
   showAbout = () => {
-    this.appUseCase.showAboutPopup();
+    this.openAboutPopupUseCase.execute();
   };
 
   showHelp = () => {
-    this.appUseCase.showHelpPopup();
+    this.openHelpPopupUseCase.execute();
   };
 
   quitApplication = () => {
-    this.appUseCase.quitApplication();
+    this.quitAppUseCase.execute();
   };
 
   openPreferences = () => {
-    this.prefsUseCase.openPreferencesModal();
+    this.openPrefsModalUseCase.execute();
   };
 
   toggleRecordOptions = (recordOptions: RecordOptions) => {
