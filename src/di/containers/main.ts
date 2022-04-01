@@ -14,11 +14,22 @@ import UpdateAppUseCase from '@application/usecases/UpdateApp';
 import OpenAboutPopupUseCase from '@application/usecases/OpenAboutPopup';
 import OpenHelpPopupUseCase from '@application/usecases/OpenHelpPopup';
 import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
+import ToggleRecordOptionsUseCase from '@application/usecases/ToggleRecordOptions';
+import StartSelectionUseCase from '@application/usecases/StartSelection';
+import StartCaptureAsIsUseCase from '@application/usecases/StartCaptureAsIs';
+import EnableCaptureUseCase from '@application/usecases/EnableCapture';
+import DisableCaptureUseCase from '@application/usecases/DisableCapture';
+import ChangeCaptureOptionsUseCase from '@application/usecases/ChangeCaptureOptions';
+import FinishSelectionUseCase from '@application/usecases/FinishSelection';
+import StartCaptureUseCase from '@application/usecases/StartCapture';
+import FinishCaptureUseCase from '@application/usecases/FinishCapture';
+import ToggleCaptureUseCase from '@application/usecases/ToggleCaptureUseCase';
 
-import CaptureUseCase from '@application/usecases/capture';
-import ActionDispatcherCore from '@application/services/dispatcher';
+import ActionDispatcherCore from '@application/controllers/dispatcher';
 import StateManager from '@application/services/state';
 import HookManager from '@application/services/hook';
+import CaptureModeManager from '@application/services/capture/mode';
+import CaptureSession from '@application/services/capture/session';
 import PreferencesRepository from '@application/repositories/preferences';
 import { UiDirector } from '@application/ports/director';
 import { UiStateApplier } from '@application/ports/state';
@@ -73,7 +84,8 @@ diContainer
 
 diContainer
   .bind<PlatformApi>(TYPES.PlatformApi)
-  .to(PlatformApiProxy).inSingletonScope();
+  .to(PlatformApiProxy)
+  .inSingletonScope();
 
 diContainer
   .bind<ActionDispatcher>(TYPES.ActionDispatcher)
@@ -96,17 +108,22 @@ diContainer
   .inSingletonScope();
 
 diContainer
+  .bind<CaptureModeManager>(CaptureModeManager)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<CaptureSession>(CaptureSession)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
   .bind<PreferencesRepository>(PreferencesRepository)
   .toSelf()
   .inSingletonScope();
 
 diContainer
   .bind<BuiltinHooks>(BuiltinHooks)
-  .toSelf()
-  .inSingletonScope();
-
-diContainer
-  .bind<CaptureUseCase>(CaptureUseCase)
   .toSelf()
   .inSingletonScope();
 
@@ -147,6 +164,56 @@ diContainer
 
 diContainer
   .bind<OpenPrefsModalUseCase>(OpenPrefsModalUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<ToggleRecordOptionsUseCase>(ToggleRecordOptionsUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<StartSelectionUseCase>(StartSelectionUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<StartCaptureAsIsUseCase>(StartCaptureAsIsUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<EnableCaptureUseCase>(EnableCaptureUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<DisableCaptureUseCase>(DisableCaptureUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<ChangeCaptureOptionsUseCase>(ChangeCaptureOptionsUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<FinishSelectionUseCase>(FinishSelectionUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<StartCaptureUseCase>(StartCaptureUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<FinishCaptureUseCase>(FinishCaptureUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<ToggleCaptureUseCase>(ToggleCaptureUseCase)
   .toSelf()
   .inSingletonScope();
 

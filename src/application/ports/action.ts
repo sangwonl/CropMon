@@ -1,4 +1,3 @@
-import { CaptureMode } from '@domain/models/common';
 import { Bounds } from '@domain/models/screen';
 import { CaptureOptions, RecordOptions } from '@domain/models/capture';
 
@@ -11,7 +10,7 @@ export interface ActionDispatcher {
   quitApplication(): void;
   openPreferences(): void;
   toggleRecordOptions(recordOptions: RecordOptions): void;
-  enableCaptureMode(captureMode?: CaptureMode): void;
+  enableCaptureMode(): void;
   disableCaptureMode(): void;
   changeCaptureOptions(options: CaptureOptions): void;
   startTargetSelection(): void;

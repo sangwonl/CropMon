@@ -10,7 +10,7 @@ import { UiDirector } from '@application/ports/director';
 import { PreferencesStore } from '@application/ports/preferences';
 
 @injectable()
-export default class OpenPrefsModalUseCase implements UseCase {
+export default class OpenPrefsModalUseCase implements UseCase<void> {
   private cachedUserPrefs?: Preferences;
 
   public constructor(

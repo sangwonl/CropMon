@@ -3,7 +3,6 @@ import { ipcMain } from 'electron';
 
 import TYPES from '@di/types';
 
-import { CaptureMode } from '@domain/models/common';
 import { RecordOptions, CaptureOptions } from '@domain/models/capture';
 import { Bounds } from '@domain/models/screen';
 
@@ -57,7 +56,7 @@ export default class ActionDispatcherProxy implements ActionDispatcher {
     throw new Error('Method not implemented.');
   }
 
-  enableCaptureMode(_captureMode?: CaptureMode): void {
+  enableCaptureMode(): void {
     throw new Error('Method not implemented.');
   }
 

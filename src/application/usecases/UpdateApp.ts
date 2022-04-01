@@ -10,7 +10,7 @@ import { UiDirector } from '@application/ports/director';
 import AppUpdater from '@adapters/updater';
 
 @injectable()
-export default class UpdateAppUseCase implements UseCase {
+export default class UpdateAppUseCase implements UseCase<void> {
   constructor(
     @inject(TYPES.AppUpdater) private appUpdater: AppUpdater,
     @inject(TYPES.UiDirector) private uiDirector: UiDirector

@@ -3,8 +3,11 @@ import { mock, instance, verify, when, capture } from 'ts-mockito';
 import { CaptureMode, CaptureStatus } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
 
-import CaptureUseCase from '@application/usecases/capture';
-import PreferencesUseCase from '@application/usecases/preferences';
+import StartCaptureUseCase from '@application/usecases/StartCapture';
+import FinishCaptureUseCase from '@application/usecases/FinishCapture';
+import PreferencesRepository from '@application/repositories/preferences';
+import CaptureModeManager from '@application/services/capture/mode';
+import CaptureSession from '@application/services/capture/session';
 import StateManager from '@application/services/state';
 import HookManager from '@application/services/hook';
 import { ScreenRecorder } from '@application/ports/recorder';
@@ -13,8 +16,8 @@ import { UiDirector } from '@application/ports/director';
 import { DEFAULT_SHORTCUT_CAPTURE } from '@utils/shortcut';
 
 describe('CaptureUseCase', () => {
-  let mockedPrefsUseCase: PreferencesUseCase;
-  let mockPrefsUseCase: PreferencesUseCase;
+  let mockedPrefsRepo: PreferencesRepository;
+  let mockPrefsRepo: PreferencesRepository;
 
   let mockedStateManager: StateManager;
   let mockStateMgr: StateManager;
@@ -22,13 +25,20 @@ describe('CaptureUseCase', () => {
   let mockedHookManager: HookManager;
   let mockHookMgr: HookManager;
 
+  let mockedCaptModeManager: CaptureModeManager;
+  let mockCaptModeMgr: CaptureModeManager;
+
+  let mockedCaptSession: CaptureSession;
+  let mockCaptSession: CaptureSession;
+
   let mockedScreenRecorder: ScreenRecorder;
   let mockRecorder: ScreenRecorder;
 
   let mockedUiDirector: UiDirector;
   let mockUiDirector: UiDirector;
 
-  let useCase: CaptureUseCase;
+  let startCaptUseCase: StartCaptureUseCase;
+  let finishCaptUseCase: FinishCaptureUseCase;
 
   const defaultPrefs: Preferences = {
     initialLoaded: false,
@@ -51,22 +61,37 @@ describe('CaptureUseCase', () => {
   };
 
   beforeEach(() => {
-    mockedPrefsUseCase = mock(PreferencesUseCase);
+    mockedPrefsRepo = mock(PreferencesRepository);
     mockedStateManager = mock(StateManager);
     mockedHookManager = mock(HookManager);
+    mockedCaptModeManager = mock(CaptureModeManager);
+    mockedCaptSession = mock(CaptureSession);
     mockedScreenRecorder = mock<ScreenRecorder>();
     mockedUiDirector = mock<UiDirector>();
 
-    mockPrefsUseCase = instance(mockedPrefsUseCase);
+    mockPrefsRepo = instance(mockedPrefsRepo);
     mockStateMgr = instance(mockedStateManager);
     mockHookMgr = instance(mockedHookManager);
+    mockCaptModeMgr = instance(mockedCaptModeManager);
+    mockCaptSession = instance(mockedCaptSession);
     mockRecorder = instance(mockedScreenRecorder);
     mockUiDirector = instance(mockedUiDirector);
 
-    useCase = new CaptureUseCase(
-      mockPrefsUseCase,
+    startCaptUseCase = new StartCaptureUseCase(
+      mockPrefsRepo,
       mockStateMgr,
       mockHookMgr,
+      mockCaptModeMgr,
+      mockCaptSession,
+      mockRecorder,
+      mockUiDirector
+    );
+
+    finishCaptUseCase = new FinishCaptureUseCase(
+      mockPrefsRepo,
+      mockHookMgr,
+      mockCaptModeMgr,
+      mockCaptSession,
       mockRecorder,
       mockUiDirector
     );
@@ -79,36 +104,36 @@ describe('CaptureUseCase', () => {
       shortcut: DEFAULT_SHORTCUT_CAPTURE,
     };
 
-    when(mockedPrefsUseCase.fetchUserPreferences()).thenResolve(mockPrefs);
+    when(mockedPrefsRepo.fetchUserPreferences()).thenResolve(mockPrefs);
   });
 
   describe('startCapture', () => {
     it('should get current context from registry and call record with it', async () => {
-      await useCase.startCapture();
+      await startCaptUseCase.execute();
 
       const [ctx] = capture(mockedScreenRecorder.record).last();
       expect(ctx.status).toEqual(CaptureStatus.IN_PROGRESS);
       expect(ctx.outputPath).toContain('recordhome');
 
-      verify(mockedPrefsUseCase.fetchUserPreferences()).once();
+      verify(mockedPrefsRepo.fetchUserPreferences()).once();
       verify(mockedScreenRecorder.record(ctx)).once();
     });
   });
 
   describe('finishCapture', () => {
     it('should call recorder finish method', async () => {
-      await useCase.startCapture();
+      await startCaptUseCase.execute();
 
       const [ctx] = capture(mockedScreenRecorder.record).last();
       expect(ctx.status).toEqual(CaptureStatus.IN_PROGRESS);
       expect(ctx.outputPath).toContain('recordhome');
 
-      verify(mockedPrefsUseCase.fetchUserPreferences()).once();
+      verify(mockedPrefsRepo.fetchUserPreferences()).once();
       verify(mockedScreenRecorder.record(ctx)).once();
 
-      await useCase.finishCapture();
+      await finishCaptUseCase.execute();
 
-      const updatedCtx = useCase.curCaptureContext();
+      const updatedCtx = mockCaptSession.getCurCaptureContext();
       expect(updatedCtx).toBeDefined();
       expect(updatedCtx?.status).toEqual(CaptureStatus.FINISHED);
       verify(mockedScreenRecorder.finish(ctx)).once();

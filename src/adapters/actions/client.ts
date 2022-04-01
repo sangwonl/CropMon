@@ -1,7 +1,6 @@
 import { injectable } from 'inversify';
 import { ipcRenderer } from 'electron';
 
-import { CaptureMode } from '@domain/models/common';
 import { RecordOptions, CaptureOptions } from '@domain/models/capture';
 import { Bounds } from '@domain/models/screen';
 
@@ -41,7 +40,7 @@ export default class ActionDispatcherClient implements ActionDispatcher {
     throw new Error('Method not implemented.');
   }
 
-  enableCaptureMode(_captureMode?: CaptureMode): void {
+  enableCaptureMode(): void {
     throw new Error('Method not implemented.');
   }
 

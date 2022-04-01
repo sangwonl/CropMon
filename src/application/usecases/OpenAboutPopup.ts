@@ -9,7 +9,7 @@ import PreferencesRepository from '@application/repositories/preferences';
 import { UiDirector } from '@application/ports/director';
 
 @injectable()
-export default class OpenAboutPopupUseCase implements UseCase {
+export default class OpenAboutPopupUseCase implements UseCase<void> {
   constructor(
     private prefsRepo: PreferencesRepository,
     @inject(TYPES.UiDirector) private uiDirector: UiDirector

@@ -1,6 +1,5 @@
 import { injectable } from 'inversify';
 
-import { CaptureMode, CaptureStatus } from '@domain/models/common';
 import { Bounds } from '@domain/models/screen';
 import { CaptureOptions, RecordOptions } from '@domain/models/capture';
 
@@ -11,9 +10,16 @@ import UpdateAppUseCase from '@application/usecases/UpdateApp';
 import OpenAboutPopupUseCase from '@application/usecases/OpenAboutPopup';
 import OpenHelpPopupUseCase from '@application/usecases/OpenHelpPopup';
 import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
-
-import CaptureUseCase from '@application/usecases/capture';
-import HookManager from '@application/services/hook';
+import ToggleRecordOptionsUseCase from '@application/usecases/ToggleRecordOptions';
+import StartSelectionUseCase from '@application/usecases/StartSelection';
+import StartCaptureAsIsUseCase from '@application/usecases/StartCaptureAsIs';
+import EnableCaptureUseCase from '@application/usecases/EnableCapture';
+import DisableCaptureUseCase from '@application/usecases/DisableCapture';
+import ChangeCaptureOptionsUseCase from '@application/usecases/ChangeCaptureOptions';
+import FinishSelectionUseCase from '@application/usecases/FinishSelection';
+import StartCaptureUseCase from '@application/usecases/StartCapture';
+import FinishCaptureUseCase from '@application/usecases/FinishCapture';
+import ToggleCaptureUseCase from '@application/usecases/ToggleCaptureUseCase';
 import { ActionDispatcher } from '@application/ports/action';
 
 import { adjustSelectionBounds } from '@utils/bounds';
@@ -28,10 +34,16 @@ export default class ActionDispatcherCore implements ActionDispatcher {
     private openAboutPopupUseCase: OpenAboutPopupUseCase,
     private openHelpPopupUseCase: OpenHelpPopupUseCase,
     private openPrefsModalUseCase: OpenPrefsModalUseCase,
-
-    private captureUseCase: CaptureUseCase,
-
-    private hookManager: HookManager
+    private toggleRecordOptionsUseCase: ToggleRecordOptionsUseCase,
+    private startSelectionUseCase: StartSelectionUseCase,
+    private startCaptureAsIsUseCase: StartCaptureAsIsUseCase,
+    private enableCaptureUseCase: EnableCaptureUseCase,
+    private disableCaptureUseCase: DisableCaptureUseCase,
+    private changeCaptureOptionsUseCase: ChangeCaptureOptionsUseCase,
+    private finishSelectionUseCase: FinishSelectionUseCase,
+    private startCaptureUseCase: StartCaptureUseCase,
+    private finishCaptureUseCase: FinishCaptureUseCase,
+    private toggleCaptureUseCase: ToggleCaptureUseCase
   ) {}
 
   initializeApp = () => {
@@ -63,51 +75,44 @@ export default class ActionDispatcherCore implements ActionDispatcher {
   };
 
   toggleRecordOptions = (recordOptions: RecordOptions) => {
-    this.captureUseCase.toggleRecordOptions(recordOptions);
+    this.toggleRecordOptionsUseCase.execute({ recordOptions });
   };
 
-  enableCaptureMode = (captureMode?: CaptureMode) => {
-    this.captureUseCase.enableCaptureMode(captureMode);
+  enableCaptureMode = () => {
+    this.enableCaptureUseCase.execute();
   };
 
   disableCaptureMode = () => {
-    this.captureUseCase.disableCaptureMode();
+    this.disableCaptureUseCase.execute();
   };
 
   changeCaptureOptions = (options: CaptureOptions) => {
-    this.captureUseCase.changeCaptureOptions(options);
+    this.changeCaptureOptionsUseCase.execute({ captureOptions: options });
   };
 
   startTargetSelection = () => {
-    this.captureUseCase.startTargetSelection();
+    this.startSelectionUseCase.execute();
   };
 
   finishTargetSelection = (targetBounds: Bounds) => {
-    this.captureUseCase.finishTargetSelection(
-      adjustSelectionBounds(targetBounds)
-    );
+    this.finishSelectionUseCase.execute({
+      targetBounds: adjustSelectionBounds(targetBounds),
+    });
   };
 
   startCapture = () => {
-    this.captureUseCase.startCapture();
+    this.startCaptureUseCase.execute();
   };
 
   startCaptureWithCurrentStates = () => {
-    this.captureUseCase.startCaptureWithCurrentStates();
+    this.startCaptureAsIsUseCase.execute();
   };
 
   finishCapture = () => {
-    this.captureUseCase.finishCapture();
+    this.finishCaptureUseCase.execute();
   };
 
   onCaptureToggleShortcut = () => {
-    const captCtx = this.captureUseCase.curCaptureContext();
-    if (captCtx?.status === CaptureStatus.IN_PROGRESS) {
-      this.finishCapture();
-    } else {
-      this.enableCaptureMode();
-
-      this.hookManager.emit('capture-shortcut-triggered', {});
-    }
+    this.toggleCaptureUseCase.execute();
   };
 }

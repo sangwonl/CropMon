@@ -12,7 +12,7 @@ import PreferencesRepository from '@application/repositories/preferences';
 import AppUpdater from '@adapters/updater';
 
 @injectable()
-export default class CheckVersionUseCase implements UseCase {
+export default class CheckVersionUseCase implements UseCase<void> {
   constructor(
     private prefsRepo: PreferencesRepository,
     private hookManager: HookManager,

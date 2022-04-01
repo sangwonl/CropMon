@@ -9,7 +9,7 @@ import HookManager from '@application/services/hook';
 import { UiDirector } from '@application/ports/director';
 
 @injectable()
-export default class QuitAppUseCase implements UseCase {
+export default class QuitAppUseCase implements UseCase<void> {
   constructor(
     private hookManager: HookManager,
     @inject(TYPES.UiDirector) private uiDirector: UiDirector

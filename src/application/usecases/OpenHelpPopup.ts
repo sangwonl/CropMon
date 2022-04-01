@@ -8,7 +8,7 @@ import { UseCase } from '@application/usecases/UseCase';
 import { UiDirector } from '@application/ports/director';
 
 @injectable()
-export default class OpenHelpPopupUseCase implements UseCase {
+export default class OpenHelpPopupUseCase implements UseCase<void> {
   constructor(@inject(TYPES.UiDirector) private uiDirector: UiDirector) {}
 
   async execute() {
