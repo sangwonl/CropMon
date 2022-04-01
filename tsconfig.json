@@ -25,10 +25,9 @@
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
     "paths": {
-      "@core/*": ["src/core/*"],
+      "@domain/*": ["src/domain/*"],
+      "@application/*": ["src/application/*"],
       "@adapters/*": ["src/adapters/*"],
-      "@infrastructures/*": ["src/infrastructures/*"],
-      "@ui/*": ["src/ui/*"],
       "@utils/*": ["src/utils/*"],
       "@di/*": ["src/di/*"],
       "@assets/*": ["src/assets/*"]

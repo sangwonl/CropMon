@@ -41,42 +41,42 @@
       "node_modules",
       "dist/",
       {
-        "from": "ui/widgets/overlays",
+        "from": "adapters/ui/widgets/overlays",
         "to": "overlays",
         "filter": [
           "*.html"
         ]
       },
       {
-        "from": "ui/widgets/ctrlpanel",
+        "from": "adapters/ui/widgets/ctrlpanel",
         "to": "ctrlpanel",
         "filter": [
           "*.html"
         ]
       },
       {
-        "from": "ui/widgets/preferences",
+        "from": "adapters/ui/widgets/preferences",
         "to": "preferences",
         "filter": [
           "*.html"
         ]
       },
       {
-        "from": "ui/widgets/progressdialog",
+        "from": "adapters/ui/widgets/progressdialog",
         "to": "progressdialog",
         "filter": [
           "*.html"
         ]
       },
       {
-        "from": "ui/widgets/staticpage",
+        "from": "adapters/ui/widgets/staticpage",
         "to": "staticpage",
         "filter": [
           "*.html"
         ]
       },
       {
-        "from": "infrastructures/recorder/rec-delegate",
+        "from": "adapters/recorder/rec-delegate",
         "to": "rec-delegate",
         "filter": [
           "*.html"
@@ -368,8 +368,7 @@
           "parser": "json"
         }
       }
-    ],
-    "singleQuote": true
+    ]
   },
   "renovate": {
     "extends": [

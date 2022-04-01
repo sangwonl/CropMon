@@ -1,26 +1,27 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable import/prefer-default-export */
 
 import 'reflect-metadata';
 
 import { Container } from 'inversify';
 
-import { TYPES } from '@di/types';
-import { IRemote } from '@adapters/remote/types';
-import { RemoteClient } from '@adapters/remote/client';
-import { IActionDispatcher } from '@adapters/actions/types';
-import { ActionDispatcherClient } from '@adapters/actions/client';
+import TYPES from '@di/types';
+
+import { PlatformApi } from '@application/ports/platform';
+import { ActionDispatcher } from '@application/ports/action';
+
+import PlatformApiClient from '@adapters/platform/client';
+import ActionDispatcherClient from '@adapters/actions/client';
 
 const diContainer = new Container();
 
 diContainer
-  .bind<IActionDispatcher>(TYPES.ActionDispatcher)
+  .bind<ActionDispatcher>(TYPES.ActionDispatcher)
   .to(ActionDispatcherClient)
   .inSingletonScope();
 
 diContainer
-  .bind<IRemote>(TYPES.Remote)
-  .to(RemoteClient)
+  .bind<PlatformApi>(TYPES.PlatformApi)
+  .to(PlatformApiClient)
   .inSingletonScope();
 
-export { diContainer };
+export default diContainer;

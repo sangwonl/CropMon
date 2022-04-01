@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-
 export const getNowAsYYYYMMDDHHmmss = () => {
   // https://stackoverflow.com/questions/10830357/javascript-toisostring-ignores-timezone-offset
   const tzoffset = new Date().getTimezoneOffset() * 60000; // offset in milliseconds

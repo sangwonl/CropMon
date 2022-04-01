@@ -31,12 +31,12 @@ export default merge(baseConfig, {
     'renderer.ui': [
       'core-js',
       'regenerator-runtime/runtime',
-      require.resolve('../../src/ui/widgets/index.tsx'),
+      require.resolve('../../src/adapters/ui/widgets/index.tsx'),
     ],
     'renderer.recorder': [
       'core-js',
       'regenerator-runtime/runtime',
-      require.resolve('../../src/infrastructures/recorder/rec-delegate/delegate.ts'),
+      require.resolve('../../src/adapters/recorder/rec-delegate/delegate.ts'),
     ],
   },
 

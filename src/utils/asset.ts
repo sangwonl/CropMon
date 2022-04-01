@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-
 import { app } from 'electron';
 import path from 'path';
 

@@ -1,16 +1,12 @@
-/* eslint-disable import/prefer-default-export */
-
 const TYPES = {
-  ScreenRecorder: Symbol.for('ScreenRecorder'),
-  PreferencesStore: Symbol.for('PreferencesStore'),
   AppUpdater: Symbol.for('AppUpdater'),
   UiDirector: Symbol.for('UiDirector'),
   UiStateApplier: Symbol.for('UiStateApplier'),
-  AnalyticsTracker: Symbol.for('AnalyticsTracker'),
-  ShortcutManager: Symbol.for('ShortcutManager'),
-  HookManager: Symbol.for('HookManager'),
+  ScreenRecorder: Symbol.for('ScreenRecorder'),
   ActionDispatcher: Symbol.for('ActionDispatcher'),
-  Remote: Symbol.for('Remote'),
+  PreferencesStore: Symbol.for('PreferencesStore'),
+  AnalyticsTracker: Symbol.for('AnalyticsTracker'),
+  PlatformApi: Symbol.for('PlatformApi'),
 };
 
-export { TYPES };
+export default TYPES;
