@@ -1,12 +1,12 @@
 import { injectable } from 'inversify';
 
 import { Bounds } from '@domain/models/screen';
-import { UiState } from '@domain/models/ui';
+import CaptureSession from '@domain/services/capture';
 
+import { UiState } from '@application/models/ui';
 import { UseCase } from '@application/usecases/UseCase';
 import StateManager from '@application/services/state';
 import HookManager from '@application/services/hook';
-import CaptureSession from '@application/services/capture/session';
 
 interface FinishSelectionUseCaseInput {
   targetBounds: Bounds;
@@ -37,20 +37,25 @@ export default class FinishSelectionUseCase
     });
 
     this.stateManager.queryUiState((state: UiState): void => {
-      this.captureSession.prepareCaptureOptions({
-        target: {
-          mode: state.controlPanel.captureMode,
-          bounds: state.captureOverlay.selectedBounds,
-          screenId: state.captureOverlay.selectedScreenId,
-        },
-        recordOptions: {
-          enableOutputAsGif: state.controlPanel.outputAsGif,
-          enableLowQualityMode: state.controlPanel.lowQualityMode,
-          enableMicrophone: state.controlPanel.microphone,
-        },
-      });
+      this.prepareForCapture(state);
     });
 
     this.hookManager.emit('capture-selection-finished', {});
+  }
+
+  private prepareForCapture(state: UiState) {
+    const { controlPanel, captureOverlay } = state;
+    this.captureSession.prepareCapture({
+      target: {
+        mode: controlPanel.captureMode,
+        bounds: captureOverlay.selectedBounds,
+        screenId: captureOverlay.selectedScreenId,
+      },
+      recordOptions: {
+        enableOutputAsGif: controlPanel.outputAsGif,
+        enableLowQualityMode: controlPanel.lowQualityMode,
+        enableMicrophone: controlPanel.microphone,
+      },
+    });
   }
 }

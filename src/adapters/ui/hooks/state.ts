@@ -1,7 +1,7 @@
 import { ipcRenderer, IpcRendererEvent } from 'electron';
 import { useState, useRef, useEffect, SetStateAction, Dispatch } from 'react';
 
-import { INITIAL_UI_STATE, UiState } from '@domain/models/ui';
+import { INITIAL_UI_STATE, UiState } from '@application/models/ui';
 
 export const useStateWithGetter = <S>(
   initialState: S

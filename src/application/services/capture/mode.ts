@@ -4,26 +4,27 @@ import TYPES from '@di/types';
 
 import { CaptureMode } from '@domain/models/common';
 import { Bounds } from '@domain/models/screen';
-import { INITIAL_UI_STATE, UiState } from '@domain/models/ui';
 
+import { INITIAL_UI_STATE, UiState } from '@application/models/ui';
 import StateManager from '@application/services/state';
-import PreferencesRepository from '@application/repositories/preferences';
 import { UiDirector } from '@application/ports/director';
+
+import PreferencesRepository from '@adapters/repositories/preferences';
 
 @injectable()
 export default class CaptureModeManager {
   constructor(
-    private prefsRepo: PreferencesRepository,
-    private stateManager: StateManager,
-    @inject(TYPES.UiDirector) private uiDirector: UiDirector
+    // eslint-disable-next-line prettier/prettier
+    @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository,
+    @inject(TYPES.UiDirector) private uiDirector: UiDirector,
+    private stateManager: StateManager
   ) {}
 
   async enableCaptureMode(captureMode: CaptureMode) {
     const prefs = await this.prefsRepo.fetchUserPreferences();
-
     this.uiDirector.enableCaptureMode(
       captureMode,
-      (screenBounds: Bounds, screenId?: number) => {
+      async (screenBounds: Bounds, screenId?: number) => {
         this.stateManager.updateUiState((state: UiState): UiState => {
           return {
             ...state,

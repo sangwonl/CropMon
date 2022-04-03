@@ -1,9 +1,12 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
+
+import TYPES from '@di/types';
 
 import { RecordOptions } from '@domain/models/capture';
 
 import { UseCase } from '@application/usecases/UseCase';
-import PreferencesRepository from '@application/repositories/preferences';
+
+import PreferencesRepository from '@adapters/repositories/preferences';
 
 interface ToggleRecordOptionsUseCaseInput {
   recordOptions: RecordOptions;
@@ -13,7 +16,10 @@ interface ToggleRecordOptionsUseCaseInput {
 export default class ToggleRecordOptionsUseCase
   implements UseCase<ToggleRecordOptionsUseCaseInput>
 {
-  constructor(private prefsRepo: PreferencesRepository) {}
+  constructor(
+    // eslint-disable-next-line prettier/prettier
+    @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository
+  ) {}
 
   async execute(input: ToggleRecordOptionsUseCaseInput) {
     const prefs = await this.prefsRepo.fetchUserPreferences();

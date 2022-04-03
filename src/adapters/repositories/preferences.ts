@@ -4,12 +4,13 @@ import TYPES from '@di/types';
 
 import { Preferences } from '@domain/models/preferences';
 import { RecordOptions } from '@domain/models/capture';
+import { PreferencesRepository } from '@domain/repositories/preferences';
 
 import HookManager from '@application/services/hook';
 import { PreferencesStore } from '@application/ports/preferences';
 
 @injectable()
-export default class PreferencesRepository {
+export default class PrefsRepositoryImpl implements PreferencesRepository {
   private cachedUserPrefs?: Preferences;
 
   public constructor(
@@ -42,7 +43,7 @@ export default class PreferencesRepository {
     this.hookManager.emit('prefs-updated', { prevPrefs, newPrefs });
   }
 
-  applyRecOptionsToPrefs = (prefs: Preferences, recOpts: RecordOptions) => {
+  applyRecOptionsToPrefs(prefs: Preferences, recOpts: RecordOptions) {
     if (recOpts.enableLowQualityMode !== undefined) {
       prefs.recordQualityMode = recOpts.enableLowQualityMode ? 'low' : 'normal';
     }
@@ -54,13 +55,13 @@ export default class PreferencesRepository {
     if (recOpts.enableMicrophone !== undefined) {
       prefs.recordMicrophone = recOpts.enableMicrophone;
     }
-  };
+  }
 
-  getRecOptionsFromPrefs = (prefs: Preferences): RecordOptions => {
+  getRecOptionsFromPrefs(prefs: Preferences): RecordOptions {
     return {
       enableOutputAsGif: prefs.outputFormat === 'gif',
       enableLowQualityMode: prefs.recordQualityMode === 'low',
       enableMicrophone: prefs.recordMicrophone,
     };
-  };
+  }
 }

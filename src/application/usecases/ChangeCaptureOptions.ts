@@ -1,13 +1,16 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
+
+import TYPES from '@di/types';
 
 import { CaptureOptions } from '@domain/models/capture';
-import { UiState } from '@domain/models/ui';
 
+import { UiState } from '@application/models/ui';
 import { UseCase } from '@application/usecases/UseCase';
 import StateManager from '@application/services/state';
 import HookManager from '@application/services/hook';
 import CaptureModeManager from '@application/services/capture/mode';
-import PreferencesRepository from '@application/repositories/preferences';
+
+import PreferencesRepository from '@adapters/repositories/preferences';
 
 interface ChangeCaptureOptionsUseCaseInput {
   captureOptions: CaptureOptions;
@@ -18,7 +21,8 @@ export default class ChangeCaptureOptionsUseCase
   implements UseCase<ChangeCaptureOptionsUseCaseInput>
 {
   constructor(
-    private prefsRepo: PreferencesRepository,
+    // eslint-disable-next-line prettier/prettier
+    @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository,
     private stateManager: StateManager,
     private hookManager: HookManager,
     private captureModeManager: CaptureModeManager

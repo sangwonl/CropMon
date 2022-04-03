@@ -2,67 +2,46 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { CaptureStatus } from '@domain/models/common';
+import { DomainException } from '@domain/exceptions';
+import CaptureSession from '@domain/services/capture';
 
 import { UseCase } from '@application/usecases/UseCase';
 import HookManager from '@application/services/hook';
 import CaptureModeManager from '@application/services/capture/mode';
-import CaptureSession from '@application/services/capture/session';
-import PreferencesRepository from '@application/repositories/preferences';
 import { UiDirector } from '@application/ports/director';
-import { ScreenRecorder } from '@application/ports/recorder';
-
-import { getTimeInSeconds } from '@utils/date';
 
 @injectable()
 export default class FinishCaptureUseCase implements UseCase<void> {
   constructor(
-    private prefsRepo: PreferencesRepository,
+    @inject(TYPES.UiDirector) private uiDirector: UiDirector,
     private hookManager: HookManager,
     private captureModeManager: CaptureModeManager,
-    private captureSession: CaptureSession,
-    @inject(TYPES.ScreenRecorder) private screenRecorder: ScreenRecorder,
-    @inject(TYPES.UiDirector) private uiDirector: UiDirector
+    private captureSession: CaptureSession
   ) {}
 
   async execute() {
     this.captureModeManager.disableCaptureMode();
 
-    const curCaptureCtx = this.captureSession.getCurCaptureContext();
-    if (!curCaptureCtx) {
-      return;
-    }
-
-    this.hookManager.emit('capture-finishing', {
-      captureContext: curCaptureCtx,
-    });
-
-    // stop recording
-    let newStatus = curCaptureCtx.status;
     try {
-      await this.screenRecorder.finish(curCaptureCtx);
-      newStatus = CaptureStatus.FINISHED;
+      const finishedCtx = await this.captureSession.finishCapture(
+        (curCaptureCtx) => {
+          this.hookManager.emit('capture-finishing', {
+            captureContext: curCaptureCtx,
+          });
+        }
+      );
+
+      if (await this.captureSession.shouldRevealRecordedFile()) {
+        this.uiDirector.showItemInFolder(finishedCtx.outputPath);
+      }
+
+      this.hookManager.emit('capture-finished', {
+        captureContext: finishedCtx,
+      });
     } catch (e) {
-      newStatus = CaptureStatus.ERROR;
+      // eslint-disable-next-line no-empty
+      if (e instanceof DomainException) {
+      }
     }
-
-    const newCtx = {
-      ...curCaptureCtx,
-      status: newStatus,
-      finishedAt: getTimeInSeconds(),
-    };
-    this.captureSession.updateCurCaptureContext(newCtx);
-
-    // open folder where recoding file saved
-    const prefs = await this.prefsRepo.fetchUserPreferences();
-    if (
-      newCtx.outputPath &&
-      newCtx.status === CaptureStatus.FINISHED &&
-      prefs.openRecordHomeWhenRecordCompleted
-    ) {
-      this.uiDirector.showItemInFolder(newCtx.outputPath);
-    }
-
-    this.hookManager.emit('capture-finished', { captureContext: newCtx });
   }
 }

@@ -2,8 +2,7 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { INITIAL_UI_STATE, UiState } from '@domain/models/ui';
-
+import { INITIAL_UI_STATE, UiState } from '@application/models/ui';
 import { UiStateApplier } from '@application/ports/state';
 
 @injectable()

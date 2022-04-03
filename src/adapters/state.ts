@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 import { ipcMain, WebContents } from 'electron';
 
-import { UiState } from '@domain/models/ui';
+import { UiState } from '@application/models/ui';
 
 @injectable()
 export default class ElectronUiStateApplier {

@@ -2,8 +2,7 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { UiState } from '@domain/models/ui';
-
+import { UiState } from '@application/models/ui';
 import { UseCase } from '@application/usecases/UseCase';
 import StateManager from '@application/services/state';
 import HookManager from '@application/services/hook';

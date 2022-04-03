@@ -7,6 +7,7 @@ const TYPES = {
   PreferencesStore: Symbol.for('PreferencesStore'),
   AnalyticsTracker: Symbol.for('AnalyticsTracker'),
   PlatformApi: Symbol.for('PlatformApi'),
+  PreferencesRepository: Symbol.for('PreferencesRepository'),
 };
 
 export default TYPES;

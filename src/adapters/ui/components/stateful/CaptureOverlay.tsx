@@ -6,6 +6,7 @@ import classNames from 'classnames';
 
 import { CaptureMode } from '@domain/models/common';
 import { Bounds } from '@domain/models/screen';
+
 import CaptureTargetingArea from '@adapters/ui/components/stateless/CaptureTargetingArea';
 import CaptureTargetingScreen from '@adapters/ui/components/stateless/CaptureTargetingScreen';
 import CaptureCountdown from '@adapters/ui/components/stateless/CaptureCountdown';
@@ -13,6 +14,7 @@ import CaptureRecording from '@adapters/ui/components/stateless/CaptureRecording
 import { useRootUiState } from '@adapters/ui/hooks/state';
 import { useActionDispatcher } from '@adapters/ui/hooks/dispatcher';
 import { usePlatformApi } from '@adapters/ui/hooks/platform';
+
 import { getBoundsFromZero, isEmptyBounds } from '@utils/bounds';
 import { isMac } from '@utils/process';
 

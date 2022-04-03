@@ -6,6 +6,9 @@ import { Container } from 'inversify';
 
 import TYPES from '@di/types';
 
+import CaptureSession from '@domain/services/capture';
+import { PreferencesRepository } from '@domain/repositories/preferences';
+
 import InitializeAppUseCase from '@application/usecases/InitializeApp';
 import QuitAppUseCase from '@application/usecases/QuitApp';
 import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
@@ -29,17 +32,16 @@ import ActionDispatcherCore from '@application/controllers/dispatcher';
 import StateManager from '@application/services/state';
 import HookManager from '@application/services/hook';
 import CaptureModeManager from '@application/services/capture/mode';
-import CaptureSession from '@application/services/capture/session';
-import PreferencesRepository from '@application/repositories/preferences';
 import { UiDirector } from '@application/ports/director';
 import { UiStateApplier } from '@application/ports/state';
 import { PreferencesStore } from '@application/ports/preferences';
 import { AnalyticsTracker } from '@application/ports/tracker';
-import { ScreenRecorder } from '@application/ports/recorder';
+import { ScreenRecorder } from '@domain/services/recorder';
 import { ActionDispatcher } from '@application/ports/action';
 import { AppUpdater } from '@application/ports/updater';
 import { PlatformApi } from '@application/ports/platform';
 
+import PrefsRepositoryImpl from '@adapters/repositories/preferences';
 import ActionDispatcherProxy from '@adapters/actions/proxy';
 import PlatformApiProxy from '@adapters/platform/proxy';
 import BuiltinHooks from '@adapters/hook';
@@ -88,6 +90,11 @@ diContainer
   .inSingletonScope();
 
 diContainer
+  .bind<PreferencesRepository>(TYPES.PreferencesRepository)
+  .to(PrefsRepositoryImpl)
+  .inSingletonScope();
+
+diContainer
   .bind<ActionDispatcher>(TYPES.ActionDispatcher)
   .to(ActionDispatcherCore)
   .inSingletonScope();
@@ -114,11 +121,6 @@ diContainer
 
 diContainer
   .bind<CaptureSession>(CaptureSession)
-  .toSelf()
-  .inSingletonScope();
-
-diContainer
-  .bind<PreferencesRepository>(PreferencesRepository)
   .toSelf()
   .inSingletonScope();
 

@@ -5,7 +5,8 @@ import React, { FC } from 'react';
 import Color from 'color';
 
 import { Bounds } from '@domain/models/screen';
-import { CaptureAreaColors } from '@domain/models/ui';
+
+import { CaptureAreaColors } from '@application/models/ui';
 
 import styles from '@adapters/ui/components/stateless/CaptureCountdown.css';
 

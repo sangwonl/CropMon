@@ -16,8 +16,7 @@ import {
 import { OutputFormat } from '@domain/models/common';
 import { Bounds, Screen } from '@domain/models/screen';
 import { CaptureContext } from '@domain/models/capture';
-
-import { ScreenRecorder } from '@application/ports/recorder';
+import { ScreenRecorder } from '@domain/services/recorder';
 
 import {
   IRecordContext,

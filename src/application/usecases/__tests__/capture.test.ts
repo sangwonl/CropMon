@@ -5,19 +5,18 @@ import { Preferences } from '@domain/models/preferences';
 
 import StartCaptureUseCase from '@application/usecases/StartCapture';
 import FinishCaptureUseCase from '@application/usecases/FinishCapture';
-import PreferencesRepository from '@application/repositories/preferences';
+import PreferencesRepository from '@adapters/repositories/preferences';
 import CaptureModeManager from '@application/services/capture/mode';
-import CaptureSession from '@application/services/capture/session';
+import CaptureSession from '@domain/services/capture';
 import StateManager from '@application/services/state';
 import HookManager from '@application/services/hook';
-import { ScreenRecorder } from '@application/ports/recorder';
+import { ScreenRecorder } from '@domain/services/recorder';
 import { UiDirector } from '@application/ports/director';
 
 import { DEFAULT_SHORTCUT_CAPTURE } from '@utils/shortcut';
 
 describe('CaptureUseCase', () => {
   let mockedPrefsRepo: PreferencesRepository;
-  let mockPrefsRepo: PreferencesRepository;
 
   let mockedStateManager: StateManager;
   let mockStateMgr: StateManager;
@@ -69,7 +68,6 @@ describe('CaptureUseCase', () => {
     mockedScreenRecorder = mock<ScreenRecorder>();
     mockedUiDirector = mock<UiDirector>();
 
-    mockPrefsRepo = instance(mockedPrefsRepo);
     mockStateMgr = instance(mockedStateManager);
     mockHookMgr = instance(mockedHookManager);
     mockCaptModeMgr = instance(mockedCaptModeManager);
@@ -78,22 +76,18 @@ describe('CaptureUseCase', () => {
     mockUiDirector = instance(mockedUiDirector);
 
     startCaptUseCase = new StartCaptureUseCase(
-      mockPrefsRepo,
+      mockUiDirector,
       mockStateMgr,
       mockHookMgr,
       mockCaptModeMgr,
-      mockCaptSession,
-      mockRecorder,
-      mockUiDirector
+      mockCaptSession
     );
 
     finishCaptUseCase = new FinishCaptureUseCase(
-      mockPrefsRepo,
+      mockUiDirector,
       mockHookMgr,
       mockCaptModeMgr,
-      mockCaptSession,
-      mockRecorder,
-      mockUiDirector
+      mockCaptSession
     );
 
     const mockPrefs = {

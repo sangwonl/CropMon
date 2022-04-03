@@ -23,14 +23,14 @@ import CheckVersionUseCase from '@application/usecases/CheckVersion';
 import HookManager, {
   HookArgsAppUpdateChecked,
   HookArgsAppUpdated,
-  HookArgsCaptureFinished,
-  HookArgsCaptureFinishing,
-  HookArgsCaptureStarting,
   HookArgsInitialPrefsLoaded,
   HookArgsPrefsLoaded,
   HookArgsPrefsUpdated,
+  HookArgsCaptureStarting,
+  HookArgsCaptureFinishing,
+  HookArgsCaptureFinished,
 } from '@application/services/hook';
-import PreferencesRepository from '@application/repositories/preferences';
+import PreferencesRepository from '@adapters/repositories/preferences';
 import { AnalyticsTracker } from '@application/ports/tracker';
 import { UiDirector } from '@application/ports/director';
 import { ActionDispatcher } from '@application/ports/action';
@@ -54,13 +54,13 @@ export default class BuiltinHooks {
   private lastUpdateCheckedAt?: number;
 
   constructor(
-    private checkUpdateUseCase: CheckUpdateUseCase,
-    private checkVersionUseCase: CheckVersionUseCase,
-    private hookManager: HookManager,
-    private prefsRepo: PreferencesRepository,
+    @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository,
     @inject(TYPES.UiDirector) private uiDirector: UiDirector,
     @inject(TYPES.AnalyticsTracker) private tracker: AnalyticsTracker,
-    @inject(TYPES.ActionDispatcher) private actionDispatcher: ActionDispatcher
+    @inject(TYPES.ActionDispatcher) private actionDispatcher: ActionDispatcher,
+    private hookManager: HookManager,
+    private checkUpdateUseCase: CheckUpdateUseCase,
+    private checkVersionUseCase: CheckVersionUseCase
   ) {
     this.hookManager.on('app-launched', this.onAppLaunched);
     this.hookManager.on('app-quit', this.onAppQuit);
