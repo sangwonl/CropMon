@@ -29,9 +29,9 @@ import FinishCaptureUseCase from '@application/usecases/FinishCapture';
 import ToggleCaptureUseCase from '@application/usecases/ToggleCaptureUseCase';
 
 import ActionDispatcherCore from '@application/controllers/dispatcher';
-import StateManager from '@application/services/state';
+import StateManager from '@application/services/ui/state';
 import HookManager from '@application/services/hook';
-import CaptureModeManager from '@application/services/capture/mode';
+import CaptureModeManager from '@application/services/ui/mode';
 import { UiDirector } from '@application/ports/director';
 import { UiStateApplier } from '@application/ports/state';
 import { PreferencesStore } from '@application/ports/preferences';

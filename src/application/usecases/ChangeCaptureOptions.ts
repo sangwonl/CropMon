@@ -6,9 +6,9 @@ import { CaptureOptions } from '@domain/models/capture';
 
 import { UiState } from '@application/models/ui';
 import { UseCase } from '@application/usecases/UseCase';
-import StateManager from '@application/services/state';
+import StateManager from '@application/services/ui/state';
 import HookManager from '@application/services/hook';
-import CaptureModeManager from '@application/services/capture/mode';
+import CaptureModeManager from '@application/services/ui/mode';
 
 import PreferencesRepository from '@adapters/repositories/preferences';
 

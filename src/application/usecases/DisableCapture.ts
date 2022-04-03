@@ -2,7 +2,7 @@ import { injectable } from 'inversify';
 
 import { UseCase } from '@application/usecases/UseCase';
 import HookManager from '@application/services/hook';
-import CaptureModeManager from '@application/services/capture/mode';
+import CaptureModeManager from '@application/services/ui/mode';
 
 @injectable()
 export default class DisableCaptureUseCase implements UseCase<void> {

@@ -7,7 +7,7 @@ import CaptureSession from '@domain/services/capture';
 
 import { UseCase } from '@application/usecases/UseCase';
 import HookManager from '@application/services/hook';
-import CaptureModeManager from '@application/services/capture/mode';
+import CaptureModeManager from '@application/services/ui/mode';
 import { UiDirector } from '@application/ports/director';
 
 @injectable()

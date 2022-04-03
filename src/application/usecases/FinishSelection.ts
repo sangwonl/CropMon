@@ -5,7 +5,7 @@ import CaptureSession from '@domain/services/capture';
 
 import { UiState } from '@application/models/ui';
 import { UseCase } from '@application/usecases/UseCase';
-import StateManager from '@application/services/state';
+import StateManager from '@application/services/ui/state';
 import HookManager from '@application/services/hook';
 
 interface FinishSelectionUseCaseInput {

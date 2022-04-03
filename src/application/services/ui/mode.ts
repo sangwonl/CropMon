@@ -6,7 +6,7 @@ import { CaptureMode } from '@domain/models/common';
 import { Bounds } from '@domain/models/screen';
 
 import { INITIAL_UI_STATE, UiState } from '@application/models/ui';
-import StateManager from '@application/services/state';
+import StateManager from '@application/services/ui/state';
 import { UiDirector } from '@application/ports/director';
 
 import PreferencesRepository from '@adapters/repositories/preferences';
