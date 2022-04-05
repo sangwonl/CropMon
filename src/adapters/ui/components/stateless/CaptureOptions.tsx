@@ -7,8 +7,9 @@ import { CaptureMode } from '@domain/models/common';
 import { RecordOptions } from '@domain/models/capture';
 import {
   shortcutForDisplay,
-  SHORTCUT_CAPTURE_MODE_AREA,
   SHORTCUT_CAPTURE_MODE_SCREEN,
+  SHORTCUT_CAPTURE_MODE_WINDOW,
+  SHORTCUT_CAPTURE_MODE_AREA,
   SHORTCUT_OUTPUT_GIF,
   SHORTCUT_OUTPUT_MP4,
 } from '@utils/shortcut';
@@ -73,6 +74,18 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
         onClick={() => handleCaptModeChange(CaptureMode.SCREEN)}
       >
         Full
+      </button>
+      <button
+        type="button"
+        title={`Record Selected Window (${shortcutForDisplay(
+          SHORTCUT_CAPTURE_MODE_WINDOW
+        )})`}
+        className={classNames(styles.btnToggleMiddle, {
+          [styles.toggled]: captMode === CaptureMode.WINDOW,
+        })}
+        onClick={() => handleCaptModeChange(CaptureMode.WINDOW)}
+      >
+        Window
       </button>
       <button
         type="button"

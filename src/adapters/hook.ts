@@ -38,8 +38,9 @@ import { ActionDispatcher } from '@application/ports/action';
 import { getPlatform, isDebugMode, isMac } from '@utils/process';
 import { getTimeInSeconds } from '@utils/date';
 import {
-  SHORTCUT_CAPTURE_MODE_AREA,
   SHORTCUT_CAPTURE_MODE_SCREEN,
+  SHORTCUT_CAPTURE_MODE_WINDOW,
+  SHORTCUT_CAPTURE_MODE_AREA,
   SHORTCUT_ENTER,
   SHORTCUT_ESCAPE,
   SHORTCUT_OUTPUT_GIF,
@@ -264,6 +265,10 @@ export default class BuiltinHooks {
         this.handleShortcutCaptureOpts(CaptureMode.SCREEN)
       );
 
+      globalShortcut.register(SHORTCUT_CAPTURE_MODE_WINDOW, () =>
+        this.handleShortcutCaptureOpts(CaptureMode.WINDOW)
+      );
+
       globalShortcut.register(SHORTCUT_CAPTURE_MODE_AREA, () =>
         this.handleShortcutCaptureOpts(CaptureMode.AREA)
       );
@@ -279,6 +284,7 @@ export default class BuiltinHooks {
       globalShortcut.unregister(SHORTCUT_ENTER);
       globalShortcut.unregister(SHORTCUT_ESCAPE);
       globalShortcut.unregister(SHORTCUT_CAPTURE_MODE_SCREEN);
+      globalShortcut.unregister(SHORTCUT_CAPTURE_MODE_WINDOW);
       globalShortcut.unregister(SHORTCUT_CAPTURE_MODE_AREA);
       globalShortcut.unregister(SHORTCUT_OUTPUT_MP4);
       globalShortcut.unregister(SHORTCUT_OUTPUT_GIF);

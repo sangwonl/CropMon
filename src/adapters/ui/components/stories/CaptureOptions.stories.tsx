@@ -29,7 +29,7 @@ const Template: Story<CaptureOptionsProps> = () => {
   return (
     <div
       style={{
-        width: 280,
+        width: 410,
         height: 56,
       }}
     >
