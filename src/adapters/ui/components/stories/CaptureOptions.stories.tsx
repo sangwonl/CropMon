@@ -6,6 +6,7 @@ import { Story, Meta } from '@storybook/react';
 
 import { CaptureMode } from '@domain/models/common';
 import { RecordOptions } from '@domain/models/capture';
+
 import {
   CaptureOptions,
   CaptureOptionsProps,
