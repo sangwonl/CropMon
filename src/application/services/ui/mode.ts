@@ -22,31 +22,27 @@ export default class CaptureModeManager {
 
   async enableCaptureMode(captureMode: CaptureMode) {
     const prefs = await this.prefsRepo.fetchUserPreferences();
-    this.uiDirector.enableCaptureMode(
-      captureMode,
-      async (screenBounds: Bounds, screenId?: number) => {
-        this.stateManager.updateUiState((state: UiState): UiState => {
-          return {
-            ...state,
-            controlPanel: {
-              ...INITIAL_UI_STATE.controlPanel,
-              captureMode,
-              outputAsGif: prefs.outputFormat === 'gif',
-              lowQualityMode: prefs.recordQualityMode === 'low',
-              microphone: prefs.recordMicrophone,
-            },
-            captureOverlay: {
-              ...INITIAL_UI_STATE.captureOverlay,
-              show: true,
-              showCountdown: prefs.showCountdown,
-              bounds: screenBounds,
-              selectedScreenId: screenId,
-            },
-            captureAreaColors: prefs.colors,
-          };
-        });
-      }
-    );
+    const screenBounds = this.uiDirector.enableCaptureMode(captureMode);
+
+    this.stateManager.updateUiState((state: UiState): UiState => {
+      return {
+        ...state,
+        controlPanel: {
+          ...INITIAL_UI_STATE.controlPanel,
+          captureMode,
+          outputAsGif: prefs.outputFormat === 'gif',
+          lowQualityMode: prefs.recordQualityMode === 'low',
+          microphone: prefs.recordMicrophone,
+        },
+        captureOverlay: {
+          ...INITIAL_UI_STATE.captureOverlay,
+          show: true,
+          showCountdown: prefs.showCountdown,
+          bounds: screenBounds,
+        },
+        captureAreaColors: prefs.colors,
+      };
+    });
   }
 
   disableCaptureMode() {

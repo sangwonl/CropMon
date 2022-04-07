@@ -80,10 +80,6 @@ export default class ActionDispatcherProxy implements ActionDispatcher {
     this.actionDispatcher.startCapture();
   }
 
-  startCaptureWithCurrentStates(): void {
-    throw new Error('Method not implemented.');
-  }
-
   finishCapture(): void {
     throw new Error('Method not implemented.');
   }

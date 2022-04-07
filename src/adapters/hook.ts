@@ -41,7 +41,6 @@ import {
   SHORTCUT_CAPTURE_MODE_SCREEN,
   SHORTCUT_CAPTURE_MODE_WINDOW,
   SHORTCUT_CAPTURE_MODE_AREA,
-  SHORTCUT_ENTER,
   SHORTCUT_ESCAPE,
   SHORTCUT_OUTPUT_GIF,
   SHORTCUT_OUTPUT_MP4,
@@ -253,10 +252,6 @@ export default class BuiltinHooks {
 
   private setupInSelectionShortcut = async (enable: boolean) => {
     if (enable) {
-      globalShortcut.register(SHORTCUT_ENTER, () =>
-        this.actionDispatcher.startCaptureWithCurrentStates()
-      );
-
       globalShortcut.register(SHORTCUT_ESCAPE, () =>
         this.actionDispatcher.disableCaptureMode()
       );
@@ -281,7 +276,6 @@ export default class BuiltinHooks {
         this.handleShortcutCaptureOpts(undefined, 'gif')
       );
     } else {
-      globalShortcut.unregister(SHORTCUT_ENTER);
       globalShortcut.unregister(SHORTCUT_ESCAPE);
       globalShortcut.unregister(SHORTCUT_CAPTURE_MODE_SCREEN);
       globalShortcut.unregister(SHORTCUT_CAPTURE_MODE_WINDOW);

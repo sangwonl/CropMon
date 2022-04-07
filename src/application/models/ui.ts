@@ -12,7 +12,6 @@ export interface ControlPanel {
   outputAsGif: boolean;
   lowQualityMode: boolean;
   microphone: boolean;
-  confirmedToCaptureAsIs: boolean;
 }
 
 export interface CaptureOverlay {
@@ -44,7 +43,6 @@ export const INITIAL_UI_STATE: UiState = {
     lowQualityMode: false,
     microphone: false,
     outputAsGif: false,
-    confirmedToCaptureAsIs: false,
   },
   captureOverlay: {
     show: false,

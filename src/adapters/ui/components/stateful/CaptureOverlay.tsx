@@ -8,14 +8,13 @@ import { CaptureMode } from '@domain/models/common';
 import { Bounds } from '@domain/models/screen';
 
 import CaptureTargetingArea from '@adapters/ui/components/stateless/CaptureTargetingArea';
-import CaptureTargetingScreen from '@adapters/ui/components/stateless/CaptureTargetingScreen';
 import CaptureCountdown from '@adapters/ui/components/stateless/CaptureCountdown';
 import CaptureRecording from '@adapters/ui/components/stateless/CaptureRecording';
 import { useRootUiState } from '@adapters/ui/hooks/state';
 import { useActionDispatcher } from '@adapters/ui/hooks/dispatcher';
 import { usePlatformApi } from '@adapters/ui/hooks/platform';
 
-import { getBoundsFromZero, isEmptyBounds } from '@utils/bounds';
+import { isEmptyBounds } from '@utils/bounds';
 import { isMac } from '@utils/process';
 
 import styles from '@adapters/ui/components/stateful/CaptureOverlay.css';
@@ -126,26 +125,6 @@ const CaptureCover = () => {
     }
   }, [captureOverlay.show, selectedBounds, countdown]);
 
-  useEffect(() => {
-    if (
-      isEmptyBounds(selectedBounds) &&
-      controlPanel.captureMode === CaptureMode.SCREEN &&
-      controlPanel.confirmedToCaptureAsIs &&
-      captureOverlay.bounds
-    ) {
-      onSelectionStart();
-      onSelectionFinish(
-        getBoundsFromZero(captureOverlay.bounds),
-        captureOverlay.bounds
-      );
-    }
-  }, [
-    selectedBounds,
-    controlPanel.captureMode,
-    controlPanel.confirmedToCaptureAsIs,
-    captureOverlay.bounds,
-  ]);
-
   return renderMode !== RenderMode.IDLE ? (
     <div
       className={classNames(styles.cover, {
@@ -160,17 +139,6 @@ const CaptureCover = () => {
             onCancel={onCaptureCancel}
             onFinish={onSelectionFinish}
             getCursorPoint={platformApi.getCursorScreenPoint}
-          />
-        )}
-      {renderMode === RenderMode.TARGETING &&
-        controlPanel.captureMode === CaptureMode.SCREEN &&
-        captureOverlay.bounds && (
-          <CaptureTargetingScreen
-            areaColors={captureAreaColors}
-            screenBounds={captureOverlay.bounds}
-            onStart={onSelectionStart}
-            onCancel={onCaptureCancel}
-            onFinish={onSelectionFinish}
           />
         )}
       {renderMode === RenderMode.COUNTDOWN &&

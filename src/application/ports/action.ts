@@ -16,7 +16,6 @@ export interface ActionDispatcher {
   startTargetSelection(): void;
   finishTargetSelection(targetBounds: Bounds): void;
   startCapture(): void;
-  startCaptureWithCurrentStates(): void;
   finishCapture(): void;
   onCaptureToggleShortcut(): void;
 }

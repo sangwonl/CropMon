@@ -64,10 +64,6 @@ export default class ActionDispatcherClient implements ActionDispatcher {
     ipcRenderer.send('startCapture');
   }
 
-  startCaptureWithCurrentStates(): void {
-    throw new Error('Method not implemented.');
-  }
-
   finishCapture(): void {
     throw new Error('Method not implemented.');
   }

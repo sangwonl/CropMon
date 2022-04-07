@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
 
 import { CaptureMode } from '@domain/models/common';
-import { Bounds } from '@domain/models/screen';
 import { Preferences } from '@domain/models/preferences';
+import { Bounds } from '@domain/models/screen';
 
 export interface UiDirector {
   initialize(): void;
@@ -13,10 +13,9 @@ export interface UiDirector {
   openReleaseNotesModal(): Promise<void>;
   openHelpPageModal(): Promise<void>;
   openPreferencesModal(preferences: Preferences, onSave: (updatedPrefs: Preferences) => void): Promise<void>;
-  enableCaptureMode(mode: CaptureMode, onActiveScreenBoundsChange: (bounds: Bounds, screenId?: number) => void): void;
+  enableCaptureMode(mode: CaptureMode): Bounds;
   disableCaptureMode(): void;
   startTargetSelection(): void;
-  resetScreenBoundsDetector(): void;
   enableRecordingMode(): void;
   showItemInFolder(path: string): void;
   startDownloadAndInstall(onReady: () => void, onCancel: () => void, onQuitAndInstall: () => void): Promise<void>;

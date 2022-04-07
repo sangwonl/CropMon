@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { injectable } from 'inversify';
-import { app, shell } from 'electron';
+import { app, shell, desktopCapturer } from 'electron';
 
 import { CaptureMode } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
@@ -15,7 +15,7 @@ import StaticPageModal from '@adapters/ui/widgets/staticpage';
 import PreferencesModal from '@adapters/ui/widgets/preferences';
 import CaptureOverlayWrap from '@adapters/ui/director/overlay';
 
-import { getScreenOfCursor, getWholeScreenBounds } from '@utils/bounds';
+import { getWholeScreenBounds } from '@utils/bounds';
 import { shortcutForDisplay } from '@utils/shortcut';
 import { getTimeInSeconds } from '@utils/date';
 import { assetPathResolver } from '@utils/asset';
@@ -37,7 +37,6 @@ export default class ElectronUiDirector implements UiDirector {
 
   private recTimeHandle?: NodeJS.Timer;
   private recTimeStart?: number;
-  private screenBoundsDetector?: NodeJS.Timer;
 
   initialize(): void {
     this.appTray = createTray();
@@ -168,57 +167,25 @@ export default class ElectronUiDirector implements UiDirector {
     this.prefsModal = undefined;
   }
 
-  enableCaptureMode(
-    mode: CaptureMode,
-    onActiveScreenBoundsChange: (bounds: Bounds, screenId?: number) => void
-  ): void {
-    this.resetScreenBoundsDetector();
-
+  enableCaptureMode(mode: CaptureMode): Bounds {
+    const screenBounds = getWholeScreenBounds();
     if (mode === CaptureMode.AREA) {
-      const screenBounds = getWholeScreenBounds();
-
-      onActiveScreenBoundsChange(screenBounds);
-
       this.captureOverlay?.show(screenBounds);
-      this.controlPanel?.show();
-
-      return;
+      this.controlPanel?.showMinimal();
+    } else {
+      this.captureOverlay?.hide();
+      this.controlPanel?.showExpanded();
     }
-
-    if (mode === CaptureMode.SCREEN) {
-      let lastScreenId: number;
-      this.screenBoundsDetector = setInterval(() => {
-        const screen = getScreenOfCursor();
-        if (lastScreenId && lastScreenId === screen.id) {
-          return;
-        }
-
-        onActiveScreenBoundsChange(screen.bounds, screen.id);
-
-        this.captureOverlay?.show(screen.bounds);
-        this.controlPanel?.show();
-
-        lastScreenId = screen.id;
-      }, 100);
-    }
+    return screenBounds;
   }
 
   disableCaptureMode(): void {
-    this.resetScreenBoundsDetector();
     this.controlPanel?.hide();
     this.captureOverlay?.hide();
   }
 
   startTargetSelection(): void {
-    this.resetScreenBoundsDetector();
     this.controlPanel?.hide();
-  }
-
-  resetScreenBoundsDetector(): void {
-    if (this.screenBoundsDetector) {
-      clearInterval(this.screenBoundsDetector);
-      this.screenBoundsDetector = undefined;
-    }
   }
 
   enableRecordingMode(): void {

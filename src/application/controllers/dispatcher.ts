@@ -104,10 +104,6 @@ export default class ActionDispatcherCore implements ActionDispatcher {
     this.startCaptureUseCase.execute();
   };
 
-  startCaptureWithCurrentStates = () => {
-    this.startCaptureAsIsUseCase.execute();
-  };
-
   finishCapture = () => {
     this.finishCaptureUseCase.execute();
   };
