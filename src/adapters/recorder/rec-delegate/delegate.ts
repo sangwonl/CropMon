@@ -4,7 +4,7 @@
 import fs from 'fs';
 import path from 'path';
 import log from 'electron-log';
-import { desktopCapturer, ipcRenderer } from 'electron';
+import { ipcRenderer } from 'electron';
 
 import diContainer from '@di/containers/renderer';
 import TYPES from '@di/types';
@@ -44,7 +44,6 @@ interface Drawable {
 
 interface IDrawContext {
   targetBounds: Bounds;
-  targetScreenId?: number;
   frameRate: number;
   drawables: Drawable[];
 }
@@ -104,13 +103,7 @@ const getVideoConstraint = (srcId: string, bounds: Bounds): any => {
 const createDrawContext = async (
   recordCtx: IRecordContext
 ): Promise<IDrawContext> => {
-  const {
-    targetScreenId,
-    targetBounds,
-    scaleDownFactor,
-    frameRate,
-    targetSlices,
-  } = recordCtx;
+  const { targetBounds, scaleDownFactor, frameRate, targetSlices } = recordCtx;
 
   const scaledTargetBounds = {
     x: 0,
@@ -119,19 +112,10 @@ const createDrawContext = async (
     height: targetBounds.height * scaleDownFactor,
   };
 
-  const sources = await desktopCapturer.getSources({ types: ['screen'] });
   const drawables = await Promise.all(
     targetSlices.map(
-      async ({ screen, bounds }: TargetSlice): Promise<Drawable> => {
-        const matchedToTarget = (src: Electron.DesktopCapturerSource) => {
-          if (targetScreenId) {
-            return src.display_id === targetScreenId.toString();
-          }
-          return src.display_id === screen.id.toString();
-        };
-
-        const source = sources.find(matchedToTarget) ?? sources[0];
-        const constraints = getVideoConstraint(source.id, screen.bounds);
+      async ({ sourceId, screen, bounds }: TargetSlice): Promise<Drawable> => {
+        const constraints = getVideoConstraint(sourceId, screen.bounds);
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
         const videoElem = document.createElement('video') as HTMLVideoElement;
@@ -164,7 +148,6 @@ const createDrawContext = async (
 
   return {
     targetBounds: scaledTargetBounds,
-    targetScreenId,
     frameRate,
     drawables,
   };
