@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { injectable } from 'inversify';
-import { app, ipcMain, systemPreferences } from 'electron';
+import { app, desktopCapturer, ipcMain, systemPreferences } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import log from 'electron-log';
@@ -60,7 +60,7 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
   }
 
   async record(ctx: CaptureContext): Promise<void> {
-    const recordCtx = this.createRecordContext(ctx);
+    const recordCtx = await this.createRecordContext(ctx);
     if (!recordCtx) {
       return Promise.reject();
     }
@@ -138,7 +138,9 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
     });
   }
 
-  private createRecordContext(ctx: CaptureContext): IRecordContext | null {
+  private async createRecordContext(
+    ctx: CaptureContext
+  ): Promise<IRecordContext | null> {
     const { outputFormat, recordMicrophone } = ctx;
     const {
       mode: captureMode,
@@ -150,7 +152,10 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
       return null;
     }
 
+    const sources = await desktopCapturer.getSources({ types: ['screen'] });
+
     const screens = getAllScreensFromLeftTop();
+
     const targetSlices = screens
       .map(
         (screen): ScreenAndBoundsTuple => [
@@ -160,7 +165,16 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
       )
       .filter(([_, bounds]: ScreenAndBoundsTuple) => !isEmptyBounds(bounds))
       .map(([screen, bounds]: ScreenAndBoundsTuple): TargetSlice => {
-        return { screen, bounds };
+        const sourceId =
+          sources.find((src) => {
+            return (
+              (targetScreenId &&
+                src.display_id === targetScreenId.toString()) ||
+              src.display_id === screen.id.toString()
+            );
+          })?.id ?? sources[0].id;
+
+        return { sourceId, screen, bounds };
       });
 
     if (targetSlices.length === 0) {
@@ -189,7 +203,6 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
       captureMode,
       targetSlices,
       targetBounds,
-      targetScreenId,
       outputFormat,
       recordMicrophone,
       frameRate,
