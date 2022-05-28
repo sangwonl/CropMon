@@ -67,7 +67,7 @@ const mapDisplayToScreen = ({ id, bounds, scaleFactor }: Display): Screen => {
   return { id, bounds, scaleFactor };
 };
 
-const getAllScreens = (): Screen[] => {
+export const getAllScreens = (): Screen[] => {
   const screens = screen.getAllDisplays().map(mapDisplayToScreen);
   if (isMac()) {
     return screens;

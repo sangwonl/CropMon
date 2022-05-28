@@ -1,11 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import logger from 'electron-log';
+
 import React, {
-  MouseEvent,
-  Dispatch,
-  SetStateAction,
   FC,
+  MutableRefObject,
+  useRef,
+  useEffect,
   useState,
 } from 'react';
 import classNames from 'classnames';
@@ -15,7 +17,7 @@ import { Bounds, Point } from '@domain/models/screen';
 
 import { CaptureAreaColors } from '@application/models/ui';
 
-import { isEmptyBounds, isCapturableBounds } from '@utils/bounds';
+import { isEmptyBounds, isCapturableBounds, emptyBounds } from '@utils/bounds';
 
 import styles from '@adapters/ui/components/stateless/CaptureTargetingArea.css';
 
@@ -39,6 +41,18 @@ const initialSelCtx: AreaSelectionCtx = {
   endPt: { x: 0, y: 0 },
   cursorPt: { x: 0, y: 0 },
   cursorScreenPt: { x: 0, y: 0 },
+};
+
+const getMousePoint = (e: MouseEvent, screenBounds: Bounds): Point => {
+  const x = Math.min(
+    Math.max(e.screenX - screenBounds.x, 0),
+    screenBounds.x + screenBounds.width
+  );
+  const y = Math.min(
+    Math.max(e.screenY - screenBounds.y, 0),
+    screenBounds.y + screenBounds.height
+  );
+  return { x, y };
 };
 
 const calcSelectedBounds = (selCtx: AreaSelectionCtx): Bounds => {
@@ -152,61 +166,63 @@ const getCursorHintStyles = (
 };
 
 const handleMouseDown = (
-  e: MouseEvent<HTMLDivElement>,
+  e: MouseEvent,
+  screenBounds: Bounds,
   getCursorPoint: () => Point,
   onStart: () => void,
   onCancel: () => void,
-  selCtx: AreaSelectionCtx,
-  setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
+  selCtxRef: MutableRefObject<AreaSelectionCtx>
 ) => {
+  const selCtx = selCtxRef.current;
+
   // if click after already area settled or right click while selecting
   if (selCtx.selected || e.button === 2) {
-    setSelCtx(initialSelCtx);
+    selCtxRef.current = initialSelCtx;
     onCancel();
     return;
   }
 
-  setSelCtx({
+  const mousePt = getMousePoint(e, screenBounds);
+  const cursorPt = getCursorPoint();
+  selCtxRef.current = {
     ...selCtx,
     started: true,
-    startPt: { x: e.clientX, y: e.clientY },
-    cursorPt: { x: e.clientX, y: e.clientY },
-    cursorScreenPt: getCursorPoint(),
-  });
+    startPt: mousePt,
+    cursorPt: mousePt,
+    cursorScreenPt: cursorPt,
+  };
 
   onStart();
 };
 
 const handleMouseUp = (
-  e: MouseEvent<HTMLDivElement>,
+  e: MouseEvent,
+  screenBounds: Bounds,
   getCursorPoint: () => Point,
   onCancel: () => void,
   onFinish: (boundsForUi: Bounds, boundsForCapture: Bounds) => void,
-  selCtx: AreaSelectionCtx,
-  setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
+  selCtxRef: MutableRefObject<AreaSelectionCtx>
 ) => {
+  const selCtx = selCtxRef.current;
+
   // if click after already area settled or right click while selecting
   if (!selCtx.started || selCtx.selected || e.button === 2) {
-    setSelCtx(initialSelCtx);
+    selCtxRef.current = initialSelCtx;
     onCancel();
     return;
   }
 
-  const updatedSelCtx = {
-    ...selCtx,
-    endPt: { x: e.clientX, y: e.clientY },
-    curPt: { x: e.clientX, y: e.clientY },
-  };
-
+  const mousePt = getMousePoint(e, screenBounds);
+  const updatedSelCtx = { ...selCtx, endPt: mousePt, curPt: mousePt };
   const boundsForUi = calcSelectedBounds(updatedSelCtx);
   if (selCtx.started && !isCapturableBounds(boundsForUi)) {
-    setSelCtx(initialSelCtx);
+    selCtxRef.current = initialSelCtx;
     onCancel();
     return;
   }
 
   updatedSelCtx.selected = true;
-  setSelCtx(updatedSelCtx);
+  selCtxRef.current = updatedSelCtx;
 
   const settledCursorPt = getCursorPoint();
   const boundsForCapture = {
@@ -219,21 +235,22 @@ const handleMouseUp = (
 };
 
 const handleMouseMove = (
-  e: MouseEvent<HTMLDivElement>,
-  selCtx: AreaSelectionCtx,
-  setSelCtx: Dispatch<SetStateAction<AreaSelectionCtx>>
+  e: MouseEvent,
+  screenBounds: Bounds,
+  selCtxRef: MutableRefObject<AreaSelectionCtx>
 ) => {
+  const selCtx = selCtxRef.current;
+
   if (!selCtx.started) {
     return;
   }
 
-  setSelCtx({
-    ...selCtx,
-    cursorPt: { x: e.clientX, y: e.clientY },
-  });
+  const mousePt = getMousePoint(e, screenBounds);
+  selCtxRef.current = { ...selCtx, cursorPt: mousePt };
 };
 
 interface PropTypes {
+  // screenBounds: Bounds;
   areaColors: CaptureAreaColors;
   onStart: () => void;
   onCancel: () => void;
@@ -242,38 +259,83 @@ interface PropTypes {
 }
 
 const CaptureTargetingArea: FC<PropTypes> = (props: PropTypes) => {
-  const { areaColors, onStart, onFinish, onCancel, getCursorPoint } = props;
+  const {
+    // screenBounds,
+    areaColors,
+    onStart,
+    onFinish,
+    onCancel,
+    getCursorPoint,
+  } = props;
 
-  const [selCtx, setSelCtx] = useState<AreaSelectionCtx>(initialSelCtx);
+  const screenBounds = { x: 0, y: 0, width: 2560, height: 1600 };
 
-  const calcBounds = calcSelectedBounds(selCtx);
+  const [selBounds, updateSelBounds] = useState<Bounds>(emptyBounds());
+  const selCtxRef = useRef<AreaSelectionCtx>(initialSelCtx);
+
+  useEffect(() => {
+    const mouseDownHandler = (e: MouseEvent): void => {
+      handleMouseDown(
+        e,
+        screenBounds,
+        getCursorPoint,
+        onStart,
+        onCancel,
+        selCtxRef
+      );
+      updateSelBounds(calcSelectedBounds(selCtxRef.current));
+    };
+
+    const mouseUpHandler = (e: MouseEvent): void => {
+      handleMouseUp(
+        e,
+        screenBounds,
+        getCursorPoint,
+        onCancel,
+        onFinish,
+        selCtxRef
+      );
+      updateSelBounds(calcSelectedBounds(selCtxRef.current));
+    };
+
+    const mouseMoveHandler = (e: MouseEvent): void => {
+      const pt = getCursorPoint();
+      logger.info(`${e.screenX}x${e.screenY}, ${pt.x}x${pt.y}`);
+      handleMouseMove(e, screenBounds, selCtxRef);
+      updateSelBounds(calcSelectedBounds(selCtxRef.current));
+    };
+
+    document.addEventListener('mousedown', mouseDownHandler);
+    document.addEventListener('mouseup', mouseUpHandler);
+    document.addEventListener('mousemove', mouseMoveHandler);
+
+    return () => {
+      document.removeEventListener('mousedown', mouseDownHandler);
+      document.removeEventListener('mouseup', mouseUpHandler);
+      document.removeEventListener('mousemove', mouseMoveHandler);
+    };
+  }, []);
 
   return (
-    <div
-      className={classNames(styles.wrapper, styles.cursorSelecting)}
-      onMouseDown={(e: MouseEvent<HTMLDivElement>) =>
-        handleMouseDown(e, getCursorPoint, onStart, onCancel, selCtx, setSelCtx)
-      }
-      onMouseUp={(e: MouseEvent<HTMLDivElement>) =>
-        handleMouseUp(e, getCursorPoint, onCancel, onFinish, selCtx, setSelCtx)
-      }
-      onMouseMove={(e: MouseEvent<HTMLDivElement>) =>
-        handleMouseMove(e, selCtx, setSelCtx)
-      }
-    >
+    <div className={classNames(styles.wrapper, styles.cursorSelecting)}>
       <>
         <div
           className={classNames(styles.area, {
-            [styles.areaHidden]: !selCtx.started || isEmptyBounds(calcBounds),
+            [styles.areaHidden]:
+              !selCtxRef.current.started || isEmptyBounds(selBounds),
           })}
-          style={getAreaStyles(selCtx, calcBounds, areaColors)}
+          style={getAreaStyles(selCtxRef.current, selBounds, areaColors)}
         />
-        {!selCtx.selected && (
+        {!selCtxRef.current.selected && (
           <div
             className={styles.cursorSizeHint}
-            style={getCursorHintStyles(selCtx, calcBounds, areaColors)}
+            style={getCursorHintStyles(
+              selCtxRef.current,
+              selBounds,
+              areaColors
+            )}
           >
-            {calcBounds.width}x{calcBounds.height}
+            {selBounds.width}x{selBounds.height}
           </div>
         )}
       </>

@@ -8,7 +8,7 @@ import FinishCaptureUseCase from '@application/usecases/FinishCapture';
 import HookManager from '@application/services/hook';
 
 @injectable()
-export default class GetCurCaptureCtxUseCase implements UseCase<void> {
+export default class ToggleCaptureUseCase implements UseCase<void> {
   constructor(
     private hookManager: HookManager,
     private captureSession: CaptureSession,

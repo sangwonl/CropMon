@@ -1,9 +1,9 @@
 import React from 'react';
 
-import CaptureCover from '@adapters/ui/components/stateful/CaptureOverlay';
+import CaptureOverlay from '@adapters/ui/components/stateful/CaptureOverlay';
 import { preventZoomKeyEvent } from '@adapters/ui/widgets/utils';
 
-const Wrapper = () => <CaptureCover />;
+const Wrapper = () => <CaptureOverlay />;
 
 export default () => {
   return <Wrapper />;

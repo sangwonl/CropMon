@@ -15,7 +15,11 @@ import StaticPageModal from '@adapters/ui/widgets/staticpage';
 import PreferencesModal from '@adapters/ui/widgets/preferences';
 import CaptureOverlayWrap from '@adapters/ui/director/overlay';
 
-import { getScreenOfCursor, getWholeScreenBounds } from '@utils/bounds';
+import {
+  getAllScreens,
+  getScreenOfCursor,
+  getWholeScreenBounds,
+} from '@utils/bounds';
 import { shortcutForDisplay } from '@utils/shortcut';
 import { getTimeInSeconds } from '@utils/date';
 import { assetPathResolver } from '@utils/asset';
@@ -179,7 +183,7 @@ export default class ElectronUiDirector implements UiDirector {
 
       onActiveScreenBoundsChange(screenBounds);
 
-      this.captureOverlay?.show(screenBounds);
+      this.captureOverlay?.show();
       this.controlPanel?.show();
 
       return;
@@ -195,7 +199,7 @@ export default class ElectronUiDirector implements UiDirector {
 
         onActiveScreenBoundsChange(screen.bounds, screen.id);
 
-        this.captureOverlay?.show(screen.bounds);
+        this.captureOverlay?.show();
         this.controlPanel?.show();
 
         lastScreenId = screen.id;

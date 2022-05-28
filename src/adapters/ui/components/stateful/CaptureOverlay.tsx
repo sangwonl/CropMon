@@ -41,7 +41,7 @@ const adjustBodySize = (overlayBounds: Bounds | null) => {
   stretchBodySize(overlayBounds.width, overlayBounds.height);
 };
 
-const CaptureCover = () => {
+const CaptureOverlay = () => {
   const { controlPanel, captureOverlay, captureAreaColors } = useRootUiState();
   const dispatcher = useActionDispatcher();
   const platformApi = usePlatformApi();
@@ -189,4 +189,4 @@ const CaptureCover = () => {
   ) : null;
 };
 
-export default CaptureCover;
+export default CaptureOverlay;
