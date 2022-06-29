@@ -150,3 +150,24 @@ export const getScreenOfCursor = (): Screen => {
 
   return foundScreen ?? screens[0];
 };
+
+export const sliceIntersectedBounds = (
+  selectedBounds: Bounds,
+  screenBounds: Bounds[]
+): Bounds[] => {
+  const intersectedSlices: Bounds[] = [];
+  screenBounds.forEach((sBounds) => {
+    const intersected = getIntersection(selectedBounds, sBounds);
+    if (!intersected) {
+      return;
+    }
+
+    intersectedSlices.push({
+      ...intersected,
+      x: intersected.x - sBounds.x,
+      y: intersected.y - sBounds.y,
+    });
+  });
+
+  return intersectedSlices;
+};

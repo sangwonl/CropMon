@@ -1,5 +1,6 @@
 import { WidgetType } from '@adapters/ui/widgets/types';
 import { Widget } from '@adapters/ui/widgets/widget';
+import { CaptureOverlayOptions } from '@adapters/ui/widgets/overlays/shared';
 
 import { assetPathResolver } from '@utils/asset';
 import { isMac } from '@utils/process';
@@ -7,7 +8,7 @@ import { isMac } from '@utils/process';
 const TRAFFIC_LIGHT_OFFSET_FOR_HIDING = { x: -256, y: -256 };
 
 export default class CaptureOverlay extends Widget {
-  constructor() {
+  constructor(options: CaptureOverlayOptions) {
     super(WidgetType.CAPTURE_OVERLAY, {
       icon: assetPathResolver('icon.png'),
       show: false,
@@ -21,6 +22,7 @@ export default class CaptureOverlay extends Widget {
       transparent: true,
       titleBarStyle: 'customButtonsOnHover', // for MacOS, with frame: false
       enableLargerThanScreen: true, // for MacOS, margin workaround
+      options,
     });
 
     this.loadURL(`file://${__dirname}/../overlays/index.html`);

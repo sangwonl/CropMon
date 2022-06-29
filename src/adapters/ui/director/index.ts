@@ -4,7 +4,7 @@ import { app, shell } from 'electron';
 
 import { CaptureMode } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
-import { Bounds } from '@domain/models/screen';
+import { Screen } from '@domain/models/screen';
 
 import { UiDirector } from '@application/ports/director';
 
@@ -15,11 +15,7 @@ import StaticPageModal from '@adapters/ui/widgets/staticpage';
 import PreferencesModal from '@adapters/ui/widgets/preferences';
 import CaptureOverlayWrap from '@adapters/ui/director/overlay';
 
-import {
-  getAllScreens,
-  getScreenOfCursor,
-  getWholeScreenBounds,
-} from '@utils/bounds';
+import { getAllScreens, getScreenOfCursor } from '@utils/bounds';
 import { shortcutForDisplay } from '@utils/shortcut';
 import { getTimeInSeconds } from '@utils/date';
 import { assetPathResolver } from '@utils/asset';
@@ -174,36 +170,36 @@ export default class ElectronUiDirector implements UiDirector {
 
   enableCaptureMode(
     mode: CaptureMode,
-    onActiveScreenBoundsChange: (bounds: Bounds, screenId?: number) => void
+    onActiveScreenBoundsChange: (screens: Screen[], screenId?: number) => void
   ): void {
     this.resetScreenBoundsDetector();
 
-    if (mode === CaptureMode.AREA) {
-      const screenBounds = getWholeScreenBounds();
+    const screens = getAllScreens();
+    let lastScreenId: number;
 
-      onActiveScreenBoundsChange(screenBounds);
-
-      this.captureOverlay?.show();
-      this.controlPanel?.show();
-
-      return;
-    }
-
-    if (mode === CaptureMode.SCREEN) {
-      let lastScreenId: number;
-      this.screenBoundsDetector = setInterval(() => {
-        const screen = getScreenOfCursor();
-        if (lastScreenId && lastScreenId === screen.id) {
-          return;
-        }
-
-        onActiveScreenBoundsChange(screen.bounds, screen.id);
-
+    switch (mode) {
+      case CaptureMode.AREA:
+        onActiveScreenBoundsChange(screens);
         this.captureOverlay?.show();
         this.controlPanel?.show();
+        break;
 
-        lastScreenId = screen.id;
-      }, 100);
+      case CaptureMode.SCREEN:
+        this.screenBoundsDetector = setInterval(() => {
+          const screen = getScreenOfCursor();
+          if (lastScreenId && lastScreenId === screen.id) {
+            return;
+          }
+          lastScreenId = screen.id;
+
+          onActiveScreenBoundsChange(screens, screen.id);
+          this.captureOverlay?.show();
+          this.controlPanel?.show();
+        }, 100);
+        break;
+
+      default:
+        break;
     }
   }
 

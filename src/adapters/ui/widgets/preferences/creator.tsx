@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import logger from 'electron-log';
+
 import React, { FC, useEffect, useState } from 'react';
 import { ipcRenderer } from 'electron';
 

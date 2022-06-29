@@ -18,7 +18,7 @@ export default class CaptureOverlayWrap {
 
       let widget = this.widgets[screenId];
       if (!widget) {
-        widget = new CaptureOverlay();
+        widget = new CaptureOverlay({ screenId: screen.id });
         this.widgets[screenId] = widget;
       }
       widget.setBounds(screen.bounds);

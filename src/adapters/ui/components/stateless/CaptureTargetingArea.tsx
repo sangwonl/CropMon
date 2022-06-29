@@ -1,15 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import logger from 'electron-log';
-
-import React, {
-  FC,
-  MutableRefObject,
-  useRef,
-  useEffect,
-  useState,
-} from 'react';
+import React, { FC, MutableRefObject, useRef, useEffect } from 'react';
 import classNames from 'classnames';
 import Color from 'color';
 
@@ -17,7 +9,7 @@ import { Bounds, Point } from '@domain/models/screen';
 
 import { CaptureAreaColors } from '@application/models/ui';
 
-import { isEmptyBounds, isCapturableBounds, emptyBounds } from '@utils/bounds';
+import { isEmptyBounds, isCapturableBounds } from '@utils/bounds';
 
 import styles from '@adapters/ui/components/stateless/CaptureTargetingArea.css';
 
@@ -43,21 +35,16 @@ const initialSelCtx: AreaSelectionCtx = {
   cursorScreenPt: { x: 0, y: 0 },
 };
 
-const getMousePoint = (e: MouseEvent, screenBounds: Bounds): Point => {
-  const x = Math.min(
-    Math.max(e.screenX - screenBounds.x, 0),
-    screenBounds.x + screenBounds.width
-  );
-  const y = Math.min(
-    Math.max(e.screenY - screenBounds.y, 0),
-    screenBounds.y + screenBounds.height
-  );
+const getMousePoint = (e: MouseEvent): Point => {
+  const x = e.screenX;
+  const y = e.screenY;
   return { x, y };
 };
 
 const calcSelectedBounds = (selCtx: AreaSelectionCtx): Bounds => {
   const endX = selCtx.selected ? selCtx.endPt.x : selCtx.cursorPt.x;
   const endY = selCtx.selected ? selCtx.endPt.y : selCtx.cursorPt.y;
+
   return {
     x: Math.min(selCtx.startPt.x, endX),
     y: Math.min(selCtx.startPt.y, endY),
@@ -78,7 +65,7 @@ const getAreaStyles = (
     height: bounds.height + 2,
   };
 
-  if (!selCtx.started || isEmptyBounds(bounds)) {
+  if (isEmptyBounds(bounds)) {
     return layoutStyle;
   }
 
@@ -167,9 +154,9 @@ const getCursorHintStyles = (
 
 const handleMouseDown = (
   e: MouseEvent,
-  screenBounds: Bounds,
   getCursorPoint: () => Point,
   onStart: () => void,
+  onSelecting: (bounds: Bounds) => void,
   onCancel: () => void,
   selCtxRef: MutableRefObject<AreaSelectionCtx>
 ) => {
@@ -182,7 +169,7 @@ const handleMouseDown = (
     return;
   }
 
-  const mousePt = getMousePoint(e, screenBounds);
+  const mousePt = getMousePoint(e);
   const cursorPt = getCursorPoint();
   selCtxRef.current = {
     ...selCtx,
@@ -193,12 +180,14 @@ const handleMouseDown = (
   };
 
   onStart();
+
+  onSelecting(calcSelectedBounds(selCtxRef.current));
 };
 
 const handleMouseUp = (
   e: MouseEvent,
-  screenBounds: Bounds,
   getCursorPoint: () => Point,
+  onSelecting: (bounds: Bounds) => void,
   onCancel: () => void,
   onFinish: (boundsForUi: Bounds, boundsForCapture: Bounds) => void,
   selCtxRef: MutableRefObject<AreaSelectionCtx>
@@ -212,7 +201,7 @@ const handleMouseUp = (
     return;
   }
 
-  const mousePt = getMousePoint(e, screenBounds);
+  const mousePt = getMousePoint(e);
   const updatedSelCtx = { ...selCtx, endPt: mousePt, curPt: mousePt };
   const boundsForUi = calcSelectedBounds(updatedSelCtx);
   if (selCtx.started && !isCapturableBounds(boundsForUi)) {
@@ -223,6 +212,8 @@ const handleMouseUp = (
 
   updatedSelCtx.selected = true;
   selCtxRef.current = updatedSelCtx;
+
+  onSelecting(calcSelectedBounds(selCtxRef.current));
 
   const settledCursorPt = getCursorPoint();
   const boundsForCapture = {
@@ -236,7 +227,7 @@ const handleMouseUp = (
 
 const handleMouseMove = (
   e: MouseEvent,
-  screenBounds: Bounds,
+  onSelecting: (bounds: Bounds) => void,
   selCtxRef: MutableRefObject<AreaSelectionCtx>
 ) => {
   const selCtx = selCtxRef.current;
@@ -245,14 +236,17 @@ const handleMouseMove = (
     return;
   }
 
-  const mousePt = getMousePoint(e, screenBounds);
+  const mousePt = getMousePoint(e);
   selCtxRef.current = { ...selCtx, cursorPt: mousePt };
+
+  onSelecting(calcSelectedBounds(selCtxRef.current));
 };
 
 interface PropTypes {
-  // screenBounds: Bounds;
+  selectingBounds: Bounds;
   areaColors: CaptureAreaColors;
   onStart: () => void;
+  onSelecting: (bounds: Bounds) => void;
   onCancel: () => void;
   onFinish: (boundsForUi: Bounds, boundsForCapture: Bounds) => void;
   getCursorPoint: () => Point;
@@ -260,49 +254,42 @@ interface PropTypes {
 
 const CaptureTargetingArea: FC<PropTypes> = (props: PropTypes) => {
   const {
-    // screenBounds,
+    selectingBounds,
     areaColors,
     onStart,
+    onSelecting,
     onFinish,
     onCancel,
     getCursorPoint,
   } = props;
 
-  const screenBounds = { x: 0, y: 0, width: 2560, height: 1600 };
-
-  const [selBounds, updateSelBounds] = useState<Bounds>(emptyBounds());
   const selCtxRef = useRef<AreaSelectionCtx>(initialSelCtx);
 
   useEffect(() => {
     const mouseDownHandler = (e: MouseEvent): void => {
       handleMouseDown(
         e,
-        screenBounds,
         getCursorPoint,
         onStart,
+        onSelecting,
         onCancel,
         selCtxRef
       );
-      updateSelBounds(calcSelectedBounds(selCtxRef.current));
     };
 
     const mouseUpHandler = (e: MouseEvent): void => {
       handleMouseUp(
         e,
-        screenBounds,
         getCursorPoint,
+        onSelecting,
         onCancel,
         onFinish,
         selCtxRef
       );
-      updateSelBounds(calcSelectedBounds(selCtxRef.current));
     };
 
     const mouseMoveHandler = (e: MouseEvent): void => {
-      const pt = getCursorPoint();
-      logger.info(`${e.screenX}x${e.screenY}, ${pt.x}x${pt.y}`);
-      handleMouseMove(e, screenBounds, selCtxRef);
-      updateSelBounds(calcSelectedBounds(selCtxRef.current));
+      handleMouseMove(e, onSelecting, selCtxRef);
     };
 
     document.addEventListener('mousedown', mouseDownHandler);
@@ -321,21 +308,20 @@ const CaptureTargetingArea: FC<PropTypes> = (props: PropTypes) => {
       <>
         <div
           className={classNames(styles.area, {
-            [styles.areaHidden]:
-              !selCtxRef.current.started || isEmptyBounds(selBounds),
+            [styles.areaHidden]: isEmptyBounds(selectingBounds),
           })}
-          style={getAreaStyles(selCtxRef.current, selBounds, areaColors)}
+          style={getAreaStyles(selCtxRef.current, selectingBounds, areaColors)}
         />
         {!selCtxRef.current.selected && (
           <div
             className={styles.cursorSizeHint}
             style={getCursorHintStyles(
               selCtxRef.current,
-              selBounds,
+              selectingBounds,
               areaColors
             )}
           >
-            {selBounds.width}x{selBounds.height}
+            {selectingBounds.width}x{selectingBounds.height}
           </div>
         )}
       </>

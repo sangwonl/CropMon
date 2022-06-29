@@ -81,12 +81,14 @@ const CaptureCountdown: FC<PropTypes> = (props: PropTypes) => {
         className={styles.area}
         style={getAreaStyles(selectedBounds, areaColors)}
       >
-        <div
-          className={styles.countdownText}
-          style={getCountdownStyles(selectedBounds, areaColors)}
-        >
-          {countdown}
-        </div>
+        {countdown > 0 && (
+          <div
+            className={styles.countdownText}
+            style={getCountdownStyles(selectedBounds, areaColors)}
+          >
+            {countdown}
+          </div>
+        )}
       </div>
     </div>
   );

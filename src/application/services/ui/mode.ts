@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 import TYPES from '@di/types';
 
 import { CaptureMode } from '@domain/models/common';
-import { Bounds } from '@domain/models/screen';
+import { Screen, Bounds } from '@domain/models/screen';
 
 import { INITIAL_UI_STATE, UiState } from '@application/models/ui';
 import StateManager from '@application/services/ui/state';
@@ -24,7 +24,12 @@ export default class CaptureModeManager {
     const prefs = await this.prefsRepo.fetchUserPreferences();
     this.uiDirector.enableCaptureMode(
       captureMode,
-      async (screenBounds: Bounds, screenId?: number) => {
+      async (screens: Screen[], screenId?: number) => {
+        const screenBounds: { [key: number]: Bounds } = {};
+        screens.forEach((s) => {
+          screenBounds[s.id] = s.bounds;
+        });
+
         this.stateManager.updateUiState((state: UiState): UiState => {
           return {
             ...state,
@@ -39,8 +44,9 @@ export default class CaptureModeManager {
               ...INITIAL_UI_STATE.captureOverlay,
               show: true,
               showCountdown: prefs.showCountdown,
-              bounds: screenBounds,
+              screenBounds,
               selectedScreenId: screenId,
+              selectingBounds: screenId ? screenBounds[screenId] : undefined,
             },
             captureAreaColors: prefs.colors,
           };

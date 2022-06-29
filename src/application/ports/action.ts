@@ -13,7 +13,8 @@ export interface ActionDispatcher {
   enableCaptureMode(): void;
   disableCaptureMode(): void;
   changeCaptureOptions(options: CaptureOptions): void;
-  startTargetSelection(): void;
+  startTargetSelection(targetBounds: Bounds): void;
+  selectingTarget(targetBounds: Bounds): void;
   finishTargetSelection(targetBounds: Bounds): void;
   startCapture(): void;
   startCaptureWithCurrentStates(): void;

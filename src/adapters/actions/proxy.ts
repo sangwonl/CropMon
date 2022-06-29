@@ -14,7 +14,12 @@ export default class ActionDispatcherProxy implements ActionDispatcher {
     @inject(TYPES.ActionDispatcher) private actionDispatcher: ActionDispatcher
   ) {
     ipcMain.on('disableCaptureMode', () => this.disableCaptureMode());
-    ipcMain.on('startTargetSelection', () => this.startTargetSelection());
+    ipcMain.on('startTargetSelection', (_event, targetBounds): void => {
+      this.startTargetSelection(targetBounds);
+    });
+    ipcMain.on('selectingTarget', (_event, targetBounds): void => {
+      this.selectingTarget(targetBounds);
+    });
     ipcMain.on('finishTargetSelection', (_event, targetBounds): void => {
       this.finishTargetSelection(targetBounds);
     });
@@ -68,8 +73,12 @@ export default class ActionDispatcherProxy implements ActionDispatcher {
     this.actionDispatcher.changeCaptureOptions(options);
   }
 
-  startTargetSelection(): void {
-    this.actionDispatcher.startTargetSelection();
+  startTargetSelection(targetBounds: Bounds): void {
+    this.actionDispatcher.startTargetSelection(targetBounds);
+  }
+
+  selectingTarget(targetBounds: Bounds): void {
+    this.actionDispatcher.selectingTarget(targetBounds);
   }
 
   finishTargetSelection(targetBounds: Bounds): void {

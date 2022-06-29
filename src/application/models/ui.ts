@@ -18,9 +18,10 @@ export interface ControlPanel {
 export interface CaptureOverlay {
   show: boolean;
   showCountdown: boolean;
-  isSelecting: boolean;
   isRecording: boolean;
-  bounds?: Bounds;
+  isCountingDown: boolean;
+  screenBounds: { [screenId: string]: Bounds };
+  selectingBounds?: Bounds;
   selectedBounds?: Bounds;
   selectedScreenId?: number;
 }
@@ -49,9 +50,10 @@ export const INITIAL_UI_STATE: UiState = {
   captureOverlay: {
     show: false,
     showCountdown: true,
-    isSelecting: false,
     isRecording: false,
-    bounds: undefined,
+    isCountingDown: false,
+    screenBounds: {},
+    selectingBounds: undefined,
     selectedBounds: undefined,
     selectedScreenId: undefined,
   },

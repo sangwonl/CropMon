@@ -52,8 +52,12 @@ export default class ActionDispatcherClient implements ActionDispatcher {
     ipcRenderer.send('changeCaptureOptions', options);
   }
 
-  startTargetSelection(): void {
-    ipcRenderer.send('startTargetSelection');
+  startTargetSelection(targetBounds: Bounds): void {
+    ipcRenderer.send('startTargetSelection', targetBounds);
+  }
+
+  selectingTarget(targetBounds: Bounds): void {
+    ipcRenderer.send('selectingTarget', targetBounds);
   }
 
   finishTargetSelection(targetBounds: Bounds): void {

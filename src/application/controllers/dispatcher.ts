@@ -12,6 +12,7 @@ import OpenHelpPopupUseCase from '@application/usecases/OpenHelpPopup';
 import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
 import ToggleRecordOptionsUseCase from '@application/usecases/ToggleRecordOptions';
 import StartSelectionUseCase from '@application/usecases/StartSelection';
+import SelectingTargetUseCase from '@application/usecases/SelectingTarget';
 import StartCaptureAsIsUseCase from '@application/usecases/StartCaptureAsIs';
 import EnableCaptureUseCase from '@application/usecases/EnableCapture';
 import DisableCaptureUseCase from '@application/usecases/DisableCapture';
@@ -36,6 +37,7 @@ export default class ActionDispatcherCore implements ActionDispatcher {
     private openPrefsModalUseCase: OpenPrefsModalUseCase,
     private toggleRecordOptionsUseCase: ToggleRecordOptionsUseCase,
     private startSelectionUseCase: StartSelectionUseCase,
+    private selectingTargetUseCase: SelectingTargetUseCase,
     private startCaptureAsIsUseCase: StartCaptureAsIsUseCase,
     private enableCaptureUseCase: EnableCaptureUseCase,
     private disableCaptureUseCase: DisableCaptureUseCase,
@@ -90,8 +92,16 @@ export default class ActionDispatcherCore implements ActionDispatcher {
     this.changeCaptureOptionsUseCase.execute({ captureOptions: options });
   };
 
-  startTargetSelection = () => {
-    this.startSelectionUseCase.execute();
+  startTargetSelection = (targetBounds: Bounds) => {
+    this.startSelectionUseCase.execute({
+      targetBounds: adjustSelectionBounds(targetBounds),
+    });
+  };
+
+  selectingTarget = (targetBounds: Bounds) => {
+    this.selectingTargetUseCase.execute({
+      targetBounds: adjustSelectionBounds(targetBounds),
+    });
   };
 
   finishTargetSelection = (targetBounds: Bounds) => {

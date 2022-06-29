@@ -19,6 +19,7 @@ import OpenHelpPopupUseCase from '@application/usecases/OpenHelpPopup';
 import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
 import ToggleRecordOptionsUseCase from '@application/usecases/ToggleRecordOptions';
 import StartSelectionUseCase from '@application/usecases/StartSelection';
+import SelectingTargetUseCase from '@application/usecases/SelectingTarget';
 import StartCaptureAsIsUseCase from '@application/usecases/StartCaptureAsIs';
 import EnableCaptureUseCase from '@application/usecases/EnableCapture';
 import DisableCaptureUseCase from '@application/usecases/DisableCapture';
@@ -176,6 +177,11 @@ diContainer
 
 diContainer
   .bind<StartSelectionUseCase>(StartSelectionUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<SelectingTargetUseCase>(SelectingTargetUseCase)
   .toSelf()
   .inSingletonScope();
 

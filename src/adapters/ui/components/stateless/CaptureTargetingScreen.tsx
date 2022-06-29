@@ -9,7 +9,7 @@ import { Bounds } from '@domain/models/screen';
 
 import { CaptureAreaColors } from '@application/models/ui';
 
-import { getBoundsFromZero, isCapturableBounds } from '@utils/bounds';
+import { isCapturableBounds } from '@utils/bounds';
 
 import styles from '@adapters/ui/components/stateless/CaptureTargetingScreen.css';
 
@@ -43,21 +43,18 @@ interface PropTypes {
   screenBounds: Bounds;
   onStart: () => void;
   onCancel: () => void;
-  onFinish: (boundsForUi: Bounds, boundsForCapture: Bounds) => void;
+  onFinish: () => void;
 }
 
 const CaptureTargetingScreen: FC<PropTypes> = (props: PropTypes) => {
   const { areaColors, screenBounds, onStart, onCancel, onFinish } = props;
 
   const handleMouseEvent = useCallback(
-    (e: MouseEvent<HTMLDivElement>, isDown: boolean) => {
+    (e: MouseEvent<HTMLDivElement>) => {
       if (e.button === 0) {
-        if (isDown) {
-          onStart();
-        } else {
-          onFinish(getBoundsFromZero(screenBounds), screenBounds);
-        }
-      } else if (e.button === 2 && !isDown) {
+        onStart();
+        onFinish();
+      } else if (e.button === 2) {
         onCancel();
       }
     },
@@ -65,11 +62,7 @@ const CaptureTargetingScreen: FC<PropTypes> = (props: PropTypes) => {
   );
 
   return (
-    <div
-      className={classNames(styles.wrapper)}
-      onMouseDown={(e: MouseEvent<HTMLDivElement>) => handleMouseEvent(e, true)}
-      onMouseUp={(e: MouseEvent<HTMLDivElement>) => handleMouseEvent(e, false)}
-    >
+    <div className={classNames(styles.wrapper)} onMouseUp={handleMouseEvent}>
       <div
         className={styles.area}
         style={getAreaStyles(screenBounds, areaColors)}
