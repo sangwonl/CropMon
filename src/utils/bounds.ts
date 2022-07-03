@@ -1,7 +1,6 @@
-import { Display, Rectangle, screen } from 'electron';
+import { Display, screen } from 'electron';
 
 import { Bounds, Point, Screen } from '@domain/models/screen';
-import { isMac } from '@utils/process';
 
 export const MIN_REQUIRED_SIZE = 16; // limited by code macroblock size
 
@@ -54,30 +53,14 @@ export const isPointInsideBounds = (pt: Point, bounds: Bounds): boolean => {
   );
 };
 
-export const getBoundsFromZero = (bounds: Bounds): Bounds => {
-  return {
-    x: 0,
-    y: 0,
-    width: bounds.width,
-    height: bounds.height,
-  };
-};
-
-const mapDisplayToScreen = ({ id, bounds, scaleFactor }: Display): Screen => {
-  return { id, bounds, scaleFactor };
-};
-
 export const getAllScreens = (): Screen[] => {
-  const screens = screen.getAllDisplays().map(mapDisplayToScreen);
-  if (isMac()) {
-    return screens;
-  }
-  return screens.map((s: Screen) => {
-    return {
-      ...s,
-      bounds: screen.dipToScreenRect(null, s.bounds as Rectangle) as Bounds,
-    };
-  });
+  return screen
+    .getAllDisplays()
+    .map(({ id, bounds, scaleFactor }: Display) => ({
+      id,
+      bounds,
+      scaleFactor,
+    }));
 };
 
 const calcScreenBounds = (screens: Screen[]): Bounds => {
@@ -116,36 +99,12 @@ export const getAllScreensFromLeftTop = (): Screen[] => {
   });
 };
 
-export const getWholeScreenBounds = (): Bounds => {
-  return calcScreenBounds(getAllScreens());
-};
-
-export const adjustSelectionBounds = (bounds: Bounds): Bounds => {
-  const screenBounds = getWholeScreenBounds();
-  return {
-    ...bounds,
-    x: bounds.x - screenBounds.x,
-    y: bounds.y - screenBounds.y,
-  };
-};
-
-const getCursorScreenPoint = () => {
-  if (isMac()) {
-    // because mac doesn't support dipToScreenPoint
-    return screen.getCursorScreenPoint();
-  }
-  return screen.dipToScreenPoint(screen.getCursorScreenPoint());
-};
-
 export const getScreenOfCursor = (): Screen => {
-  const cursorPoint = getCursorScreenPoint();
-  const screens = screen.getAllDisplays().map(mapDisplayToScreen);
+  const cursorPoint = screen.getCursorScreenPoint();
+  const screens = getAllScreens();
 
   const foundScreen = screens.find((s) => {
-    return isPointInsideBounds(
-      cursorPoint,
-      isMac() ? s.bounds : screen.dipToScreenRect(null, s.bounds as Rectangle)
-    );
+    return isPointInsideBounds(cursorPoint, s.bounds);
   });
 
   return foundScreen ?? screens[0];

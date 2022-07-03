@@ -3,7 +3,7 @@ import CaptureOverlay from '@adapters/ui/widgets/overlays';
 import { getAllScreens } from '@utils/bounds';
 
 export default class CaptureOverlayWrap {
-  private widgets: { [key: string]: CaptureOverlay } = {};
+  private widgets: { [screenId: string]: CaptureOverlay } = {};
 
   constructor() {
     this.syncWidgetsToScreens();
@@ -22,6 +22,7 @@ export default class CaptureOverlayWrap {
         this.widgets[screenId] = widget;
       }
       widget.setBounds(screen.bounds);
+      widget.setResizable(false);
     });
 
     const staleScreenIds = Object.keys(this.widgets).filter(

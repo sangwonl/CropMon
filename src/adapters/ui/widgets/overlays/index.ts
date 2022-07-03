@@ -14,7 +14,7 @@ export default class CaptureOverlay extends Widget {
       show: false,
       frame: false,
       movable: false,
-      resizable: false,
+      resizable: true, // WORKAROUND: for Windows to be set bounds properly
       maximizable: false,
       minimizable: false,
       focusable: true,

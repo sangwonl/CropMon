@@ -23,8 +23,6 @@ import FinishCaptureUseCase from '@application/usecases/FinishCapture';
 import ToggleCaptureUseCase from '@application/usecases/ToggleCaptureUseCase';
 import { ActionDispatcher } from '@application/ports/action';
 
-import { adjustSelectionBounds } from '@utils/bounds';
-
 @injectable()
 export default class ActionDispatcherCore implements ActionDispatcher {
   constructor(
@@ -94,19 +92,19 @@ export default class ActionDispatcherCore implements ActionDispatcher {
 
   startTargetSelection = (targetBounds: Bounds) => {
     this.startSelectionUseCase.execute({
-      targetBounds: adjustSelectionBounds(targetBounds),
+      targetBounds,
     });
   };
 
   selectingTarget = (targetBounds: Bounds) => {
     this.selectingTargetUseCase.execute({
-      targetBounds: adjustSelectionBounds(targetBounds),
+      targetBounds,
     });
   };
 
   finishTargetSelection = (targetBounds: Bounds) => {
     this.finishSelectionUseCase.execute({
-      targetBounds: adjustSelectionBounds(targetBounds),
+      targetBounds,
     });
   };
 

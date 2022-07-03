@@ -23,7 +23,6 @@ interface AreaSelectionCtx {
   startPt: Point;
   endPt: Point;
   cursorPt: Point;
-  cursorScreenPt: Point;
 }
 
 const initialSelCtx: AreaSelectionCtx = {
@@ -32,13 +31,10 @@ const initialSelCtx: AreaSelectionCtx = {
   startPt: { x: 0, y: 0 },
   endPt: { x: 0, y: 0 },
   cursorPt: { x: 0, y: 0 },
-  cursorScreenPt: { x: 0, y: 0 },
 };
 
 const getMousePoint = (e: MouseEvent): Point => {
-  const x = e.screenX;
-  const y = e.screenY;
-  return { x, y };
+  return { x: e.screenX, y: e.screenY };
 };
 
 const calcSelectedBounds = (selCtx: AreaSelectionCtx): Bounds => {
@@ -154,7 +150,6 @@ const getCursorHintStyles = (
 
 const handleMouseDown = (
   e: MouseEvent,
-  getCursorPoint: () => Point,
   onStart: () => void,
   onSelecting: (bounds: Bounds) => void,
   onCancel: () => void,
@@ -170,13 +165,11 @@ const handleMouseDown = (
   }
 
   const mousePt = getMousePoint(e);
-  const cursorPt = getCursorPoint();
   selCtxRef.current = {
     ...selCtx,
     started: true,
     startPt: mousePt,
     cursorPt: mousePt,
-    cursorScreenPt: cursorPt,
   };
 
   onStart();
@@ -186,10 +179,9 @@ const handleMouseDown = (
 
 const handleMouseUp = (
   e: MouseEvent,
-  getCursorPoint: () => Point,
   onSelecting: (bounds: Bounds) => void,
   onCancel: () => void,
-  onFinish: (boundsForUi: Bounds, boundsForCapture: Bounds) => void,
+  onFinish: (bounds: Bounds) => void,
   selCtxRef: MutableRefObject<AreaSelectionCtx>
 ) => {
   const selCtx = selCtxRef.current;
@@ -203,8 +195,8 @@ const handleMouseUp = (
 
   const mousePt = getMousePoint(e);
   const updatedSelCtx = { ...selCtx, endPt: mousePt, curPt: mousePt };
-  const boundsForUi = calcSelectedBounds(updatedSelCtx);
-  if (selCtx.started && !isCapturableBounds(boundsForUi)) {
+  const bounds = calcSelectedBounds(updatedSelCtx);
+  if (selCtx.started && !isCapturableBounds(bounds)) {
     selCtxRef.current = initialSelCtx;
     onCancel();
     return;
@@ -215,14 +207,7 @@ const handleMouseUp = (
 
   onSelecting(calcSelectedBounds(selCtxRef.current));
 
-  const settledCursorPt = getCursorPoint();
-  const boundsForCapture = {
-    x: Math.min(updatedSelCtx.cursorScreenPt.x, settledCursorPt.x),
-    y: Math.min(updatedSelCtx.cursorScreenPt.y, settledCursorPt.y),
-    width: Math.abs(settledCursorPt.x - updatedSelCtx.cursorScreenPt.x) + 1,
-    height: Math.abs(settledCursorPt.y - updatedSelCtx.cursorScreenPt.y) + 1,
-  };
-  onFinish(boundsForUi, boundsForCapture);
+  onFinish(bounds);
 };
 
 const handleMouseMove = (
@@ -248,8 +233,7 @@ interface PropTypes {
   onStart: () => void;
   onSelecting: (bounds: Bounds) => void;
   onCancel: () => void;
-  onFinish: (boundsForUi: Bounds, boundsForCapture: Bounds) => void;
-  getCursorPoint: () => Point;
+  onFinish: (bounds: Bounds) => void;
 }
 
 const CaptureTargetingArea: FC<PropTypes> = (props: PropTypes) => {
@@ -260,32 +244,17 @@ const CaptureTargetingArea: FC<PropTypes> = (props: PropTypes) => {
     onSelecting,
     onFinish,
     onCancel,
-    getCursorPoint,
   } = props;
 
   const selCtxRef = useRef<AreaSelectionCtx>(initialSelCtx);
 
   useEffect(() => {
     const mouseDownHandler = (e: MouseEvent): void => {
-      handleMouseDown(
-        e,
-        getCursorPoint,
-        onStart,
-        onSelecting,
-        onCancel,
-        selCtxRef
-      );
+      handleMouseDown(e, onStart, onSelecting, onCancel, selCtxRef);
     };
 
     const mouseUpHandler = (e: MouseEvent): void => {
-      handleMouseUp(
-        e,
-        getCursorPoint,
-        onSelecting,
-        onCancel,
-        onFinish,
-        selCtxRef
-      );
+      handleMouseUp(e, onSelecting, onCancel, onFinish, selCtxRef);
     };
 
     const mouseMoveHandler = (e: MouseEvent): void => {

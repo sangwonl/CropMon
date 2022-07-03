@@ -122,12 +122,7 @@ const createDrawContext = async (
         videoElem.srcObject = stream;
         videoElem.play();
 
-        const srcBounds: Bounds = {
-          ...bounds,
-          x: bounds.x - screen.bounds.x,
-          y: bounds.y - screen.bounds.y,
-        };
-
+        const srcBounds: Bounds = { ...bounds };
         const dstBounds: Bounds = {
           x: Math.floor(
             (screen.bounds.x + srcBounds.x - recordCtx.targetBounds.x) *

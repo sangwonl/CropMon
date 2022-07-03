@@ -13,13 +13,8 @@ import CaptureCountdown from '@adapters/ui/components/stateless/CaptureCountdown
 import CaptureRecording from '@adapters/ui/components/stateless/CaptureRecording';
 import { useRootUiState } from '@adapters/ui/hooks/state';
 import { useActionDispatcher } from '@adapters/ui/hooks/dispatcher';
-import { usePlatformApi } from '@adapters/ui/hooks/platform';
 
-import {
-  emptyBounds,
-  isEmptyBounds,
-  sliceIntersectedBounds,
-} from '@utils/bounds';
+import { emptyBounds, getIntersection, isEmptyBounds } from '@utils/bounds';
 import { isMac } from '@utils/process';
 
 import styles from '@adapters/ui/components/stateful/CaptureOverlay.css';
@@ -40,27 +35,31 @@ interface PropTypes {
 const CaptureOverlay = (props: PropTypes) => {
   const { assignedScreenId } = props;
 
+  const dispatcher = useActionDispatcher();
+
   const { controlPanel, captureOverlay, captureAreaColors } = useRootUiState();
   const screenBounds = captureOverlay.screenBounds[assignedScreenId.toString()];
-
-  const dispatcher = useActionDispatcher();
-  const platformApi = usePlatformApi();
 
   const [renderMode, setRenderMode] = useState<RenderMode>(RenderMode.IDLE);
   const [countdown, setCountdown] = useState<number>(0);
   const countdownTimer = useRef<any>();
 
   const targetBounds = (): Bounds => {
-    let slices: Bounds[] = [];
     const selBounds =
       renderMode === RenderMode.TARGETING
         ? captureOverlay.selectingBounds
         : captureOverlay.selectedBounds;
 
-    if (selBounds) {
-      slices = sliceIntersectedBounds(selBounds, [screenBounds]);
+    if (!selBounds) {
+      return emptyBounds();
     }
-    return slices?.length > 0 ? slices[0] : emptyBounds();
+
+    const intersected = getIntersection(selBounds, screenBounds);
+    if (!intersected) {
+      return emptyBounds();
+    }
+
+    return intersected;
   };
 
   const changeRenderMode = (mode: RenderMode) => {
@@ -174,7 +173,6 @@ const CaptureOverlay = (props: PropTypes) => {
             onSelecting={onSelectingTarget}
             onCancel={onCaptureCancel}
             onFinish={onSelectionFinish}
-            getCursorPoint={platformApi.getCursorScreenPoint}
           />
         )}
       {renderMode === RenderMode.TARGETING &&
