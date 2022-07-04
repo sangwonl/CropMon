@@ -63,17 +63,17 @@ export const getAllScreens = (): Screen[] => {
     }));
 };
 
-const calcScreenBounds = (screens: Screen[]): Bounds => {
+export const mergeScreenBounds = (bounds: Bounds[]): Bounds => {
   let left = Number.MAX_SAFE_INTEGER;
   let top = Number.MAX_SAFE_INTEGER;
   let right = Number.MIN_SAFE_INTEGER;
   let bottom = Number.MIN_SAFE_INTEGER;
 
-  screens.forEach(({ bounds }: Screen) => {
-    left = Math.min(left, bounds.x);
-    top = Math.min(top, bounds.y);
-    right = Math.max(right, bounds.x + bounds.width);
-    bottom = Math.max(bottom, bounds.y + bounds.height);
+  bounds.forEach((b: Bounds) => {
+    left = Math.min(left, b.x);
+    top = Math.min(top, b.y);
+    right = Math.max(right, b.x + b.width);
+    bottom = Math.max(bottom, b.y + b.height);
   });
 
   return {
@@ -82,21 +82,6 @@ const calcScreenBounds = (screens: Screen[]): Bounds => {
     width: right - left,
     height: bottom - top,
   };
-};
-
-export const getAllScreensFromLeftTop = (): Screen[] => {
-  const screens = getAllScreens();
-  const screenBounds = calcScreenBounds(screens);
-  return screens.map((s: Screen): Screen => {
-    return {
-      ...s,
-      bounds: {
-        ...s.bounds,
-        x: s.bounds.x - screenBounds.x,
-        y: s.bounds.y - screenBounds.y,
-      },
-    };
-  });
 };
 
 export const getScreenOfCursor = (): Screen => {
@@ -108,25 +93,4 @@ export const getScreenOfCursor = (): Screen => {
   });
 
   return foundScreen ?? screens[0];
-};
-
-export const sliceIntersectedBounds = (
-  selectedBounds: Bounds,
-  screenBounds: Bounds[]
-): Bounds[] => {
-  const intersectedSlices: Bounds[] = [];
-  screenBounds.forEach((sBounds) => {
-    const intersected = getIntersection(selectedBounds, sBounds);
-    if (!intersected) {
-      return;
-    }
-
-    intersectedSlices.push({
-      ...intersected,
-      x: intersected.x - sBounds.x,
-      y: intersected.y - sBounds.y,
-    });
-  });
-
-  return intersectedSlices;
 };

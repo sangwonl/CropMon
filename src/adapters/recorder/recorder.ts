@@ -154,6 +154,47 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
     return undefined;
   }
 
+  private getTargetSlicesForScreenMode(
+    targetScreenId: number,
+    screens: Screen[],
+    sources: Electron.DesktopCapturerSource[]
+  ) {
+    const targetSlices: TargetSlice[] = [];
+    const source = this.getSourceByScreenId(targetScreenId, sources);
+    const screen = this.getScreenById(targetScreenId, screens);
+    if (source && screen) {
+      targetSlices.push({
+        mediaSourceId: source.id,
+        targetBounds: { ...screen.bounds },
+        screenBounds: { ...screen.bounds },
+      });
+    }
+    return targetSlices;
+  }
+
+  private getTargetSlicesForAreaMode(
+    targetBounds: Bounds,
+    screens: Screen[],
+    sources: Electron.DesktopCapturerSource[]
+  ) {
+    const targetSlices: TargetSlice[] = [];
+    // eslint-disable-next-line no-restricted-syntax
+    for (const screen of screens) {
+      const intersected = getIntersection(targetBounds, screen.bounds);
+      if (intersected) {
+        const source = this.getSourceByScreenId(screen.id, sources);
+        if (source) {
+          targetSlices.push({
+            mediaSourceId: source.id,
+            targetBounds: intersected,
+            screenBounds: { ...screen.bounds },
+          });
+        }
+      }
+    }
+    return targetSlices;
+  }
+
   private async createRecordContext(
     ctx: CaptureContext
   ): Promise<IRecordContext | null> {
@@ -170,34 +211,9 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
 
     const screens = getAllScreens();
     const sources = await desktopCapturer.getSources({ types: ['screen'] });
-
-    const targetSlices: TargetSlice[] = [];
-    if (targetScreenId) {
-      const source = this.getSourceByScreenId(targetScreenId, sources);
-      const screen = this.getScreenById(targetScreenId, screens);
-      if (source && screen) {
-        targetSlices.push({
-          sourceId: source.id,
-          screen,
-          bounds: targetBounds,
-        });
-      }
-    } else {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const screen of screens) {
-        const intersected = getIntersection(targetBounds, screen.bounds);
-        if (intersected) {
-          const source = this.getSourceByScreenId(screen.id, sources);
-          if (source) {
-            targetSlices.push({
-              sourceId: source.id,
-              screen,
-              bounds: intersected,
-            });
-          }
-        }
-      }
-    }
+    const targetSlices = targetScreenId
+      ? this.getTargetSlicesForScreenMode(targetScreenId, screens, sources)
+      : this.getTargetSlicesForAreaMode(targetBounds, screens, sources);
 
     if (targetSlices.length === 0) {
       return null;
@@ -216,7 +232,6 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
     return {
       captureMode,
       targetSlices,
-      targetBounds,
       outputFormat,
       recordMicrophone,
       frameRate,

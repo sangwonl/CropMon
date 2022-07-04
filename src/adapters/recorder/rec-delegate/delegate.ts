@@ -20,6 +20,7 @@ import {
 } from '@adapters/recorder/rec-delegate/types';
 
 import { getNowAsYYYYMMDDHHmmss } from '@utils/date';
+import { mergeScreenBounds } from '@utils/bounds';
 
 const MEDIA_MIME_TYPE = 'video/webm; codecs=h264,opus';
 // const MEDIA_MIME_TYPE = 'video/webm; codecs=vp8,opus';
@@ -43,7 +44,7 @@ interface Drawable {
 }
 
 interface IDrawContext {
-  targetBounds: Bounds;
+  canvasBounds: Bounds;
   frameRate: number;
   drawables: Drawable[];
 }
@@ -103,37 +104,45 @@ const getVideoConstraint = (srcId: string, bounds: Bounds): any => {
 const createDrawContext = async (
   recordCtx: IRecordContext
 ): Promise<IDrawContext> => {
-  const { targetBounds, scaleDownFactor, frameRate, targetSlices } = recordCtx;
+  const { scaleDownFactor, frameRate, targetSlices } = recordCtx;
 
-  const scaledTargetBounds = {
+  const canvasBounds = {
+    ...mergeScreenBounds(
+      targetSlices.map(({ targetBounds }) => ({
+        x: Math.floor(targetBounds.x * scaleDownFactor),
+        y: Math.floor(targetBounds.y * scaleDownFactor),
+        width: Math.floor(targetBounds.width * scaleDownFactor),
+        height: Math.floor(targetBounds.height * scaleDownFactor),
+      }))
+    ),
     x: 0,
     y: 0,
-    width: targetBounds.width * scaleDownFactor,
-    height: targetBounds.height * scaleDownFactor,
   };
 
   const drawables = await Promise.all(
     targetSlices.map(
-      async ({ sourceId, screen, bounds }: TargetSlice): Promise<Drawable> => {
-        const constraints = getVideoConstraint(sourceId, screen.bounds);
+      async ({
+        mediaSourceId,
+        screenBounds,
+        targetBounds,
+      }: TargetSlice): Promise<Drawable> => {
+        const constraints = getVideoConstraint(mediaSourceId, screenBounds);
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
         const videoElem = document.createElement('video') as HTMLVideoElement;
         videoElem.srcObject = stream;
         videoElem.play();
 
-        const srcBounds: Bounds = { ...bounds };
+        const srcBounds: Bounds = { ...targetBounds };
         const dstBounds: Bounds = {
           x: Math.floor(
-            (screen.bounds.x + srcBounds.x - recordCtx.targetBounds.x) *
-              recordCtx.scaleDownFactor
+            (screenBounds.x + srcBounds.x - targetBounds.x) * scaleDownFactor
           ),
           y: Math.floor(
-            (screen.bounds.y + srcBounds.y - recordCtx.targetBounds.y) *
-              recordCtx.scaleDownFactor
+            (screenBounds.y + srcBounds.y - targetBounds.y) * scaleDownFactor
           ),
-          width: Math.floor(srcBounds.width * recordCtx.scaleDownFactor),
-          height: Math.floor(srcBounds.height * recordCtx.scaleDownFactor),
+          width: Math.floor(srcBounds.width * scaleDownFactor),
+          height: Math.floor(srcBounds.height * scaleDownFactor),
         };
 
         return { videoElem, srcBounds, dstBounds };
@@ -142,7 +151,7 @@ const createDrawContext = async (
   );
 
   return {
-    targetBounds: scaledTargetBounds,
+    canvasBounds,
     frameRate,
     drawables,
   };
@@ -154,23 +163,21 @@ const createBypassStream = (drawContext: IDrawContext): MediaStream => {
 };
 
 const createCanvasStream = (drawContext: IDrawContext): MediaStream => {
-  const { targetBounds, frameRate, drawables } = drawContext;
+  const { canvasBounds, frameRate, drawables } = drawContext;
 
   // WORKAROUND - completely no evidence for this setting
   const MAX_FPS = 30;
   const MIN_FPS = 10;
   const BASE_PIXELS = 1280 * 720;
-  const pixelRatio = BASE_PIXELS / (targetBounds.width * targetBounds.height);
+  const pixelRatio = BASE_PIXELS / (canvasBounds.width * canvasBounds.height);
   const targetFps = Math.floor(frameRate * pixelRatio);
   const fps = Math.max(Math.min(targetFps, MAX_FPS), MIN_FPS);
   const frameDuration = Math.floor(1000 / fps);
 
   const canvasElem = document.createElement('canvas') as any;
-  canvasElem.width = targetBounds.width;
-  canvasElem.height = targetBounds.height;
+  canvasElem.width = canvasBounds.width;
+  canvasElem.height = canvasBounds.height;
 
-  // const offCanvas = canvasElem.transferControlToOffscreen();
-  // const canvasCtx = offCanvas.getContext('2d')!;
   const canvasCtx = canvasElem.getContext('2d');
   const canvasStream = canvasElem.captureStream(0);
   const [canvasTrack] = canvasStream.getVideoTracks();
