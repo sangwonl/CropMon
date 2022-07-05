@@ -2,7 +2,7 @@ import { injectable } from 'inversify';
 import { ipcRenderer } from 'electron';
 
 import { RecordOptions, CaptureOptions } from '@domain/models/capture';
-import { Bounds } from '@domain/models/screen';
+import { Bounds, Point } from '@domain/models/screen';
 
 import { ActionDispatcher } from '@application/ports/action';
 
@@ -52,8 +52,12 @@ export default class ActionDispatcherClient implements ActionDispatcher {
     ipcRenderer.send('changeCaptureOptions', options);
   }
 
-  startTargetSelection(): void {
-    ipcRenderer.send('startTargetSelection');
+  startTargetSelection(targetBounds: Bounds, cursorPosition: Point): void {
+    ipcRenderer.send('startTargetSelection', targetBounds, cursorPosition);
+  }
+
+  selectingTarget(targetBounds: Bounds, cursorPosition: Point): void {
+    ipcRenderer.send('selectingTarget', targetBounds, cursorPosition);
   }
 
   finishTargetSelection(targetBounds: Bounds): void {

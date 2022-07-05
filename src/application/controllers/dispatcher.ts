@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 
-import { Bounds } from '@domain/models/screen';
+import { Bounds, Point } from '@domain/models/screen';
 import { CaptureOptions, RecordOptions } from '@domain/models/capture';
 
 import InitializeAppUseCase from '@application/usecases/InitializeApp';
@@ -12,6 +12,7 @@ import OpenHelpPopupUseCase from '@application/usecases/OpenHelpPopup';
 import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
 import ToggleRecordOptionsUseCase from '@application/usecases/ToggleRecordOptions';
 import StartSelectionUseCase from '@application/usecases/StartSelection';
+import SelectingTargetUseCase from '@application/usecases/SelectingTarget';
 import StartCaptureAsIsUseCase from '@application/usecases/StartCaptureAsIs';
 import EnableCaptureUseCase from '@application/usecases/EnableCapture';
 import DisableCaptureUseCase from '@application/usecases/DisableCapture';
@@ -21,8 +22,6 @@ import StartCaptureUseCase from '@application/usecases/StartCapture';
 import FinishCaptureUseCase from '@application/usecases/FinishCapture';
 import ToggleCaptureUseCase from '@application/usecases/ToggleCaptureUseCase';
 import { ActionDispatcher } from '@application/ports/action';
-
-import { adjustSelectionBounds } from '@utils/bounds';
 
 @injectable()
 export default class ActionDispatcherCore implements ActionDispatcher {
@@ -36,6 +35,7 @@ export default class ActionDispatcherCore implements ActionDispatcher {
     private openPrefsModalUseCase: OpenPrefsModalUseCase,
     private toggleRecordOptionsUseCase: ToggleRecordOptionsUseCase,
     private startSelectionUseCase: StartSelectionUseCase,
+    private selectingTargetUseCase: SelectingTargetUseCase,
     private startCaptureAsIsUseCase: StartCaptureAsIsUseCase,
     private enableCaptureUseCase: EnableCaptureUseCase,
     private disableCaptureUseCase: DisableCaptureUseCase,
@@ -90,13 +90,23 @@ export default class ActionDispatcherCore implements ActionDispatcher {
     this.changeCaptureOptionsUseCase.execute({ captureOptions: options });
   };
 
-  startTargetSelection = () => {
-    this.startSelectionUseCase.execute();
+  startTargetSelection = (targetBounds: Bounds, cursorPosition: Point) => {
+    this.startSelectionUseCase.execute({
+      targetBounds,
+      cursorPosition,
+    });
+  };
+
+  selectingTarget = (targetBounds: Bounds, cursorPosition: Point) => {
+    this.selectingTargetUseCase.execute({
+      targetBounds,
+      cursorPosition,
+    });
   };
 
   finishTargetSelection = (targetBounds: Bounds) => {
     this.finishSelectionUseCase.execute({
-      targetBounds: adjustSelectionBounds(targetBounds),
+      targetBounds,
     });
   };
 

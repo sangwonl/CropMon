@@ -1,43 +1,72 @@
-import { Bounds } from '@domain/models/screen';
-
 import CaptureOverlay from '@adapters/ui/widgets/overlays';
 
+import { getAllScreens } from '@utils/bounds';
+
 export default class CaptureOverlayWrap {
-  private widget?: CaptureOverlay;
+  private widgets: { [screenId: string]: CaptureOverlay } = {};
 
   constructor() {
-    this.widget = new CaptureOverlay();
+    this.syncWidgetsToScreens();
   }
 
-  show(screenBounds: Bounds) {
-    setImmediate(() => {
-      // WORKAROUND: https://github.com/electron/electron/issues/10862
-      this.widget?.setBounds(screenBounds);
-      this.widget?.setBounds(screenBounds);
-      this.widget?.setBounds(screenBounds);
-      this.widget?.setBounds(screenBounds);
+  syncWidgetsToScreens() {
+    const curScreenIds: string[] = [];
+
+    getAllScreens().forEach((screen) => {
+      const screenId = screen.id.toString();
+      curScreenIds.push(screenId);
+
+      let widget = this.widgets[screenId];
+      if (!widget) {
+        widget = new CaptureOverlay({ screenId: screen.id });
+        this.widgets[screenId] = widget;
+      }
+      widget.setBounds(screen.bounds);
+      widget.setResizable(false);
     });
 
-    this.widget?.setIgnoreMouseEvents(false);
-    this.widget?.show();
+    const staleScreenIds = Object.keys(this.widgets).filter(
+      (sId) => !curScreenIds.includes(sId)
+    );
+
+    staleScreenIds.forEach((sId) => {
+      this.widgets[sId].destroy();
+    });
+  }
+
+  show() {
+    this.syncWidgetsToScreens();
+
+    Object.values(this.widgets).forEach((widget) => {
+      widget.setIgnoreMouseEvents(false);
+      widget.show();
+    });
   }
 
   hide() {
     // should wait for react component rerender
     setTimeout(() => {
-      this.widget?.hide();
+      Object.values(this.widgets).forEach((widget) => {
+        widget.hide();
+      });
     }, 500);
   }
 
   close() {
-    this.widget?.close();
+    Object.values(this.widgets).forEach((widget) => {
+      widget.close();
+    });
   }
 
   ignoreMouseEvents() {
-    this.widget?.setIgnoreMouseEvents(true);
+    Object.values(this.widgets).forEach((widget) => {
+      widget.setIgnoreMouseEvents(true);
+    });
   }
 
   blur() {
-    this.widget?.blur();
+    Object.values(this.widgets).forEach((widget) => {
+      widget.blur();
+    });
   }
 }

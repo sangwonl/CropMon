@@ -1,4 +1,4 @@
-import { Bounds } from '@domain/models/screen';
+import { Bounds, Point } from '@domain/models/screen';
 import { CaptureOptions, RecordOptions } from '@domain/models/capture';
 
 export interface ActionDispatcher {
@@ -13,7 +13,8 @@ export interface ActionDispatcher {
   enableCaptureMode(): void;
   disableCaptureMode(): void;
   changeCaptureOptions(options: CaptureOptions): void;
-  startTargetSelection(): void;
+  startTargetSelection(targetBounds: Bounds, cursorPosition: Point): void;
+  selectingTarget(targetBounds: Bounds, cursorPosition: Point): void;
   finishTargetSelection(targetBounds: Bounds): void;
   startCapture(): void;
   startCaptureWithCurrentStates(): void;

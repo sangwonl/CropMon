@@ -5,11 +5,11 @@ import React, { MouseEvent, FC, useCallback } from 'react';
 import classNames from 'classnames';
 import Color from 'color';
 
-import { Bounds } from '@domain/models/screen';
+import { Bounds, Point } from '@domain/models/screen';
 
 import { CaptureAreaColors } from '@application/models/ui';
 
-import { getBoundsFromZero, isCapturableBounds } from '@utils/bounds';
+import { isCapturableBounds } from '@utils/bounds';
 
 import styles from '@adapters/ui/components/stateless/CaptureTargetingScreen.css';
 
@@ -39,40 +39,33 @@ const getAreaStyles = (bounds: Bounds, colors: CaptureAreaColors): any => {
 };
 
 interface PropTypes {
+  targetBounds: Bounds;
   areaColors: CaptureAreaColors;
-  screenBounds: Bounds;
-  onStart: () => void;
+  onStart: (cursorPosition: Point) => void;
   onCancel: () => void;
-  onFinish: (boundsForUi: Bounds, boundsForCapture: Bounds) => void;
+  onFinish: () => void;
 }
 
 const CaptureTargetingScreen: FC<PropTypes> = (props: PropTypes) => {
-  const { areaColors, screenBounds, onStart, onCancel, onFinish } = props;
+  const { areaColors, targetBounds, onStart, onCancel, onFinish } = props;
 
   const handleMouseEvent = useCallback(
-    (e: MouseEvent<HTMLDivElement>, isDown: boolean) => {
+    (e: MouseEvent<HTMLDivElement>) => {
       if (e.button === 0) {
-        if (isDown) {
-          onStart();
-        } else {
-          onFinish(getBoundsFromZero(screenBounds), screenBounds);
-        }
-      } else if (e.button === 2 && !isDown) {
+        onStart({ x: e.screenX, y: e.screenY });
+        onFinish();
+      } else if (e.button === 2) {
         onCancel();
       }
     },
-    [screenBounds]
+    [targetBounds]
   );
 
   return (
-    <div
-      className={classNames(styles.wrapper)}
-      onMouseDown={(e: MouseEvent<HTMLDivElement>) => handleMouseEvent(e, true)}
-      onMouseUp={(e: MouseEvent<HTMLDivElement>) => handleMouseEvent(e, false)}
-    >
+    <div className={classNames(styles.wrapper)} onMouseUp={handleMouseEvent}>
       <div
         className={styles.area}
-        style={getAreaStyles(screenBounds, areaColors)}
+        style={getAreaStyles(targetBounds, areaColors)}
       />
     </div>
   );

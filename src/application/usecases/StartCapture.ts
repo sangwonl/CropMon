@@ -24,9 +24,11 @@ export default class StartCaptureUseCase implements UseCase<void> {
 
   async execute() {
     try {
+      this.updateUiForRecordingMode();
+
       const newCaptureCtx = await this.captureSession.startCapture();
 
-      this.updateUiAsCaptureStatus();
+      this.disableCaptureModeWhenFailToStartRecording();
 
       this.hookManager.emit('capture-starting', {
         captureContext: newCaptureCtx,
@@ -38,22 +40,23 @@ export default class StartCaptureUseCase implements UseCase<void> {
     }
   }
 
-  private updateUiAsCaptureStatus() {
-    // handle ui state
-    const isRecording = this.captureSession.isCaptureInProgress();
-    if (!isRecording) {
+  private updateUiForRecordingMode() {
+    this.uiDirector.enableRecordingMode();
+    this.stateManager.updateUiState((state: UiState): UiState => {
+      return {
+        ...state,
+        captureOverlay: {
+          ...state.captureOverlay,
+          isRecording: true,
+          isCountingDown: false,
+        },
+      };
+    });
+  }
+
+  private disableCaptureModeWhenFailToStartRecording() {
+    if (!this.captureSession.isCaptureInProgress()) {
       this.captureModeManager.disableCaptureMode();
-    } else {
-      this.uiDirector.enableRecordingMode();
-      this.stateManager.updateUiState((state: UiState): UiState => {
-        return {
-          ...state,
-          captureOverlay: {
-            ...state.captureOverlay,
-            isRecording,
-          },
-        };
-      });
     }
   }
 }

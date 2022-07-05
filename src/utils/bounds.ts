@@ -1,7 +1,6 @@
-import { Display, Rectangle, screen } from 'electron';
+import { Display, screen } from 'electron';
 
 import { Bounds, Point, Screen } from '@domain/models/screen';
-import { isMac } from '@utils/process';
 
 export const MIN_REQUIRED_SIZE = 16; // limited by code macroblock size
 
@@ -54,43 +53,33 @@ export const isPointInsideBounds = (pt: Point, bounds: Bounds): boolean => {
   );
 };
 
-export const getBoundsFromZero = (bounds: Bounds): Bounds => {
-  return {
-    x: 0,
-    y: 0,
-    width: bounds.width,
-    height: bounds.height,
-  };
+export const getAllScreens = (): Screen[] => {
+  const primaryDisplay = screen.getPrimaryDisplay();
+  return screen
+    .getAllDisplays()
+    .map(({ id, bounds, scaleFactor }: Display) => ({
+      id,
+      bounds,
+      scaleFactor,
+      isPrimary: id === primaryDisplay.id,
+    }));
 };
 
-const mapDisplayToScreen = ({ id, bounds, scaleFactor }: Display): Screen => {
-  return { id, bounds, scaleFactor };
+export const getPrimaryScreenId = (): number => {
+  return screen.getPrimaryDisplay().id;
 };
 
-const getAllScreens = (): Screen[] => {
-  const screens = screen.getAllDisplays().map(mapDisplayToScreen);
-  if (isMac()) {
-    return screens;
-  }
-  return screens.map((s: Screen) => {
-    return {
-      ...s,
-      bounds: screen.dipToScreenRect(null, s.bounds as Rectangle) as Bounds,
-    };
-  });
-};
-
-const calcScreenBounds = (screens: Screen[]): Bounds => {
+export const mergeScreenBounds = (bounds: Bounds[]): Bounds => {
   let left = Number.MAX_SAFE_INTEGER;
   let top = Number.MAX_SAFE_INTEGER;
   let right = Number.MIN_SAFE_INTEGER;
   let bottom = Number.MIN_SAFE_INTEGER;
 
-  screens.forEach(({ bounds }: Screen) => {
-    left = Math.min(left, bounds.x);
-    top = Math.min(top, bounds.y);
-    right = Math.max(right, bounds.x + bounds.width);
-    bottom = Math.max(bottom, bounds.y + bounds.height);
+  bounds.forEach((b: Bounds) => {
+    left = Math.min(left, b.x);
+    top = Math.min(top, b.y);
+    right = Math.max(right, b.x + b.width);
+    bottom = Math.max(bottom, b.y + b.height);
   });
 
   return {
@@ -101,51 +90,12 @@ const calcScreenBounds = (screens: Screen[]): Bounds => {
   };
 };
 
-export const getAllScreensFromLeftTop = (): Screen[] => {
+export const getScreenCursorOn = (): Screen => {
+  const cursorPoint = screen.getCursorScreenPoint();
   const screens = getAllScreens();
-  const screenBounds = calcScreenBounds(screens);
-  return screens.map((s: Screen): Screen => {
-    return {
-      ...s,
-      bounds: {
-        ...s.bounds,
-        x: s.bounds.x - screenBounds.x,
-        y: s.bounds.y - screenBounds.y,
-      },
-    };
-  });
-};
-
-export const getWholeScreenBounds = (): Bounds => {
-  return calcScreenBounds(getAllScreens());
-};
-
-export const adjustSelectionBounds = (bounds: Bounds): Bounds => {
-  const screenBounds = getWholeScreenBounds();
-  return {
-    ...bounds,
-    x: bounds.x - screenBounds.x,
-    y: bounds.y - screenBounds.y,
-  };
-};
-
-const getCursorScreenPoint = () => {
-  if (isMac()) {
-    // because mac doesn't support dipToScreenPoint
-    return screen.getCursorScreenPoint();
-  }
-  return screen.dipToScreenPoint(screen.getCursorScreenPoint());
-};
-
-export const getScreenOfCursor = (): Screen => {
-  const cursorPoint = getCursorScreenPoint();
-  const screens = screen.getAllDisplays().map(mapDisplayToScreen);
 
   const foundScreen = screens.find((s) => {
-    return isPointInsideBounds(
-      cursorPoint,
-      isMac() ? s.bounds : screen.dipToScreenRect(null, s.bounds as Rectangle)
-    );
+    return isPointInsideBounds(cursorPoint, s.bounds);
   });
 
   return foundScreen ?? screens[0];

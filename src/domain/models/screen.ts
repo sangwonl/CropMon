@@ -14,4 +14,5 @@ export interface Screen {
   id: number;
   bounds: Bounds;
   scaleFactor: number;
+  isPrimary: boolean;
 }

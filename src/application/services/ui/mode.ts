@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 import TYPES from '@di/types';
 
 import { CaptureMode } from '@domain/models/common';
-import { Bounds } from '@domain/models/screen';
+import { Screen, Bounds } from '@domain/models/screen';
 
 import { INITIAL_UI_STATE, UiState } from '@application/models/ui';
 import StateManager from '@application/services/ui/state';
@@ -24,12 +24,18 @@ export default class CaptureModeManager {
     const prefs = await this.prefsRepo.fetchUserPreferences();
     this.uiDirector.enableCaptureMode(
       captureMode,
-      async (screenBounds: Bounds, screenId?: number) => {
+      async (screens: Screen[], screenCursorOn?: Screen) => {
+        const screenMap: { [screenId: number]: Screen } = {};
+        screens.forEach((s) => {
+          screenMap[s.id] = s;
+        });
+
         this.stateManager.updateUiState((state: UiState): UiState => {
           return {
             ...state,
             controlPanel: {
               ...INITIAL_UI_STATE.controlPanel,
+              show: true,
               captureMode,
               outputAsGif: prefs.outputFormat === 'gif',
               lowQualityMode: prefs.recordQualityMode === 'low',
@@ -39,8 +45,11 @@ export default class CaptureModeManager {
               ...INITIAL_UI_STATE.captureOverlay,
               show: true,
               showCountdown: prefs.showCountdown,
-              bounds: screenBounds,
-              selectedScreenId: screenId,
+              screens: screenMap,
+              selectedScreenId: screenCursorOn?.id,
+              selectingBounds: screenCursorOn
+                ? screenMap[screenCursorOn.id].bounds
+                : undefined,
             },
             captureAreaColors: prefs.colors,
           };

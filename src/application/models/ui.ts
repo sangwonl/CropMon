@@ -1,5 +1,5 @@
 import { CaptureMode } from '@domain/models/common';
-import { Bounds } from '@domain/models/screen';
+import { Screen, Bounds, Point } from '@domain/models/screen';
 import { Preferences, DEFAULT_APPEAR_COLORS } from '@domain/models/preferences';
 
 export interface PreferencesModal {
@@ -8,6 +8,7 @@ export interface PreferencesModal {
 }
 
 export interface ControlPanel {
+  show: boolean;
   captureMode: CaptureMode;
   outputAsGif: boolean;
   lowQualityMode: boolean;
@@ -18,11 +19,14 @@ export interface ControlPanel {
 export interface CaptureOverlay {
   show: boolean;
   showCountdown: boolean;
-  isSelecting: boolean;
   isRecording: boolean;
-  bounds?: Bounds;
+  isCountingDown: boolean;
+  screens: { [screenId: string]: Screen };
+  selectingBounds?: Bounds;
   selectedBounds?: Bounds;
   selectedScreenId?: number;
+  startCursorPosition?: Point;
+  curCursorPosition?: Point;
 }
 
 export interface CaptureAreaColors {
@@ -40,6 +44,7 @@ export interface UiState {
 
 export const INITIAL_UI_STATE: UiState = {
   controlPanel: {
+    show: false,
     captureMode: CaptureMode.AREA,
     lowQualityMode: false,
     microphone: false,
@@ -49,11 +54,14 @@ export const INITIAL_UI_STATE: UiState = {
   captureOverlay: {
     show: false,
     showCountdown: true,
-    isSelecting: false,
     isRecording: false,
-    bounds: undefined,
+    isCountingDown: false,
+    screens: {},
+    selectingBounds: undefined,
     selectedBounds: undefined,
     selectedScreenId: undefined,
+    startCursorPosition: undefined,
+    curCursorPosition: undefined,
   },
   captureAreaColors: DEFAULT_APPEAR_COLORS,
 };

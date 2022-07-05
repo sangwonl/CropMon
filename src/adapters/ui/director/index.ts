@@ -4,18 +4,17 @@ import { app, shell } from 'electron';
 
 import { CaptureMode } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
-import { Bounds } from '@domain/models/screen';
+import { Screen } from '@domain/models/screen';
 
 import { UiDirector } from '@application/ports/director';
 
 import AppTray, { createTray } from '@adapters/ui/widgets/tray';
-import ControlPanel from '@adapters/ui/widgets/ctrlpanel';
 import ProgressDialog from '@adapters/ui/widgets/progressdialog';
 import StaticPageModal from '@adapters/ui/widgets/staticpage';
 import PreferencesModal from '@adapters/ui/widgets/preferences';
 import CaptureOverlayWrap from '@adapters/ui/director/overlay';
 
-import { getScreenOfCursor, getWholeScreenBounds } from '@utils/bounds';
+import { getAllScreens, getScreenCursorOn } from '@utils/bounds';
 import { shortcutForDisplay } from '@utils/shortcut';
 import { getTimeInSeconds } from '@utils/date';
 import { assetPathResolver } from '@utils/asset';
@@ -26,7 +25,6 @@ import { version as curVersion } from '../../../package.json';
 @injectable()
 export default class ElectronUiDirector implements UiDirector {
   private appTray?: AppTray;
-  private controlPanel?: ControlPanel;
   private captureOverlay?: CaptureOverlayWrap;
 
   private aboutModal?: StaticPageModal;
@@ -41,7 +39,6 @@ export default class ElectronUiDirector implements UiDirector {
 
   initialize(): void {
     this.appTray = createTray();
-    this.controlPanel = new ControlPanel();
     this.captureOverlay = new CaptureOverlayWrap();
   }
 
@@ -170,48 +167,45 @@ export default class ElectronUiDirector implements UiDirector {
 
   enableCaptureMode(
     mode: CaptureMode,
-    onActiveScreenBoundsChange: (bounds: Bounds, screenId?: number) => void
+    onActiveScreenBoundsChange: (
+      screens: Screen[],
+      screenCursorOn?: Screen
+    ) => void
   ): void {
     this.resetScreenBoundsDetector();
 
-    if (mode === CaptureMode.AREA) {
-      const screenBounds = getWholeScreenBounds();
+    const screens = getAllScreens();
+    let lastScreenId: number;
 
-      onActiveScreenBoundsChange(screenBounds);
+    switch (mode) {
+      case CaptureMode.AREA:
+        onActiveScreenBoundsChange(screens);
+        this.captureOverlay?.show();
+        break;
 
-      this.captureOverlay?.show(screenBounds);
-      this.controlPanel?.show();
+      case CaptureMode.SCREEN:
+        this.screenBoundsDetector = setInterval(() => {
+          const screenCursorOn = getScreenCursorOn();
+          if (!lastScreenId || lastScreenId !== screenCursorOn.id) {
+            lastScreenId = screenCursorOn.id;
+            onActiveScreenBoundsChange(screens, screenCursorOn);
+            this.captureOverlay?.show();
+          }
+        }, 100);
+        break;
 
-      return;
-    }
-
-    if (mode === CaptureMode.SCREEN) {
-      let lastScreenId: number;
-      this.screenBoundsDetector = setInterval(() => {
-        const screen = getScreenOfCursor();
-        if (lastScreenId && lastScreenId === screen.id) {
-          return;
-        }
-
-        onActiveScreenBoundsChange(screen.bounds, screen.id);
-
-        this.captureOverlay?.show(screen.bounds);
-        this.controlPanel?.show();
-
-        lastScreenId = screen.id;
-      }, 100);
+      default:
+        break;
     }
   }
 
   disableCaptureMode(): void {
     this.resetScreenBoundsDetector();
-    this.controlPanel?.hide();
     this.captureOverlay?.hide();
   }
 
   startTargetSelection(): void {
     this.resetScreenBoundsDetector();
-    this.controlPanel?.hide();
   }
 
   resetScreenBoundsDetector(): void {

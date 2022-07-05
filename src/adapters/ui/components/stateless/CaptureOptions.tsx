@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import React, { FC, useEffect, useState, useCallback } from 'react';
+import React, { FC, useEffect, useState, useCallback, MouseEvent } from 'react';
 import classNames from 'classnames';
 
 import { CaptureMode } from '@domain/models/common';
@@ -15,6 +15,17 @@ import {
 
 import styles from '@adapters/ui/components/stateless/CaptureOptions.css';
 import closeIcon from '@assets/close.png';
+
+const withStopPropagation = (
+  e: MouseEvent<HTMLButtonElement>,
+  handler?: () => void
+) => {
+  e.stopPropagation();
+  if (handler) {
+    handler();
+  }
+  return false;
+};
 
 export interface CaptureOptionsProps {
   captureMode: CaptureMode;
@@ -70,7 +81,11 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
         className={classNames(styles.btnToggleLeft, {
           [styles.toggled]: captMode === CaptureMode.SCREEN,
         })}
-        onClick={() => handleCaptModeChange(CaptureMode.SCREEN)}
+        onClick={(e) =>
+          withStopPropagation(e, () => handleCaptModeChange(CaptureMode.SCREEN))
+        }
+        onMouseUp={(e) => withStopPropagation(e)}
+        onMouseDown={(e) => withStopPropagation(e)}
       >
         Full
       </button>
@@ -82,7 +97,11 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
         className={classNames(styles.btnToggleRight, {
           [styles.toggled]: captMode === CaptureMode.AREA,
         })}
-        onClick={() => handleCaptModeChange(CaptureMode.AREA)}
+        onMouseUp={(e) => withStopPropagation(e)}
+        onMouseDown={(e) => withStopPropagation(e)}
+        onClick={(e) =>
+          withStopPropagation(e, () => handleCaptModeChange(CaptureMode.AREA))
+        }
       >
         Selection
       </button>
@@ -93,11 +112,15 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
         className={classNames(styles.btnToggleLeft, {
           [styles.toggled]: !recOpts.enableOutputAsGif,
         })}
-        onClick={() =>
-          handleRecOptsChange({
-            ...recOpts,
-            enableOutputAsGif: false,
-          })
+        onMouseUp={(e) => withStopPropagation(e)}
+        onMouseDown={(e) => withStopPropagation(e)}
+        onClick={(e) =>
+          withStopPropagation(e, () =>
+            handleRecOptsChange({
+              ...recOpts,
+              enableOutputAsGif: false,
+            })
+          )
         }
       >
         MP4
@@ -108,11 +131,15 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
         className={classNames(styles.btnToggleRight, {
           [styles.toggled]: recOpts.enableOutputAsGif,
         })}
-        onClick={() =>
-          handleRecOptsChange({
-            ...recOpts,
-            enableOutputAsGif: true,
-          })
+        onMouseUp={(e) => withStopPropagation(e)}
+        onMouseDown={(e) => withStopPropagation(e)}
+        onClick={(e) =>
+          withStopPropagation(e, () =>
+            handleRecOptsChange({
+              ...recOpts,
+              enableOutputAsGif: true,
+            })
+          )
         }
       >
         GIF
@@ -122,7 +149,9 @@ export const CaptureOptions: FC<CaptureOptionsProps> = ({
         type="button"
         title="Close"
         className={styles.btnClose}
-        onClick={onCaptureCancel}
+        onMouseUp={(e) => withStopPropagation(e)}
+        onMouseDown={(e) => withStopPropagation(e)}
+        onClick={(e) => withStopPropagation(e, onCaptureCancel)}
       >
         <img src={closeIcon} alt="close" />
       </button>

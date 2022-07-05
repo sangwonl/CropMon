@@ -25,14 +25,7 @@ import {
 import RecorderDelegate from '@adapters/recorder/rec-delegate';
 
 import { isProduction } from '@utils/process';
-import {
-  emptyBounds,
-  getAllScreensFromLeftTop,
-  getIntersection,
-  isEmptyBounds,
-} from '@utils/bounds';
-
-type ScreenAndBoundsTuple = [Screen, Bounds];
+import { getAllScreens, getIntersection, isEmptyBounds } from '@utils/bounds';
 
 const FRAMERATE = 30;
 const FRAMERATE_LOW = 30;
@@ -138,6 +131,70 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
     });
   }
 
+  private getSourceByScreenId(
+    screenId: number,
+    sources: Electron.DesktopCapturerSource[]
+  ) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const source of sources) {
+      if (source.display_id === screenId.toString()) {
+        return source;
+      }
+    }
+    return undefined;
+  }
+
+  private getScreenById(screenId: number, screens: Screen[]) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const screen of screens) {
+      if (screen.id === screenId) {
+        return screen;
+      }
+    }
+    return undefined;
+  }
+
+  private getTargetSlicesForScreenMode(
+    targetScreenId: number,
+    screens: Screen[],
+    sources: Electron.DesktopCapturerSource[]
+  ) {
+    const targetSlices: TargetSlice[] = [];
+    const source = this.getSourceByScreenId(targetScreenId, sources);
+    const screen = this.getScreenById(targetScreenId, screens);
+    if (source && screen) {
+      targetSlices.push({
+        mediaSourceId: source.id,
+        targetBounds: { ...screen.bounds },
+        screenBounds: { ...screen.bounds },
+      });
+    }
+    return targetSlices;
+  }
+
+  private getTargetSlicesForAreaMode(
+    targetBounds: Bounds,
+    screens: Screen[],
+    sources: Electron.DesktopCapturerSource[]
+  ) {
+    const targetSlices: TargetSlice[] = [];
+    // eslint-disable-next-line no-restricted-syntax
+    for (const screen of screens) {
+      const intersected = getIntersection(targetBounds, screen.bounds);
+      if (intersected) {
+        const source = this.getSourceByScreenId(screen.id, sources);
+        if (source) {
+          targetSlices.push({
+            mediaSourceId: source.id,
+            targetBounds: intersected,
+            screenBounds: { ...screen.bounds },
+          });
+        }
+      }
+    }
+    return targetSlices;
+  }
+
   private async createRecordContext(
     ctx: CaptureContext
   ): Promise<IRecordContext | null> {
@@ -152,42 +209,15 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
       return null;
     }
 
+    const screens = getAllScreens();
     const sources = await desktopCapturer.getSources({ types: ['screen'] });
-
-    const screens = getAllScreensFromLeftTop();
-
-    const targetSlices = screens
-      .map(
-        (screen): ScreenAndBoundsTuple => [
-          screen,
-          getIntersection(screen.bounds, targetBounds) ?? emptyBounds(),
-        ]
-      )
-      .filter(([_, bounds]: ScreenAndBoundsTuple) => !isEmptyBounds(bounds))
-      .map(([screen, bounds]: ScreenAndBoundsTuple): TargetSlice => {
-        const sourceId =
-          sources.find((src) => {
-            return (
-              (targetScreenId &&
-                src.display_id === targetScreenId.toString()) ||
-              src.display_id === screen.id.toString()
-            );
-          })?.id ?? sources[0].id;
-
-        return { sourceId, screen, bounds };
-      });
+    const targetSlices = targetScreenId
+      ? this.getTargetSlicesForScreenMode(targetScreenId, screens, sources)
+      : this.getTargetSlicesForAreaMode(targetBounds, screens, sources);
 
     if (targetSlices.length === 0) {
       return null;
     }
-
-    // WORKAROUND: For browser large pixels canvas issue & transcoding lag
-    // https://stackoverflow.com/a/11585939
-    // const screenBounds = getOverlayScreenBounds();
-    // const screenArea = screenBounds.width * screenBounds.height;
-    // const targetArea = targetBounds.width * targetBounds.height;
-    // const targetAreaRate = targetArea / screenArea;
-    // let scaleDownFactor = targetAreaRate < 0.5 ? 1.0 : 0.7;
 
     let scaleDownFactor = 1.0;
     let frameRate = FRAMERATE;
@@ -202,7 +232,6 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
     return {
       captureMode,
       targetSlices,
-      targetBounds,
       outputFormat,
       recordMicrophone,
       frameRate,

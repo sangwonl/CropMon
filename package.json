@@ -48,13 +48,6 @@
         ]
       },
       {
-        "from": "adapters/ui/widgets/ctrlpanel",
-        "to": "ctrlpanel",
-        "filter": [
-          "*.html"
-        ]
-      },
-      {
         "from": "adapters/ui/widgets/preferences",
         "to": "preferences",
         "filter": [

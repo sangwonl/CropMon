@@ -45,6 +45,7 @@ export default class ChangeCaptureOptionsUseCase
       return {
         ...state,
         controlPanel: {
+          ...state.controlPanel,
           captureMode: options.target.mode,
           outputAsGif:
             options.recordOptions.enableOutputAsGif ??

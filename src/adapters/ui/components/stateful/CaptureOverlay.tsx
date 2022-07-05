@@ -5,7 +5,8 @@ import React, { useCallback, useEffect, useState, useRef } from 'react';
 import classNames from 'classnames';
 
 import { CaptureMode } from '@domain/models/common';
-import { Bounds } from '@domain/models/screen';
+import { Bounds, Point } from '@domain/models/screen';
+import { RecordOptions } from '@domain/models/capture';
 
 import CaptureTargetingArea from '@adapters/ui/components/stateless/CaptureTargetingArea';
 import CaptureTargetingScreen from '@adapters/ui/components/stateless/CaptureTargetingScreen';
@@ -13,9 +14,9 @@ import CaptureCountdown from '@adapters/ui/components/stateless/CaptureCountdown
 import CaptureRecording from '@adapters/ui/components/stateless/CaptureRecording';
 import { useRootUiState } from '@adapters/ui/hooks/state';
 import { useActionDispatcher } from '@adapters/ui/hooks/dispatcher';
-import { usePlatformApi } from '@adapters/ui/hooks/platform';
+import { CaptureOptions } from '@adapters/ui/components/stateless/CaptureOptions';
 
-import { getBoundsFromZero, isEmptyBounds } from '@utils/bounds';
+import { emptyBounds, getIntersection, isEmptyBounds } from '@utils/bounds';
 import { isMac } from '@utils/process';
 
 import styles from '@adapters/ui/components/stateful/CaptureOverlay.css';
@@ -29,27 +30,44 @@ enum RenderMode {
   RECORDING,
 }
 
-const stretchBodySize = (w: number, h: number) => {
-  const curCssText = document.body.style.cssText;
-  document.body.style.cssText = `${curCssText}; width: ${w}px; height: ${h}px;`;
-};
+interface PropTypes {
+  assignedScreenId: number;
+}
 
-const adjustBodySize = (overlayBounds: Bounds | null) => {
-  if (overlayBounds === null) {
-    return;
-  }
-  stretchBodySize(overlayBounds.width, overlayBounds.height);
-};
+const CaptureOverlay = (props: PropTypes) => {
+  const { assignedScreenId } = props;
 
-const CaptureCover = () => {
-  const { controlPanel, captureOverlay, captureAreaColors } = useRootUiState();
   const dispatcher = useActionDispatcher();
-  const platformApi = usePlatformApi();
+
+  const { controlPanel, captureOverlay, captureAreaColors } = useRootUiState();
+  const assignedScreen = captureOverlay.screens[assignedScreenId.toString()];
+  const screenBounds = assignedScreen?.bounds;
 
   const [renderMode, setRenderMode] = useState<RenderMode>(RenderMode.IDLE);
-  const [selectedBounds, setSelectedBounds] = useState<Bounds | null>(null);
   const [countdown, setCountdown] = useState<number>(0);
   const countdownTimer = useRef<any>();
+
+  const getTargetBoundsForUI = (): Bounds => {
+    const selBounds =
+      renderMode === RenderMode.TARGETING
+        ? captureOverlay.selectingBounds
+        : captureOverlay.selectedBounds;
+
+    if (!selBounds) {
+      return emptyBounds();
+    }
+
+    const intersected = getIntersection(selBounds, screenBounds);
+    if (!intersected) {
+      return emptyBounds();
+    }
+
+    return {
+      ...intersected,
+      x: intersected.x - screenBounds.x,
+      y: intersected.y - screenBounds.y,
+    };
+  };
 
   const changeRenderMode = (mode: RenderMode) => {
     if (renderMode !== mode) {
@@ -83,15 +101,20 @@ const CaptureCover = () => {
     setCountdown(0);
   };
 
-  const onSelectionStart = useCallback(() => {
-    dispatcher.startTargetSelection();
+  const onSelectionStart = useCallback((cursorPosition: Point) => {
+    dispatcher.startTargetSelection(emptyBounds(), cursorPosition);
   }, []);
 
-  const onSelectionFinish = useCallback(
-    (boundsForUi: Bounds, boundsForCapture: Bounds) => {
-      setSelectedBounds(boundsForUi);
+  const onSelectingTarget = useCallback(
+    (bounds: Bounds, cursorPosition: Point) => {
+      dispatcher.selectingTarget(bounds, cursorPosition);
+    },
+    []
+  );
 
-      dispatcher.finishTargetSelection(boundsForCapture);
+  const onSelectionFinish = useCallback(
+    (bounds?: Bounds) => {
+      dispatcher.finishTargetSelection(bounds ?? screenBounds);
 
       startCountdown(() => dispatcher.startCapture());
     },
@@ -102,91 +125,147 @@ const CaptureCover = () => {
     dispatcher.disableCaptureMode();
   }, []);
 
+  const composeOptions = useCallback(
+    (mode?: CaptureMode, recOpts?: RecordOptions) => {
+      return {
+        target: {
+          mode: mode ?? controlPanel.captureMode,
+        },
+        recordOptions: {
+          enableOutputAsGif:
+            recOpts?.enableOutputAsGif ?? controlPanel.outputAsGif,
+          enableLowQualityMode:
+            recOpts?.enableLowQualityMode ?? controlPanel.lowQualityMode,
+          enableMicrophone:
+            recOpts?.enableMicrophone ?? controlPanel.microphone,
+        },
+      };
+    },
+    [controlPanel]
+  );
+
+  const onCaptureModeChange = useCallback(
+    (mode: CaptureMode) => {
+      dispatcher.changeCaptureOptions(composeOptions(mode));
+    },
+    [controlPanel]
+  );
+
+  const onRecOptionsChange = useCallback(
+    (recOpts: RecordOptions) => {
+      dispatcher.changeCaptureOptions(composeOptions(undefined, recOpts));
+    },
+    [controlPanel]
+  );
+
   useEffect(() => {
-    if (captureOverlay.show && captureOverlay.bounds) {
-      adjustBodySize(captureOverlay.bounds);
-    } else {
+    if (!captureOverlay.show) {
       stopCountdown();
       changeRenderMode(RenderMode.IDLE);
-      setSelectedBounds(null);
     }
-  }, [captureOverlay.show, captureOverlay.bounds]);
+  }, [captureOverlay.show]);
 
   useEffect(() => {
     if (!captureOverlay.show) {
       return;
     }
 
-    if (isEmptyBounds(selectedBounds)) {
+    if (isEmptyBounds(captureOverlay.selectedBounds)) {
       changeRenderMode(RenderMode.TARGETING);
-    } else if (countdown > 0) {
+    } else if (captureOverlay.isCountingDown) {
       changeRenderMode(RenderMode.COUNTDOWN);
     } else {
       changeRenderMode(RenderMode.RECORDING);
     }
-  }, [captureOverlay.show, selectedBounds, countdown]);
+  }, [
+    captureOverlay.show,
+    captureOverlay.isCountingDown,
+    captureOverlay.selectedBounds,
+  ]);
 
   useEffect(() => {
     if (
-      isEmptyBounds(selectedBounds) &&
-      controlPanel.captureMode === CaptureMode.SCREEN &&
       controlPanel.confirmedToCaptureAsIs &&
-      captureOverlay.bounds
+      controlPanel.captureMode === CaptureMode.SCREEN &&
+      captureOverlay.selectedScreenId === assignedScreenId &&
+      isEmptyBounds(captureOverlay.selectedBounds) &&
+      screenBounds
     ) {
-      onSelectionStart();
-      onSelectionFinish(
-        getBoundsFromZero(captureOverlay.bounds),
-        captureOverlay.bounds
-      );
+      onSelectionStart({ x: 0, y: 0 });
+      onSelectionFinish(screenBounds);
     }
   }, [
-    selectedBounds,
-    controlPanel.captureMode,
     controlPanel.confirmedToCaptureAsIs,
-    captureOverlay.bounds,
+    controlPanel.captureMode,
+    captureOverlay.selectedScreenId,
+    captureOverlay.selectedBounds,
   ]);
 
-  return renderMode !== RenderMode.IDLE ? (
-    <div
-      className={classNames(styles.cover, {
-        [styles.coverHack]: isMac(),
-      })}
-    >
-      {renderMode === RenderMode.TARGETING &&
-        controlPanel.captureMode === CaptureMode.AREA && (
-          <CaptureTargetingArea
-            areaColors={captureAreaColors}
-            onStart={onSelectionStart}
-            onCancel={onCaptureCancel}
-            onFinish={onSelectionFinish}
-            getCursorPoint={platformApi.getCursorScreenPoint}
-          />
-        )}
-      {renderMode === RenderMode.TARGETING &&
-        controlPanel.captureMode === CaptureMode.SCREEN &&
-        captureOverlay.bounds && (
-          <CaptureTargetingScreen
-            areaColors={captureAreaColors}
-            screenBounds={captureOverlay.bounds}
-            onStart={onSelectionStart}
-            onCancel={onCaptureCancel}
-            onFinish={onSelectionFinish}
-          />
-        )}
-      {renderMode === RenderMode.COUNTDOWN &&
-        countdown > 0 &&
-        selectedBounds && (
-          <CaptureCountdown
-            selectedBounds={selectedBounds}
-            countdown={countdown}
-            areaColors={captureAreaColors}
-          />
-        )}
-      {renderMode === RenderMode.RECORDING && selectedBounds && (
-        <CaptureRecording selectedBounds={selectedBounds} />
+  return (
+    <>
+      {renderMode !== RenderMode.IDLE && (
+        <div
+          className={classNames(styles.cover, {
+            [styles.coverHack]: isMac(),
+          })}
+        >
+          {renderMode === RenderMode.TARGETING &&
+            controlPanel.captureMode === CaptureMode.AREA && (
+              <CaptureTargetingArea
+                targetBounds={getTargetBoundsForUI()}
+                screenBounds={screenBounds}
+                startCursorPosition={captureOverlay.startCursorPosition}
+                curCursorPosition={captureOverlay.curCursorPosition}
+                areaColors={captureAreaColors}
+                onStart={onSelectionStart}
+                onSelecting={onSelectingTarget}
+                onCancel={onCaptureCancel}
+                onFinish={onSelectionFinish}
+              />
+            )}
+          {renderMode === RenderMode.TARGETING &&
+            controlPanel.captureMode === CaptureMode.SCREEN &&
+            screenBounds && (
+              <CaptureTargetingScreen
+                targetBounds={getTargetBoundsForUI()}
+                areaColors={captureAreaColors}
+                onStart={onSelectionStart}
+                onCancel={onCaptureCancel}
+                onFinish={onSelectionFinish}
+              />
+            )}
+          {renderMode === RenderMode.COUNTDOWN &&
+            captureOverlay.isCountingDown &&
+            captureOverlay.selectedBounds && (
+              <CaptureCountdown
+                targetBounds={getTargetBoundsForUI()}
+                countdown={countdown}
+                areaColors={captureAreaColors}
+              />
+            )}
+          {renderMode === RenderMode.RECORDING &&
+            captureOverlay.selectedBounds && (
+              <CaptureRecording targetBounds={getTargetBoundsForUI()} />
+            )}
+        </div>
       )}
-    </div>
-  ) : null;
+      {assignedScreen?.isPrimary && controlPanel.show && (
+        <div className={styles.options}>
+          <CaptureOptions
+            captureMode={controlPanel.captureMode}
+            recordOptions={{
+              enableOutputAsGif: controlPanel.outputAsGif,
+              enableLowQualityMode: controlPanel.lowQualityMode,
+              enableMicrophone: controlPanel.microphone,
+            }}
+            onCaptureModeChange={onCaptureModeChange}
+            onRecordOptionsChange={onRecOptionsChange}
+            onCaptureCancel={onCaptureCancel}
+          />
+        </div>
+      )}
+    </>
+  );
 };
 
-export default CaptureCover;
+export default CaptureOverlay;
