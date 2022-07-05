@@ -106,17 +106,15 @@ const createDrawContext = async (
 ): Promise<IDrawContext> => {
   const { scaleDownFactor, frameRate, targetSlices } = recordCtx;
 
+  const wholeTargetBounds = mergeScreenBounds(
+    targetSlices.map(({ targetBounds }) => targetBounds)
+  );
+
   const canvasBounds = {
-    ...mergeScreenBounds(
-      targetSlices.map(({ targetBounds }) => ({
-        x: Math.floor(targetBounds.x * scaleDownFactor),
-        y: Math.floor(targetBounds.y * scaleDownFactor),
-        width: Math.floor(targetBounds.width * scaleDownFactor),
-        height: Math.floor(targetBounds.height * scaleDownFactor),
-      }))
-    ),
     x: 0,
     y: 0,
+    width: Math.floor(wholeTargetBounds.width * scaleDownFactor),
+    height: Math.floor(wholeTargetBounds.height * scaleDownFactor),
   };
 
   const drawables = await Promise.all(
@@ -133,16 +131,21 @@ const createDrawContext = async (
         videoElem.srcObject = stream;
         videoElem.play();
 
-        const srcBounds: Bounds = { ...targetBounds };
+        const srcBounds: Bounds = {
+          ...targetBounds,
+          x: targetBounds.x - screenBounds.x,
+          y: targetBounds.y - screenBounds.y,
+        };
+
         const dstBounds: Bounds = {
           x: Math.floor(
-            (screenBounds.x + srcBounds.x - targetBounds.x) * scaleDownFactor
+            (targetBounds.x - wholeTargetBounds.x) * scaleDownFactor
           ),
           y: Math.floor(
-            (screenBounds.y + srcBounds.y - targetBounds.y) * scaleDownFactor
+            (targetBounds.y - wholeTargetBounds.y) * scaleDownFactor
           ),
-          width: Math.floor(srcBounds.width * scaleDownFactor),
-          height: Math.floor(srcBounds.height * scaleDownFactor),
+          width: Math.floor(targetBounds.width * scaleDownFactor),
+          height: Math.floor(targetBounds.height * scaleDownFactor),
         };
 
         return { videoElem, srcBounds, dstBounds };

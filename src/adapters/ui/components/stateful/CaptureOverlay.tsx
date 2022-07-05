@@ -44,7 +44,7 @@ const CaptureOverlay = (props: PropTypes) => {
   const [countdown, setCountdown] = useState<number>(0);
   const countdownTimer = useRef<any>();
 
-  const targetBounds = (): Bounds => {
+  const getTargetBoundsForUI = (): Bounds => {
     const selBounds =
       renderMode === RenderMode.TARGETING
         ? captureOverlay.selectingBounds
@@ -59,7 +59,11 @@ const CaptureOverlay = (props: PropTypes) => {
       return emptyBounds();
     }
 
-    return intersected;
+    return {
+      ...intersected,
+      x: intersected.x - screenBounds.x,
+      y: intersected.y - screenBounds.y,
+    };
   };
 
   const changeRenderMode = (mode: RenderMode) => {
@@ -167,7 +171,7 @@ const CaptureOverlay = (props: PropTypes) => {
       {renderMode === RenderMode.TARGETING &&
         controlPanel.captureMode === CaptureMode.AREA && (
           <CaptureTargetingArea
-            selectingBounds={targetBounds()}
+            selectingBounds={getTargetBoundsForUI()}
             areaColors={captureAreaColors}
             onStart={onSelectionStart}
             onSelecting={onSelectingTarget}
@@ -180,7 +184,7 @@ const CaptureOverlay = (props: PropTypes) => {
         screenBounds && (
           <CaptureTargetingScreen
             areaColors={captureAreaColors}
-            screenBounds={targetBounds()}
+            screenBounds={getTargetBoundsForUI()}
             onStart={onSelectionStart}
             onCancel={onCaptureCancel}
             onFinish={onSelectionFinish}
@@ -190,13 +194,13 @@ const CaptureOverlay = (props: PropTypes) => {
         captureOverlay.isCountingDown &&
         captureOverlay.selectedBounds && (
           <CaptureCountdown
-            selectedBounds={targetBounds()}
+            selectedBounds={getTargetBoundsForUI()}
             countdown={countdown}
             areaColors={captureAreaColors}
           />
         )}
       {renderMode === RenderMode.RECORDING && captureOverlay.selectedBounds && (
-        <CaptureRecording selectedBounds={targetBounds()} />
+        <CaptureRecording selectedBounds={getTargetBoundsForUI()} />
       )}
     </div>
   ) : null;
