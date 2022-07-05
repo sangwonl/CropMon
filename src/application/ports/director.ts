@@ -13,7 +13,7 @@ export interface UiDirector {
   openReleaseNotesModal(): Promise<void>;
   openHelpPageModal(): Promise<void>;
   openPreferencesModal(preferences: Preferences, onSave: (updatedPrefs: Preferences) => void): Promise<void>;
-  enableCaptureMode(mode: CaptureMode, onActiveScreenBoundsChange: (screens: Screen[], screenId?: number) => void): void;
+  enableCaptureMode(mode: CaptureMode, onActiveScreenBoundsChange: (screens: Screen[], screenCursorOn?: Screen) => void): void;
   disableCaptureMode(): void;
   startTargetSelection(): void;
   resetScreenBoundsDetector(): void;

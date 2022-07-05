@@ -67,24 +67,24 @@ const getCountdownStyles = (bounds: Bounds, colors: CaptureAreaColors) => {
 };
 
 interface PropTypes {
-  selectedBounds: Bounds;
-  countdown: number;
+  targetBounds: Bounds;
   areaColors: CaptureAreaColors;
+  countdown: number;
 }
 
 const CaptureCountdown: FC<PropTypes> = (props: PropTypes) => {
-  const { selectedBounds, countdown, areaColors } = props;
+  const { targetBounds, countdown, areaColors } = props;
 
   return (
     <div className={styles.wrapper}>
       <div
         className={styles.area}
-        style={getAreaStyles(selectedBounds, areaColors)}
+        style={getAreaStyles(targetBounds, areaColors)}
       >
         {countdown > 0 && (
           <div
             className={styles.countdownText}
-            style={getCountdownStyles(selectedBounds, areaColors)}
+            style={getCountdownStyles(targetBounds, areaColors)}
           >
             {countdown}
           </div>

@@ -9,13 +9,12 @@ import { Screen } from '@domain/models/screen';
 import { UiDirector } from '@application/ports/director';
 
 import AppTray, { createTray } from '@adapters/ui/widgets/tray';
-import ControlPanel from '@adapters/ui/widgets/ctrlpanel';
 import ProgressDialog from '@adapters/ui/widgets/progressdialog';
 import StaticPageModal from '@adapters/ui/widgets/staticpage';
 import PreferencesModal from '@adapters/ui/widgets/preferences';
 import CaptureOverlayWrap from '@adapters/ui/director/overlay';
 
-import { getAllScreens, getScreenOfCursor } from '@utils/bounds';
+import { getAllScreens, getScreenCursorOn } from '@utils/bounds';
 import { shortcutForDisplay } from '@utils/shortcut';
 import { getTimeInSeconds } from '@utils/date';
 import { assetPathResolver } from '@utils/asset';
@@ -26,7 +25,6 @@ import { version as curVersion } from '../../../package.json';
 @injectable()
 export default class ElectronUiDirector implements UiDirector {
   private appTray?: AppTray;
-  private controlPanel?: ControlPanel;
   private captureOverlay?: CaptureOverlayWrap;
 
   private aboutModal?: StaticPageModal;
@@ -41,7 +39,6 @@ export default class ElectronUiDirector implements UiDirector {
 
   initialize(): void {
     this.appTray = createTray();
-    this.controlPanel = new ControlPanel();
     this.captureOverlay = new CaptureOverlayWrap();
   }
 
@@ -170,7 +167,10 @@ export default class ElectronUiDirector implements UiDirector {
 
   enableCaptureMode(
     mode: CaptureMode,
-    onActiveScreenBoundsChange: (screens: Screen[], screenId?: number) => void
+    onActiveScreenBoundsChange: (
+      screens: Screen[],
+      screenCursorOn?: Screen
+    ) => void
   ): void {
     this.resetScreenBoundsDetector();
 
@@ -181,20 +181,16 @@ export default class ElectronUiDirector implements UiDirector {
       case CaptureMode.AREA:
         onActiveScreenBoundsChange(screens);
         this.captureOverlay?.show();
-        this.controlPanel?.show();
         break;
 
       case CaptureMode.SCREEN:
         this.screenBoundsDetector = setInterval(() => {
-          const screen = getScreenOfCursor();
-          if (lastScreenId && lastScreenId === screen.id) {
-            return;
+          const screenCursorOn = getScreenCursorOn();
+          if (!lastScreenId || lastScreenId !== screenCursorOn.id) {
+            lastScreenId = screenCursorOn.id;
+            onActiveScreenBoundsChange(screens, screenCursorOn);
+            this.captureOverlay?.show();
           }
-          lastScreenId = screen.id;
-
-          onActiveScreenBoundsChange(screens, screen.id);
-          this.captureOverlay?.show();
-          this.controlPanel?.show();
         }, 100);
         break;
 
@@ -205,13 +201,11 @@ export default class ElectronUiDirector implements UiDirector {
 
   disableCaptureMode(): void {
     this.resetScreenBoundsDetector();
-    this.controlPanel?.hide();
     this.captureOverlay?.hide();
   }
 
   startTargetSelection(): void {
     this.resetScreenBoundsDetector();
-    this.controlPanel?.hide();
   }
 
   resetScreenBoundsDetector(): void {

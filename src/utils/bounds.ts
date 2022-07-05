@@ -54,13 +54,19 @@ export const isPointInsideBounds = (pt: Point, bounds: Bounds): boolean => {
 };
 
 export const getAllScreens = (): Screen[] => {
+  const primaryDisplay = screen.getPrimaryDisplay();
   return screen
     .getAllDisplays()
     .map(({ id, bounds, scaleFactor }: Display) => ({
       id,
       bounds,
       scaleFactor,
+      isPrimary: id === primaryDisplay.id,
     }));
+};
+
+export const getPrimaryScreenId = (): number => {
+  return screen.getPrimaryDisplay().id;
 };
 
 export const mergeScreenBounds = (bounds: Bounds[]): Bounds => {
@@ -84,7 +90,7 @@ export const mergeScreenBounds = (bounds: Bounds[]): Bounds => {
   };
 };
 
-export const getScreenOfCursor = (): Screen => {
+export const getScreenCursorOn = (): Screen => {
   const cursorPoint = screen.getCursorScreenPoint();
   const screens = getAllScreens();
 

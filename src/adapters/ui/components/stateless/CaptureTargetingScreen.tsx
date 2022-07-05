@@ -5,7 +5,7 @@ import React, { MouseEvent, FC, useCallback } from 'react';
 import classNames from 'classnames';
 import Color from 'color';
 
-import { Bounds } from '@domain/models/screen';
+import { Bounds, Point } from '@domain/models/screen';
 
 import { CaptureAreaColors } from '@application/models/ui';
 
@@ -39,33 +39,33 @@ const getAreaStyles = (bounds: Bounds, colors: CaptureAreaColors): any => {
 };
 
 interface PropTypes {
+  targetBounds: Bounds;
   areaColors: CaptureAreaColors;
-  screenBounds: Bounds;
-  onStart: () => void;
+  onStart: (cursorPosition: Point) => void;
   onCancel: () => void;
   onFinish: () => void;
 }
 
 const CaptureTargetingScreen: FC<PropTypes> = (props: PropTypes) => {
-  const { areaColors, screenBounds, onStart, onCancel, onFinish } = props;
+  const { areaColors, targetBounds, onStart, onCancel, onFinish } = props;
 
   const handleMouseEvent = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
       if (e.button === 0) {
-        onStart();
+        onStart({ x: e.screenX, y: e.screenY });
         onFinish();
       } else if (e.button === 2) {
         onCancel();
       }
     },
-    [screenBounds]
+    [targetBounds]
   );
 
   return (
     <div className={classNames(styles.wrapper)} onMouseUp={handleMouseEvent}>
       <div
         className={styles.area}
-        style={getAreaStyles(screenBounds, areaColors)}
+        style={getAreaStyles(targetBounds, areaColors)}
       />
     </div>
   );

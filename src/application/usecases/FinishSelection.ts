@@ -28,8 +28,6 @@ export default class FinishSelectionUseCase
   ) {}
 
   async execute(input: FinishSelectionUseCaseInput) {
-    const { targetBounds } = input;
-
     const prefs = await this.prefsRepo.fetchUserPreferences();
 
     this.stateManager.updateUiState((state: UiState): UiState => {
@@ -39,7 +37,7 @@ export default class FinishSelectionUseCase
           ...state.captureOverlay,
           isCountingDown: prefs.showCountdown,
           selectingBounds: undefined,
-          selectedBounds: targetBounds,
+          selectedBounds: input.targetBounds,
         },
       };
     });

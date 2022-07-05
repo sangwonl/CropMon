@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { Bounds } from '@domain/models/screen';
+import { Bounds, Point } from '@domain/models/screen';
 
 import { UiState } from '@application/models/ui';
 import { UseCase } from '@application/usecases/UseCase';
@@ -12,6 +12,7 @@ import { UiDirector } from '@application/ports/director';
 
 interface StartSelectionUseCaseInput {
   targetBounds: Bounds;
+  cursorPosition: Point;
 }
 
 @injectable()
@@ -30,9 +31,14 @@ export default class StartSelectionUseCase
     this.stateManager.updateUiState((state: UiState): UiState => {
       return {
         ...state,
+        controlPanel: {
+          ...state.controlPanel,
+          show: false,
+        },
         captureOverlay: {
           ...state.captureOverlay,
           selectingBounds: input.targetBounds,
+          startCursorPosition: input.cursorPosition,
         },
       };
     });

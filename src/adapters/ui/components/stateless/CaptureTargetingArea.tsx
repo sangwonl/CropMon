@@ -9,7 +9,12 @@ import { Bounds, Point } from '@domain/models/screen';
 
 import { CaptureAreaColors } from '@application/models/ui';
 
-import { isEmptyBounds, isCapturableBounds } from '@utils/bounds';
+import {
+  isEmptyBounds,
+  isCapturableBounds,
+  emptyBounds,
+  isPointInsideBounds,
+} from '@utils/bounds';
 
 import styles from '@adapters/ui/components/stateless/CaptureTargetingArea.css';
 
@@ -49,11 +54,31 @@ const calcSelectedBounds = (selCtx: AreaSelectionCtx): Bounds => {
   };
 };
 
+const getBoundsFromPoint = (startPt?: Point, curPt?: Point): Bounds => {
+  if (!startPt || !curPt) {
+    return emptyBounds();
+  }
+
+  return {
+    x: 0,
+    y: 0,
+    width: Math.abs(curPt.x - startPt.x),
+    height: Math.abs(curPt.y - startPt.y),
+  };
+};
+
 const getAreaStyles = (
   selCtx: AreaSelectionCtx,
   bounds: Bounds,
+  captureBounds: Bounds,
   colors: CaptureAreaColors
 ): any => {
+  if (selCtx.selected || isEmptyBounds(bounds)) {
+    return {
+      display: 'none',
+    };
+  }
+
   const layoutStyle = {
     left: bounds.x - 1,
     top: bounds.y - 1,
@@ -61,21 +86,7 @@ const getAreaStyles = (
     height: bounds.height + 2,
   };
 
-  if (isEmptyBounds(bounds)) {
-    return layoutStyle;
-  }
-
-  if (!selCtx.selected) {
-    if (isCapturableBounds(bounds)) {
-      const color = Color(colors.selectingBackground);
-      return {
-        ...layoutStyle,
-        backgroundColor: color.alpha(COLOR_ALPHA_AREA).string(),
-        boxShadow: `inset 0 0 1px ${color
-          .alpha(COLOR_ALPHA_AREA_SHADOW)
-          .string()}`,
-      };
-    }
+  if (!isCapturableBounds(captureBounds)) {
     return {
       ...layoutStyle,
       backgroundColor: '#ff00001a',
@@ -83,16 +94,34 @@ const getAreaStyles = (
     };
   }
 
-  return layoutStyle;
+  const color = Color(colors.selectingBackground);
+  return {
+    ...layoutStyle,
+    backgroundColor: color.alpha(COLOR_ALPHA_AREA).string(),
+    boxShadow: `inset 0 0 1px ${color.alpha(COLOR_ALPHA_AREA_SHADOW).string()}`,
+  };
 };
 
 const CURSOR_HINT_BOX_SIZE = { width: 60, height: 10 };
 const CURSOR_HINT_BOX_PAD = 4;
 const getCursorHintStyles = (
-  selCtx: AreaSelectionCtx,
   bounds: Bounds,
-  colors: CaptureAreaColors
+  screenBounds: Bounds,
+  colors: CaptureAreaColors,
+  startPt?: Point,
+  curPt?: Point
 ): any => {
+  if (
+    !startPt ||
+    !curPt ||
+    !isCapturableBounds(getBoundsFromPoint(startPt, curPt)) ||
+    !isPointInsideBounds(curPt, screenBounds)
+  ) {
+    return {
+      display: 'none',
+    };
+  }
+
   const colorStyle = {
     color: colors.selectingText,
     textShadow: `${Color(colors.selectingBackground)
@@ -100,21 +129,20 @@ const getCursorHintStyles = (
       .string()} 0px 0px 1px`,
   };
 
-  if (!selCtx.started || !isCapturableBounds(bounds)) {
-    return {
-      display: 'none',
-    };
-  }
-
-  const { startPt, cursorPt: curPt } = selCtx;
   if (curPt.x > startPt.x) {
     // right-bottom
     if (curPt.y > startPt.y) {
       return {
         ...CURSOR_HINT_BOX_SIZE,
         ...colorStyle,
-        left: curPt.x - (CURSOR_HINT_BOX_SIZE.width + CURSOR_HINT_BOX_PAD),
-        top: curPt.y - (CURSOR_HINT_BOX_SIZE.height + CURSOR_HINT_BOX_PAD),
+        left:
+          bounds.x +
+          bounds.width -
+          (CURSOR_HINT_BOX_SIZE.width + CURSOR_HINT_BOX_PAD),
+        top:
+          bounds.y +
+          bounds.height -
+          (CURSOR_HINT_BOX_SIZE.height + CURSOR_HINT_BOX_PAD),
         textAlign: 'right',
       };
     }
@@ -123,8 +151,11 @@ const getCursorHintStyles = (
     return {
       ...CURSOR_HINT_BOX_SIZE,
       ...colorStyle,
-      left: curPt.x - (CURSOR_HINT_BOX_SIZE.width + CURSOR_HINT_BOX_PAD),
-      top: curPt.y + CURSOR_HINT_BOX_PAD,
+      left:
+        bounds.x +
+        bounds.width -
+        (CURSOR_HINT_BOX_SIZE.width + CURSOR_HINT_BOX_PAD),
+      top: bounds.y + CURSOR_HINT_BOX_PAD,
       textAlign: 'right',
     };
   }
@@ -134,8 +165,11 @@ const getCursorHintStyles = (
     return {
       ...CURSOR_HINT_BOX_SIZE,
       ...colorStyle,
-      left: curPt.x + CURSOR_HINT_BOX_PAD,
-      top: curPt.y - (CURSOR_HINT_BOX_SIZE.height + CURSOR_HINT_BOX_PAD),
+      left: bounds.x + CURSOR_HINT_BOX_PAD,
+      top:
+        bounds.y +
+        bounds.height -
+        (CURSOR_HINT_BOX_SIZE.height + CURSOR_HINT_BOX_PAD),
     };
   }
 
@@ -143,15 +177,15 @@ const getCursorHintStyles = (
   return {
     ...CURSOR_HINT_BOX_SIZE,
     ...colorStyle,
-    left: curPt.x + CURSOR_HINT_BOX_PAD,
-    top: curPt.y + CURSOR_HINT_BOX_PAD,
+    left: bounds.x + CURSOR_HINT_BOX_PAD,
+    top: bounds.y + CURSOR_HINT_BOX_PAD,
   };
 };
 
 const handleMouseDown = (
   e: MouseEvent,
-  onStart: () => void,
-  onSelecting: (bounds: Bounds) => void,
+  onStart: (cursorPosition: Point) => void,
+  onSelecting: (bounds: Bounds, cursorPosition: Point) => void,
   onCancel: () => void,
   selCtxRef: MutableRefObject<AreaSelectionCtx>
 ) => {
@@ -172,14 +206,31 @@ const handleMouseDown = (
     cursorPt: mousePt,
   };
 
-  onStart();
+  onStart(mousePt);
 
-  onSelecting(calcSelectedBounds(selCtxRef.current));
+  onSelecting(calcSelectedBounds(selCtxRef.current), mousePt);
+};
+
+const handleMouseMove = (
+  e: MouseEvent,
+  onSelecting: (bounds: Bounds, cursorPosition: Point) => void,
+  selCtxRef: MutableRefObject<AreaSelectionCtx>
+) => {
+  const selCtx = selCtxRef.current;
+
+  if (!selCtx.started) {
+    return;
+  }
+
+  const mousePt = getMousePoint(e);
+  selCtxRef.current = { ...selCtx, cursorPt: mousePt };
+
+  onSelecting(calcSelectedBounds(selCtxRef.current), mousePt);
 };
 
 const handleMouseUp = (
   e: MouseEvent,
-  onSelecting: (bounds: Bounds) => void,
+  onSelecting: (bounds: Bounds, cursorPosition: Point) => void,
   onCancel: () => void,
   onFinish: (bounds: Bounds) => void,
   selCtxRef: MutableRefObject<AreaSelectionCtx>
@@ -205,40 +256,29 @@ const handleMouseUp = (
   updatedSelCtx.selected = true;
   selCtxRef.current = updatedSelCtx;
 
-  onSelecting(calcSelectedBounds(selCtxRef.current));
+  onSelecting(calcSelectedBounds(selCtxRef.current), mousePt);
 
   onFinish(bounds);
 };
 
-const handleMouseMove = (
-  e: MouseEvent,
-  onSelecting: (bounds: Bounds) => void,
-  selCtxRef: MutableRefObject<AreaSelectionCtx>
-) => {
-  const selCtx = selCtxRef.current;
-
-  if (!selCtx.started) {
-    return;
-  }
-
-  const mousePt = getMousePoint(e);
-  selCtxRef.current = { ...selCtx, cursorPt: mousePt };
-
-  onSelecting(calcSelectedBounds(selCtxRef.current));
-};
-
 interface PropTypes {
-  selectingBounds: Bounds;
+  targetBounds: Bounds;
+  screenBounds: Bounds;
+  startCursorPosition: Point | undefined;
+  curCursorPosition: Point | undefined;
   areaColors: CaptureAreaColors;
-  onStart: () => void;
-  onSelecting: (bounds: Bounds) => void;
+  onStart: (cursorPosition: Point) => void;
+  onSelecting: (bounds: Bounds, cursorPosition: Point) => void;
   onCancel: () => void;
   onFinish: (bounds: Bounds) => void;
 }
 
 const CaptureTargetingArea: FC<PropTypes> = (props: PropTypes) => {
   const {
-    selectingBounds,
+    targetBounds,
+    screenBounds,
+    startCursorPosition,
+    curCursorPosition,
     areaColors,
     onStart,
     onSelecting,
@@ -247,6 +287,13 @@ const CaptureTargetingArea: FC<PropTypes> = (props: PropTypes) => {
   } = props;
 
   const selCtxRef = useRef<AreaSelectionCtx>(initialSelCtx);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.focus();
+    }
+  }, []);
 
   useEffect(() => {
     const mouseDownHandler = (e: MouseEvent): void => {
@@ -272,25 +319,40 @@ const CaptureTargetingArea: FC<PropTypes> = (props: PropTypes) => {
     };
   }, []);
 
+  const entireCaptureBounds = getBoundsFromPoint(
+    startCursorPosition,
+    curCursorPosition
+  );
+
   return (
-    <div className={classNames(styles.wrapper, styles.cursorSelecting)}>
+    <div
+      ref={containerRef}
+      className={classNames(styles.wrapper, styles.cursorSelecting)}
+    >
       <>
         <div
           className={classNames(styles.area, {
-            [styles.areaHidden]: isEmptyBounds(selectingBounds),
+            [styles.areaHidden]: isEmptyBounds(targetBounds),
           })}
-          style={getAreaStyles(selCtxRef.current, selectingBounds, areaColors)}
+          style={getAreaStyles(
+            selCtxRef.current,
+            targetBounds,
+            entireCaptureBounds,
+            areaColors
+          )}
         />
         {!selCtxRef.current.selected && (
           <div
             className={styles.cursorSizeHint}
             style={getCursorHintStyles(
-              selCtxRef.current,
-              selectingBounds,
-              areaColors
+              targetBounds,
+              screenBounds,
+              areaColors,
+              startCursorPosition,
+              curCursorPosition
             )}
           >
-            {selectingBounds.width}x{selectingBounds.height}
+            {entireCaptureBounds.width}x{entireCaptureBounds.height}
           </div>
         )}
       </>

@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 
-import { Bounds } from '@domain/models/screen';
+import { Bounds, Point } from '@domain/models/screen';
 import { CaptureOptions, RecordOptions } from '@domain/models/capture';
 
 import InitializeAppUseCase from '@application/usecases/InitializeApp';
@@ -90,15 +90,17 @@ export default class ActionDispatcherCore implements ActionDispatcher {
     this.changeCaptureOptionsUseCase.execute({ captureOptions: options });
   };
 
-  startTargetSelection = (targetBounds: Bounds) => {
+  startTargetSelection = (targetBounds: Bounds, cursorPosition: Point) => {
     this.startSelectionUseCase.execute({
       targetBounds,
+      cursorPosition,
     });
   };
 
-  selectingTarget = (targetBounds: Bounds) => {
+  selectingTarget = (targetBounds: Bounds, cursorPosition: Point) => {
     this.selectingTargetUseCase.execute({
       targetBounds,
+      cursorPosition,
     });
   };
 

@@ -4,7 +4,7 @@ import { ipcMain } from 'electron';
 import TYPES from '@di/types';
 
 import { RecordOptions, CaptureOptions } from '@domain/models/capture';
-import { Bounds } from '@domain/models/screen';
+import { Bounds, Point } from '@domain/models/screen';
 
 import { ActionDispatcher } from '@application/ports/action';
 
@@ -14,12 +14,18 @@ export default class ActionDispatcherProxy implements ActionDispatcher {
     @inject(TYPES.ActionDispatcher) private actionDispatcher: ActionDispatcher
   ) {
     ipcMain.on('disableCaptureMode', () => this.disableCaptureMode());
-    ipcMain.on('startTargetSelection', (_event, targetBounds): void => {
-      this.startTargetSelection(targetBounds);
-    });
-    ipcMain.on('selectingTarget', (_event, targetBounds): void => {
-      this.selectingTarget(targetBounds);
-    });
+    ipcMain.on(
+      'startTargetSelection',
+      (_event, targetBounds, cursorPosition): void => {
+        this.startTargetSelection(targetBounds, cursorPosition);
+      }
+    );
+    ipcMain.on(
+      'selectingTarget',
+      (_event, targetBounds, cursorPosition): void => {
+        this.selectingTarget(targetBounds, cursorPosition);
+      }
+    );
     ipcMain.on('finishTargetSelection', (_event, targetBounds): void => {
       this.finishTargetSelection(targetBounds);
     });
@@ -73,12 +79,12 @@ export default class ActionDispatcherProxy implements ActionDispatcher {
     this.actionDispatcher.changeCaptureOptions(options);
   }
 
-  startTargetSelection(targetBounds: Bounds): void {
-    this.actionDispatcher.startTargetSelection(targetBounds);
+  startTargetSelection(targetBounds: Bounds, cursorPosition: Point): void {
+    this.actionDispatcher.startTargetSelection(targetBounds, cursorPosition);
   }
 
-  selectingTarget(targetBounds: Bounds): void {
-    this.actionDispatcher.selectingTarget(targetBounds);
+  selectingTarget(targetBounds: Bounds, cursorPosition: Point): void {
+    this.actionDispatcher.selectingTarget(targetBounds, cursorPosition);
   }
 
   finishTargetSelection(targetBounds: Bounds): void {

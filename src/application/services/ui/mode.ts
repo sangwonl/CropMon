@@ -24,10 +24,10 @@ export default class CaptureModeManager {
     const prefs = await this.prefsRepo.fetchUserPreferences();
     this.uiDirector.enableCaptureMode(
       captureMode,
-      async (screens: Screen[], screenId?: number) => {
-        const screenBounds: { [key: number]: Bounds } = {};
+      async (screens: Screen[], screenCursorOn?: Screen) => {
+        const screenMap: { [screenId: number]: Screen } = {};
         screens.forEach((s) => {
-          screenBounds[s.id] = s.bounds;
+          screenMap[s.id] = s;
         });
 
         this.stateManager.updateUiState((state: UiState): UiState => {
@@ -35,6 +35,7 @@ export default class CaptureModeManager {
             ...state,
             controlPanel: {
               ...INITIAL_UI_STATE.controlPanel,
+              show: true,
               captureMode,
               outputAsGif: prefs.outputFormat === 'gif',
               lowQualityMode: prefs.recordQualityMode === 'low',
@@ -44,9 +45,11 @@ export default class CaptureModeManager {
               ...INITIAL_UI_STATE.captureOverlay,
               show: true,
               showCountdown: prefs.showCountdown,
-              screenBounds,
-              selectedScreenId: screenId,
-              selectingBounds: screenId ? screenBounds[screenId] : undefined,
+              screens: screenMap,
+              selectedScreenId: screenCursorOn?.id,
+              selectingBounds: screenCursorOn
+                ? screenMap[screenCursorOn.id].bounds
+                : undefined,
             },
             captureAreaColors: prefs.colors,
           };

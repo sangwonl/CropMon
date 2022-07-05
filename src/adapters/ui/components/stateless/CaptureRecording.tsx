@@ -24,15 +24,15 @@ const getAreaStyles = (bounds: Bounds): any => {
 };
 
 interface PropTypes {
-  selectedBounds: Bounds;
+  targetBounds: Bounds;
 }
 
 const CaptureRecording: FC<PropTypes> = (props: PropTypes) => {
-  const { selectedBounds } = props;
+  const { targetBounds } = props;
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.area} style={getAreaStyles(selectedBounds)} />
+      <div className={styles.area} style={getAreaStyles(targetBounds)} />
     </div>
   );
 };
