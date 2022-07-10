@@ -110,8 +110,6 @@ export default class BuiltinHooks {
   };
 
   onInitialPrefsLoaded = async (_args: HookArgsInitialPrefsLoaded) => {
-    await this.uiDirector.openHelpPageModal();
-
     this.tracker.eventL('app-lifecycle', 'initial-launch', getPlatform());
   };
 
