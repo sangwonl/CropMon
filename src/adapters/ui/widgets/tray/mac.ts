@@ -70,6 +70,11 @@ export default class MacAppTray extends AppTray {
         ],
       },
       {
+        id: 'open-folder',
+        label: 'Open Folder',
+        click: this.onOpenFolder,
+      },
+      {
         type: 'separator',
       },
       {

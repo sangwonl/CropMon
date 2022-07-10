@@ -95,6 +95,10 @@ export default abstract class AppTray {
     });
   };
 
+  protected onOpenFolder = () => {
+    this.dispatcher.openCaptureFolder();
+  };
+
   protected onQuit = () => {
     this.dispatcher.quitApplication();
   };

@@ -36,6 +36,10 @@ export default class ActionDispatcherClient implements ActionDispatcher {
     throw new Error('Method not implemented.');
   }
 
+  openCaptureFolder(): void {
+    throw new Error('Method not implemented.');
+  }
+
   toggleRecordOptions(_recordOptions: RecordOptions): void {
     throw new Error('Method not implemented.');
   }

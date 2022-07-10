@@ -9,6 +9,7 @@ export interface ActionDispatcher {
   showHelp(): void;
   quitApplication(): void;
   openPreferences(): void;
+  openCaptureFolder(): void;
   toggleRecordOptions(recordOptions: RecordOptions): void;
   enableCaptureMode(): void;
   disableCaptureMode(): void;
