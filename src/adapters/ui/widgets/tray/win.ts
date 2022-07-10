@@ -70,6 +70,11 @@ export default class WinAppTray extends AppTray {
         ],
       },
       {
+        id: 'open-folder',
+        label: '&Open Folder',
+        click: this.onOpenFolder,
+      },
+      {
         type: 'separator',
       },
       {

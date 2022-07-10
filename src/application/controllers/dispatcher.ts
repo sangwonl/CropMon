@@ -10,6 +10,7 @@ import UpdateAppUseCase from '@application/usecases/UpdateApp';
 import OpenAboutPopupUseCase from '@application/usecases/OpenAboutPopup';
 import OpenHelpPopupUseCase from '@application/usecases/OpenHelpPopup';
 import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
+import OpenCaptureFolderUseCase from '@application/usecases/OpenCaptureFolder';
 import ToggleRecordOptionsUseCase from '@application/usecases/ToggleRecordOptions';
 import StartSelectionUseCase from '@application/usecases/StartSelection';
 import SelectingTargetUseCase from '@application/usecases/SelectingTarget';
@@ -33,6 +34,7 @@ export default class ActionDispatcherCore implements ActionDispatcher {
     private openAboutPopupUseCase: OpenAboutPopupUseCase,
     private openHelpPopupUseCase: OpenHelpPopupUseCase,
     private openPrefsModalUseCase: OpenPrefsModalUseCase,
+    private openCaptureFolderUseCase: OpenCaptureFolderUseCase,
     private toggleRecordOptionsUseCase: ToggleRecordOptionsUseCase,
     private startSelectionUseCase: StartSelectionUseCase,
     private selectingTargetUseCase: SelectingTargetUseCase,
@@ -72,6 +74,10 @@ export default class ActionDispatcherCore implements ActionDispatcher {
 
   openPreferences = () => {
     this.openPrefsModalUseCase.execute();
+  };
+
+  openCaptureFolder = () => {
+    this.openCaptureFolderUseCase.execute();
   };
 
   toggleRecordOptions = (recordOptions: RecordOptions) => {
