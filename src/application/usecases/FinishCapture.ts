@@ -32,7 +32,7 @@ export default class FinishCaptureUseCase implements UseCase<void> {
       );
 
       if (await this.captureSession.shouldRevealRecordedFile()) {
-        this.uiDirector.showItemInFolder(finishedCtx.outputPath);
+        this.uiDirector.revealItemInFolder(finishedCtx.outputPath);
       }
 
       this.hookManager.emit('capture-finished', {

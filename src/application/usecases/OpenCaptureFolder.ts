@@ -17,6 +17,6 @@ export default class OpenCaptureFolderUseCase implements UseCase<void> {
 
   async execute() {
     const prefs = await this.prefsRepo.fetchUserPreferences();
-    this.uiDirector.showItemInFolder(prefs.recordHome);
+    this.uiDirector.revealFolder(prefs.recordHome);
   }
 }

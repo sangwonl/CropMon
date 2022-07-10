@@ -18,7 +18,8 @@ export interface UiDirector {
   startTargetSelection(): void;
   resetScreenBoundsDetector(): void;
   enableRecordingMode(): void;
-  showItemInFolder(path: string): void;
+  revealItemInFolder(path: string): void;
+  revealFolder(path: string): void;
   startDownloadAndInstall(onReady: () => void, onCancel: () => void, onQuitAndInstall: () => void): Promise<void>;
   setUpdateDownloadProgress(percent: number): void;
 }

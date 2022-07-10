@@ -220,8 +220,12 @@ export default class ElectronUiDirector implements UiDirector {
     this.captureOverlay?.blur();
   }
 
-  showItemInFolder(path: string): void {
+  revealItemInFolder(path: string): void {
     shell.showItemInFolder(path);
+  }
+
+  revealFolder(path: string): void {
+    shell.openPath(path);
   }
 
   async startDownloadAndInstall(
