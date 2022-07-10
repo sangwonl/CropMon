@@ -22,10 +22,11 @@ export default class MacAppTray extends AppTray {
         label: 'About',
         click: this.onAbout,
       },
-      {
-        label: 'Help',
-        click: this.onHelp,
-      },
+      // NOTE: Hiding this item because of nothing in help page for now
+      // {
+      //   label: 'Help',
+      //   click: this.onHelp,
+      // },
       {
         label: 'Preferences',
         click: this.onPreferences,
