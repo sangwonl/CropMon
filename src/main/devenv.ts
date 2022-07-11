@@ -4,31 +4,28 @@
 import { isDebugMode, isProduction } from '@utils/process';
 
 const installDevTools = async () => {
-  if (isProduction()) {
-    const sourceMapSupport = require('source-map-support');
-    sourceMapSupport.install();
-  }
+  const sourceMapSupport = require('source-map-support');
+  sourceMapSupport.install();
 
-  if (isDebugMode()) {
-    require('electron-debug')({ showDevTools: false });
-  } else {
-    return;
-  }
+  const installElectronDebug = require('electron-debug');
+  installElectronDebug({ showDevTools: false });
 
-  const installer = require('electron-devtools-installer');
+  const installExtensions = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = ['REACT_DEVELOPER_TOOLS'];
 
-  return installer
+  installExtensions
     .default(
-      extensions.map((name) => installer[name]),
+      extensions.map((name) => installExtensions[name]),
       forceDownload
     )
     .catch(console.log);
 };
 
-const initializeDevEnv = async () => {
-  await installDevTools();
+const initializeDevEnv = () => {
+  if (!isProduction() && isDebugMode()) {
+    installDevTools();
+  }
 };
 
 export default initializeDevEnv;

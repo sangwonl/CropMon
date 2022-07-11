@@ -22,7 +22,7 @@ import { ActionDispatcher } from '@application/ports/action';
 import initializeDevEnv from './devenv';
 
 const start = async () => {
-  await initializeDevEnv();
+  initializeDevEnv();
 
   await diContainer
     .get<ActionDispatcher>(TYPES.ActionDispatcher)
