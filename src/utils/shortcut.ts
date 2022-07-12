@@ -45,7 +45,7 @@ const isOthersAllowed = (keyCode: number): boolean => {
   return keyCode >= 32 && keyCode <= 111;
 };
 
-export const extractShortcut = (e: any) => {
+export const extractShortcut = (e: KeyboardEvent) => {
   const pressed = [];
   if (e.metaKey) {
     pressed.push('Meta');
