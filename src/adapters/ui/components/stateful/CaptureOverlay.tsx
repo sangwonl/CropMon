@@ -160,7 +160,6 @@ const CaptureOverlay = (props: PropTypes) => {
 
   useEffect(() => {
     if (!captureOverlay.show) {
-      stopCountdown();
       changeRenderMode(RenderMode.IDLE);
     }
   }, [captureOverlay.show]);
@@ -200,6 +199,12 @@ const CaptureOverlay = (props: PropTypes) => {
     captureOverlay.selectedScreenId,
     captureOverlay.selectedBounds,
   ]);
+
+  useEffect(() => {
+    if (renderMode === RenderMode.IDLE || renderMode === RenderMode.TARGETING) {
+      stopCountdown();
+    }
+  }, [renderMode]);
 
   return (
     <>
