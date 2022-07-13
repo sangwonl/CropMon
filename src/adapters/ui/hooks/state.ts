@@ -1,7 +1,7 @@
 import { ipcRenderer, IpcRendererEvent } from 'electron';
 import { useState, useRef, useEffect, SetStateAction, Dispatch } from 'react';
 
-import { INITIAL_UI_STATE, UiState } from '@application/models/ui';
+import { UiState } from '@application/models/ui';
 
 export const useStateWithGetter = <S>(
   initialState: S
@@ -16,14 +16,15 @@ export const useStateWithGetter = <S>(
 };
 
 export const useRootUiState = (): UiState => {
-  const [uiState, setUiState] = useState<UiState>(INITIAL_UI_STATE);
+  const [uiState, setUiState] = useState<UiState>(
+    ipcRenderer.sendSync('getStates')
+  );
 
   useEffect(() => {
     const handleSyncStates = (_event: IpcRendererEvent, newState: UiState) => {
       setUiState(newState);
     };
     ipcRenderer.on('syncStates', handleSyncStates);
-    ipcRenderer.send('joinForSynStates');
     return () => {
       ipcRenderer.removeListener('syncStates', handleSyncStates);
     };

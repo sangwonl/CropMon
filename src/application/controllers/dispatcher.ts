@@ -3,6 +3,10 @@ import { injectable } from 'inversify';
 import { Bounds, Point } from '@domain/models/screen';
 import { CaptureOptions, RecordOptions } from '@domain/models/capture';
 
+import { UiState } from '@application/models/ui';
+
+import { ActionDispatcher } from '@application/ports/action';
+
 import InitializeAppUseCase from '@application/usecases/InitializeApp';
 import QuitAppUseCase from '@application/usecases/QuitApp';
 import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
@@ -22,7 +26,6 @@ import FinishSelectionUseCase from '@application/usecases/FinishSelection';
 import StartCaptureUseCase from '@application/usecases/StartCapture';
 import FinishCaptureUseCase from '@application/usecases/FinishCapture';
 import ToggleCaptureUseCase from '@application/usecases/ToggleCaptureUseCase';
-import { ActionDispatcher } from '@application/ports/action';
 
 @injectable()
 export default class ActionDispatcherCore implements ActionDispatcher {

@@ -72,9 +72,13 @@ diContainer
   .inSingletonScope();
 
 diContainer
-  .bind<UiStateApplier>(TYPES.UiStateApplier)
-  .to(ElectronUiStateApplier)
+  .bind<ElectronUiStateApplier>(ElectronUiStateApplier)
+  .toSelf()
   .inSingletonScope();
+
+diContainer
+  .bind<UiStateApplier>(TYPES.UiStateApplier)
+  .toConstantValue(diContainer.get(ElectronUiStateApplier));
 
 diContainer
   .bind<AnalyticsTracker>(TYPES.AnalyticsTracker)

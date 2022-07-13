@@ -22,15 +22,15 @@ export default class StaticPageModal extends Widget {
       options,
     });
 
-    this.loadURL(`file://${__dirname}/../staticpage/index.html`);
+    this.window.loadURL(`file://${__dirname}/../staticpage/index.html`);
 
-    this.on('close', () => {
+    this.window.on('close', () => {
       this.closeResolver?.();
     });
   }
 
   private async openAsModal(): Promise<void> {
-    this.webContents.on('did-finish-load', () => {
+    this.window.webContents.on('did-finish-load', () => {
       this.show();
       this.focus();
     });

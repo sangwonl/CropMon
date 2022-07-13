@@ -25,16 +25,16 @@ export default class CaptureOverlay extends Widget {
       options,
     });
 
-    this.loadURL(`file://${__dirname}/../overlays/index.html`);
+    this.window.loadURL(`file://${__dirname}/../overlays/index.html`);
 
     // https://github.com/electron/electron/issues/25368
-    this.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-    this.setAlwaysOnTop(true, 'screen-saver', 1);
-    this.setHasShadow(false);
+    this.window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+    this.window.setAlwaysOnTop(true, 'screen-saver', 1);
+    this.window.setHasShadow(false);
 
     // Not to expose traffic light buttons
     if (isMac()) {
-      this.setTrafficLightPosition(TRAFFIC_LIGHT_OFFSET_FOR_HIDING);
+      this.window.setTrafficLightPosition(TRAFFIC_LIGHT_OFFSET_FOR_HIDING);
     }
   }
 }

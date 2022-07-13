@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { BrowserWindow, NativeImage } from 'electron';
+import { BrowserWindow, NativeImage, Rectangle, WebContents } from 'electron';
 
 import { WidgetType } from '@adapters/ui/widgets/types';
 
@@ -25,9 +25,11 @@ export interface WidgetOptions {
   options?: any;
 }
 
-export class Widget extends BrowserWindow {
+export class Widget {
+  protected window: BrowserWindow;
+
   constructor(type: WidgetType, options?: WidgetOptions) {
-    super({
+    this.window = new BrowserWindow({
       icon: options?.icon,
       show: options?.show ?? true,
       width: options?.width ?? 800,
@@ -50,17 +52,61 @@ export class Widget extends BrowserWindow {
       },
     });
 
-    this.removeMenu();
+    this.window.removeMenu();
 
     // be sure window scaled as default
-    this.webContents.on('did-finish-load', () => {
-      this.webContents.setZoomFactor(1.0);
-      this.webContents.setZoomLevel(0.0);
-      this.webContents.setVisualZoomLevelLimits(1.0, 1.0);
-      this.webContents.send('loadWidget', {
+    this.window.webContents.on('did-finish-load', () => {
+      this.window.webContents.setZoomFactor(1.0);
+      this.window.webContents.setZoomLevel(0.0);
+      this.window.webContents.setVisualZoomLevelLimits(1.0, 1.0);
+      this.window.webContents.send('loadWidget', {
         type,
         options: options?.options,
       });
     });
+  }
+
+  get id(): number {
+    return this.window.id;
+  }
+
+  get webContents(): WebContents {
+    return this.window.webContents;
+  }
+
+  show() {
+    this.window.show();
+  }
+
+  hide() {
+    this.window.hide();
+  }
+
+  focus() {
+    this.window.focus();
+  }
+
+  blur() {
+    this.window.blur();
+  }
+
+  close() {
+    this.window.close();
+  }
+
+  destroy() {
+    this.window.destroy();
+  }
+
+  setIgnoreMouseEvents(ignore: boolean) {
+    this.window.setIgnoreMouseEvents(ignore);
+  }
+
+  setBounds(bounds: Partial<Rectangle>) {
+    this.window.setBounds(bounds);
+  }
+
+  setResizable(resizable: boolean) {
+    this.window.setResizable(resizable);
   }
 }

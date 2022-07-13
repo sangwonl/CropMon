@@ -254,7 +254,7 @@ const CaptureOverlay = (props: PropTypes) => {
             )}
         </div>
       )}
-      {assignedScreen?.isPrimary && controlPanel.show && (
+      {assignedScreen?.isPrimary && captureOverlay.show && controlPanel.show && (
         <div className={styles.options}>
           <CaptureOptions
             captureMode={controlPanel.captureMode}

@@ -1,6 +1,8 @@
 import { Bounds, Point } from '@domain/models/screen';
 import { CaptureOptions, RecordOptions } from '@domain/models/capture';
 
+import { UiState } from '@application/models/ui';
+
 export interface ActionDispatcher {
   initializeApp(): void;
   checkForUpdates(): void;

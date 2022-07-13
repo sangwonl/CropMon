@@ -1,18 +1,21 @@
 import fs from 'fs';
 import { injectable } from 'inversify';
-import { app, shell } from 'electron';
+import { app, ipcMain, shell } from 'electron';
 
 import { CaptureMode } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
 import { Screen } from '@domain/models/screen';
 
+import { UiState } from '@application/models/ui';
 import { UiDirector } from '@application/ports/director';
+import StateManager from '@application/services/ui/state';
 
 import AppTray, { createTray } from '@adapters/ui/widgets/tray';
 import ProgressDialog from '@adapters/ui/widgets/progressdialog';
 import StaticPageModal from '@adapters/ui/widgets/staticpage';
 import PreferencesModal from '@adapters/ui/widgets/preferences';
 import CaptureOverlayWrap from '@adapters/ui/director/overlay';
+import ElectronUiStateApplier from '@adapters/state';
 
 import { getAllScreens, getScreenCursorOn } from '@utils/bounds';
 import { shortcutForDisplay } from '@utils/shortcut';
@@ -37,9 +40,20 @@ export default class ElectronUiDirector implements UiDirector {
   private recTimeStart?: number;
   private screenBoundsDetector?: NodeJS.Timer;
 
+  constructor(
+    private stateManager: StateManager,
+    private uiStateApplier: ElectronUiStateApplier
+  ) {
+    ipcMain.on('getStates', (event) => {
+      this.stateManager.queryUiState((uiState: UiState) => {
+        event.returnValue = uiState;
+      });
+    });
+  }
+
   initialize(): void {
     this.appTray = createTray();
-    this.captureOverlay = new CaptureOverlayWrap();
+    this.captureOverlay = new CaptureOverlayWrap(this.uiStateApplier);
   }
 
   async refreshTrayState(
@@ -179,8 +193,8 @@ export default class ElectronUiDirector implements UiDirector {
 
     switch (mode) {
       case CaptureMode.AREA:
-        onActiveScreenBoundsChange(screens);
         this.captureOverlay?.show();
+        setTimeout(() => onActiveScreenBoundsChange(screens), 100);
         break;
 
       case CaptureMode.SCREEN:
@@ -188,8 +202,8 @@ export default class ElectronUiDirector implements UiDirector {
           const screenCursorOn = getScreenCursorOn();
           if (!lastScreenId || lastScreenId !== screenCursorOn.id) {
             lastScreenId = screenCursorOn.id;
-            onActiveScreenBoundsChange(screens, screenCursorOn);
             this.captureOverlay?.show();
+            onActiveScreenBoundsChange(screens, screenCursorOn);
           }
         }, 100);
         break;
@@ -244,10 +258,7 @@ export default class ElectronUiDirector implements UiDirector {
       timeout: 300,
       width: 400,
       height: 200,
-    });
-
-    this.updateProgressDialog?.on('ready-to-show', () => {
-      onReady();
+      onReady,
     });
 
     const shouldUpdate = await this.updateProgressDialog?.open();

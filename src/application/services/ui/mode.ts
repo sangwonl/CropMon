@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 import TYPES from '@di/types';
 
 import { CaptureMode } from '@domain/models/common';
-import { Screen, Bounds } from '@domain/models/screen';
+import { Screen } from '@domain/models/screen';
 
 import { INITIAL_UI_STATE, UiState } from '@application/models/ui';
 import StateManager from '@application/services/ui/state';
@@ -66,6 +66,9 @@ export default class CaptureModeManager {
         ...state,
         captureOverlay: {
           ...INITIAL_UI_STATE.captureOverlay,
+        },
+        controlPanel: {
+          ...INITIAL_UI_STATE.controlPanel,
         },
       };
     });
