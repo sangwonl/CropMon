@@ -2,7 +2,6 @@ import { injectable } from 'inversify';
 import { WebContents } from 'electron';
 
 import { UiState } from '@application/models/ui';
-
 import { UiStateApplier } from '@application/ports/state';
 
 import { Widget } from '@adapters/ui/widgets/widget';

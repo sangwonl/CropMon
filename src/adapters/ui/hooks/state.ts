@@ -3,6 +3,8 @@ import { useState, useRef, useEffect, SetStateAction, Dispatch } from 'react';
 
 import { UiState } from '@application/models/ui';
 
+import { useActionDispatcher } from '@adapters/ui/hooks/dispatcher';
+
 export const useStateWithGetter = <S>(
   initialState: S
 ): [S, () => S, Dispatch<SetStateAction<S>>] => {
@@ -16,8 +18,9 @@ export const useStateWithGetter = <S>(
 };
 
 export const useRootUiState = (): UiState => {
+  const actionDispatcher = useActionDispatcher();
   const [uiState, setUiState] = useState<UiState>(
-    ipcRenderer.sendSync('getStates')
+    actionDispatcher.getUiState()
   );
 
   useEffect(() => {

@@ -1,14 +1,12 @@
 import fs from 'fs';
 import { injectable } from 'inversify';
-import { app, ipcMain, shell } from 'electron';
+import { app, shell } from 'electron';
 
 import { CaptureMode } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
 import { Screen } from '@domain/models/screen';
 
-import { UiState } from '@application/models/ui';
 import { UiDirector } from '@application/ports/director';
-import StateManager from '@application/services/ui/state';
 
 import AppTray, { createTray } from '@adapters/ui/widgets/tray';
 import ProgressDialog from '@adapters/ui/widgets/progressdialog';
@@ -40,16 +38,7 @@ export default class ElectronUiDirector implements UiDirector {
   private recTimeStart?: number;
   private screenBoundsDetector?: NodeJS.Timer;
 
-  constructor(
-    private stateManager: StateManager,
-    private uiStateApplier: ElectronUiStateApplier
-  ) {
-    ipcMain.on('getStates', (event) => {
-      this.stateManager.queryUiState((uiState: UiState) => {
-        event.returnValue = uiState;
-      });
-    });
-  }
+  constructor(private uiStateApplier: ElectronUiStateApplier) {}
 
   initialize(): void {
     this.appTray = createTray();

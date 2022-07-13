@@ -6,6 +6,7 @@ import TYPES from '@di/types';
 import { RecordOptions, CaptureOptions } from '@domain/models/capture';
 import { Bounds, Point } from '@domain/models/screen';
 
+import { UiState } from '@application/models/ui';
 import { ActionDispatcher } from '@application/ports/action';
 
 @injectable()
@@ -32,6 +33,9 @@ export default class ActionDispatcherProxy implements ActionDispatcher {
     ipcMain.on('startCapture', () => this.startCapture());
     ipcMain.on('changeCaptureOptions', (_event, options) => {
       this.changeCaptureOptions(options);
+    });
+    ipcMain.on('getUiState', (event) => {
+      event.returnValue = this.getUiState();
     });
   }
 
@@ -109,5 +113,9 @@ export default class ActionDispatcherProxy implements ActionDispatcher {
 
   onCaptureToggleShortcut(): void {
     throw new Error('Method not implemented.');
+  }
+
+  getUiState(): UiState {
+    return this.actionDispatcher.getUiState();
   }
 }

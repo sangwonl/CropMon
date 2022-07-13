@@ -4,6 +4,7 @@ import { ipcRenderer } from 'electron';
 import { RecordOptions, CaptureOptions } from '@domain/models/capture';
 import { Bounds, Point } from '@domain/models/screen';
 
+import { UiState } from '@application/models/ui';
 import { ActionDispatcher } from '@application/ports/action';
 
 @injectable()
@@ -82,5 +83,9 @@ export default class ActionDispatcherClient implements ActionDispatcher {
 
   onCaptureToggleShortcut(): void {
     throw new Error('Method not implemented.');
+  }
+
+  getUiState(): UiState {
+    return ipcRenderer.sendSync('getUiState');
   }
 }

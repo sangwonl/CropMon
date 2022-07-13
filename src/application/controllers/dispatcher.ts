@@ -4,9 +4,7 @@ import { Bounds, Point } from '@domain/models/screen';
 import { CaptureOptions, RecordOptions } from '@domain/models/capture';
 
 import { UiState } from '@application/models/ui';
-
 import { ActionDispatcher } from '@application/ports/action';
-
 import InitializeAppUseCase from '@application/usecases/InitializeApp';
 import QuitAppUseCase from '@application/usecases/QuitApp';
 import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
@@ -26,6 +24,7 @@ import FinishSelectionUseCase from '@application/usecases/FinishSelection';
 import StartCaptureUseCase from '@application/usecases/StartCapture';
 import FinishCaptureUseCase from '@application/usecases/FinishCapture';
 import ToggleCaptureUseCase from '@application/usecases/ToggleCaptureUseCase';
+import GetUiStateUseCase from '@application/usecases/GetUiStateUseCase';
 
 @injectable()
 export default class ActionDispatcherCore implements ActionDispatcher {
@@ -48,7 +47,8 @@ export default class ActionDispatcherCore implements ActionDispatcher {
     private finishSelectionUseCase: FinishSelectionUseCase,
     private startCaptureUseCase: StartCaptureUseCase,
     private finishCaptureUseCase: FinishCaptureUseCase,
-    private toggleCaptureUseCase: ToggleCaptureUseCase
+    private toggleCaptureUseCase: ToggleCaptureUseCase,
+    private getUiStateUseCase: GetUiStateUseCase
   ) {}
 
   initializeApp = () => {
@@ -133,5 +133,10 @@ export default class ActionDispatcherCore implements ActionDispatcher {
 
   onCaptureToggleShortcut = () => {
     this.toggleCaptureUseCase.execute();
+  };
+
+  getUiState = (): UiState => {
+    const ouptput = this.getUiStateUseCase.execute();
+    return ouptput.uiState;
   };
 }

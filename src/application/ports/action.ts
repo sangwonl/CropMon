@@ -23,4 +23,5 @@ export interface ActionDispatcher {
   startCaptureWithCurrentStates(): void;
   finishCapture(): void;
   onCaptureToggleShortcut(): void;
+  getUiState(): UiState;
 }

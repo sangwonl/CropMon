@@ -29,6 +29,7 @@ import FinishSelectionUseCase from '@application/usecases/FinishSelection';
 import StartCaptureUseCase from '@application/usecases/StartCapture';
 import FinishCaptureUseCase from '@application/usecases/FinishCapture';
 import ToggleCaptureUseCase from '@application/usecases/ToggleCaptureUseCase';
+import GetUiStateUseCase from '@application/usecases/GetUiStateUseCase';
 
 import ActionDispatcherCore from '@application/controllers/dispatcher';
 import StateManager from '@application/services/ui/state';
@@ -232,6 +233,11 @@ diContainer
 
 diContainer
   .bind<ToggleCaptureUseCase>(ToggleCaptureUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<GetUiStateUseCase>(GetUiStateUseCase)
   .toSelf()
   .inSingletonScope();
 
