@@ -37,11 +37,11 @@ export default class PreferencesModal extends Widget {
 
     this.options = options;
 
-    this.loadURL(`file://${__dirname}/../preferences/index.html`);
+    this.window.loadURL(`file://${__dirname}/../preferences/index.html`);
 
     const onRecordHomeSel = async (_event: any, data: any) => {
       const { prefs } = data;
-      const { filePaths } = await dialog.showOpenDialog(this, {
+      const { filePaths } = await dialog.showOpenDialog(this.window, {
         defaultPath: prefs.recordHome ?? app.getPath('videos'),
         properties: ['openDirectory'],
       });
@@ -66,7 +66,7 @@ export default class PreferencesModal extends Widget {
       this.close();
     };
 
-    this.on('close', () => {
+    this.window.on('close', () => {
       this.closeResolver?.();
     });
 
@@ -74,7 +74,7 @@ export default class PreferencesModal extends Widget {
     ipcMain.on(IPC_EVT_ON_SAVE, onSave);
     ipcMain.on(IPC_EVT_ON_CLOSE, onClose);
 
-    this.on('closed', () => {
+    this.window.on('closed', () => {
       ipcMain.off(IPC_EVT_ON_RECORD_HOME_SELECTION, onRecordHomeSel);
       ipcMain.off(IPC_EVT_ON_SAVE, onSave);
       ipcMain.off(IPC_EVT_ON_CLOSE, onClose);
@@ -86,7 +86,7 @@ export default class PreferencesModal extends Widget {
   ): Promise<void> {
     this.notifyPrefsUpdated(this.options.preferences);
 
-    this.webContents.on('did-finish-load', () => {
+    this.window.webContents.on('did-finish-load', () => {
       this.show();
       this.focus();
     });
@@ -98,7 +98,7 @@ export default class PreferencesModal extends Widget {
   }
 
   private notifyPrefsUpdated(newPrefs: Preferences, oldPrefs?: Preferences) {
-    this.webContents.send(IPC_EVT_ON_PREFS_UPDATED, {
+    this.window.webContents.send(IPC_EVT_ON_PREFS_UPDATED, {
       oldPrefs: oldPrefs ?? newPrefs,
       newPrefs,
     });

@@ -31,11 +31,13 @@ export default class ProgressDialog extends Widget {
     });
     this.options = options;
 
-    this.loadURL(`file://${__dirname}/../progressdialog/index.html`);
+    this.window.loadURL(`file://${__dirname}/../progressdialog/index.html`);
+
+    this.window.on('ready-to-show', () => options.onReady?.());
   }
 
   setProgress(progress: number) {
-    this.webContents.send(IPC_EVT_SET_PROGRESS, { progress });
+    this.window.webContents.send(IPC_EVT_SET_PROGRESS, { progress });
   }
 
   open(): Promise<boolean> {
