@@ -1,3 +1,3 @@
-export interface CaptureOverlayOptions {
+export type CaptureOverlayOptions = {
   screenId: number;
-}
+};

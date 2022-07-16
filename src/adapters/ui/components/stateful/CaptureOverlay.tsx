@@ -45,7 +45,7 @@ const CaptureOverlay = (props: PropTypes) => {
 
   const [renderMode, setRenderMode] = useState<RenderMode>(RenderMode.IDLE);
   const [countdown, setCountdown] = useState<number>(0);
-  const countdownTimer = useRef<any>();
+  const countdownTimer = useRef<ReturnType<typeof setInterval>>();
 
   const getTargetBoundsForUI = (): Bounds => {
     const selBounds =

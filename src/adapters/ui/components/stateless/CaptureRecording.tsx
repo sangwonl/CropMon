@@ -9,10 +9,10 @@ import styles from '@adapters/ui/components/stateless/CaptureRecording.css';
 
 const getAreaStyles = (bounds: Bounds): any => {
   const layoutStyle = {
-    left: bounds.x - 1,
-    top: bounds.y - 1,
-    width: bounds.width + 2,
-    height: bounds.height + 2,
+    left: bounds.x - 2,
+    top: bounds.y - 2,
+    width: bounds.width + 4,
+    height: bounds.height + 4,
   };
 
   return {

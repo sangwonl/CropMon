@@ -6,43 +6,43 @@ import { injectable } from 'inversify';
 import { CaptureContext } from '@domain/models/capture';
 import { Preferences } from '@domain/models/preferences';
 
-export interface HookArgsAppUpdateChecked {
+export type HookArgsAppUpdateChecked = {
   updateAvailable: boolean;
-}
+};
 
-export interface HookArgsAppUpdated {
+export type HookArgsAppUpdated = {
   oldVersion: string;
   curVersion: string;
-}
+};
 
-export interface HookArgsInitialPrefsLoaded {
+export type HookArgsInitialPrefsLoaded = {
   loadedPrefs: Preferences;
-}
+};
 
-export interface HookArgsPrefsLoaded {
+export type HookArgsPrefsLoaded = {
   loadedPrefs: Preferences;
-}
+};
 
-export interface HookArgsPrefsUpdated {
+export type HookArgsPrefsUpdated = {
   prevPrefs?: Preferences;
   newPrefs: Preferences;
-}
+};
 
-export interface HookArgsCaptureStarting {
+export type HookArgsCaptureStarting = {
   captureContext: CaptureContext;
-}
+};
 
-export interface HookArgsCaptureFinishing {
+export type HookArgsCaptureFinishing = {
   captureContext: CaptureContext;
-}
+};
 
-export interface HookArgsCaptureFinished {
+export type HookArgsCaptureFinished = {
   captureContext: CaptureContext;
-}
+};
 
 interface HookArgsBlank {}
 
-interface HookTypeArgsMap {
+type HookTypeArgsMap = {
   'app-launched': HookArgsBlank;
   'app-quit': HookArgsBlank;
   'app-updated': HookArgsAppUpdated;
@@ -60,7 +60,7 @@ interface HookTypeArgsMap {
   'capture-starting': HookArgsCaptureStarting;
   'capture-finishing': HookArgsCaptureFinishing;
   'capture-finished': HookArgsCaptureFinished;
-}
+};
 
 export type HookType = keyof HookTypeArgsMap;
 

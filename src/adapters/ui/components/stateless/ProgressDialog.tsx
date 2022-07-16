@@ -12,20 +12,20 @@ import { ProgressBar } from '@adapters/ui/components/stateless/ProgressBar';
 
 import styles from './ProgressDialog.css';
 
-export interface ProgressDialogButtonsProps {
+export type ProgressDialogButtonsProps = {
   cancelTitle: string;
   actionTitle: string;
   actionHideInProgress: boolean;
-}
+};
 
-export interface ProgressDialogProps {
+export type ProgressDialogProps = {
   title: string;
   message: string;
   buttons: ProgressDialogButtonsProps;
   progress: number;
   onCancelClick: () => void;
   onActionClick: () => void;
-}
+};
 
 export const ProgressDialog = (props: ProgressDialogProps) => {
   const { title, message, buttons, progress } = props;

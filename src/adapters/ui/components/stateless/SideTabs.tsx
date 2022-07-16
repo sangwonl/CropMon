@@ -27,16 +27,17 @@ const Tab = ({ tabId, title, selected, onSelect }: TabItemProps) => {
   );
 };
 
-export interface TabItem {
+export type TabItem = {
   tabId: string;
   title: string;
-}
+};
 
-export interface SideTabsProps {
+export type SideTabsProps = {
+  // eslint-disable-next-line react/require-default-props
   defaultTabId?: string;
   tabItems: TabItem[];
   onTabItemSelect: (tabId: string) => void;
-}
+};
 
 const SideTabs = ({
   defaultTabId,

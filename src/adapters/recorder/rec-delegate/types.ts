@@ -1,13 +1,13 @@
 import { CaptureMode, OutputFormat } from '@domain/models/common';
 import { Bounds } from '@domain/models/screen';
 
-export interface TargetSlice {
+export type TargetSlice = {
   targetBounds: Bounds;
   screenBounds: Bounds;
   mediaSourceId: string;
-}
+};
 
-export interface IRecordContext {
+export type IRecordContext = {
   captureMode: CaptureMode;
   targetSlices: TargetSlice[];
   outputFormat: OutputFormat;
@@ -15,4 +15,4 @@ export interface IRecordContext {
   frameRate: number;
   scaleDownFactor: number;
   videoBitrates?: number;
-}
+};

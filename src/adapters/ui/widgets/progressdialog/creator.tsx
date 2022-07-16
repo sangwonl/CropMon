@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { ipcRenderer } from 'electron';
-import React, { FC, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { ProgressDialog } from '@adapters/ui/components/stateless/ProgressDialog';
 import { preventZoomKeyEvent } from '@adapters/ui/widgets/utils';
@@ -13,11 +13,11 @@ import {
   IPC_EVT_ON_CANCEL,
 } from '@adapters/ui/widgets/progressdialog/shared';
 
-interface PropTypes {
+type PropTypes = {
   options: ProgressDialogOptions;
-}
+};
 
-const Wrapper: FC<PropTypes> = (props: PropTypes) => {
+const Wrapper = (props: PropTypes) => {
   const { options } = props;
   const [progress, setProgress] = useState(0);
 

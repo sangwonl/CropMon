@@ -1,18 +1,18 @@
-export interface Point {
+export type Point = {
   x: number;
   y: number;
-}
+};
 
-export interface Bounds {
+export type Bounds = {
   x: number;
   y: number;
   width: number;
   height: number;
-}
+};
 
-export interface Screen {
+export type Screen = {
   id: number;
   bounds: Bounds;
   scaleFactor: number;
   isPrimary: boolean;
-}
+};

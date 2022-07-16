@@ -6,7 +6,7 @@ import { WidgetType } from '@adapters/ui/widgets/types';
 
 import { isDebugMode } from '@utils/process';
 
-export interface WidgetOptions {
+export type WidgetOptions = {
   icon?: NativeImage | string;
   show?: boolean;
   width?: number;
@@ -23,7 +23,7 @@ export interface WidgetOptions {
   enableLargerThanScreen?: boolean;
   titleBarStyle?: 'default' | 'hidden' | 'hiddenInset' | 'customButtonsOnHover';
   options?: any;
-}
+};
 
 export class Widget {
   protected window: BrowserWindow;

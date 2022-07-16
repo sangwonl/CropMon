@@ -34,9 +34,9 @@ export default class ElectronUiDirector implements UiDirector {
   private prefsModal?: PreferencesModal;
   private updateProgressDialog?: ProgressDialog;
 
-  private recTimeHandle?: NodeJS.Timer;
+  private screenBoundsDetector?: ReturnType<typeof setInterval>;
+  private recTimeHandle?: ReturnType<typeof setInterval>;
   private recTimeStart?: number;
-  private screenBoundsDetector?: NodeJS.Timer;
 
   constructor(private uiStateApplier: ElectronUiStateApplier) {}
 

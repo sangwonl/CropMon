@@ -55,7 +55,7 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
   async record(ctx: CaptureContext): Promise<void> {
     const recordCtx = await this.createRecordContext(ctx);
     if (!recordCtx) {
-      return Promise.reject();
+      return Promise.reject(Error('fail to create record context'));
     }
 
     if (recordCtx.recordMicrophone) {
@@ -71,7 +71,7 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
 
       const onRecordingFailed = (_event: any, _data: any) => {
         clearIpcListeners();
-        reject();
+        reject(Error('recording failed'));
       };
 
       const setupIpcListeners = () => {
@@ -111,7 +111,7 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
 
       const onRecordingFailed = (_event: any, _data: any) => {
         clearIpcListeners();
-        reject();
+        reject(Error('recording failed'));
         this.renewBuildRenderer();
       };
 

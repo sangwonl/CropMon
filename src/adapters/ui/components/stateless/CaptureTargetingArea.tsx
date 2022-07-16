@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { FC, MutableRefObject, useRef, useEffect } from 'react';
+import React, { MutableRefObject, useRef, useEffect } from 'react';
 import classNames from 'classnames';
 import Color from 'color';
 
@@ -273,7 +273,7 @@ interface PropTypes {
   onFinish: (bounds: Bounds) => void;
 }
 
-const CaptureTargetingArea: FC<PropTypes> = (props: PropTypes) => {
+const CaptureTargetingArea = (props: PropTypes) => {
   const {
     targetBounds,
     screenBounds,

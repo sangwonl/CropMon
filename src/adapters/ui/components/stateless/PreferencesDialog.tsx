@@ -17,13 +17,13 @@ import SideTabs, { TabItem } from '@adapters/ui/components/stateless/SideTabs';
 
 import styles from '@adapters/ui/components/stateless/PreferencesDialog.css';
 
-export interface AppPreferencesProps {
+export type AppPreferencesProps = {
   origPrefs: Preferences;
   selectedRecordHome: string;
   onChooseRecordHome: () => void;
   onSave: (preferences: Preferences) => void;
   onClose: () => void;
-}
+};
 
 const TAB_GENERAL = 'general';
 // const TAB_RECORDING = 'recording';

@@ -1,24 +1,14 @@
 import { inject, injectable } from 'inversify';
-import path from 'path';
 
 import TYPES from '@di/types';
 
-import { CaptureStatus } from '@domain/models/common';
-import {
-  CaptureContext,
-  CaptureOptions,
-  CaptureTarget,
-  RecordOptions,
-} from '@domain/models/capture';
-import { Preferences } from '@domain/models/preferences';
+import { CaptureContext, CaptureOptions } from '@domain/models/capture';
 import { PreferencesRepository } from '@domain/repositories/preferences';
 import { ScreenRecorder } from '@domain/services/recorder';
 import {
   CaptureOptionsNotPreparedException,
   InvalidCaptureStatusException,
 } from '@domain/exceptions';
-
-import { getNowAsYYYYMMDDHHmmss, getTimeInSeconds } from '@utils/date';
 
 @injectable()
 export default class CaptureSession {
@@ -43,17 +33,13 @@ export default class CaptureSession {
     const prefs = await this.prefsRepo.fetchUserPreferences();
     const { target, recordOptions } = this.curCaptureOptions;
 
-    const newCaptureCtx = this.createCaptureContext(
-      prefs,
-      target,
-      recordOptions
-    );
+    const newCaptureCtx = CaptureContext.create(prefs, target, recordOptions);
 
     try {
       await this.screenRecorder.record(newCaptureCtx);
-      newCaptureCtx.status = CaptureStatus.IN_PROGRESS;
+      newCaptureCtx.setToInProgress();
     } catch (e) {
-      newCaptureCtx.status = CaptureStatus.ERROR;
+      newCaptureCtx.setToError();
     }
 
     this.curCaptureCtx = newCaptureCtx;
@@ -68,67 +54,39 @@ export default class CaptureSession {
   async finishCapture(
     finishingCallback: (curCaptureCtx: CaptureContext) => void
   ): Promise<CaptureContext> {
-    if (!this.isCaptureInProgress()) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const curCaptureCtx = this.curCaptureCtx!;
+
+    if (!curCaptureCtx.isInProgress) {
       throw new InvalidCaptureStatusException(
         `Can't finish capturing which is not in progress`
       );
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const curCaptureCtx = this.curCaptureCtx!;
     finishingCallback(curCaptureCtx);
 
-    let newStatus = curCaptureCtx.status;
     try {
       await this.screenRecorder.finish(curCaptureCtx);
-      newStatus = CaptureStatus.FINISHED;
+      curCaptureCtx.setToFinished();
     } catch (e) {
-      newStatus = CaptureStatus.ERROR;
+      curCaptureCtx.setToError();
     }
 
-    const updatedCaptureCtx = {
-      ...curCaptureCtx,
-      status: newStatus,
-      finishedAt: getTimeInSeconds(),
-    };
-
-    this.curCaptureCtx = updatedCaptureCtx;
-
-    return updatedCaptureCtx;
-  }
-
-  isCaptureInProgress(): boolean {
-    return this.curCaptureCtx?.status === CaptureStatus.IN_PROGRESS;
-  }
-
-  isCaptureFinished(): boolean {
-    return this.curCaptureCtx?.status === CaptureStatus.FINISHED;
+    return curCaptureCtx;
   }
 
   async shouldRevealRecordedFile(): Promise<boolean> {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const curCaptureCtx = this.curCaptureCtx!;
     const prefs = await this.prefsRepo.fetchUserPreferences();
-    return this.isCaptureFinished() && prefs.openRecordHomeWhenRecordCompleted;
+    return curCaptureCtx.isFinished && prefs.openRecordHomeWhenRecordCompleted;
   }
 
-  private createCaptureContext(
-    prefs: Preferences,
-    target: CaptureTarget,
-    recordOptions: RecordOptions
-  ): CaptureContext {
-    const fileName = getNowAsYYYYMMDDHHmmss();
-    const output = path.join(
-      prefs.recordHome,
-      `${fileName}.${prefs.outputFormat}`
-    );
+  isCaptureInProgress(): boolean {
+    return this.curCaptureCtx?.isInProgress ?? false;
+  }
 
-    return {
-      target,
-      status: CaptureStatus.PREPARED,
-      createdAt: getTimeInSeconds(),
-      outputPath: output,
-      outputFormat: recordOptions.enableOutputAsGif ? 'gif' : 'mp4',
-      lowQualityMode: recordOptions.enableLowQualityMode ?? false,
-      recordMicrophone: recordOptions.enableMicrophone ?? false,
-    };
+  isCaptureFinished(): boolean {
+    return this.curCaptureCtx?.isFinished ?? false;
   }
 }

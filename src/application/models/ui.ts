@@ -2,21 +2,21 @@ import { CaptureMode } from '@domain/models/common';
 import { Screen, Bounds, Point } from '@domain/models/screen';
 import { Preferences, DEFAULT_APPEAR_COLORS } from '@domain/models/preferences';
 
-export interface PreferencesModal {
+export type PreferencesModal = {
   show: boolean;
   preferences: Preferences;
-}
+};
 
-export interface ControlPanel {
+export type ControlPanel = {
   show: boolean;
   captureMode: CaptureMode;
   outputAsGif: boolean;
   lowQualityMode: boolean;
   microphone: boolean;
   confirmedToCaptureAsIs: boolean;
-}
+};
 
-export interface CaptureOverlay {
+export type CaptureOverlay = {
   show: boolean;
   showCountdown: boolean;
   isRecording: boolean;
@@ -27,20 +27,20 @@ export interface CaptureOverlay {
   selectedScreenId?: number;
   startCursorPosition?: Point;
   curCursorPosition?: Point;
-}
+};
 
-export interface CaptureAreaColors {
+export type CaptureAreaColors = {
   selectingBackground: string;
   selectingText: string;
   countdownBackground: string;
   countdownText: string;
-}
+};
 
-export interface UiState {
+export type UiState = {
   controlPanel: ControlPanel;
   captureOverlay: CaptureOverlay;
   captureAreaColors: CaptureAreaColors;
-}
+};
 
 export const INITIAL_UI_STATE: UiState = {
   controlPanel: {

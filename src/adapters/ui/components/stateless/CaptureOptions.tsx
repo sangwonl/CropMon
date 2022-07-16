@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import React, { FC, useEffect, useState, useCallback, MouseEvent } from 'react';
+import React, { useEffect, useState, useCallback, MouseEvent } from 'react';
 import classNames from 'classnames';
 
 import { CaptureMode } from '@domain/models/common';
@@ -27,15 +27,15 @@ const withStopPropagation = (
   return false;
 };
 
-export interface CaptureOptionsProps {
+export type CaptureOptionsProps = {
   captureMode: CaptureMode;
   recordOptions: RecordOptions;
   onCaptureModeChange: (mode: CaptureMode) => void;
   onRecordOptionsChange: (recOptions: RecordOptions) => void;
   onCaptureCancel: () => void;
-}
+};
 
-export const CaptureOptions: FC<CaptureOptionsProps> = ({
+export const CaptureOptions = ({
   captureMode,
   recordOptions,
   onCaptureModeChange,

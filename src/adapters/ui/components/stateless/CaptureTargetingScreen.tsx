@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { MouseEvent, FC, useCallback } from 'react';
+import React, { MouseEvent, useCallback } from 'react';
 import classNames from 'classnames';
 import Color from 'color';
 
@@ -46,7 +46,7 @@ interface PropTypes {
   onFinish: () => void;
 }
 
-const CaptureTargetingScreen: FC<PropTypes> = (props: PropTypes) => {
+const CaptureTargetingScreen = (props: PropTypes) => {
   const { areaColors, targetBounds, onStart, onCancel, onFinish } = props;
 
   const handleMouseEvent = useCallback(

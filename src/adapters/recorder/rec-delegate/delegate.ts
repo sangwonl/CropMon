@@ -234,8 +234,8 @@ const attachAudioStreamForMic = async (stream: MediaStream) => {
     if (tracks.length > 0) {
       tracks.forEach((t: MediaStreamTrack) => stream.addTrack(t));
     }
-  } catch (error) {
-    log.error('no available audio stream found', error);
+  } catch (e) {
+    log.error('no available audio stream found', e);
   }
 
   return stream;

@@ -4,14 +4,14 @@ import {
   RecordQualityMode,
 } from '@domain/models/common';
 
-export interface AppearancesColors {
+export type AppearancesColors = {
   selectingBackground: string;
   selectingText: string;
   countdownBackground: string;
   countdownText: string;
-}
+};
 
-export interface Preferences {
+export type Preferences = {
   initialLoaded: boolean;
   version: string;
   runAtStartup: boolean;
@@ -24,7 +24,7 @@ export interface Preferences {
   outputFormat: OutputFormat;
   captureMode: CaptureMode;
   colors: AppearancesColors;
-}
+};
 
 export const DEFAULT_APPEAR_COLORS: AppearancesColors = {
   selectingBackground: '#3B9F3D',

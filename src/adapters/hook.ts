@@ -12,7 +12,6 @@ import TYPES from '@di/types';
 
 import {
   CaptureMode,
-  CaptureStatus,
   OutputFormat,
 } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
@@ -163,19 +162,19 @@ export default class BuiltinHooks {
     await this.setupInSelectionShortcut(false);
 
     // refresh tray
-    const { status } = args.captureContext;
+    const { captureContext } = args;
     await this.uiDirector.refreshTrayState(
       await this.prefsRepo.fetchUserPreferences(),
       undefined,
-      status === CaptureStatus.IN_PROGRESS
+      captureContext.isInProgress
     );
 
-    if (status === CaptureStatus.IN_PROGRESS) {
+    if (captureContext.isInProgress) {
       this.uiDirector.toggleRecordingTime(true);
     }
 
     // tracking
-    if (status === CaptureStatus.IN_PROGRESS) {
+    if (captureContext.isInProgress) {
       const { target, outputFormat, recordMicrophone, lowQualityMode } =
         args.captureContext;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -186,7 +185,7 @@ export default class BuiltinHooks {
       this.tracker.eventL('capture', 'start-capture', `mic:${String(recordMicrophone)}`);
       this.tracker.eventL('capture', 'start-capture', `lowqual:${String(lowQualityMode)}`);
       this.tracker.view('in-recording');
-    } else if (status === CaptureStatus.ERROR) {
+    } else if (captureContext.isError) {
       this.tracker.eventL('capture', 'start-capture', 'fail');
     }
   };
@@ -212,12 +211,12 @@ export default class BuiltinHooks {
       }, UPDATE_CHECK_DELAY);
     }
 
-    const { status, createdAt, finishedAt } = args.captureContext;
-    if (status === CaptureStatus.FINISHED) {
+    const { captureContext } = args;
+    if (captureContext.isFinished) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const duration = finishedAt! - createdAt;
+      const duration = captureContext.finishedAt! - captureContext.createdAt;
       this.tracker.eventLV('capture', 'finish-capture', 'duration', duration);
-    } else if (status === CaptureStatus.ERROR) {
+    } else if (captureContext.isError) {
       this.tracker.eventL('capture', 'finish-capture', 'fail');
     }
     this.tracker.view('idle');

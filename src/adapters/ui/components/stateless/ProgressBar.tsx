@@ -5,9 +5,9 @@ import React from 'react';
 
 import styles from './ProgressBar.css';
 
-export interface ProgressBarProps {
+export type ProgressBarProps = {
   progress: number;
-}
+};
 
 export const ProgressBar = (props: ProgressBarProps) => {
   const { progress } = props;

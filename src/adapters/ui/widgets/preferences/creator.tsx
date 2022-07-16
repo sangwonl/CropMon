@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { FC, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ipcRenderer } from 'electron';
 
 import { Preferences } from '@domain/models/preferences';
@@ -20,7 +20,7 @@ interface PropTypes {
   initialPrefs: Preferences;
 }
 
-const Wrapper: FC<PropTypes> = (props: PropTypes) => {
+const Wrapper = (props: PropTypes) => {
   const { initialPrefs } = props;
 
   const [readyToShow, setReadyToShow] = useState<boolean>(true);
