@@ -11,6 +11,8 @@ import { UseCase } from '@application/usecases/UseCase';
 import StateManager from '@application/services/ui/state';
 import HookManager from '@application/services/hook';
 
+import { UiDirector } from '@application/ports/director';
+
 interface FinishSelectionUseCaseInput {
   targetBounds: Bounds;
 }
@@ -22,6 +24,7 @@ export default class FinishSelectionUseCase
   constructor(
     // eslint-disable-next-line prettier/prettier
     @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository,
+    @inject(TYPES.UiDirector) private uiDirector: UiDirector,
     private stateManager: StateManager,
     private hookManager: HookManager,
     private captureSession: CaptureSession
@@ -29,6 +32,8 @@ export default class FinishSelectionUseCase
 
   async execute(input: FinishSelectionUseCaseInput) {
     const prefs = await this.prefsRepo.fetchUserPreferences();
+
+    this.uiDirector.enableUserInteraction();
 
     this.stateManager.updateUiState((state: UiState): UiState => {
       return {

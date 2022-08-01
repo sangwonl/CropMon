@@ -1,6 +1,4 @@
-import { inject, injectable } from 'inversify';
-
-import TYPES from '@di/types';
+import { injectable } from 'inversify';
 
 import { DomainException } from '@domain/exceptions';
 import CaptureSession from '@domain/services/capture';
@@ -10,12 +8,10 @@ import { UiState } from '@application/models/ui';
 import StateManager from '@application/services/ui/state';
 import HookManager from '@application/services/hook';
 import CaptureModeManager from '@application/services/ui/mode';
-import { UiDirector } from '@application/ports/director';
 
 @injectable()
 export default class StartCaptureUseCase implements UseCase<void> {
   constructor(
-    @inject(TYPES.UiDirector) private uiDirector: UiDirector,
     private stateManager: StateManager,
     private hookManager: HookManager,
     private captureModeManager: CaptureModeManager,
@@ -41,7 +37,6 @@ export default class StartCaptureUseCase implements UseCase<void> {
   }
 
   private updateUiForRecordingMode() {
-    this.uiDirector.enableRecordingMode();
     this.stateManager.updateUiState((state: UiState): UiState => {
       return {
         ...state,

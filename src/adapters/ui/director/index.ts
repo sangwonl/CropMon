@@ -218,7 +218,7 @@ export default class ElectronUiDirector implements UiDirector {
     }
   }
 
-  enableRecordingMode(): void {
+  enableUserInteraction(): void {
     this.captureOverlay?.ignoreMouseEvents();
     this.captureOverlay?.blur();
   }
