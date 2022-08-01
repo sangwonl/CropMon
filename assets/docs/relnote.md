@@ -1,5 +1,14 @@
 ## Release Notes
 
+### v0.8.0
+
+_2 Aug 2022_
+
+- Enhance capture overlay windows
+- Add tray menu to open folder
+- Fix hang issue when quit app and update
+- Fix some issues when connecting external display
+
 ### v0.7.2
 
 _24 Feb 2022_
