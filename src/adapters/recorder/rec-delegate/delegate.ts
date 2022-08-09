@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable prefer-const */
 
 import fs from 'fs';
 import path from 'path';
-import log from 'electron-log';
+import logger from 'electron-log';
 import { ipcRenderer } from 'electron';
 
 import diContainer from '@di/containers/renderer';
@@ -15,337 +16,320 @@ import { Bounds } from '@domain/models/screen';
 import { PlatformApi } from '@application/ports/platform';
 
 import {
-  IRecordContext,
+  RecordContext,
   TargetSlice,
 } from '@adapters/recorder/rec-delegate/types';
 
 import { getNowAsYYYYMMDDHHmmss } from '@utils/date';
 import { mergeScreenBounds } from '@utils/bounds';
 
-const MEDIA_MIME_TYPE = 'video/webm; codecs=h264,opus';
-// const MEDIA_MIME_TYPE = 'video/webm; codecs=vp8,opus';
-
-const RECORD_TIMESLICE_MS = 100;
-const NUM_CHUNKS_TO_FLUSH = 50;
-const CHUNK_HANLER_INTERVAL = 1000;
-
-let gMediaRecorder: MediaRecorder;
-let gRecordState: 'initial' | 'recording' | 'stopping' | 'stopped' = 'initial';
-let gTempFilePath: string;
-let gRecordedChunks: Blob[] = [];
-let gTotalRecordedChunks = 0;
-let gRecordStoppingTime = Number.MAX_VALUE;
-let gChunkHandler: any;
-
-interface Drawable {
-  videoElem: HTMLVideoElement;
+type Drawable = {
+  videoStream: MediaStream;
   srcBounds: Bounds;
   dstBounds: Bounds;
-}
+};
 
-interface IDrawContext {
+type DrawContext = {
   canvasBounds: Bounds;
   frameRate: number;
   drawables: Drawable[];
-}
+};
 
-const platformApi = diContainer.get<PlatformApi>(TYPES.PlatformApi);
+type RecordState = 'initial' | 'recording' | 'stopping' | 'stopped';
 
-const recorderOpts = (mimeType?: string, videoBitrates?: number) => {
-  const mType = mimeType ?? MEDIA_MIME_TYPE;
-  if (videoBitrates !== undefined) {
+const RECORD_TIMESLICE_MS = 200;
+const NUM_CHUNKS_TO_FLUSH = 50;
+const CHUNK_HANLER_INTERVAL = 1000;
+const MEDIA_MIME_TYPE = 'video/webm; codecs=h264,opus';
+// const MEDIA_MIME_TYPE = 'video/webm; codecs=vp8,opus';
+// const MEDIA_MIME_TYPE = 'video/webm; codecs=vp9,opus';
+
+class MediaRecordDelegatee {
+  private mediaRecorder?: MediaRecorder;
+  private recordState: RecordState = 'initial';
+  private tempFilePath?: string;
+  private recordedChunks: Blob[] = [];
+  private totalRecordedChunks = 0;
+  private chunkHandler?: ReturnType<typeof setInterval>;
+  private tranformWorker: Worker;
+
+  constructor() {
+    this.tranformWorker = new Worker(this.getWorkerPath());
+  }
+
+  start = async (recordCtx: RecordContext) => {
+    const { videoBitrates } = recordCtx;
+
+    const stream = await this.createStreamToRecord(recordCtx);
+    const recOpts = this.recorderOpts(MEDIA_MIME_TYPE, videoBitrates);
+    this.mediaRecorder = new MediaRecorder(stream, recOpts);
+    this.mediaRecorder.onstart = this.handleRecordStart;
+    this.mediaRecorder.ondataavailable = this.handleStreamDataAvailable;
+    this.mediaRecorder.onstop = this.handleRecordStop;
+
+    this.tempFilePath = this.getTempOutputPath();
+    this.ensureTempDirPathExists(this.tempFilePath);
+
+    // this.mediaRecorder?.start(RECORD_TIMESLICE_MS);
+    setTimeout(() => this.mediaRecorder?.start(RECORD_TIMESLICE_MS));
+  };
+
+  stop = () => {
+    if (this.mediaRecorder === undefined) {
+      ipcRenderer.send('recording-failed', {
+        message: 'invalid media recorder state',
+      });
+      return;
+    }
+
+    if (this.totalRecordedChunks === 0) {
+      ipcRenderer.send('recording-failed', {
+        message: 'empty recorded chunks',
+      });
+      return;
+    }
+
+    this.recordState = 'stopping';
+  };
+
+  private recorderOpts(mimeType?: string, videoBitrates?: number) {
+    const mType = mimeType ?? MEDIA_MIME_TYPE;
+    if (videoBitrates !== undefined) {
+      return {
+        mimeType: mType,
+        videoBitsPerSecond: videoBitrates,
+      };
+    }
+    return { mimeType: mType };
+  }
+
+  private getAudioConstraint(): any {
     return {
-      mimeType: mType,
-      videoBitsPerSecond: videoBitrates,
+      audio: true,
     };
   }
-  return { mimeType: mType };
-};
 
-const getTempOutputPath = () => {
-  const fileName = getNowAsYYYYMMDDHHmmss();
-  return path.join(
-    platformApi.getAppPath('temp'),
-    'kropsaurus',
-    'recording',
-    `tmp-${fileName}.webm`
-  );
-};
-
-const ensureTempDirPathExists = (tempPath: string) => {
-  const dirPath = path.dirname(tempPath);
-  if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath, { recursive: true });
-  }
-};
-
-const getAudioConstraint = (): any => {
-  return {
-    audio: true,
-  };
-};
-
-const getVideoConstraint = (srcId: string, bounds: Bounds): any => {
-  return {
-    audio: false,
-    video: {
-      mandatory: {
-        chromeMediaSource: 'desktop',
-        chromeMediaSourceId: srcId,
-        minWidth: bounds.width,
-        minHeight: bounds.height,
-        maxWidth: bounds.width,
-        maxHeight: bounds.height,
+  private getVideoConstraint(srcId: string, bounds: Bounds): any {
+    return {
+      audio: false,
+      video: {
+        mandatory: {
+          chromeMediaSource: 'desktop',
+          chromeMediaSourceId: srcId,
+          minWidth: bounds.width,
+          minHeight: bounds.height,
+          maxWidth: bounds.width,
+          maxHeight: bounds.height,
+        },
       },
-    },
-  };
-};
+    };
+  }
 
-const createDrawContext = async (
-  recordCtx: IRecordContext
-): Promise<IDrawContext> => {
-  const { scaleDownFactor, frameRate, targetSlices } = recordCtx;
+  private createDrawContext = async (
+    recordCtx: RecordContext
+  ): Promise<DrawContext> => {
+    const { scaleDownFactor, frameRate, targetSlices } = recordCtx;
 
-  const wholeTargetBounds = mergeScreenBounds(
-    targetSlices.map(({ targetBounds }) => targetBounds)
-  );
-
-  const canvasBounds = {
-    x: 0,
-    y: 0,
-    width: Math.floor(wholeTargetBounds.width * scaleDownFactor),
-    height: Math.floor(wholeTargetBounds.height * scaleDownFactor),
-  };
-
-  const drawables = await Promise.all(
-    targetSlices.map(
-      async ({
-        mediaSourceId,
-        screenBounds,
-        targetBounds,
-      }: TargetSlice): Promise<Drawable> => {
-        const constraints = getVideoConstraint(mediaSourceId, screenBounds);
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-
-        const videoElem = document.createElement('video') as HTMLVideoElement;
-        videoElem.srcObject = stream;
-        videoElem.play();
-
-        const srcBounds: Bounds = {
-          ...targetBounds,
-          x: targetBounds.x - screenBounds.x,
-          y: targetBounds.y - screenBounds.y,
-        };
-
-        const dstBounds: Bounds = {
-          x: Math.floor(
-            (targetBounds.x - wholeTargetBounds.x) * scaleDownFactor
-          ),
-          y: Math.floor(
-            (targetBounds.y - wholeTargetBounds.y) * scaleDownFactor
-          ),
-          width: Math.floor(targetBounds.width * scaleDownFactor),
-          height: Math.floor(targetBounds.height * scaleDownFactor),
-        };
-
-        return { videoElem, srcBounds, dstBounds };
-      }
-    )
-  );
-
-  return {
-    canvasBounds,
-    frameRate,
-    drawables,
-  };
-};
-
-const createBypassStream = (drawContext: IDrawContext): MediaStream => {
-  const [screenDrawable] = drawContext.drawables;
-  return screenDrawable.videoElem.srcObject as MediaStream;
-};
-
-const createCanvasStream = (drawContext: IDrawContext): MediaStream => {
-  const { canvasBounds, frameRate, drawables } = drawContext;
-
-  // WORKAROUND - completely no evidence for this setting
-  const MAX_FPS = 30;
-  const MIN_FPS = 10;
-  const BASE_PIXELS = 1280 * 720;
-  const pixelRatio = BASE_PIXELS / (canvasBounds.width * canvasBounds.height);
-  const targetFps = Math.floor(frameRate * pixelRatio);
-  const fps = Math.max(Math.min(targetFps, MAX_FPS), MIN_FPS);
-  const frameDuration = Math.floor(1000 / fps);
-
-  const canvasElem = document.createElement('canvas') as any;
-  canvasElem.width = canvasBounds.width;
-  canvasElem.height = canvasBounds.height;
-
-  const canvasCtx = canvasElem.getContext('2d');
-  const canvasStream = canvasElem.captureStream(0);
-  const [canvasTrack] = canvasStream.getVideoTracks();
-
-  let frameElapsed = 0;
-  let prevTime = 0;
-  const renderCapturedToCanvas = () => {
-    const now = performance.now();
-    const dTime = Math.ceil(now - prevTime);
-    frameElapsed += dTime;
-
-    if (dTime >= frameDuration || frameElapsed >= frameDuration) {
-      drawables.forEach((d: any) => {
-        canvasCtx.drawImage(
-          d.videoElem,
-          d.srcBounds.x,
-          d.srcBounds.y,
-          d.srcBounds.width,
-          d.srcBounds.height,
-          d.dstBounds.x,
-          d.dstBounds.y,
-          d.dstBounds.width,
-          d.dstBounds.height
-        );
-      });
-
-      canvasTrack.requestFrame();
-
-      frameElapsed = 0;
-    }
-
-    prevTime = now;
-
-    if (gRecordState !== 'stopped') {
-      requestAnimationFrame(renderCapturedToCanvas);
-    }
-  };
-
-  requestAnimationFrame(renderCapturedToCanvas);
-
-  return canvasStream;
-};
-
-const attachAudioStreamForMic = async (stream: MediaStream) => {
-  try {
-    const audioStream = await navigator.mediaDevices.getUserMedia(
-      getAudioConstraint()
+    const wholeTargetBounds = mergeScreenBounds(
+      targetSlices.map(({ targetBounds }) => targetBounds)
     );
 
-    const tracks = audioStream.getAudioTracks();
-    if (tracks.length > 0) {
-      tracks.forEach((t: MediaStreamTrack) => stream.addTrack(t));
+    const canvasBounds = {
+      x: 0,
+      y: 0,
+      width: Math.floor(wholeTargetBounds.width * scaleDownFactor),
+      height: Math.floor(wholeTargetBounds.height * scaleDownFactor),
+    };
+
+    const sliceToDrawable = async (slice: TargetSlice): Promise<Drawable> => {
+      const { mediaSourceId, screenBounds, targetBounds } = slice;
+
+      const constraints = this.getVideoConstraint(mediaSourceId, screenBounds);
+      const videoStream = await navigator.mediaDevices.getUserMedia(
+        constraints
+      );
+
+      const srcBounds: Bounds = {
+        ...targetBounds,
+        x: targetBounds.x - screenBounds.x,
+        y: targetBounds.y - screenBounds.y,
+      };
+
+      const dstBounds: Bounds = {
+        x: Math.floor((targetBounds.x - wholeTargetBounds.x) * scaleDownFactor),
+        y: Math.floor((targetBounds.y - wholeTargetBounds.y) * scaleDownFactor),
+        width: Math.floor(targetBounds.width * scaleDownFactor),
+        height: Math.floor(targetBounds.height * scaleDownFactor),
+      };
+
+      return { videoStream, srcBounds, dstBounds };
+    };
+
+    const drawables = await Promise.all(targetSlices.map(sliceToDrawable));
+
+    return { canvasBounds, frameRate, drawables };
+  };
+
+  private createBypassStream(drawContext: DrawContext): MediaStream {
+    const [screenDrawable] = drawContext.drawables;
+    return screenDrawable.videoStream;
+  }
+
+  private createTransformStream = (drawContext: DrawContext): MediaStream => {
+    const { canvasBounds } = drawContext;
+
+    const generator = new MediaStreamTrackGenerator({ kind: 'video' });
+    const { writable } = generator;
+
+    const readables = drawContext.drawables.map(({ videoStream }) => {
+      const [track] = videoStream.getVideoTracks();
+      const { readable } = new MediaStreamTrackProcessor({ track });
+      return readable;
+    });
+
+    const boundsList = drawContext.drawables.map(({ srcBounds, dstBounds }) => {
+      return {
+        srcBounds,
+        dstBounds,
+      };
+    });
+
+    const { writable: nullWritable } = new MediaStreamTrackGenerator({
+      kind: 'video',
+    });
+
+    this.tranformWorker.postMessage(
+      { canvasBounds, boundsList, readables, writable, nullWritable },
+      [...readables, writable, nullWritable as any]
+    );
+
+    return new MediaStream([generator]);
+  };
+
+  private attachAudioStreamForMic = async (stream: MediaStream) => {
+    try {
+      const audioStream = await navigator.mediaDevices.getUserMedia(
+        this.getAudioConstraint()
+      );
+
+      const tracks = audioStream.getAudioTracks();
+      if (tracks.length > 0) {
+        tracks.forEach((t: MediaStreamTrack) => stream.addTrack(t));
+      }
+    } catch (e) {
+      logger.error('no available audio stream found', e);
     }
-  } catch (e) {
-    log.error('no available audio stream found', e);
+
+    return stream;
+  };
+
+  private createStreamToRecord = async (
+    recordCtx: RecordContext
+  ): Promise<MediaStream> => {
+    const { outputFormat, recordMicrophone } = recordCtx;
+
+    const drawContext = await this.createDrawContext(recordCtx);
+    const videoStream =
+      recordCtx.captureMode === CaptureMode.SCREEN
+        ? this.createBypassStream(drawContext)
+        : this.createTransformStream(drawContext);
+
+    if (recordMicrophone && outputFormat !== 'gif') {
+      await this.attachAudioStreamForMic(videoStream);
+    }
+
+    return videoStream;
+  };
+
+  private flushChunksToFile = async (numChunks: number) => {
+    const chunks = this.recordedChunks.splice(0, numChunks);
+    if (chunks.length === 0) {
+      return;
+    }
+
+    const blob = new Blob(chunks, { type: MEDIA_MIME_TYPE });
+    const buffer = Buffer.from(await blob.arrayBuffer());
+    await fs.promises.appendFile(this.tempFilePath!, buffer);
+  };
+
+  private handleStreamDataAvailable = (event: BlobEvent) => {
+    this.recordedChunks.push(event.data);
+    this.totalRecordedChunks += 1;
+  };
+
+  private handleRecordedChunks = async () => {
+    switch (this.recordState) {
+      case 'recording':
+        await this.flushChunksToFile(NUM_CHUNKS_TO_FLUSH);
+        break;
+
+      case 'stopping':
+        await this.flushChunksToFile(this.recordedChunks.length);
+        this.mediaRecorder?.stop();
+        break;
+
+      case 'stopped':
+        clearInterval(this.chunkHandler);
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  private handleRecordStart = (_event: Event) => {
+    this.recordState = 'recording';
+
+    this.chunkHandler = setInterval(
+      this.handleRecordedChunks,
+      CHUNK_HANLER_INTERVAL
+    );
+
+    ipcRenderer.send('recording-started', {});
+  };
+
+  private handleRecordStop = (_event: Event) => {
+    this.recordState = 'stopped';
+
+    ipcRenderer.send('recording-file-saved', {
+      tempFilePath: this.tempFilePath,
+    });
+  };
+
+  private getTempOutputPath() {
+    const gPlatformApi = diContainer.get<PlatformApi>(TYPES.PlatformApi);
+    const fileName = getNowAsYYYYMMDDHHmmss();
+    return path.join(
+      gPlatformApi.getAppPath('temp'),
+      'kropsaurus',
+      'recording',
+      `tmp-${fileName}.webm`
+    );
   }
 
-  return stream;
-};
+  private getWorkerPath(): string {
+    if (process.env.NODE_ENV === 'production') {
+      return '../dist/renderer.recorder.worker.prod.js';
+    }
 
-const createStreamToRecord = async (
-  recordCtx: IRecordContext
-): Promise<MediaStream> => {
-  const { outputFormat, recordMicrophone } = recordCtx;
-
-  const drawContext = await createDrawContext(recordCtx);
-  const videoStream =
-    recordCtx.captureMode === CaptureMode.SCREEN
-      ? createBypassStream(drawContext)
-      : createCanvasStream(drawContext);
-
-  if (recordMicrophone && outputFormat !== 'gif') {
-    await attachAudioStreamForMic(videoStream);
+    const port = process.env.PORT || 1212;
+    return `http://localhost:${port}/dist/renderer.recorder.worker.dev.js`;
   }
 
-  return videoStream;
-};
-
-const flushChunksToFile = async (numChunks: number) => {
-  const chunks = gRecordedChunks.splice(0, numChunks);
-  if (chunks.length === 0) {
-    return;
+  private ensureTempDirPathExists(tempPath: string) {
+    const dirPath = path.dirname(tempPath);
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
+    }
   }
+}
 
-  const blob = new Blob(chunks, { type: MEDIA_MIME_TYPE });
-  const buffer = Buffer.from(await blob.arrayBuffer());
-  await fs.promises.appendFile(gTempFilePath, buffer);
-};
-
-const handleStreamDataAvailable = async (event: BlobEvent) => {
-  const LOOSE_TIME = RECORD_TIMESLICE_MS * 2;
-  if (
-    event.data.size > 0 &&
-    gRecordStoppingTime + LOOSE_TIME >= event.timeStamp
-  ) {
-    gRecordedChunks.push(event.data);
-    gTotalRecordedChunks += 1;
-  }
-};
-
-const handleRecordedChunks = async () => {
-  switch (gRecordState) {
-    case 'recording':
-      await flushChunksToFile(NUM_CHUNKS_TO_FLUSH);
-      break;
-
-    case 'stopping':
-      await flushChunksToFile(gRecordedChunks.length);
-      gMediaRecorder.stop();
-      break;
-
-    case 'stopped':
-      clearInterval(gChunkHandler);
-      break;
-
-    default:
-      break;
-  }
-};
-
-const handleRecordStart = (_event: Event) => {
-  gRecordState = 'recording';
-
-  gChunkHandler = setInterval(handleRecordedChunks, CHUNK_HANLER_INTERVAL);
-};
-
-const handleRecordStop = async (_event: Event) => {
-  gRecordState = 'stopped';
-
-  ipcRenderer.send('recording-file-saved', { tempFilePath: gTempFilePath });
-};
+const recorder = new MediaRecordDelegatee();
 
 ipcRenderer.on('start-record', async (_event, data) => {
-  const recordCtx: IRecordContext = data.recordContext;
-  const { videoBitrates } = recordCtx;
-
-  const stream = await createStreamToRecord(recordCtx);
-  const recOpts = recorderOpts(MEDIA_MIME_TYPE, videoBitrates);
-  gMediaRecorder = new MediaRecorder(stream, recOpts);
-  gMediaRecorder.onstart = handleRecordStart;
-  gMediaRecorder.ondataavailable = handleStreamDataAvailable;
-  gMediaRecorder.onstop = handleRecordStop;
-
-  gTempFilePath = getTempOutputPath();
-  ensureTempDirPathExists(gTempFilePath);
-
-  setTimeout(() => gMediaRecorder.start(RECORD_TIMESLICE_MS));
-  ipcRenderer.send('recording-started', {});
+  await recorder.start(data.recordContext);
 });
 
-ipcRenderer.on('stop-record', async (_event, _data) => {
-  if (gMediaRecorder === undefined) {
-    ipcRenderer.send('recording-failed', {
-      message: 'invalid media recorder state',
-    });
-    return;
-  }
-
-  if (gTotalRecordedChunks === 0) {
-    ipcRenderer.send('recording-failed', {
-      message: 'empty recorded chunks',
-    });
-    return;
-  }
-
-  gRecordState = 'stopping';
-  gRecordStoppingTime = performance.now();
+ipcRenderer.on('stop-record', (_event, _data) => {
+  recorder.stop();
 });

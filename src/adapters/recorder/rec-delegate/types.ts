@@ -7,7 +7,7 @@ export type TargetSlice = {
   mediaSourceId: string;
 };
 
-export type IRecordContext = {
+export type RecordContext = {
   captureMode: CaptureMode;
   targetSlices: TargetSlice[];
   outputFormat: OutputFormat;
