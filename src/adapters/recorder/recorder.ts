@@ -19,7 +19,7 @@ import { CaptureContext } from '@domain/models/capture';
 import { ScreenRecorder } from '@domain/services/recorder';
 
 import {
-  IRecordContext,
+  RecordContext,
   TargetSlice,
 } from '@adapters/recorder/rec-delegate/types';
 import RecorderDelegate from '@adapters/recorder/rec-delegate';
@@ -197,7 +197,7 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
 
   private async createRecordContext(
     ctx: CaptureContext
-  ): Promise<IRecordContext | null> {
+  ): Promise<RecordContext | null> {
     const { outputFormat, recordMicrophone } = ctx;
     const {
       mode: captureMode,
@@ -343,7 +343,7 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
     '-i',
     input,
     '-vf',
-    'fps=10,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse',
+    'fps=14,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse',
     '-f',
     'gif',
     output,

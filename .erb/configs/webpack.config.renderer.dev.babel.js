@@ -52,6 +52,11 @@ export default merge(baseConfig, {
       'regenerator-runtime/runtime',
       require.resolve('../../src/adapters/recorder/rec-delegate/delegate.ts'),
     ],
+    'renderer.recorder.worker': [
+      'core-js',
+      'regenerator-runtime/runtime',
+      require.resolve('../../src/adapters/recorder/rec-delegate/worker.ts'),
+    ],
   },
 
   output: {
