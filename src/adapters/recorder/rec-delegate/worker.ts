@@ -2,54 +2,75 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Bounds } from '@domain/models/screen';
+import { alignedBounds } from '@utils/bounds';
 
-const alignBounds = (bounds: Bounds) => ({
-  // WORKAROUND:
-  // Invalid visibleRect issue with not-sample-aligned in plane 1.
-  x: bounds.x % 2 === 0 ? bounds.x : bounds.x + 1,
-  y: bounds.y % 2 === 0 ? bounds.y : bounds.y + 1,
-  width: bounds.x % 2 === 0 ? bounds.width : bounds.width - 1,
-  height: bounds.y % 2 === 0 ? bounds.height : bounds.height - 1,
-});
+function simpleResizeTransform(srcBounds: Bounds): TransformStream {
+  const visibleRect = alignedBounds(srcBounds);
 
-const getTransformProc = (
+  return new TransformStream({
+    transform: async (
+      frame: VideoFrame,
+      controller: TransformStreamDefaultController
+    ) => {
+      const resizedFrame = new VideoFrame(frame as any, { visibleRect });
+      frame.close();
+
+      controller.enqueue(resizedFrame);
+    },
+  });
+}
+
+function resizeAndMergeTransform(
   srcBounds: Bounds,
   dstBounds: Bounds,
   canvasCtx: OffscreenCanvasRenderingContext2D,
   skipEnqueue: boolean
-) => {
-  return async (
-    frame: VideoFrame,
-    controller: TransformStreamDefaultController
-  ) => {
-    const newFrame = new VideoFrame(frame as any, {
-      visibleRect: alignBounds(srcBounds),
-    });
-    frame.close();
+): TransformStream {
+  const visibleRect = alignedBounds(srcBounds);
 
-    canvasCtx.drawImage(
-      newFrame,
-      dstBounds.x,
-      dstBounds.y,
-      dstBounds.width,
-      dstBounds.height
-    );
-    newFrame.close();
+  return new TransformStream({
+    transform: async (
+      frame: VideoFrame,
+      controller: TransformStreamDefaultController
+    ) => {
+      const resizedFrame = new VideoFrame(frame as any, { visibleRect });
+      frame.close();
 
-    if (!skipEnqueue) {
-      controller.enqueue(
-        new VideoFrame(canvasCtx.canvas as any, {
-          timestamp: frame.timestamp!,
-        })
+      canvasCtx.drawImage(
+        resizedFrame,
+        dstBounds.x,
+        dstBounds.y,
+        dstBounds.width,
+        dstBounds.height
       );
-    }
-  };
-};
+      resizedFrame.close();
 
-onmessage = (event) => {
-  const { canvasBounds, boundsList, readables, writable, nullWritable } =
-    event.data;
+      if (!skipEnqueue) {
+        controller.enqueue(
+          new VideoFrame(canvasCtx.canvas as any, {
+            timestamp: frame.timestamp!,
+          })
+        );
+      }
+    },
+  });
+}
 
+function composeSimpleResizePipeline(
+  writable: WritableStream<VideoFrame>,
+  readable: ReadableStream<VideoFrame>,
+  srcBounds: Bounds
+) {
+  readable.pipeThrough(simpleResizeTransform(srcBounds)).pipeTo(writable);
+}
+
+function composeResizeAndMergePipeline(
+  writable: WritableStream<VideoFrame>,
+  nullWritable: WritableStream<VideoFrame>,
+  readables: ReadableStream<VideoFrame>[],
+  boundsList: { srcBounds: Bounds; dstBounds: Bounds }[],
+  canvasBounds: Bounds
+) {
   const canvas = new OffscreenCanvas(canvasBounds.width, canvasBounds.height);
   const canvasCtx = canvas.getContext('2d')!;
 
@@ -60,10 +81,10 @@ onmessage = (event) => {
   // eslint-disable-next-line no-plusplus
   for (let i = 0; i < readables.length - 1; i++) {
     const { srcBounds, dstBounds } = boundsList[i];
-    const transform = getTransformProc(srcBounds, dstBounds, canvasCtx, true);
-
     readables[i]
-      .pipeThrough(new TransformStream({ transform }))
+      .pipeThrough(
+        resizeAndMergeTransform(srcBounds, dstBounds, canvasCtx, true)
+      )
       .pipeTo(nullWritable);
   }
 
@@ -71,9 +92,29 @@ onmessage = (event) => {
   const { srcBounds, dstBounds } = boundsList[lastReadableIdx];
   readables[lastReadableIdx]
     .pipeThrough(
-      new TransformStream({
-        transform: getTransformProc(srcBounds, dstBounds, canvasCtx, false),
-      })
+      resizeAndMergeTransform(srcBounds, dstBounds, canvasCtx, false)
     )
     .pipeTo(writable);
+}
+
+onmessage = (event) => {
+  const { canvasBounds, boundsList, readables, writable, nullWritable } =
+    event.data;
+
+  // simple resize 왜 안되냐..
+  // if (readables.length === 1) {
+  //   composeSimpleResizePipeline(
+  //     writable,
+  //     readables[0],
+  //     boundsList[0].srcBounds
+  //   );
+  // } else {
+  composeResizeAndMergePipeline(
+    writable,
+    nullWritable,
+    readables,
+    boundsList,
+    canvasBounds
+  );
+  // }
 };
