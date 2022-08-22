@@ -4,31 +4,31 @@ import { Bounds, Point, Screen } from '@domain/models/screen';
 
 export const MIN_REQUIRED_SIZE = 16; // limited by code macroblock size
 
-export const emptyBounds = (): Bounds => {
+export function emptyBounds(): Bounds {
   return {
     x: 0,
     y: 0,
     width: 0,
     height: 0,
   };
-};
+}
 
-export const isEmptyBounds = (bounds?: Bounds | null): boolean => {
+export function isEmptyBounds(bounds?: Bounds | null): boolean {
   return (
     bounds === undefined ||
     bounds === null ||
     bounds.width === 0 ||
     bounds.height === 0
   );
-};
+}
 
-export const isCapturableBounds = (bounds: Bounds): boolean => {
+export function isCapturableBounds(bounds: Bounds): boolean {
   return (
     bounds.width >= MIN_REQUIRED_SIZE && bounds.height >= MIN_REQUIRED_SIZE
   );
-};
+}
 
-export const getIntersection = (a: Bounds, b: Bounds): Bounds | undefined => {
+export function getIntersection(a: Bounds, b: Bounds): Bounds | undefined {
   const left = Math.max(a.x, b.x);
   const right = Math.min(a.x + a.width, b.x + b.width);
   const top = Math.max(a.y, b.y);
@@ -42,18 +42,18 @@ export const getIntersection = (a: Bounds, b: Bounds): Bounds | undefined => {
     width: right - left,
     height: bottom - top,
   };
-};
+}
 
-export const isPointInsideBounds = (pt: Point, bounds: Bounds): boolean => {
+export function isPointInsideBounds(pt: Point, bounds: Bounds): boolean {
   return (
     bounds.x <= pt.x &&
     pt.x <= bounds.x + bounds.width &&
     bounds.y <= pt.y &&
     pt.y <= bounds.y + bounds.height
   );
-};
+}
 
-export const getAllScreens = (): Screen[] => {
+export function getAllScreens(): Screen[] {
   const primaryDisplay = screen.getPrimaryDisplay();
   return screen
     .getAllDisplays()
@@ -63,13 +63,13 @@ export const getAllScreens = (): Screen[] => {
       scaleFactor,
       isPrimary: id === primaryDisplay.id,
     }));
-};
+}
 
-export const getPrimaryScreenId = (): number => {
+export function getPrimaryScreenId(): number {
   return screen.getPrimaryDisplay().id;
-};
+}
 
-export const mergeScreenBounds = (bounds: Bounds[]): Bounds => {
+export function mergeScreenBounds(bounds: Bounds[]): Bounds {
   let left = Number.MAX_SAFE_INTEGER;
   let top = Number.MAX_SAFE_INTEGER;
   let right = Number.MIN_SAFE_INTEGER;
@@ -88,9 +88,9 @@ export const mergeScreenBounds = (bounds: Bounds[]): Bounds => {
     width: right - left,
     height: bottom - top,
   };
-};
+}
 
-export const getScreenCursorOn = (): Screen => {
+export function getScreenCursorOn(): Screen {
   const cursorPoint = screen.getCursorScreenPoint();
   const screens = getAllScreens();
 
@@ -99,4 +99,15 @@ export const getScreenCursorOn = (): Screen => {
   });
 
   return foundScreen ?? screens[0];
-};
+}
+
+export function alignedBounds(bounds: Bounds) {
+  // NOTE:
+  // Invalid visibleRect issue with not-sample-aligned in plane 1.
+  return {
+    x: bounds.x % 2 === 0 ? bounds.x : bounds.x + 1,
+    y: bounds.y % 2 === 0 ? bounds.y : bounds.y + 1,
+    width: bounds.x % 2 === 0 ? bounds.width : bounds.width - 1,
+    height: bounds.y % 2 === 0 ? bounds.height : bounds.height - 1,
+  };
+}

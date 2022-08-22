@@ -181,7 +181,7 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
     // eslint-disable-next-line no-restricted-syntax
     for (const screen of screens) {
       const intersected = getIntersection(targetBounds, screen.bounds);
-      if (intersected) {
+      if (intersected && !isEmptyBounds(intersected)) {
         const source = this.getSourceByScreenId(screen.id, sources);
         if (source) {
           targetSlices.push({

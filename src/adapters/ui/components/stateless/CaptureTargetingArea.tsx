@@ -10,9 +10,9 @@ import { Bounds, Point } from '@domain/models/screen';
 import { CaptureAreaColors } from '@application/models/ui';
 
 import {
+  emptyBounds,
   isEmptyBounds,
   isCapturableBounds,
-  emptyBounds,
   isPointInsideBounds,
 } from '@utils/bounds';
 
@@ -60,10 +60,10 @@ const getBoundsFromPoint = (startPt?: Point, curPt?: Point): Bounds => {
   }
 
   return {
-    x: 0,
-    y: 0,
-    width: Math.abs(curPt.x - startPt.x),
-    height: Math.abs(curPt.y - startPt.y),
+    x: Math.min(curPt.x, startPt.x),
+    y: Math.min(curPt.y, startPt.y),
+    width: Math.abs(curPt.x - startPt.x) + 1,
+    height: Math.abs(curPt.y - startPt.y) + 1,
   };
 };
 
