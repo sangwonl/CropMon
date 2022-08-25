@@ -287,13 +287,6 @@ const CaptureTargetingArea = (props: PropTypes) => {
   } = props;
 
   const selCtxRef = useRef<AreaSelectionCtx>(initialSelCtx);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.focus();
-    }
-  }, []);
 
   useEffect(() => {
     const mouseDownHandler = (e: MouseEvent): void => {
@@ -325,10 +318,7 @@ const CaptureTargetingArea = (props: PropTypes) => {
   );
 
   return (
-    <div
-      ref={containerRef}
-      className={classNames(styles.wrapper, styles.cursorSelecting)}
-    >
+    <div className={classNames(styles.wrapper)}>
       <>
         <div
           className={classNames(styles.area, {

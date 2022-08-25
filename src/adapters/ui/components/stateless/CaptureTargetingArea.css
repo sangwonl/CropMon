@@ -11,10 +11,6 @@
   display: none;
 }
 
-.cursorSelecting {
-  cursor: crosshair;
-}
-
 .cursorSizeHint {
   position: absolute;
   font-size: 10px;
