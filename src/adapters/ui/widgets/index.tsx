@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { ipcRenderer } from 'electron';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import { WidgetType } from '@adapters/ui/widgets/types';
 import progressDialogCreator from '@adapters/ui/widgets/progressdialog/creator';
@@ -23,8 +24,6 @@ const creators: WidgetCreatorMap = {
 
 ipcRenderer.on('loadWidget', (_event, data) => {
   const { type: widgetType, options } = data;
-  ReactDOM.render(
-    creators[widgetType](options),
-    document.getElementById('root')
-  );
+  const root = createRoot(document.getElementById('root')!);
+  root.render(creators[widgetType](options));
 });
