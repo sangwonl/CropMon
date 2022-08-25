@@ -37,7 +37,10 @@ export default class FinishCaptureUseCase implements UseCase<void> {
 
       this.hookManager.emit('capture-finished', {
         captureContext: finishedCtx,
+        error: !this.captureSession.isFinished(),
       });
+
+      this.captureSession.idle();
     } catch (e) {
       // eslint-disable-next-line no-empty
       if (e instanceof DomainException) {

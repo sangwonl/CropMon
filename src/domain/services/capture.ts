@@ -3,6 +3,7 @@ import { inject, injectable } from 'inversify';
 import TYPES from '@di/types';
 
 import { CaptureContext, CaptureOptions } from '@domain/models/capture';
+import { CaptureStatus } from '@domain/models/common';
 import { PreferencesRepository } from '@domain/repositories/preferences';
 import { ScreenRecorder } from '@domain/services/recorder';
 import {
@@ -14,15 +15,39 @@ import {
 export default class CaptureSession {
   private curCaptureOptions?: CaptureOptions;
   private curCaptureCtx?: CaptureContext;
+  private captureStatus: CaptureStatus;
 
   constructor(
     // eslint-disable-next-line prettier/prettier
     @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository,
     @inject(TYPES.ScreenRecorder) private screenRecorder: ScreenRecorder
-  ) {}
+  ) {
+    this.captureStatus = CaptureStatus.IN_IDLE;
+  }
 
-  prepareCapture(captureOptions: CaptureOptions): void {
+  idle(): void {
+    this.captureStatus = CaptureStatus.IN_IDLE;
+  }
+
+  selecting(): void {
+    this.captureStatus = CaptureStatus.IN_SELECTING;
+  }
+
+  prepare(captureOptions: CaptureOptions): void {
     this.curCaptureOptions = captureOptions;
+    this.captureStatus = CaptureStatus.PREPARED;
+  }
+
+  isIdle(): boolean {
+    return this.captureStatus === CaptureStatus.IN_IDLE;
+  }
+
+  isInProgress(): boolean {
+    return this.captureStatus === CaptureStatus.IN_PROGRESS;
+  }
+
+  isFinished(): boolean {
+    return this.captureStatus === CaptureStatus.FINISHED;
   }
 
   async startCapture(): Promise<CaptureContext> {
@@ -37,18 +62,14 @@ export default class CaptureSession {
 
     try {
       await this.screenRecorder.record(newCaptureCtx);
-      newCaptureCtx.setToInProgress();
+      this.captureStatus = CaptureStatus.IN_PROGRESS;
     } catch (e) {
-      newCaptureCtx.setToError();
+      this.captureStatus = CaptureStatus.ERROR;
     }
 
     this.curCaptureCtx = newCaptureCtx;
 
     return newCaptureCtx;
-  }
-
-  getCurCaptureContext(): CaptureContext | undefined {
-    return this.curCaptureCtx;
   }
 
   async finishCapture(
@@ -57,7 +78,7 @@ export default class CaptureSession {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const curCaptureCtx = this.curCaptureCtx!;
 
-    if (!curCaptureCtx.isInProgress) {
+    if (this.captureStatus !== CaptureStatus.IN_PROGRESS) {
       throw new InvalidCaptureStatusException(
         `Can't finish capturing which is not in progress`
       );
@@ -67,26 +88,20 @@ export default class CaptureSession {
 
     try {
       await this.screenRecorder.finish(curCaptureCtx);
-      curCaptureCtx.setToFinished();
+      curCaptureCtx.finishCapture();
+      this.captureStatus = CaptureStatus.FINISHED;
     } catch (e) {
-      curCaptureCtx.setToError();
+      this.captureStatus = CaptureStatus.ERROR;
     }
 
     return curCaptureCtx;
   }
 
   async shouldRevealRecordedFile(): Promise<boolean> {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const curCaptureCtx = this.curCaptureCtx!;
     const prefs = await this.prefsRepo.fetchUserPreferences();
-    return curCaptureCtx.isFinished && prefs.openRecordHomeWhenRecordCompleted;
-  }
-
-  isCaptureInProgress(): boolean {
-    return this.curCaptureCtx?.isInProgress ?? false;
-  }
-
-  isCaptureFinished(): boolean {
-    return this.curCaptureCtx?.isFinished ?? false;
+    return (
+      this.captureStatus === CaptureStatus.FINISHED &&
+      prefs.openRecordHomeWhenRecordCompleted
+    );
   }
 }

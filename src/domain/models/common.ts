@@ -1,5 +1,7 @@
 export enum CaptureStatus {
-  PREPARED = 1,
+  IN_IDLE = 1,
+  IN_SELECTING,
+  PREPARED,
   IN_PROGRESS,
   FINISHED,
   ERROR,

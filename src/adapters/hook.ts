@@ -162,19 +162,20 @@ export default class BuiltinHooks {
     await this.setupInSelectionShortcut(false);
 
     // refresh tray
-    const { captureContext } = args;
+    const { error } = args;
+
     await this.uiDirector.refreshTrayState(
       await this.prefsRepo.fetchUserPreferences(),
       undefined,
-      captureContext.isInProgress
+      !error
     );
 
-    if (captureContext.isInProgress) {
+    if (!error) {
       this.uiDirector.toggleRecordingTime(true);
     }
 
     // tracking
-    if (captureContext.isInProgress) {
+    if (!error) {
       const { target, outputFormat, recordMicrophone, lowQualityMode } =
         args.captureContext;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -185,7 +186,7 @@ export default class BuiltinHooks {
       this.tracker.eventL('capture', 'start-capture', `mic:${String(recordMicrophone)}`);
       this.tracker.eventL('capture', 'start-capture', `lowqual:${String(lowQualityMode)}`);
       this.tracker.view('in-recording');
-    } else if (captureContext.isError) {
+    } else {
       this.tracker.eventL('capture', 'start-capture', 'fail');
     }
   };
@@ -211,12 +212,13 @@ export default class BuiltinHooks {
       }, UPDATE_CHECK_DELAY);
     }
 
-    const { captureContext } = args;
-    if (captureContext.isFinished) {
+    const { captureContext, error } = args;
+
+    if (!error) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const duration = captureContext.finishedAt! - captureContext.createdAt;
       this.tracker.eventLV('capture', 'finish-capture', 'duration', duration);
-    } else if (captureContext.isError) {
+    } else {
       this.tracker.eventL('capture', 'finish-capture', 'fail');
     }
     this.tracker.view('idle');

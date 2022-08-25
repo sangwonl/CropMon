@@ -17,7 +17,7 @@ export default class ToggleCaptureUseCase implements UseCase<void> {
   ) {}
 
   execute() {
-    if (this.captureSession.isCaptureInProgress()) {
+    if (this.captureSession.isInProgress()) {
       this.finishCaptureUseCase.execute();
     } else {
       this.enableCaptureUseCase.execute();

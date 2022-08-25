@@ -20,9 +20,9 @@ export default class StartSelectionUseCase
   implements UseCase<StartSelectionUseCaseInput>
 {
   constructor(
+    @inject(TYPES.UiDirector) private uiDirector: UiDirector,
     private stateManager: StateManager,
-    private hookManager: HookManager,
-    @inject(TYPES.UiDirector) private uiDirector: UiDirector
+    private hookManager: HookManager
   ) {}
 
   execute(input: StartSelectionUseCaseInput) {

@@ -30,6 +30,7 @@ export type HookArgsPrefsUpdated = {
 
 export type HookArgsCaptureStarting = {
   captureContext: CaptureContext;
+  error: boolean;
 };
 
 export type HookArgsCaptureFinishing = {
@@ -38,6 +39,7 @@ export type HookArgsCaptureFinishing = {
 
 export type HookArgsCaptureFinished = {
   captureContext: CaptureContext;
+  error: boolean;
 };
 
 interface HookArgsBlank {}

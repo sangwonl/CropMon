@@ -56,7 +56,7 @@ export default class FinishSelectionUseCase
 
   private prepareForCapture(state: UiState) {
     const { controlPanel, captureOverlay } = state;
-    this.captureSession.prepareCapture({
+    this.captureSession.prepare({
       target: {
         mode: controlPanel.captureMode,
         bounds: captureOverlay.selectedBounds,

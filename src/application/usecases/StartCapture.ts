@@ -28,6 +28,7 @@ export default class StartCaptureUseCase implements UseCase<void> {
 
       this.hookManager.emit('capture-starting', {
         captureContext: newCaptureCtx,
+        error: !this.captureSession.isInProgress(),
       });
     } catch (e) {
       // eslint-disable-next-line no-empty
@@ -50,7 +51,7 @@ export default class StartCaptureUseCase implements UseCase<void> {
   }
 
   private disableCaptureModeWhenFailToStartRecording() {
-    if (!this.captureSession.isCaptureInProgress()) {
+    if (!this.captureSession.isInProgress()) {
       this.captureModeManager.disableCaptureMode();
     }
   }

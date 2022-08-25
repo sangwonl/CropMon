@@ -1,11 +1,7 @@
 import path from 'path';
 import { getNowAsYYYYMMDDHHmmss, getTimeInSeconds } from '@utils/date';
 
-import {
-  CaptureMode,
-  CaptureStatus,
-  OutputFormat,
-} from '@domain/models/common';
+import { CaptureMode, OutputFormat } from '@domain/models/common';
 import { Bounds } from '@domain/models/screen';
 import { Preferences } from '@domain/models/preferences';
 
@@ -27,8 +23,6 @@ export type CaptureOptions = {
 };
 
 export class CaptureContext {
-  private status: CaptureStatus;
-
   createdAt: number;
   finishedAt?: number;
 
@@ -39,33 +33,11 @@ export class CaptureContext {
     public lowQualityMode: boolean,
     public recordMicrophone: boolean
   ) {
-    this.status = CaptureStatus.PREPARED;
     this.createdAt = getTimeInSeconds();
   }
 
-  get isInProgress(): boolean {
-    return this.status === CaptureStatus.IN_PROGRESS;
-  }
-
-  get isFinished(): boolean {
-    return this.status === CaptureStatus.FINISHED;
-  }
-
-  get isError(): boolean {
-    return this.status === CaptureStatus.ERROR;
-  }
-
-  setToInProgress(): void {
-    this.status = CaptureStatus.IN_PROGRESS;
-  }
-
-  setToFinished(): void {
-    this.status = CaptureStatus.FINISHED;
+  finishCapture(): void {
     this.finishedAt = getTimeInSeconds();
-  }
-
-  setToError(): void {
-    this.status = CaptureStatus.ERROR;
   }
 
   static create(
