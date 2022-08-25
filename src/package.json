@@ -1,7 +1,7 @@
 {
   "name": "kropsaurus",
   "productName": "Kropsaurus",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "appId": "com.pineple.kropsaurus",
   "description": "Simple Screen Recorder",
   "main": "./dist/main.prod.js",

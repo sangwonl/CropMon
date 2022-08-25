@@ -1,8 +1,8 @@
 ## Release Notes
 
-### v0.8.0
+### v0.8.1
 
-_25 Aug 2022_
+_26 Aug 2022_
 
 - Support for Apple Silicon
 - Enhance capture overlay for area selection
