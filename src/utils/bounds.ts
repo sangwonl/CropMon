@@ -107,7 +107,7 @@ export function alignedBounds(bounds: Bounds) {
   return {
     x: bounds.x % 2 === 0 ? bounds.x : bounds.x + 1,
     y: bounds.y % 2 === 0 ? bounds.y : bounds.y + 1,
-    width: bounds.x % 2 === 0 ? bounds.width : bounds.width - 1,
-    height: bounds.y % 2 === 0 ? bounds.height : bounds.height - 1,
+    width: bounds.width % 2 === 0 ? bounds.width : bounds.width - 1,
+    height: bounds.height % 2 === 0 ? bounds.height : bounds.height - 1,
   };
 }
