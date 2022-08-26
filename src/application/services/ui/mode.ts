@@ -38,7 +38,6 @@ export default class CaptureModeManager {
               show: true,
               captureMode,
               outputAsGif: prefs.outputFormat === 'gif',
-              lowQualityMode: prefs.recordQualityMode === 'low',
               microphone: prefs.recordMicrophone,
             },
             captureOverlay: {

@@ -44,10 +44,6 @@ export default class PrefsRepositoryImpl implements PreferencesRepository {
   }
 
   applyRecOptionsToPrefs(prefs: Preferences, recOpts: RecordOptions) {
-    if (recOpts.enableLowQualityMode !== undefined) {
-      prefs.recordQualityMode = recOpts.enableLowQualityMode ? 'low' : 'normal';
-    }
-
     if (recOpts.enableOutputAsGif !== undefined) {
       prefs.outputFormat = recOpts.enableOutputAsGif ? 'gif' : 'mp4';
     }
@@ -60,7 +56,6 @@ export default class PrefsRepositoryImpl implements PreferencesRepository {
   getRecOptionsFromPrefs(prefs: Preferences): RecordOptions {
     return {
       enableOutputAsGif: prefs.outputFormat === 'gif',
-      enableLowQualityMode: prefs.recordQualityMode === 'low',
       enableMicrophone: prefs.recordMicrophone,
     };
   }

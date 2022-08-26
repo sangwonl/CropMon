@@ -75,12 +75,6 @@ export default abstract class AppTray {
     this.dispatcher.openPreferences();
   };
 
-  protected onToggleLowQual = (m: MenuItem) => {
-    this.dispatcher.toggleRecordOptions({
-      enableLowQualityMode: m.checked,
-    });
-  };
-
   protected onToggleOutGif = (m: MenuItem) => {
     this.dispatcher.toggleRecordOptions({
       enableOutputAsGif: m.checked,
@@ -148,9 +142,6 @@ export default abstract class AppTray {
 
     const gifOpt = this.getMenuItemTemplById(recOpts.submenu, 'out-gif');
     gifOpt.checked = recOptions?.enableOutputAsGif ?? false;
-
-    const reduceOpt = this.getMenuItemTemplById(recOpts.submenu, 'low-qual');
-    reduceOpt.checked = recOptions?.enableLowQualityMode ?? false;
 
     // update tray properties
     this.menu = Menu.buildFromTemplate(templ);

@@ -55,7 +55,6 @@ export default class ElectronUiDirector implements UiDirector {
       updatable,
       recording,
       {
-        enableLowQualityMode: prefs.recordQualityMode === 'low',
         enableOutputAsGif: prefs.outputFormat === 'gif',
         enableMicrophone: prefs.recordMicrophone,
       }

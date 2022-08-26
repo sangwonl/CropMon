@@ -50,9 +50,6 @@ export default class ChangeCaptureOptionsUseCase
           outputAsGif:
             options.recordOptions.enableOutputAsGif ??
             prefs.outputFormat === 'gif',
-          lowQualityMode:
-            options.recordOptions.enableLowQualityMode ??
-            prefs.recordQualityMode === 'low',
           microphone:
             options.recordOptions.enableMicrophone ?? prefs.recordMicrophone,
           confirmedToCaptureAsIs: false,

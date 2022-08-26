@@ -64,7 +64,6 @@ export default class FinishSelectionUseCase
       },
       recordOptions: {
         enableOutputAsGif: controlPanel.outputAsGif,
-        enableLowQualityMode: controlPanel.lowQualityMode,
         enableMicrophone: controlPanel.microphone,
       },
     });

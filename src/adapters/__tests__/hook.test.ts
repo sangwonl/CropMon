@@ -15,7 +15,6 @@ describe('HookManager', () => {
     openRecordHomeWhenRecordCompleted: true,
     showCountdown: false,
     recordMicrophone: false,
-    recordQualityMode: 'normal',
     outputFormat: 'mp4',
     captureMode: CaptureMode.AREA,
     colors: {

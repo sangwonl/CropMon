@@ -13,7 +13,6 @@ export type CaptureTarget = {
 
 export type RecordOptions = {
   enableOutputAsGif?: boolean;
-  enableLowQualityMode?: boolean;
   enableMicrophone?: boolean;
 };
 
@@ -30,7 +29,6 @@ export class CaptureContext {
     public target: CaptureTarget,
     public outputPath: string,
     public outputFormat: OutputFormat,
-    public lowQualityMode: boolean,
     public recordMicrophone: boolean
   ) {
     this.createdAt = getTimeInSeconds();
@@ -55,7 +53,6 @@ export class CaptureContext {
       target,
       output,
       recordOptions.enableOutputAsGif ? 'gif' : 'mp4',
-      recordOptions.enableLowQualityMode ?? false,
       recordOptions.enableMicrophone ?? false
     );
   }

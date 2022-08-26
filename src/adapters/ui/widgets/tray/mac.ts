@@ -50,12 +50,6 @@ export default class MacAppTray extends AppTray {
         label: 'Options',
         submenu: [
           {
-            id: 'low-qual',
-            type: 'checkbox',
-            label: 'Low Quality Mode',
-            click: this.onToggleLowQual,
-          },
-          {
             id: 'out-gif',
             type: 'checkbox',
             label: 'Output as GIF',

@@ -11,7 +11,6 @@ export type ControlPanel = {
   show: boolean;
   captureMode: CaptureMode;
   outputAsGif: boolean;
-  lowQualityMode: boolean;
   microphone: boolean;
   confirmedToCaptureAsIs: boolean;
 };
@@ -46,7 +45,6 @@ export const INITIAL_UI_STATE: UiState = {
   controlPanel: {
     show: false,
     captureMode: CaptureMode.AREA,
-    lowQualityMode: false,
     microphone: false,
     outputAsGif: false,
     confirmedToCaptureAsIs: false,
