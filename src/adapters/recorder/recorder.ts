@@ -254,34 +254,20 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
     outputFormat: OutputFormat,
     enableMic: boolean
   ) {
-    await this.postProcessWithFFmpeg(
-      tempPath,
-      outputPath,
-      outputFormat,
-      enableMic
-    );
-  }
-
-  private async postProcessWithFFmpeg(
-    tempPath: string,
-    outputPath: string,
-    outputFormat: OutputFormat,
-    enableMic: boolean
-  ) {
     const memInputName = path.basename(tempPath);
     const memOutputName = path.basename(outputPath);
+
+    const ffmpegRunArgs = this.chooseFFmpegArgs(
+      outputFormat,
+      enableMic,
+      memInputName,
+      memOutputName
+    );
 
     try {
       this.ffmpeg?.FS('writeFile', memInputName, await fetchFile(tempPath));
 
-      await this.ffmpeg?.run(
-        ...this.chooseFFmpegArgs(
-          outputFormat,
-          enableMic,
-          memInputName,
-          memOutputName
-        )
-      );
+      await this.ffmpeg?.run(...ffmpegRunArgs);
 
       const outStream = this.ffmpeg?.FS('readFile', memOutputName);
       if (outStream) {
