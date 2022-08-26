@@ -13,6 +13,4 @@ export enum CaptureMode {
   SCREEN = 'screen',
 }
 
-export type RecordQualityMode = 'low' | 'normal';
-
 export type OutputFormat = 'mp4' | 'webm' | 'gif';

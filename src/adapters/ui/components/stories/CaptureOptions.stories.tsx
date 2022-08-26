@@ -23,7 +23,6 @@ const Template: Story<CaptureOptionsProps> = () => {
   const [recOpts, setRecOpts] = useState<RecordOptions>({
     enableOutputAsGif: false,
     enableMicrophone: false,
-    enableLowQualityMode: false,
   });
 
   return (

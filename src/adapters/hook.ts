@@ -176,7 +176,7 @@ export default class BuiltinHooks {
 
     // tracking
     if (!error) {
-      const { target, outputFormat, recordMicrophone, lowQualityMode } =
+      const { target, outputFormat, recordMicrophone } =
         args.captureContext;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const { width, height } = target.bounds!;
@@ -184,7 +184,6 @@ export default class BuiltinHooks {
       this.tracker.eventL('capture', 'start-capture', `area:${width}x${height}`);
       this.tracker.eventL('capture', 'start-capture', `outfmt:${outputFormat}`);
       this.tracker.eventL('capture', 'start-capture', `mic:${String(recordMicrophone)}`);
-      this.tracker.eventL('capture', 'start-capture', `lowqual:${String(lowQualityMode)}`);
       this.tracker.view('in-recording');
     } else {
       this.tracker.eventL('capture', 'start-capture', 'fail');

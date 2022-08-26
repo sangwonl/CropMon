@@ -28,9 +28,6 @@ import { isProduction } from '@utils/process';
 import { getAllScreens, getIntersection, isEmptyBounds } from '@utils/bounds';
 
 const FRAMERATE = 30;
-const FRAMERATE_LOW = 30;
-const VIDEO_BITRATES_LOW = 850000;
-const SCALE_DOWN_FACTOR_LOW = 0.65;
 
 @injectable()
 export default class ElectronScreenRecorder implements ScreenRecorder {
@@ -219,15 +216,8 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
       return null;
     }
 
-    let scaleDownFactor = 1.0;
-    let frameRate = FRAMERATE;
-    let videoBitrates;
-
-    if (ctx.lowQualityMode) {
-      scaleDownFactor *= SCALE_DOWN_FACTOR_LOW;
-      frameRate = FRAMERATE_LOW;
-      videoBitrates = VIDEO_BITRATES_LOW;
-    }
+    const scaleDownFactor = 1.0;
+    const frameRate = FRAMERATE;
 
     return {
       captureMode,
@@ -236,7 +226,6 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
       recordMicrophone,
       frameRate,
       scaleDownFactor,
-      videoBitrates,
     };
   }
 

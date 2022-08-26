@@ -134,8 +134,6 @@ const CaptureOverlay = (props: PropTypes) => {
         recordOptions: {
           enableOutputAsGif:
             recOpts?.enableOutputAsGif ?? controlPanel.outputAsGif,
-          enableLowQualityMode:
-            recOpts?.enableLowQualityMode ?? controlPanel.lowQualityMode,
           enableMicrophone:
             recOpts?.enableMicrophone ?? controlPanel.microphone,
         },
@@ -260,7 +258,6 @@ const CaptureOverlay = (props: PropTypes) => {
             captureMode={controlPanel.captureMode}
             recordOptions={{
               enableOutputAsGif: controlPanel.outputAsGif,
-              enableLowQualityMode: controlPanel.lowQualityMode,
               enableMicrophone: controlPanel.microphone,
             }}
             onCaptureModeChange={onCaptureModeChange}

@@ -1,6 +1,6 @@
 ## Release Notes
 
-### v0.8.1
+### v0.8.3
 
 _26 Aug 2022_
 
@@ -8,6 +8,7 @@ _26 Aug 2022_
 - Enhance capture overlay for area selection
 - Enhance area-mode recording performance
 - Add tray menu to open folder
+- Deprecate low quality mode
 - Fix hang issue when quit app and update
 - Fix some issues when connecting external display
 

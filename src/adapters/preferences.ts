@@ -2,11 +2,7 @@ import { injectable } from 'inversify';
 import { app } from 'electron';
 import Store from 'electron-store';
 
-import {
-  CaptureMode,
-  OutputFormat,
-  RecordQualityMode,
-} from '@domain/models/common';
+import { CaptureMode, OutputFormat } from '@domain/models/common';
 import {
   Preferences,
   AppearancesColors,
@@ -61,10 +57,6 @@ export default class ElectronPreferencesStore implements PreferencesStore {
               true
             ) as boolean,
             recordMicrophone: store.get('recordMicrophone', false) as boolean,
-            recordQualityMode: store.get(
-              'recordQualityMode',
-              'normal'
-            ) as RecordQualityMode,
             outputFormat: store.get('outputFormat', 'mp4') as OutputFormat,
             captureMode: CaptureMode.AREA, // newly added on 0.7.0
             colors: DEFAULT_APPEAR_COLORS,
@@ -79,7 +71,6 @@ export default class ElectronPreferencesStore implements PreferencesStore {
             curPrefs.openRecordHomeWhenRecordCompleted
           );
           store.set(PREFS_RECORDING_MICROPHONE, curPrefs.recordMicrophone);
-          store.set(PREFS_RECORDING_QUALITYMODE, curPrefs.recordQualityMode);
           store.set(PREFS_RECORDING_OUTPUTFORMAT, curPrefs.outputFormat);
 
           store.delete('runAtStartup');
@@ -87,7 +78,6 @@ export default class ElectronPreferencesStore implements PreferencesStore {
           store.delete('recordHomeDir');
           store.delete('openRecordHomeDirWhenRecordCompleted');
           store.delete('recordMicrophone');
-          store.delete('recordQualityMode');
           store.delete('outputFormat');
         },
         '0.6.5': (store) => {
@@ -110,6 +100,9 @@ export default class ElectronPreferencesStore implements PreferencesStore {
         },
         '0.7.0': (store) => {
           store.set(PREFS_RECORDING_CAPTUREMODE, CaptureMode.AREA);
+        },
+        '0.8.3': (store) => {
+          store.delete(PREFS_RECORDING_QUALITYMODE);
         },
       },
     });
@@ -138,7 +131,6 @@ export default class ElectronPreferencesStore implements PreferencesStore {
     );
     this.store.set(PREFS_GENERAL_SHOWCOUNTDOWN, prefs.showCountdown);
     this.store.set(PREFS_RECORDING_MICROPHONE, prefs.recordMicrophone);
-    this.store.set(PREFS_RECORDING_QUALITYMODE, prefs.recordQualityMode);
     this.store.set(PREFS_RECORDING_OUTPUTFORMAT, prefs.outputFormat);
     this.store.set(PREFS_RECORDING_CAPTUREMODE, prefs.captureMode);
     this.store.set(
@@ -166,7 +158,6 @@ export default class ElectronPreferencesStore implements PreferencesStore {
       openRecordHomeWhenRecordCompleted: true,
       showCountdown: true,
       recordMicrophone: false,
-      recordQualityMode: 'normal',
       outputFormat: 'mp4',
       captureMode: CaptureMode.AREA,
       colors: DEFAULT_APPEAR_COLORS,
@@ -216,10 +207,6 @@ export default class ElectronPreferencesStore implements PreferencesStore {
         PREFS_RECORDING_MICROPHONE,
         false
       ) as boolean,
-      recordQualityMode: this.store.get(
-        PREFS_RECORDING_QUALITYMODE,
-        'normal'
-      ) as RecordQualityMode,
       outputFormat: this.store.get(
         PREFS_RECORDING_OUTPUTFORMAT,
         'mp4'

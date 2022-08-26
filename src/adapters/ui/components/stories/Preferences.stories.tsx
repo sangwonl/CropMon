@@ -39,7 +39,6 @@ Default.args = {
     shortcut: 'Win + Shift + E',
     showCountdown: true,
     recordMicrophone: false,
-    recordQualityMode: 'normal',
     outputFormat: 'mp4',
     captureMode: CaptureMode.AREA,
     colors: {
