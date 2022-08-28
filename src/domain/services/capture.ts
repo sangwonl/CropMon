@@ -1,4 +1,5 @@
 import { inject, injectable } from 'inversify';
+import logger from 'electron-log';
 
 import TYPES from '@di/types';
 
@@ -65,6 +66,7 @@ export default class CaptureSession {
       this.captureStatus = CaptureStatus.IN_PROGRESS;
     } catch (e) {
       this.captureStatus = CaptureStatus.ERROR;
+      logger.info(e);
     }
 
     this.curCaptureCtx = newCaptureCtx;

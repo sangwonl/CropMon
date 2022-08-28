@@ -3,6 +3,7 @@
 
 import { injectable } from 'inversify';
 import { app, desktopCapturer, ipcMain, systemPreferences } from 'electron';
+import logger from 'electron-log';
 
 import { Bounds, Screen } from '@domain/models/screen';
 import { CaptureContext } from '@domain/models/capture';
@@ -26,7 +27,9 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
     app
       .whenReady()
       .then(() => this.renewBuildRenderer())
-      .catch((_e) => {});
+      .catch((e) => {
+        logger.info(e);
+      });
   }
 
   renewBuildRenderer() {

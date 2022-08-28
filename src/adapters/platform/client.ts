@@ -8,7 +8,7 @@ import { PlatformApi, PathType } from '@application/ports/platform';
 @injectable()
 export default class PlatformApiClient implements PlatformApi {
   getPath(name: PathType): string {
-    return ipcRenderer.sendSync('getAppPath', name);
+    return ipcRenderer.sendSync('getPath', name);
   }
 
   getCursorScreenPoint(): Point {

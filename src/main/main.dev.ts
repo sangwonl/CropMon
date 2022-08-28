@@ -33,6 +33,6 @@ const instanceLock = app.requestSingleInstanceLock();
 if (!instanceLock) {
   app.quit();
 } else {
-  app.commandLine.appendSwitch('enable-features', 'SharedArrayBuffer');
+  // app.commandLine.appendSwitch('enable-features', 'SharedArrayBuffer');
   app.whenReady().then(start).catch(log.error);
 }
