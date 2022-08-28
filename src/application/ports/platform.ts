@@ -4,7 +4,7 @@ export type PathType =
   | 'home'
   | 'appData'
   | 'userData'
-  | 'cache'
+  | 'sessionData'
   | 'temp'
   | 'exe'
   | 'module'
@@ -16,9 +16,10 @@ export type PathType =
   | 'videos'
   | 'recent'
   | 'logs'
-  | 'crashDumps';
+  | 'crashDumps'
+  | 'app'; // custom
 
 export interface PlatformApi {
-  getAppPath(name: PathType): string;
+  getPath(name: PathType): string;
   getCursorScreenPoint(): Point;
 }

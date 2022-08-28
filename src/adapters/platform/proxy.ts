@@ -11,7 +11,7 @@ import { isMac } from '@utils/process';
 export default class PlatformApiProxy implements PlatformApi {
   constructor() {
     ipcMain.on('getAppPath', (event, name) => {
-      event.returnValue = this.getAppPath(name);
+      event.returnValue = this.getPath(name);
     });
 
     ipcMain.on('getCursorScreenPoint', (event) => {
@@ -19,7 +19,10 @@ export default class PlatformApiProxy implements PlatformApi {
     });
   }
 
-  getAppPath(name: PathType): string {
+  getPath(name: PathType): string {
+    if (name) {
+      return app.getAppPath();
+    }
     return app.getPath(name);
   }
 
