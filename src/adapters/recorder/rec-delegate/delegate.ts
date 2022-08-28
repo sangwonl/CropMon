@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable prefer-const */
@@ -6,11 +7,17 @@ import fs from 'fs';
 import path from 'path';
 import logger from 'electron-log';
 import { ipcRenderer } from 'electron';
+import {
+  createFFmpeg,
+  CreateFFmpegOptions,
+  fetchFile,
+  FFmpeg,
+} from '@ffmpeg/ffmpeg';
 
 import diContainer from '@di/containers/renderer';
 import TYPES from '@di/types';
 
-import { CaptureMode } from '@domain/models/common';
+import { CaptureMode, OutputFormat } from '@domain/models/common';
 import { Bounds } from '@domain/models/screen';
 
 import { PlatformApi } from '@application/ports/platform';
@@ -22,6 +29,7 @@ import {
 
 import { getNowAsYYYYMMDDHHmmss } from '@utils/date';
 import { mergeScreenBounds } from '@utils/bounds';
+import { isProduction } from '@utils/process';
 
 type Drawable = {
   videoStream: MediaStream;
@@ -43,6 +51,8 @@ const CHUNK_HANLER_INTERVAL = 1000;
 const MEDIA_MIME_TYPE = 'video/webm; codecs=h264,opus';
 // const MEDIA_MIME_TYPE = 'video/webm; codecs=vp8,opus';
 // const MEDIA_MIME_TYPE = 'video/webm; codecs=vp9,opus';
+
+const gPlatformApi = diContainer.get<PlatformApi>(TYPES.PlatformApi);
 
 class MediaRecordDelegatee {
   private mediaRecorder?: MediaRecorder;
@@ -291,16 +301,15 @@ class MediaRecordDelegatee {
   private handleRecordStop = (_event: Event) => {
     this.recordState = 'stopped';
 
-    ipcRenderer.send('recording-file-saved', {
+    ipcRenderer.send('recording-done', {
       tempFilePath: this.tempFilePath,
     });
   };
 
   private getTempOutputPath() {
-    const gPlatformApi = diContainer.get<PlatformApi>(TYPES.PlatformApi);
     const fileName = getNowAsYYYYMMDDHHmmss();
     return path.join(
-      gPlatformApi.getAppPath('temp'),
+      gPlatformApi.getPath('temp'),
       'kropsaurus',
       'recording',
       `tmp-${fileName}.webm`
@@ -324,7 +333,115 @@ class MediaRecordDelegatee {
   }
 }
 
+class PostProcessorDelegate {
+  ffmpeg: FFmpeg;
+
+  constructor() {
+    this.ffmpeg = createFFmpeg(this.ffmpegOptions());
+    this.ffmpeg.load();
+  }
+
+  private ffmpegOptions() {
+    const ffmpegOptions: CreateFFmpegOptions = {
+      log: true,
+      logger: ({ message }) => logger.debug(message),
+    };
+
+    if (isProduction()) {
+      const appPath = gPlatformApi.getPath('app');
+      ffmpegOptions.corePath = path.join(
+        appPath,
+        '..',
+        'ffmpegwasm-core',
+        'ffmpeg-core.js'
+      );
+    }
+
+    return ffmpegOptions;
+  }
+
+  async postProcess(
+    tempPath: string,
+    outputPath: string,
+    outputFormat: OutputFormat,
+    enableMic: boolean
+  ) {
+    const memInputName = path.basename(tempPath);
+    const memOutputName = path.basename(outputPath);
+
+    const ffmpegRunArgs = this.chooseFFmpegArgs(
+      outputFormat,
+      enableMic,
+      memInputName,
+      memOutputName
+    );
+
+    try {
+      this.ffmpeg.FS('writeFile', memInputName, await fetchFile(tempPath));
+
+      await this.ffmpeg.run(...ffmpegRunArgs);
+
+      const outStream = this.ffmpeg.FS('readFile', memOutputName);
+      if (outStream) {
+        await fs.promises.writeFile(outputPath, outStream);
+      }
+    } catch (e) {
+      logger.error(e);
+    } finally {
+      fs.unlink(tempPath, () => {});
+    }
+  }
+
+  private chooseFFmpegArgs = (
+    outFmt: OutputFormat,
+    mic: boolean,
+    input: string,
+    output: string
+  ): string[] => {
+    if (outFmt === 'gif') {
+      return this.ffmpegArgsForGif(input, output);
+    }
+    if (mic) {
+      return this.ffmpegArgsForMic(input, output);
+    }
+    return this.ffmpegArgsForNoMic(input, output);
+  };
+
+  private ffmpegArgsForNoMic = (input: string, output: string): string[] => [
+    '-i',
+    input,
+    '-c:v',
+    'copy',
+    output,
+  ];
+
+  private ffmpegArgsForMic = (input: string, output: string): string[] => [
+    '-i',
+    input,
+    '-c:v',
+    'copy',
+    '-c:a',
+    'aac',
+    output,
+  ];
+
+  // https://superuser.com/questions/556029/how-do-i-convert-a-video-to-gif-using-ffmpeg-with-reasonable-quality
+  private ffmpegArgsForGif = (input: string, output: string): string[] => [
+    '-i',
+    input,
+    // WORKAROUND: limit gif time to avoid OOM from MEMFS usage
+    '-t',
+    '10',
+    '-vf',
+    'fps=14,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse',
+    '-f',
+    'gif',
+    output,
+  ];
+}
+
 const recorder = new MediaRecordDelegatee();
+const postProc = new PostProcessorDelegate();
 
 ipcRenderer.on('start-record', async (_event, data) => {
   await recorder.start(data.recordContext);
@@ -332,4 +449,10 @@ ipcRenderer.on('start-record', async (_event, data) => {
 
 ipcRenderer.on('stop-record', (_event, _data) => {
   recorder.stop();
+});
+
+ipcRenderer.on('start-post-process', async (_event, data) => {
+  const { tempPath, outputPath, outputFormat, enableMic } = data;
+  await postProc.postProcess(tempPath, outputPath, outputFormat, enableMic);
+  ipcRenderer.send('post-process-done');
 });

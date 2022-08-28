@@ -7,7 +7,7 @@ import { PlatformApi, PathType } from '@application/ports/platform';
 
 @injectable()
 export default class PlatformApiClient implements PlatformApi {
-  getAppPath(name: PathType): string {
+  getPath(name: PathType): string {
     return ipcRenderer.sendSync('getAppPath', name);
   }
 

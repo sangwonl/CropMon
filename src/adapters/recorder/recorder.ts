@@ -3,17 +3,7 @@
 
 import { injectable } from 'inversify';
 import { app, desktopCapturer, ipcMain, systemPreferences } from 'electron';
-import fs from 'fs';
-import path from 'path';
-import log from 'electron-log';
-import {
-  createFFmpeg,
-  CreateFFmpegOptions,
-  fetchFile,
-  FFmpeg,
-} from '@ffmpeg/ffmpeg';
 
-import { OutputFormat } from '@domain/models/common';
 import { Bounds, Screen } from '@domain/models/screen';
 import { CaptureContext } from '@domain/models/capture';
 import { ScreenRecorder } from '@domain/services/recorder';
@@ -24,19 +14,15 @@ import {
 } from '@adapters/recorder/rec-delegate/types';
 import RecorderDelegate from '@adapters/recorder/rec-delegate';
 
-import { isProduction } from '@utils/process';
 import { getAllScreens, getIntersection, isEmptyBounds } from '@utils/bounds';
 
 const FRAMERATE = 30;
 
 @injectable()
 export default class ElectronScreenRecorder implements ScreenRecorder {
-  ffmpeg?: FFmpeg;
   delegate?: RecorderDelegate;
 
   constructor() {
-    this.initializeFFmpeg();
-
     app
       .whenReady()
       .then(() => this.renewBuildRenderer())
@@ -93,14 +79,16 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
     const { outputPath, outputFormat, recordMicrophone: enableMic } = ctx;
 
     return new Promise((resolve, reject) => {
-      const onRecordingFileSaved = async (_event: any, data: any) => {
-        await this.postProcess(
-          data.tempFilePath,
+      const onRecordingDone = async (_event: any, data: any) => {
+        this.delegate?.webContents.send('start-post-process', {
+          tempPath: data.tempFilePath,
           outputPath,
           outputFormat,
-          enableMic
-        );
+          enableMic,
+        });
+      };
 
+      const onPostProcessDone = async () => {
         clearIpcListeners();
         resolve();
         this.renewBuildRenderer();
@@ -113,13 +101,15 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
       };
 
       const setupIpcListeners = () => {
-        ipcMain.on('recording-file-saved', onRecordingFileSaved);
+        ipcMain.on('recording-done', onRecordingDone);
         ipcMain.on('recording-failed', onRecordingFailed);
+        ipcMain.on('post-process-done', onPostProcessDone);
       };
 
       const clearIpcListeners = () => {
-        ipcMain.off('recording-file-saved', onRecordingFileSaved);
+        ipcMain.off('recording-done', onRecordingDone);
         ipcMain.off('recording-failed', onRecordingFailed);
+        ipcMain.off('post-process-done', onPostProcessDone);
       };
 
       setupIpcListeners();
@@ -228,99 +218,4 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
       scaleDownFactor,
     };
   }
-
-  private initializeFFmpeg() {
-    const ffmpegOptions: CreateFFmpegOptions = {
-      log: true,
-      logger: ({ message }) => log.debug(message),
-    };
-
-    if (isProduction()) {
-      ffmpegOptions.corePath = path.join(
-        app.getAppPath(),
-        '..',
-        'ffmpegwasm-core',
-        'ffmpeg-core.js'
-      );
-    }
-
-    this.ffmpeg = createFFmpeg(ffmpegOptions);
-    this.ffmpeg?.load();
-  }
-
-  private async postProcess(
-    tempPath: string,
-    outputPath: string,
-    outputFormat: OutputFormat,
-    enableMic: boolean
-  ) {
-    const memInputName = path.basename(tempPath);
-    const memOutputName = path.basename(outputPath);
-
-    const ffmpegRunArgs = this.chooseFFmpegArgs(
-      outputFormat,
-      enableMic,
-      memInputName,
-      memOutputName
-    );
-
-    try {
-      this.ffmpeg?.FS('writeFile', memInputName, await fetchFile(tempPath));
-
-      await this.ffmpeg?.run(...ffmpegRunArgs);
-
-      const outStream = this.ffmpeg?.FS('readFile', memOutputName);
-      if (outStream) {
-        await fs.promises.writeFile(outputPath, outStream);
-      }
-    } catch (e) {
-      log.error(e);
-    } finally {
-      fs.unlink(tempPath, () => {});
-    }
-  }
-
-  private chooseFFmpegArgs = (
-    outFmt: OutputFormat,
-    mic: boolean,
-    input: string,
-    output: string
-  ): string[] => {
-    if (outFmt === 'gif') {
-      return this.ffmpegArgsForGif(input, output);
-    }
-    if (mic) {
-      return this.ffmpegArgsForMic(input, output);
-    }
-    return this.ffmpegArgsForNoMic(input, output);
-  };
-
-  private ffmpegArgsForNoMic = (input: string, output: string): string[] => [
-    '-i',
-    input,
-    '-c:v',
-    'copy',
-    output,
-  ];
-
-  private ffmpegArgsForMic = (input: string, output: string): string[] => [
-    '-i',
-    input,
-    '-c:v',
-    'copy',
-    '-c:a',
-    'aac',
-    output,
-  ];
-
-  // https://superuser.com/questions/556029/how-do-i-convert-a-video-to-gif-using-ffmpeg-with-reasonable-quality
-  private ffmpegArgsForGif = (input: string, output: string): string[] => [
-    '-i',
-    input,
-    '-vf',
-    'fps=14,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse',
-    '-f',
-    'gif',
-    output,
-  ];
 }
