@@ -10,7 +10,7 @@ import { isMac } from '@utils/process';
 @injectable()
 export default class PlatformApiProxy implements PlatformApi {
   constructor() {
-    ipcMain.on('getAppPath', (event, name) => {
+    ipcMain.on('getPath', (event, name) => {
       event.returnValue = this.getPath(name);
     });
 
@@ -20,7 +20,7 @@ export default class PlatformApiProxy implements PlatformApi {
   }
 
   getPath(name: PathType): string {
-    if (name) {
+    if (name === 'app') {
       return app.getAppPath();
     }
     return app.getPath(name);

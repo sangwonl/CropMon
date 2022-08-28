@@ -3,16 +3,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable prefer-const */
 
+import os from 'os';
 import fs from 'fs';
 import path from 'path';
 import logger from 'electron-log';
 import { ipcRenderer } from 'electron';
-import {
-  createFFmpeg,
-  CreateFFmpegOptions,
-  fetchFile,
-  FFmpeg,
-} from '@ffmpeg/ffmpeg';
+import ffmpeg from 'fluent-ffmpeg';
 
 import diContainer from '@di/containers/renderer';
 import TYPES from '@di/types';
@@ -29,7 +25,7 @@ import {
 
 import { getNowAsYYYYMMDDHHmmss } from '@utils/date';
 import { mergeScreenBounds } from '@utils/bounds';
-import { isProduction } from '@utils/process';
+import { isProduction, isWin } from '@utils/process';
 
 type Drawable = {
   videoStream: MediaStream;
@@ -317,7 +313,7 @@ class MediaRecordDelegatee {
   }
 
   private getWorkerPath(): string {
-    if (process.env.NODE_ENV === 'production') {
+    if (isProduction()) {
       return '../dist/renderer.recorder.worker.prod.js';
     }
 
@@ -334,110 +330,53 @@ class MediaRecordDelegatee {
 }
 
 class PostProcessorDelegate {
-  ffmpeg: FFmpeg;
-
-  constructor() {
-    this.ffmpeg = createFFmpeg(this.ffmpegOptions());
-    this.ffmpeg.load();
-  }
-
-  private ffmpegOptions() {
-    const ffmpegOptions: CreateFFmpegOptions = {
-      log: true,
-      logger: ({ message }) => logger.debug(message),
-    };
-
-    if (isProduction()) {
-      const appPath = gPlatformApi.getPath('app');
-      ffmpegOptions.corePath = path.join(
-        appPath,
-        '..',
-        'ffmpegwasm-core',
-        'ffmpeg-core.js'
-      );
-    }
-
-    return ffmpegOptions;
-  }
-
   async postProcess(
     tempPath: string,
     outputPath: string,
     outputFormat: OutputFormat,
     enableMic: boolean
-  ) {
-    const memInputName = path.basename(tempPath);
-    const memOutputName = path.basename(outputPath);
+  ): Promise<void> {
+    return new Promise((resolve) => {
+      const finalizer = () => {
+        fs.unlink(tempPath, () => {});
+        resolve();
+      };
 
-    const ffmpegRunArgs = this.chooseFFmpegArgs(
-      outputFormat,
-      enableMic,
-      memInputName,
-      memOutputName
-    );
-
-    try {
-      this.ffmpeg.FS('writeFile', memInputName, await fetchFile(tempPath));
-
-      await this.ffmpeg.run(...ffmpegRunArgs);
-
-      const outStream = this.ffmpeg.FS('readFile', memOutputName);
-      if (outStream) {
-        await fs.promises.writeFile(outputPath, outStream);
+      const ffmpegCmd = ffmpeg(tempPath).setFfmpegPath(this.getFfmpegPath());
+      if (outputFormat === 'gif') {
+        ffmpegCmd
+          .outputFormat('gif')
+          .videoFilter(
+            'fps=14,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse'
+          );
+      } else if (enableMic) {
+        ffmpegCmd.videoCodec('copy').audioCodec('aac');
+      } else {
+        ffmpegCmd.videoCodec('copy');
       }
-    } catch (e) {
-      logger.error(e);
-    } finally {
-      fs.unlink(tempPath, () => {});
-    }
+
+      ffmpegCmd.output(outputPath).on('end', finalizer).run();
+    });
   }
 
-  private chooseFFmpegArgs = (
-    outFmt: OutputFormat,
-    mic: boolean,
-    input: string,
-    output: string
-  ): string[] => {
-    if (outFmt === 'gif') {
-      return this.ffmpegArgsForGif(input, output);
-    }
-    if (mic) {
-      return this.ffmpegArgsForMic(input, output);
-    }
-    return this.ffmpegArgsForNoMic(input, output);
-  };
+  private getFfmpegPath(): string {
+    const appPath = gPlatformApi.getPath('app');
 
-  private ffmpegArgsForNoMic = (input: string, output: string): string[] => [
-    '-i',
-    input,
-    '-c:v',
-    'copy',
-    output,
-  ];
+    const ffmpegFilename = `${
+      isWin() ? 'ffmpeg.exe' : 'ffmpeg'
+    }-${os.platform()}-${os.arch()}`;
 
-  private ffmpegArgsForMic = (input: string, output: string): string[] => [
-    '-i',
-    input,
-    '-c:v',
-    'copy',
-    '-c:a',
-    'aac',
-    output,
-  ];
-
-  // https://superuser.com/questions/556029/how-do-i-convert-a-video-to-gif-using-ffmpeg-with-reasonable-quality
-  private ffmpegArgsForGif = (input: string, output: string): string[] => [
-    '-i',
-    input,
-    // WORKAROUND: limit gif time to avoid OOM from MEMFS usage
-    '-t',
-    '10',
-    '-vf',
-    'fps=14,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse',
-    '-f',
-    'gif',
-    output,
-  ];
+    return isProduction()
+      ? path.join(appPath, '..', 'bin', ffmpegFilename)
+      : path.join(
+          appPath,
+          '..',
+          '..',
+          'node_modules',
+          'ffmpeg-static',
+          ffmpegFilename
+        );
+  }
 }
 
 const recorder = new MediaRecordDelegatee();
