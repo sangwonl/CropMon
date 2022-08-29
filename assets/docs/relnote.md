@@ -1,8 +1,8 @@
 ## Release Notes
 
-### v0.8.3
+### v0.8.4
 
-_26 Aug 2022_
+_30 Aug 2022_
 
 - Support for Apple Silicon
 - Enhance capture overlay for area selection
@@ -11,6 +11,7 @@ _26 Aug 2022_
 - Deprecate low quality mode
 - Fix hang issue when quit app and update
 - Fix some issues when connecting external display
+- Fix crash while post-processing
 
 ### v0.7.2
 
