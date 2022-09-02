@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useCallback, useEffect, useState, useRef } from 'react';
-import classNames from 'classnames';
 
 import { CaptureMode } from '@domain/models/common';
 import { Bounds, Point } from '@domain/models/screen';
@@ -17,7 +16,6 @@ import { useActionDispatcher } from '@adapters/ui/hooks/dispatcher';
 import { CaptureOptions } from '@adapters/ui/components/stateless/CaptureOptions';
 
 import { emptyBounds, getIntersection, isEmptyBounds } from '@utils/bounds';
-import { isMac } from '@utils/process';
 
 import styles from '@adapters/ui/components/stateful/CaptureOverlay.css';
 
@@ -205,13 +203,9 @@ const CaptureOverlay = (props: PropTypes) => {
   }, [renderMode]);
 
   return (
-    <>
+    <div className={styles.cover}>
       {renderMode !== RenderMode.IDLE && (
-        <div
-          className={classNames(styles.cover, {
-            [styles.coverHack]: isMac(),
-          })}
-        >
+        <>
           {renderMode === RenderMode.TARGETING &&
             controlPanel.captureMode === CaptureMode.AREA && (
               <CaptureTargetingArea
@@ -250,7 +244,7 @@ const CaptureOverlay = (props: PropTypes) => {
             captureOverlay.selectedBounds && (
               <CaptureRecording targetBounds={getTargetBoundsForUI()} />
             )}
-        </div>
+        </>
       )}
       {assignedScreen?.isPrimary && captureOverlay.show && controlPanel.show && (
         <div className={styles.options}>
@@ -266,7 +260,7 @@ const CaptureOverlay = (props: PropTypes) => {
           />
         </div>
       )}
-    </>
+    </div>
   );
 };
 

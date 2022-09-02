@@ -318,35 +318,33 @@ const CaptureTargetingArea = (props: PropTypes) => {
   );
 
   return (
-    <div className={classNames(styles.wrapper)}>
-      <>
-        <div
-          className={classNames(styles.area, {
-            [styles.areaHidden]: isEmptyBounds(targetBounds),
-          })}
-          style={getAreaStyles(
-            selCtxRef.current,
-            targetBounds,
-            entireCaptureBounds,
-            areaColors
-          )}
-        />
-        {!selCtxRef.current.selected && (
-          <div
-            className={styles.cursorSizeHint}
-            style={getCursorHintStyles(
-              targetBounds,
-              screenBounds,
-              areaColors,
-              startCursorPosition,
-              curCursorPosition
-            )}
-          >
-            {entireCaptureBounds.width}x{entireCaptureBounds.height}
-          </div>
+    <>
+      <div
+        className={classNames(styles.area, {
+          [styles.areaHidden]: isEmptyBounds(targetBounds),
+        })}
+        style={getAreaStyles(
+          selCtxRef.current,
+          targetBounds,
+          entireCaptureBounds,
+          areaColors
         )}
-      </>
-    </div>
+      />
+      {!selCtxRef.current.selected && (
+        <div
+          className={styles.cursorSizeHint}
+          style={getCursorHintStyles(
+            targetBounds,
+            screenBounds,
+            areaColors,
+            startCursorPosition,
+            curCursorPosition
+          )}
+        >
+          {entireCaptureBounds.width}x{entireCaptureBounds.height}
+        </div>
+      )}
+    </>
   );
 };
 

@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { app, dialog, ipcMain } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 
 import { Preferences } from '@domain/models/preferences';
 
 import { WidgetType } from '@adapters/ui/widgets/types';
-import { Widget } from '@adapters/ui/widgets/widget';
+import Widget from '@adapters/ui/widgets/widget';
 import {
   IPC_EVT_ON_RECORD_HOME_SELECTION,
   IPC_EVT_ON_CLOSE,
@@ -16,26 +16,14 @@ import {
 } from '@adapters/ui/widgets/preferences/shared';
 
 import { assetPathResolver } from '@utils/asset';
+import { isDebugMode } from '@utils/process';
 
 export default class PreferencesModal extends Widget {
-  private options: PreferencesModalOptions;
   private saveCallback?: (updatedPrefs: Preferences) => void;
   private closeResolver?: any;
 
-  private constructor(options: PreferencesModalOptions) {
-    super(WidgetType.PREFERENECS_MODAL, {
-      icon: assetPathResolver('icon.png'),
-      show: false,
-      width: 640,
-      height: 520,
-      resizable: false,
-      minimizable: false,
-      maximizable: false,
-      closable: true,
-      options,
-    });
-
-    this.options = options;
+  private constructor(private options: PreferencesModalOptions) {
+    super(WidgetType.PREFERENECS_MODAL, options);
 
     this.window.loadURL(`file://${__dirname}/../preferences/index.html`);
 
@@ -78,6 +66,24 @@ export default class PreferencesModal extends Widget {
       ipcMain.off(IPC_EVT_ON_RECORD_HOME_SELECTION, onRecordHomeSel);
       ipcMain.off(IPC_EVT_ON_SAVE, onSave);
       ipcMain.off(IPC_EVT_ON_CLOSE, onClose);
+    });
+  }
+
+  protected createWindow(): BrowserWindow {
+    return new BrowserWindow({
+      icon: assetPathResolver('icon.png'),
+      show: false,
+      width: 640,
+      height: 520,
+      resizable: false,
+      minimizable: false,
+      maximizable: false,
+      closable: true,
+      webPreferences: {
+        devTools: isDebugMode(),
+        nodeIntegration: true,
+        contextIsolation: false,
+      },
     });
   }
 

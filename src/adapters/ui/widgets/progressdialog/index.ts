@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { ipcMain } from 'electron';
+import { BrowserWindow, ipcMain } from 'electron';
 
 import { WidgetType } from '@adapters/ui/widgets/types';
-import { Widget } from '@adapters/ui/widgets/widget';
+import Widget from '@adapters/ui/widgets/widget';
 
 import { assetPathResolver } from '@utils/asset';
+import { isDebugMode } from '@utils/process';
 
 import {
   ProgressDialogOptions,
@@ -15,25 +16,30 @@ import {
 } from './shared';
 
 export default class ProgressDialog extends Widget {
-  options?: ProgressDialogOptions;
-
-  constructor(options: ProgressDialogOptions) {
-    super(WidgetType.PROGRESS_DIALOG, {
-      icon: assetPathResolver('icon.png'),
-      show: false,
-      width: options.width,
-      height: options.height,
-      resizable: false,
-      maximizable: false,
-      minimizable: false,
-      closable: true,
-      options,
-    });
-    this.options = options;
+  constructor(private options: ProgressDialogOptions) {
+    super(WidgetType.PROGRESS_DIALOG, options);
 
     this.window.loadURL(`file://${__dirname}/../progressdialog/index.html`);
 
     this.window.on('ready-to-show', () => options.onReady?.());
+  }
+
+  protected createWindow({ width, height }: any): BrowserWindow {
+    return new BrowserWindow({
+      icon: assetPathResolver('icon.png'),
+      show: false,
+      width,
+      height,
+      resizable: false,
+      maximizable: false,
+      minimizable: false,
+      closable: true,
+      webPreferences: {
+        devTools: isDebugMode(),
+        nodeIntegration: true,
+        contextIsolation: false,
+      },
+    });
   }
 
   setProgress(progress: number) {
