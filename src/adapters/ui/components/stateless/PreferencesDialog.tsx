@@ -15,7 +15,7 @@ import {
 } from '@adapters/ui/components/stateless/PrefsTabPanels';
 import SideTabs, { TabItem } from '@adapters/ui/components/stateless/SideTabs';
 
-import styles from '@adapters/ui/components/stateless/PreferencesDialog.css';
+import styles from './PreferencesDialog.css';
 
 export type AppPreferencesProps = {
   origPrefs: Preferences;

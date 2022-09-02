@@ -1,5 +1,5 @@
-import { injectable } from 'inversify';
 import { ipcRenderer } from 'electron';
+import { injectable } from 'inversify';
 
 import { RecordOptions, CaptureOptions } from '@domain/models/capture';
 import { Bounds, Point } from '@domain/models/screen';

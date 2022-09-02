@@ -1,10 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import React, { useEffect, useState, useCallback, MouseEvent } from 'react';
 import classNames from 'classnames';
+import React, { useEffect, useState, useCallback, MouseEvent } from 'react';
 
-import { CaptureMode } from '@domain/models/common';
-import { RecordOptions } from '@domain/models/capture';
 import {
   shortcutForDisplay,
   SHORTCUT_CAPTURE_MODE_AREA,
@@ -13,8 +11,12 @@ import {
   SHORTCUT_OUTPUT_MP4,
 } from '@utils/shortcut';
 
-import styles from '@adapters/ui/components/stateless/CaptureOptions.css';
+import { RecordOptions } from '@domain/models/capture';
+import { CaptureMode } from '@domain/models/common';
+
 import closeIcon from '@assets/close.png';
+
+import styles from './CaptureOptions.css';
 
 const withStopPropagation = (
   e: MouseEvent<HTMLButtonElement>,

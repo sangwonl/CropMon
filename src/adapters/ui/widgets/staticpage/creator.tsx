@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 
 import { StaticPage } from '@adapters/ui/components/stateless/StaticPage';
-import { preventZoomKeyEvent } from '@adapters/ui/widgets/utils';
 import { StaticPageModalOptions } from '@adapters/ui/widgets/staticpage/shared';
+import { preventZoomKeyEvent } from '@adapters/ui/widgets/utils';
 
 interface PropTypes {
   options: StaticPageModalOptions;

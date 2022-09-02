@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { injectable } from 'inversify';
 import { app, desktopCapturer, ipcMain, systemPreferences } from 'electron';
 import logger from 'electron-log';
+import { injectable } from 'inversify';
 
-import { Bounds, Screen } from '@domain/models/screen';
+import { getAllScreens, getIntersection, isEmptyBounds } from '@utils/bounds';
+
 import { CaptureContext } from '@domain/models/capture';
+import { Bounds, Screen } from '@domain/models/screen';
 import { ScreenRecorder } from '@domain/services/recorder';
 
+import RecorderDelegate from '@adapters/recorder/rec-delegate';
 import {
   RecordContext,
   TargetSlice,
 } from '@adapters/recorder/rec-delegate/types';
-import RecorderDelegate from '@adapters/recorder/rec-delegate';
-
-import { getAllScreens, getIntersection, isEmptyBounds } from '@utils/bounds';
 
 const FRAMERATE = 30;
 

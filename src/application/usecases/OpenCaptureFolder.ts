@@ -4,8 +4,8 @@ import TYPES from '@di/types';
 
 import { PreferencesRepository } from '@domain/repositories/preferences';
 
-import { UseCase } from '@application/usecases/UseCase';
 import { UiDirector } from '@application/ports/director';
+import { UseCase } from '@application/usecases/UseCase';
 
 @injectable()
 export default class OpenCaptureFolderUseCase implements UseCase<void> {

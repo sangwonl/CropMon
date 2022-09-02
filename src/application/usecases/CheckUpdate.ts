@@ -4,10 +4,10 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { UseCase } from '@application/usecases/UseCase';
-import HookManager from '@application/services/hook';
 import { UiDirector } from '@application/ports/director';
 import { AppUpdater } from '@application/ports/updater';
+import HookManager from '@application/services/hook';
+import { UseCase } from '@application/usecases/UseCase';
 
 @injectable()
 export default class CheckUpdateUseCase implements UseCase<void> {

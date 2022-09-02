@@ -1,16 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { MouseEvent, useCallback } from 'react';
 import Color from 'color';
+import React, { MouseEvent, useCallback } from 'react';
+
+import { isCapturableBounds } from '@utils/bounds';
 
 import { Bounds, Point } from '@domain/models/screen';
 
 import { CaptureAreaColors } from '@application/models/ui';
 
-import { isCapturableBounds } from '@utils/bounds';
-
-import styles from '@adapters/ui/components/stateless/CaptureTargetingScreen.css';
+import styles from './CaptureTargetingScreen.css';
 
 const COLOR_ALPHA_AREA = 0.2;
 const COLOR_ALPHA_AREA_SHADOW = 1.0;

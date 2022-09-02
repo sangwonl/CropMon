@@ -1,59 +1,58 @@
 /* eslint-disable prettier/prettier */
 
 import 'reflect-metadata';
-
+// eslint-disable-next-line import/order
 import { Container } from 'inversify';
 
 import TYPES from '@di/types';
 
-import CaptureSession from '@domain/services/capture';
 import { PreferencesRepository } from '@domain/repositories/preferences';
-
-import InitializeAppUseCase from '@application/usecases/InitializeApp';
-import QuitAppUseCase from '@application/usecases/QuitApp';
-import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
-import CheckVersionUseCase from '@application/usecases/CheckVersion';
-import UpdateAppUseCase from '@application/usecases/UpdateApp';
-import OpenAboutPopupUseCase from '@application/usecases/OpenAboutPopup';
-import OpenHelpPopupUseCase from '@application/usecases/OpenHelpPopup';
-import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
-import OpenCaptureFolderUseCase from '@application/usecases/OpenCaptureFolder';
-import ToggleRecordOptionsUseCase from '@application/usecases/ToggleRecordOptions';
-import StartSelectionUseCase from '@application/usecases/StartSelection';
-import SelectingTargetUseCase from '@application/usecases/SelectingTarget';
-import StartCaptureAsIsUseCase from '@application/usecases/StartCaptureAsIs';
-import EnableCaptureUseCase from '@application/usecases/EnableCapture';
-import DisableCaptureUseCase from '@application/usecases/DisableCapture';
-import ChangeCaptureOptionsUseCase from '@application/usecases/ChangeCaptureOptions';
-import FinishSelectionUseCase from '@application/usecases/FinishSelection';
-import StartCaptureUseCase from '@application/usecases/StartCapture';
-import FinishCaptureUseCase from '@application/usecases/FinishCapture';
-import ToggleCaptureUseCase from '@application/usecases/ToggleCaptureUseCase';
-import GetUiStateUseCase from '@application/usecases/GetUiStateUseCase';
+import CaptureSession from '@domain/services/capture';
+import { ScreenRecorder } from '@domain/services/recorder';
 
 import ActionDispatcherCore from '@application/controllers/dispatcher';
-import StateManager from '@application/services/ui/state';
+import { ActionDispatcher } from '@application/ports/action';
+import { UiDirector } from '@application/ports/director';
+import { PlatformApi } from '@application/ports/platform';
+import { PreferencesStore } from '@application/ports/preferences';
+import { UiStateApplier } from '@application/ports/state';
+import { AnalyticsTracker } from '@application/ports/tracker';
+import { AppUpdater } from '@application/ports/updater';
 import HookManager from '@application/services/hook';
 import CaptureModeManager from '@application/services/ui/mode';
-import { UiDirector } from '@application/ports/director';
-import { UiStateApplier } from '@application/ports/state';
-import { PreferencesStore } from '@application/ports/preferences';
-import { AnalyticsTracker } from '@application/ports/tracker';
-import { ScreenRecorder } from '@domain/services/recorder';
-import { ActionDispatcher } from '@application/ports/action';
-import { AppUpdater } from '@application/ports/updater';
-import { PlatformApi } from '@application/ports/platform';
+import StateManager from '@application/services/ui/state';
+import ChangeCaptureOptionsUseCase from '@application/usecases/ChangeCaptureOptions';
+import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
+import CheckVersionUseCase from '@application/usecases/CheckVersion';
+import DisableCaptureUseCase from '@application/usecases/DisableCapture';
+import EnableCaptureUseCase from '@application/usecases/EnableCapture';
+import FinishCaptureUseCase from '@application/usecases/FinishCapture';
+import FinishSelectionUseCase from '@application/usecases/FinishSelection';
+import GetUiStateUseCase from '@application/usecases/GetUiStateUseCase';
+import InitializeAppUseCase from '@application/usecases/InitializeApp';
+import OpenAboutPopupUseCase from '@application/usecases/OpenAboutPopup';
+import OpenCaptureFolderUseCase from '@application/usecases/OpenCaptureFolder';
+import OpenHelpPopupUseCase from '@application/usecases/OpenHelpPopup';
+import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
+import QuitAppUseCase from '@application/usecases/QuitApp';
+import SelectingTargetUseCase from '@application/usecases/SelectingTarget';
+import StartCaptureUseCase from '@application/usecases/StartCapture';
+import StartCaptureAsIsUseCase from '@application/usecases/StartCaptureAsIs';
+import StartSelectionUseCase from '@application/usecases/StartSelection';
+import ToggleCaptureUseCase from '@application/usecases/ToggleCaptureUseCase';
+import ToggleRecordOptionsUseCase from '@application/usecases/ToggleRecordOptions';
+import UpdateAppUseCase from '@application/usecases/UpdateApp';
 
-import PrefsRepositoryImpl from '@adapters/repositories/preferences';
 import ActionDispatcherProxy from '@adapters/actions/proxy';
-import PlatformApiProxy from '@adapters/platform/proxy';
 import BuiltinHooks from '@adapters/hook';
-import ElectronUiStateApplier from '@adapters/state';
+import PlatformApiProxy from '@adapters/platform/proxy';
 import ElectronPreferencesStore from '@adapters/preferences';
+import ElectronScreenRecorder from '@adapters/recorder/recorder';
+import PrefsRepositoryImpl from '@adapters/repositories/preferences';
+import ElectronUiStateApplier from '@adapters/state';
+import GoogleAnalyticsTracker from '@adapters/tracker';
 import ElectronUiDirector from '@adapters/ui/director';
 import ElectronAppUpdater from '@adapters/updater';
-import ElectronScreenRecorder from '@adapters/recorder/recorder';
-import GoogleAnalyticsTracker from '@adapters/tracker';
 
 const diContainer = new Container();
 

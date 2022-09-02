@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { FC } from 'react';
 import Color from 'color';
+import React, { FC } from 'react';
 
 import { Bounds } from '@domain/models/screen';
 
 import { CaptureAreaColors } from '@application/models/ui';
 
-import styles from '@adapters/ui/components/stateless/CaptureCountdown.css';
+import styles from './CaptureCountdown.css';
 
 const COUNTDOWN_FONT_SMALL = 16;
 const COUNTDOWN_FONT_MID = 50;

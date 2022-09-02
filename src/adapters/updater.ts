@@ -1,15 +1,13 @@
-/* eslint-disable import/order */
-/* eslint-disable import/first */
 /* eslint-disable promise/always-return */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { injectable } from 'inversify';
 import { app } from 'electron';
 import log from 'electron-log';
-
-import { AppUpdater } from '@application/ports/updater';
+import { injectable } from 'inversify';
 
 import { isProduction } from '@utils/process';
+
+import { AppUpdater } from '@application/ports/updater';
 
 import { version as curVersion } from '../package.json';
 
@@ -18,6 +16,7 @@ if (!isProduction()) {
 }
 
 // this should be imported after version overriding in dev mode
+// eslint-disable-next-line import/order, import/first
 import { autoUpdater } from 'electron-updater';
 
 @injectable()
@@ -64,7 +63,7 @@ export default class ElectronAppUpdater implements AppUpdater {
   }
 
   private clearListeners() {
-    const offListener = (eventName: string) => {
+    const offListener = (eventName: any) => {
       autoUpdater.listeners(eventName).forEach((l: any) => {
         autoUpdater.off(eventName, l);
       });

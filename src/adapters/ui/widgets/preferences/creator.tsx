@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { useEffect, useState } from 'react';
 import { ipcRenderer } from 'electron';
+import React, { useEffect, useState } from 'react';
 
 import { Preferences } from '@domain/models/preferences';
 
 import { PreferencesDialog } from '@adapters/ui/components/stateless/PreferencesDialog';
-import { preventZoomKeyEvent } from '@adapters/ui/widgets/utils';
 import {
   IPC_EVT_ON_CLOSE,
   IPC_EVT_ON_PREFS_UPDATED,
@@ -15,6 +14,7 @@ import {
   IpcEvtOnPrefsUpdated,
   PreferencesModalOptions,
 } from '@adapters/ui/widgets/preferences/shared';
+import { preventZoomKeyEvent } from '@adapters/ui/widgets/utils';
 
 interface PropTypes {
   initialPrefs: Preferences;

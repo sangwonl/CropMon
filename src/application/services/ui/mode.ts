@@ -6,8 +6,8 @@ import { CaptureMode } from '@domain/models/common';
 import { Screen } from '@domain/models/screen';
 
 import { INITIAL_UI_STATE, UiState } from '@application/models/ui';
-import StateManager from '@application/services/ui/state';
 import { UiDirector } from '@application/ports/director';
+import StateManager from '@application/services/ui/state';
 
 import PreferencesRepository from '@adapters/repositories/preferences';
 

@@ -1,11 +1,10 @@
 import { BrowserWindow } from 'electron';
 
+import { isDebugMode, isMac } from '@utils/process';
+
+import { CaptureOverlayOptions } from '@adapters/ui/widgets/overlays/shared';
 import { WidgetType } from '@adapters/ui/widgets/types';
 import Widget from '@adapters/ui/widgets/widget';
-import { CaptureOverlayOptions } from '@adapters/ui/widgets/overlays/shared';
-
-import { assetPathResolver } from '@utils/asset';
-import { isDebugMode, isMac } from '@utils/process';
 
 const TRAFFIC_LIGHT_OFFSET_FOR_HIDING = { x: -256, y: -256 };
 

@@ -3,12 +3,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable prefer-const */
 
-import os from 'os';
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
-import logger from 'electron-log';
+
 import { ipcRenderer } from 'electron';
+import logger from 'electron-log';
 import ffmpeg from 'fluent-ffmpeg';
+
+import { mergeScreenBounds } from '@utils/bounds';
+import { getNowAsYYYYMMDDHHmmss } from '@utils/date';
+import { isProduction, isWin } from '@utils/process';
 
 import diContainer from '@di/containers/renderer';
 import TYPES from '@di/types';
@@ -22,10 +27,6 @@ import {
   RecordContext,
   TargetSlice,
 } from '@adapters/recorder/rec-delegate/types';
-
-import { getNowAsYYYYMMDDHHmmss } from '@utils/date';
-import { mergeScreenBounds } from '@utils/bounds';
-import { isProduction, isWin } from '@utils/process';
 
 type Drawable = {
   videoStream: MediaStream;

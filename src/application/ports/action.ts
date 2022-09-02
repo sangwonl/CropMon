@@ -1,5 +1,5 @@
-import { Bounds, Point } from '@domain/models/screen';
 import { CaptureOptions, RecordOptions } from '@domain/models/capture';
+import { Bounds, Point } from '@domain/models/screen';
 
 import { UiState } from '@application/models/ui';
 

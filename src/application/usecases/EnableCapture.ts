@@ -2,12 +2,13 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { UseCase } from '@application/usecases/UseCase';
+import CaptureSession from '@domain/services/capture';
+
 import HookManager from '@application/services/hook';
 import CaptureModeManager from '@application/services/ui/mode';
+import { UseCase } from '@application/usecases/UseCase';
 
 import PreferencesRepository from '@adapters/repositories/preferences';
-import CaptureSession from '@domain/services/capture';
 
 @injectable()
 export default class EnableCaptureUseCase implements UseCase<void> {

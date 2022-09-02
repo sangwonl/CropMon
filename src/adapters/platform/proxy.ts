@@ -1,11 +1,11 @@
-import { injectable } from 'inversify';
 import { app, screen, ipcMain } from 'electron';
+import { injectable } from 'inversify';
+
+import { isMac } from '@utils/process';
 
 import { Point } from '@domain/models/screen';
 
 import { PlatformApi, PathType } from '@application/ports/platform';
-
-import { isMac } from '@utils/process';
 
 @injectable()
 export default class PlatformApiProxy implements PlatformApi {

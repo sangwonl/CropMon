@@ -5,7 +5,7 @@ import React, { FC } from 'react';
 
 import { Bounds } from '@domain/models/screen';
 
-import styles from '@adapters/ui/components/stateless/CaptureRecording.css';
+import styles from './CaptureRecording.css';
 
 const getAreaStyles = (bounds: Bounds): any => {
   const layoutStyle = {

@@ -1,3 +1,5 @@
+import { KeyboardEvent } from 'react';
+
 import { isMac } from '@utils/process';
 import { capitalize } from '@utils/strings';
 

@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
 
-import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react';
+import React, { useState } from 'react';
 
-import { CaptureMode } from '@domain/models/common';
 import { RecordOptions } from '@domain/models/capture';
+import { CaptureMode } from '@domain/models/common';
 
 import {
   CaptureOptions,

@@ -4,8 +4,8 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { UseCase } from '@application/usecases/UseCase';
 import { UiDirector } from '@application/ports/director';
+import { UseCase } from '@application/usecases/UseCase';
 
 import PreferencesRepository from '@adapters/repositories/preferences';
 

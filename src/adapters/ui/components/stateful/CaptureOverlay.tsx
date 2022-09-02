@@ -1,24 +1,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { useCallback, useEffect, useState, useRef } from 'react';
 import classNames from 'classnames';
-
-import { CaptureMode } from '@domain/models/common';
-import { Bounds, Point } from '@domain/models/screen';
-import { RecordOptions } from '@domain/models/capture';
-
-import CaptureTargetingArea from '@adapters/ui/components/stateless/CaptureTargetingArea';
-import CaptureTargetingScreen from '@adapters/ui/components/stateless/CaptureTargetingScreen';
-import CaptureCountdown from '@adapters/ui/components/stateless/CaptureCountdown';
-import CaptureRecording from '@adapters/ui/components/stateless/CaptureRecording';
-import { useRootUiState } from '@adapters/ui/hooks/state';
-import { useActionDispatcher } from '@adapters/ui/hooks/dispatcher';
-import { CaptureOptions } from '@adapters/ui/components/stateless/CaptureOptions';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 
 import { emptyBounds, getIntersection, isEmptyBounds } from '@utils/bounds';
 
-import styles from '@adapters/ui/components/stateful/CaptureOverlay.css';
+import { RecordOptions } from '@domain/models/capture';
+import { CaptureMode } from '@domain/models/common';
+import { Bounds, Point } from '@domain/models/screen';
+
+import CaptureCountdown from '@adapters/ui/components/stateless/CaptureCountdown';
+import { CaptureOptions } from '@adapters/ui/components/stateless/CaptureOptions';
+import CaptureRecording from '@adapters/ui/components/stateless/CaptureRecording';
+import CaptureTargetingArea from '@adapters/ui/components/stateless/CaptureTargetingArea';
+import CaptureTargetingScreen from '@adapters/ui/components/stateless/CaptureTargetingScreen';
+import { useActionDispatcher } from '@adapters/ui/hooks/dispatcher';
+import { useRootUiState } from '@adapters/ui/hooks/state';
+
+import styles from './CaptureOverlay.css';
 
 const DEFAULT_COUNTDOWN = 3;
 

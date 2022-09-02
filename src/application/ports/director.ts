@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
 
 import { CaptureMode } from '@domain/models/common';
-import { Screen } from '@domain/models/screen';
 import { Preferences } from '@domain/models/preferences';
+import { Screen } from '@domain/models/screen';
 
 export interface UiDirector {
   initialize(): void;

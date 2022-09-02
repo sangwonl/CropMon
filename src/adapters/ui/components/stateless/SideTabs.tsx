@@ -1,8 +1,8 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 
-import React, { useCallback, useState } from 'react';
 import classNames from 'classnames';
+import React, { useCallback, useState } from 'react';
 
 import styles from './SideTabs.css';
 

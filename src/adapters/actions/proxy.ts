@@ -1,5 +1,5 @@
-import { inject, injectable } from 'inversify';
 import { ipcMain } from 'electron';
+import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 

@@ -5,8 +5,8 @@ import semver from 'semver';
 
 import TYPES from '@di/types';
 
-import { UseCase } from '@application/usecases/UseCase';
 import HookManager from '@application/services/hook';
+import { UseCase } from '@application/usecases/UseCase';
 
 import PreferencesRepository from '@adapters/repositories/preferences';
 import AppUpdater from '@adapters/updater';

@@ -17,6 +17,58 @@ module.exports = {
         printWidth: 80,
       },
     ],
+    'import/order': [
+      'error',
+      {
+        groups: [
+          'builtin',
+          'external',
+          'index',
+          'parent',
+          'sibling',
+          'unknown',
+        ],
+        pathGroups: [
+          {
+            pattern: '@utils/**',
+            group: 'external',
+            position: 'after',
+          },
+          {
+            pattern: '@di/**',
+            group: 'external',
+            position: 'after',
+          },
+          {
+            pattern: '@domain/**',
+            group: 'external',
+            position: 'after',
+          },
+          {
+            pattern: '@application/**',
+            group: 'external',
+            position: 'after',
+          },
+          {
+            pattern: '@adapters/**',
+            group: 'external',
+            position: 'after',
+          },
+          {
+            pattern: '@assets/**',
+            group: 'external',
+            position: 'after',
+          },
+        ],
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: true,
+        },
+        'newlines-between': 'always',
+        pathGroupsExcludedImportTypes: ['builtin'],
+        warnOnUnassignedImports: true,
+      },
+    ],
   },
   parserOptions: {
     ecmaVersion: 2020,

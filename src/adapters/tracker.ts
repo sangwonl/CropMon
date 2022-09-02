@@ -1,8 +1,8 @@
 /* eslint-disable promise/always-return */
 
-import { injectable } from 'inversify';
 import { app, session, screen } from 'electron';
 import Store from 'electron-store';
+import { injectable } from 'inversify';
 import ua from 'universal-analytics';
 import { v4 as uuidv4 } from 'uuid';
 

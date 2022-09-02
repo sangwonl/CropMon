@@ -2,11 +2,11 @@
 
 import { BrowserWindow, ipcMain } from 'electron';
 
-import { WidgetType } from '@adapters/ui/widgets/types';
-import Widget from '@adapters/ui/widgets/widget';
-
 import { assetPathResolver } from '@utils/asset';
 import { isDebugMode } from '@utils/process';
+
+import { WidgetType } from '@adapters/ui/widgets/types';
+import Widget from '@adapters/ui/widgets/widget';
 
 import {
   ProgressDialogOptions,

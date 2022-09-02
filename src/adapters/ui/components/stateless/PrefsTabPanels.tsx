@@ -5,6 +5,7 @@
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 
+import classNames from 'classnames';
 import React, {
   useState,
   useCallback,
@@ -12,16 +13,17 @@ import React, {
   ChangeEvent,
   KeyboardEvent,
 } from 'react';
-import classNames from 'classnames';
 
-import { Preferences } from '@domain/models/preferences';
 import {
   extractShortcut,
   validateShortcut,
   shortcutForDisplay,
 } from '@utils/shortcut';
 
-import ColorPalette from './ColorPalette';
+import { Preferences } from '@domain/models/preferences';
+
+import ColorPalette from '@adapters/ui/components/stateless/ColorPalette';
+
 import styles from './PrefsTabPanels.css';
 
 interface PrefsTabPanelBaseProps {

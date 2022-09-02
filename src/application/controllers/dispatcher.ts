@@ -1,30 +1,30 @@
 import { injectable } from 'inversify';
 
-import { Bounds, Point } from '@domain/models/screen';
 import { CaptureOptions, RecordOptions } from '@domain/models/capture';
+import { Bounds, Point } from '@domain/models/screen';
 
 import { UiState } from '@application/models/ui';
 import { ActionDispatcher } from '@application/ports/action';
-import InitializeAppUseCase from '@application/usecases/InitializeApp';
-import QuitAppUseCase from '@application/usecases/QuitApp';
+import ChangeCaptureOptionsUseCase from '@application/usecases/ChangeCaptureOptions';
 import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
-import UpdateAppUseCase from '@application/usecases/UpdateApp';
+import DisableCaptureUseCase from '@application/usecases/DisableCapture';
+import EnableCaptureUseCase from '@application/usecases/EnableCapture';
+import FinishCaptureUseCase from '@application/usecases/FinishCapture';
+import FinishSelectionUseCase from '@application/usecases/FinishSelection';
+import GetUiStateUseCase from '@application/usecases/GetUiStateUseCase';
+import InitializeAppUseCase from '@application/usecases/InitializeApp';
 import OpenAboutPopupUseCase from '@application/usecases/OpenAboutPopup';
+import OpenCaptureFolderUseCase from '@application/usecases/OpenCaptureFolder';
 import OpenHelpPopupUseCase from '@application/usecases/OpenHelpPopup';
 import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
-import OpenCaptureFolderUseCase from '@application/usecases/OpenCaptureFolder';
-import ToggleRecordOptionsUseCase from '@application/usecases/ToggleRecordOptions';
-import StartSelectionUseCase from '@application/usecases/StartSelection';
+import QuitAppUseCase from '@application/usecases/QuitApp';
 import SelectingTargetUseCase from '@application/usecases/SelectingTarget';
-import StartCaptureAsIsUseCase from '@application/usecases/StartCaptureAsIs';
-import EnableCaptureUseCase from '@application/usecases/EnableCapture';
-import DisableCaptureUseCase from '@application/usecases/DisableCapture';
-import ChangeCaptureOptionsUseCase from '@application/usecases/ChangeCaptureOptions';
-import FinishSelectionUseCase from '@application/usecases/FinishSelection';
 import StartCaptureUseCase from '@application/usecases/StartCapture';
-import FinishCaptureUseCase from '@application/usecases/FinishCapture';
+import StartCaptureAsIsUseCase from '@application/usecases/StartCaptureAsIs';
+import StartSelectionUseCase from '@application/usecases/StartSelection';
 import ToggleCaptureUseCase from '@application/usecases/ToggleCaptureUseCase';
-import GetUiStateUseCase from '@application/usecases/GetUiStateUseCase';
+import ToggleRecordOptionsUseCase from '@application/usecases/ToggleRecordOptions';
+import UpdateAppUseCase from '@application/usecases/UpdateApp';
 
 @injectable()
 export default class ActionDispatcherCore implements ActionDispatcher {
