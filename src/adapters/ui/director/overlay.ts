@@ -32,6 +32,17 @@ export default class CaptureOverlayWrap {
     }, 100);
   }
 
+  focus(screenId: number) {
+    const widget = this.widgets[screenId];
+    widget?.focus();
+  }
+
+  blur() {
+    Object.values(this.widgets).forEach((widget) => {
+      widget.blur();
+    });
+  }
+
   close() {
     Object.values(this.widgets).forEach((widget) => {
       widget.close();
@@ -41,12 +52,6 @@ export default class CaptureOverlayWrap {
   ignoreMouseEvents() {
     Object.values(this.widgets).forEach((widget) => {
       widget.setIgnoreMouseEvents(true);
-    });
-  }
-
-  blur() {
-    Object.values(this.widgets).forEach((widget) => {
-      widget.blur();
     });
   }
 

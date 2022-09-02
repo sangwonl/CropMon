@@ -179,30 +179,25 @@ export default class ElectronUiDirector implements UiDirector {
     const screens = getAllScreens();
     let lastScreenId: number;
 
-    switch (mode) {
-      case CaptureMode.AREA:
-        this.captureOverlay?.show();
-        setTimeout(() => onActiveScreenBoundsChange(screens), 100);
-        break;
+    this.captureOverlay?.show();
+    this.screenBoundsDetector = setInterval(() => {
+      const screenCursorOn = getScreenCursorOn();
+      this.captureOverlay?.focus(lastScreenId);
 
-      case CaptureMode.SCREEN:
-        this.screenBoundsDetector = setInterval(() => {
-          const screenCursorOn = getScreenCursorOn();
-          if (!lastScreenId || lastScreenId !== screenCursorOn.id) {
-            lastScreenId = screenCursorOn.id;
-            this.captureOverlay?.show();
-            onActiveScreenBoundsChange(screens, screenCursorOn);
-          }
-        }, 100);
-        break;
-
-      default:
-        break;
-    }
+      if (!lastScreenId || lastScreenId !== screenCursorOn.id) {
+        lastScreenId = screenCursorOn.id;
+        if (mode === CaptureMode.AREA) {
+          onActiveScreenBoundsChange(screens);
+        } else {
+          onActiveScreenBoundsChange(screens, screenCursorOn);
+        }
+      }
+    }, 100);
   }
 
   disableCaptureMode(): void {
     this.resetScreenBoundsDetector();
+    this.captureOverlay?.blur();
     this.captureOverlay?.hide();
   }
 
@@ -218,8 +213,8 @@ export default class ElectronUiDirector implements UiDirector {
   }
 
   enableUserInteraction(): void {
-    this.captureOverlay?.ignoreMouseEvents();
     this.captureOverlay?.blur();
+    this.captureOverlay?.ignoreMouseEvents();
   }
 
   revealItemInFolder(path: string): void {
