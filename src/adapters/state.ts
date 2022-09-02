@@ -1,10 +1,10 @@
-import { injectable } from 'inversify';
 import { WebContents } from 'electron';
+import { injectable } from 'inversify';
 
 import { UiState } from '@application/models/ui';
 import { UiStateApplier } from '@application/ports/state';
 
-import { Widget } from '@adapters/ui/widgets/widget';
+import Widget from '@adapters/ui/widgets/widget';
 
 @injectable()
 export default class ElectronUiStateApplier implements UiStateApplier {

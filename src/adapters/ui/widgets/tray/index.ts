@@ -1,8 +1,8 @@
-import AppTray from '@adapters/ui/widgets/tray/base';
-import WinAppTray from '@adapters/ui/widgets/tray/win';
-import MacAppTray from '@adapters/ui/widgets/tray/mac';
-
 import { isMac } from '@utils/process';
+
+import AppTray from '@adapters/ui/widgets/tray/base';
+import MacAppTray from '@adapters/ui/widgets/tray/mac';
+import WinAppTray from '@adapters/ui/widgets/tray/win';
 
 export default AppTray;
 

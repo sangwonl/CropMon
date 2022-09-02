@@ -1,16 +1,16 @@
-import { inject, injectable } from 'inversify';
 import logger from 'electron-log';
+import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { CaptureContext, CaptureOptions } from '@domain/models/capture';
-import { CaptureStatus } from '@domain/models/common';
-import { PreferencesRepository } from '@domain/repositories/preferences';
-import { ScreenRecorder } from '@domain/services/recorder';
 import {
   CaptureOptionsNotPreparedException,
   InvalidCaptureStatusException,
 } from '@domain/exceptions';
+import { CaptureContext, CaptureOptions } from '@domain/models/capture';
+import { CaptureStatus } from '@domain/models/common';
+import { PreferencesRepository } from '@domain/repositories/preferences';
+import { ScreenRecorder } from '@domain/services/recorder';
 
 @injectable()
 export default class CaptureSession {

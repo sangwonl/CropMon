@@ -5,10 +5,10 @@ import TYPES from '@di/types';
 import { CaptureOptions } from '@domain/models/capture';
 
 import { UiState } from '@application/models/ui';
-import { UseCase } from '@application/usecases/UseCase';
-import StateManager from '@application/services/ui/state';
 import HookManager from '@application/services/hook';
 import CaptureModeManager from '@application/services/ui/mode';
+import StateManager from '@application/services/ui/state';
+import { UseCase } from '@application/usecases/UseCase';
 
 import PreferencesRepository from '@adapters/repositories/preferences';
 

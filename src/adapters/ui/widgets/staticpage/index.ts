@@ -2,12 +2,12 @@
 
 import { BrowserWindow } from 'electron';
 
-import { WidgetType } from '@adapters/ui/widgets/types';
-import Widget from '@adapters/ui/widgets/widget';
-import { StaticPageModalOptions } from '@adapters/ui/widgets/staticpage/shared';
-
 import { assetPathResolver } from '@utils/asset';
 import { isDebugMode } from '@utils/process';
+
+import { StaticPageModalOptions } from '@adapters/ui/widgets/staticpage/shared';
+import { WidgetType } from '@adapters/ui/widgets/types';
+import Widget from '@adapters/ui/widgets/widget';
 
 export default class StaticPageModal extends Widget {
   private closeResolver?: any;

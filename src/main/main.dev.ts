@@ -9,6 +9,7 @@
  * `./src/main.prod.js` using webpack. This gives us some performance wins.
  */
 import 'core-js/stable';
+// eslint-disable-next-line import/order
 import 'regenerator-runtime/runtime';
 
 import { app } from 'electron';

@@ -1,8 +1,8 @@
 import { injectable } from 'inversify';
 
 import { INITIAL_UI_STATE, UiState } from '@application/models/ui';
-import { UseCase } from '@application/usecases/UseCase';
 import StateManager from '@application/services/ui/state';
+import { UseCase } from '@application/usecases/UseCase';
 
 interface GetUiStateUseCaseOutput {
   uiState: UiState;

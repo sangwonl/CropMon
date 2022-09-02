@@ -1,6 +1,6 @@
 import { CaptureMode } from '@domain/models/common';
-import { Screen, Bounds, Point } from '@domain/models/screen';
 import { Preferences, DEFAULT_APPEAR_COLORS } from '@domain/models/preferences';
+import { Screen, Bounds, Point } from '@domain/models/screen';
 
 export type PreferencesModal = {
   show: boolean;

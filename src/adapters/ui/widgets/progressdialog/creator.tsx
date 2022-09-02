@@ -4,7 +4,6 @@ import { ipcRenderer } from 'electron';
 import React, { useEffect, useState } from 'react';
 
 import { ProgressDialog } from '@adapters/ui/components/stateless/ProgressDialog';
-import { preventZoomKeyEvent } from '@adapters/ui/widgets/utils';
 import {
   ProgressDialogOptions,
   IpcEvtSetProgress,
@@ -12,6 +11,7 @@ import {
   IPC_EVT_ON_ACTION,
   IPC_EVT_ON_CANCEL,
 } from '@adapters/ui/widgets/progressdialog/shared';
+import { preventZoomKeyEvent } from '@adapters/ui/widgets/utils';
 
 type PropTypes = {
   options: ProgressDialogOptions;

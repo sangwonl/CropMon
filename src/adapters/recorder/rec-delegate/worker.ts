@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Bounds } from '@domain/models/screen';
 import { alignedBounds } from '@utils/bounds';
+
+import { Bounds } from '@domain/models/screen';
 
 function simpleResizeTransform(srcBounds: Bounds): TransformStream {
   const visibleRect = alignedBounds(srcBounds);

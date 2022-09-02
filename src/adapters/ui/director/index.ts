@@ -1,6 +1,13 @@
 import fs from 'fs';
-import { injectable } from 'inversify';
+
 import { app, shell } from 'electron';
+import { injectable } from 'inversify';
+
+import { assetPathResolver } from '@utils/asset';
+import { getAllScreens, getScreenCursorOn } from '@utils/bounds';
+import { getTimeInSeconds } from '@utils/date';
+import { isMac } from '@utils/process';
+import { shortcutForDisplay } from '@utils/shortcut';
 
 import { CaptureMode } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
@@ -8,18 +15,12 @@ import { Screen } from '@domain/models/screen';
 
 import { UiDirector } from '@application/ports/director';
 
-import AppTray, { createTray } from '@adapters/ui/widgets/tray';
+import ElectronUiStateApplier from '@adapters/state';
+import CaptureOverlayWrap from '@adapters/ui/director/overlay';
+import PreferencesModal from '@adapters/ui/widgets/preferences';
 import ProgressDialog from '@adapters/ui/widgets/progressdialog';
 import StaticPageModal from '@adapters/ui/widgets/staticpage';
-import PreferencesModal from '@adapters/ui/widgets/preferences';
-import CaptureOverlayWrap from '@adapters/ui/director/overlay';
-import ElectronUiStateApplier from '@adapters/state';
-
-import { getAllScreens, getScreenCursorOn } from '@utils/bounds';
-import { shortcutForDisplay } from '@utils/shortcut';
-import { getTimeInSeconds } from '@utils/date';
-import { assetPathResolver } from '@utils/asset';
-import { isMac } from '@utils/process';
+import AppTray, { createTray } from '@adapters/ui/widgets/tray';
 
 import { version as curVersion } from '../../../package.json';
 

@@ -1,8 +1,8 @@
 // eslint-disable-next-line max-classes-per-file
-import CaptureOverlay from '@adapters/ui/widgets/overlays';
-import ElectronUiStateApplier from '@adapters/state';
-
 import { getAllScreens } from '@utils/bounds';
+
+import ElectronUiStateApplier from '@adapters/state';
+import CaptureOverlay from '@adapters/ui/widgets/overlays';
 
 export default class CaptureOverlayWrap {
   private uiStateApplier: ElectronUiStateApplier;

@@ -1,9 +1,10 @@
 import path from 'path';
+
 import { getNowAsYYYYMMDDHHmmss, getTimeInSeconds } from '@utils/date';
 
 import { CaptureMode, OutputFormat } from '@domain/models/common';
-import { Bounds } from '@domain/models/screen';
 import { Preferences } from '@domain/models/preferences';
+import { Bounds } from '@domain/models/screen';
 
 export type CaptureTarget = {
   mode: CaptureMode;

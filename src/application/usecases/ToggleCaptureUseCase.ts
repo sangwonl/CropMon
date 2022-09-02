@@ -2,10 +2,10 @@ import { injectable } from 'inversify';
 
 import CaptureSession from '@domain/services/capture';
 
-import { UseCase } from '@application/usecases/UseCase';
+import HookManager from '@application/services/hook';
 import EnableCaptureUseCase from '@application/usecases/EnableCapture';
 import FinishCaptureUseCase from '@application/usecases/FinishCapture';
-import HookManager from '@application/services/hook';
+import { UseCase } from '@application/usecases/UseCase';
 
 @injectable()
 export default class ToggleCaptureUseCase implements UseCase<void> {

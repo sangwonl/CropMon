@@ -5,10 +5,10 @@ import TYPES from '@di/types';
 import { Bounds, Point } from '@domain/models/screen';
 
 import { UiState } from '@application/models/ui';
-import { UseCase } from '@application/usecases/UseCase';
-import StateManager from '@application/services/ui/state';
-import HookManager from '@application/services/hook';
 import { UiDirector } from '@application/ports/director';
+import HookManager from '@application/services/hook';
+import StateManager from '@application/services/ui/state';
+import { UseCase } from '@application/usecases/UseCase';
 
 interface StartSelectionUseCaseInput {
   targetBounds: Bounds;

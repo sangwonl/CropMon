@@ -2,12 +2,12 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { Preferences } from '@domain/models/preferences';
 import { RecordOptions } from '@domain/models/capture';
+import { Preferences } from '@domain/models/preferences';
 import { PreferencesRepository } from '@domain/repositories/preferences';
 
-import HookManager from '@application/services/hook';
 import { PreferencesStore } from '@application/ports/preferences';
+import HookManager from '@application/services/hook';
 
 @injectable()
 export default class PrefsRepositoryImpl implements PreferencesRepository {

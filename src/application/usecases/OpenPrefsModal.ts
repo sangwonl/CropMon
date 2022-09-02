@@ -5,9 +5,9 @@ import TYPES from '@di/types';
 import { Preferences } from '@domain/models/preferences';
 import { PreferencesRepository } from '@domain/repositories/preferences';
 
-import { UseCase } from '@application/usecases/UseCase';
-import HookManager from '@application/services/hook';
 import { UiDirector } from '@application/ports/director';
+import HookManager from '@application/services/hook';
+import { UseCase } from '@application/usecases/UseCase';
 
 @injectable()
 export default class OpenPrefsModalUseCase implements UseCase<void> {

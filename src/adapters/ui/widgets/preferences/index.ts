@@ -2,10 +2,11 @@
 
 import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 
+import { assetPathResolver } from '@utils/asset';
+import { isDebugMode } from '@utils/process';
+
 import { Preferences } from '@domain/models/preferences';
 
-import { WidgetType } from '@adapters/ui/widgets/types';
-import Widget from '@adapters/ui/widgets/widget';
 import {
   IPC_EVT_ON_RECORD_HOME_SELECTION,
   IPC_EVT_ON_CLOSE,
@@ -14,9 +15,8 @@ import {
   IpcEvtOnSave,
   PreferencesModalOptions,
 } from '@adapters/ui/widgets/preferences/shared';
-
-import { assetPathResolver } from '@utils/asset';
-import { isDebugMode } from '@utils/process';
+import { WidgetType } from '@adapters/ui/widgets/types';
+import Widget from '@adapters/ui/widgets/widget';
 
 export default class PreferencesModal extends Widget {
   private saveCallback?: (updatedPrefs: Preferences) => void;

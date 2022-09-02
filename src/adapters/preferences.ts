@@ -1,6 +1,8 @@
-import { injectable } from 'inversify';
 import { app } from 'electron';
 import Store from 'electron-store';
+import { injectable } from 'inversify';
+
+import { DEFAULT_SHORTCUT_CAPTURE } from '@utils/shortcut';
 
 import { CaptureMode, OutputFormat } from '@domain/models/common';
 import {
@@ -10,8 +12,6 @@ import {
 } from '@domain/models/preferences';
 
 import { PreferencesStore } from '@application/ports/preferences';
-
-import { DEFAULT_SHORTCUT_CAPTURE } from '@utils/shortcut';
 
 import { version as curVersion } from '../package.json';
 

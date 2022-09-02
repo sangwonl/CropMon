@@ -1,5 +1,6 @@
-import { app } from 'electron';
 import path from 'path';
+
+import { app } from 'electron';
 
 const RESOURCES_PATH = app.isPackaged
   ? process.resourcesPath

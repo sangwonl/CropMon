@@ -1,12 +1,23 @@
 /* eslint-disable prettier/prettier */
 
-import { inject, injectable } from 'inversify';
 import {
   app,
   desktopCapturer,
   globalShortcut,
   systemPreferences,
 } from 'electron';
+import { inject, injectable } from 'inversify';
+
+import { getTimeInSeconds } from '@utils/date';
+import { getPlatform, isDebugMode, isMac } from '@utils/process';
+import {
+  SHORTCUT_CAPTURE_MODE_AREA,
+  SHORTCUT_CAPTURE_MODE_SCREEN,
+  SHORTCUT_ENTER,
+  SHORTCUT_ESCAPE,
+  SHORTCUT_OUTPUT_GIF,
+  SHORTCUT_OUTPUT_MP4,
+} from '@utils/shortcut';
 
 import TYPES from '@di/types';
 
@@ -16,9 +27,9 @@ import {
 } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
 
-import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
-import CheckVersionUseCase from '@application/usecases/CheckVersion';
-
+import { ActionDispatcher } from '@application/ports/action';
+import { UiDirector } from '@application/ports/director';
+import { AnalyticsTracker } from '@application/ports/tracker';
 import HookManager, {
   HookArgsAppUpdateChecked,
   HookArgsAppUpdated,
@@ -29,21 +40,12 @@ import HookManager, {
   HookArgsCaptureFinishing,
   HookArgsCaptureFinished,
 } from '@application/services/hook';
-import PreferencesRepository from '@adapters/repositories/preferences';
-import { AnalyticsTracker } from '@application/ports/tracker';
-import { UiDirector } from '@application/ports/director';
-import { ActionDispatcher } from '@application/ports/action';
+import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
+import CheckVersionUseCase from '@application/usecases/CheckVersion';
 
-import { getPlatform, isDebugMode, isMac } from '@utils/process';
-import { getTimeInSeconds } from '@utils/date';
-import {
-  SHORTCUT_CAPTURE_MODE_AREA,
-  SHORTCUT_CAPTURE_MODE_SCREEN,
-  SHORTCUT_ENTER,
-  SHORTCUT_ESCAPE,
-  SHORTCUT_OUTPUT_GIF,
-  SHORTCUT_OUTPUT_MP4,
-} from '@utils/shortcut';
+import PreferencesRepository from '@adapters/repositories/preferences';
+
+
 
 const UPDATE_CHECK_DELAY = 5 * 60 * 1000;
 const UPDATE_CHECK_INTERVAL = 4 * 60 * 60 * 1000;

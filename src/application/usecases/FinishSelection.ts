@@ -3,15 +3,14 @@ import { inject, injectable } from 'inversify';
 import TYPES from '@di/types';
 
 import { Bounds } from '@domain/models/screen';
-import CaptureSession from '@domain/services/capture';
 import { PreferencesRepository } from '@domain/repositories/preferences';
+import CaptureSession from '@domain/services/capture';
 
 import { UiState } from '@application/models/ui';
-import { UseCase } from '@application/usecases/UseCase';
-import StateManager from '@application/services/ui/state';
-import HookManager from '@application/services/hook';
-
 import { UiDirector } from '@application/ports/director';
+import HookManager from '@application/services/hook';
+import StateManager from '@application/services/ui/state';
+import { UseCase } from '@application/usecases/UseCase';
 
 interface FinishSelectionUseCaseInput {
   targetBounds: Bounds;

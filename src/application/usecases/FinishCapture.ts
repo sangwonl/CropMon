@@ -4,10 +4,10 @@ import TYPES from '@di/types';
 
 import CaptureSession from '@domain/services/capture';
 
-import { UseCase } from '@application/usecases/UseCase';
+import { UiDirector } from '@application/ports/director';
 import HookManager from '@application/services/hook';
 import CaptureModeManager from '@application/services/ui/mode';
-import { UiDirector } from '@application/ports/director';
+import { UseCase } from '@application/usecases/UseCase';
 
 @injectable()
 export default class FinishCaptureUseCase implements UseCase<void> {

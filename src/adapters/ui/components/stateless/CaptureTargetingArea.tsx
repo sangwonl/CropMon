@@ -1,13 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { MutableRefObject, useRef, useEffect } from 'react';
 import classNames from 'classnames';
 import Color from 'color';
-
-import { Bounds, Point } from '@domain/models/screen';
-
-import { CaptureAreaColors } from '@application/models/ui';
+import React, { MutableRefObject, useRef, useEffect } from 'react';
 
 import {
   emptyBounds,
@@ -16,7 +12,11 @@ import {
   isPointInsideBounds,
 } from '@utils/bounds';
 
-import styles from '@adapters/ui/components/stateless/CaptureTargetingArea.css';
+import { Bounds, Point } from '@domain/models/screen';
+
+import { CaptureAreaColors } from '@application/models/ui';
+
+import styles from './CaptureTargetingArea.css';
 
 const COLOR_ALPHA_AREA = 0.2;
 const COLOR_ALPHA_AREA_SHADOW = 1.0;

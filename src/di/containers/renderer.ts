@@ -1,16 +1,14 @@
-/* eslint-disable prettier/prettier */
-
 import 'reflect-metadata';
-
+// eslint-disable-next-line import/order
 import { Container } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { PlatformApi } from '@application/ports/platform';
 import { ActionDispatcher } from '@application/ports/action';
+import { PlatformApi } from '@application/ports/platform';
 
-import PlatformApiClient from '@adapters/platform/client';
 import ActionDispatcherClient from '@adapters/actions/client';
+import PlatformApiClient from '@adapters/platform/client';
 
 const diContainer = new Container();
 
