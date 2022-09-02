@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useCallback, useEffect, useState, useRef } from 'react';
+import classNames from 'classnames';
 
 import { CaptureMode } from '@domain/models/common';
 import { Bounds, Point } from '@domain/models/screen';
@@ -203,7 +204,14 @@ const CaptureOverlay = (props: PropTypes) => {
   }, [renderMode]);
 
   return (
-    <div className={styles.cover}>
+    <div
+      className={classNames(styles.cover, {
+        [styles.cursorCaptureArea]:
+          controlPanel.captureMode === CaptureMode.AREA,
+        [styles.cursorCaptureScreen]:
+          controlPanel.captureMode === CaptureMode.SCREEN,
+      })}
+    >
       {renderMode !== RenderMode.IDLE && (
         <>
           {renderMode === RenderMode.TARGETING &&

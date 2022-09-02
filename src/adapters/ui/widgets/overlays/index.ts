@@ -27,7 +27,6 @@ export default class CaptureOverlay extends Widget {
 
   protected createWindow(): BrowserWindow {
     return new BrowserWindow({
-      icon: assetPathResolver('icon.png'),
       show: false,
       frame: false,
       movable: false,

@@ -2,7 +2,14 @@
   width: 100vw;
   height: 100vh;
   background-color: transparent;
+}
+
+.cursorCaptureArea {
   cursor: crosshair;
+}
+
+.cursorCaptureScreen {
+  cursor: grab;
 }
 
 .options {
