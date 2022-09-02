@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { MouseEvent, useCallback } from 'react';
-import classNames from 'classnames';
 import Color from 'color';
 
 import { Bounds, Point } from '@domain/models/screen';
@@ -62,12 +61,11 @@ const CaptureTargetingScreen = (props: PropTypes) => {
   );
 
   return (
-    <div className={classNames(styles.wrapper)} onMouseUp={handleMouseEvent}>
-      <div
-        className={styles.area}
-        style={getAreaStyles(targetBounds, areaColors)}
-      />
-    </div>
+    <div
+      className={styles.area}
+      style={getAreaStyles(targetBounds, areaColors)}
+      onMouseUp={handleMouseEvent}
+    />
   );
 };
 
