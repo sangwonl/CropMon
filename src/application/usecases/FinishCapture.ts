@@ -2,6 +2,7 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
+import { Progress } from '@domain/models/capture';
 import CaptureSession from '@domain/services/capture';
 
 import { UiDirector } from '@application/ports/director';
@@ -27,6 +28,9 @@ export default class FinishCaptureUseCase implements UseCase<void> {
           this.hookManager.emit('capture-finishing', {
             captureContext: curCaptureCtx,
           });
+        },
+        (progress: Progress) => {
+          console.log(progress.percent);
         }
       );
 

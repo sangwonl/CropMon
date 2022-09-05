@@ -12,7 +12,7 @@ import logger from 'electron-log';
 import ffmpeg from 'fluent-ffmpeg';
 
 import { mergeScreenBounds } from '@utils/bounds';
-import { getNowAsYYYYMMDDHHmmss } from '@utils/date';
+import { getDurationFromString, getNowAsYYYYMMDDHHmmss } from '@utils/date';
 import { isProduction, isWin } from '@utils/process';
 
 import diContainer from '@di/containers/renderer';
@@ -59,6 +59,7 @@ class MediaRecordDelegatee {
   private totalRecordedChunks = 0;
   private chunkHandler?: ReturnType<typeof setInterval>;
   private tranformWorker: Worker;
+  private recordStartedAt?: number;
 
   constructor() {
     this.tranformWorker = new Worker(this.getWorkerPath());
@@ -77,8 +78,10 @@ class MediaRecordDelegatee {
     this.tempFilePath = this.getTempOutputPath();
     this.ensureTempDirPathExists(this.tempFilePath);
 
-    // this.mediaRecorder?.start(RECORD_TIMESLICE_MS);
-    setTimeout(() => this.mediaRecorder?.start(RECORD_TIMESLICE_MS));
+    setTimeout(() => {
+      this.mediaRecorder?.start(RECORD_TIMESLICE_MS);
+      this.recordStartedAt = new Date().getTime();
+    });
   };
 
   stop = () => {
@@ -298,8 +301,12 @@ class MediaRecordDelegatee {
   private handleRecordStop = (_event: Event) => {
     this.recordState = 'stopped';
 
+    const recordStoppedAt = new Date().getTime();
+    const totalRecordTime = recordStoppedAt - this.recordStartedAt!;
+
     ipcRenderer.send('recording-done', {
       tempFilePath: this.tempFilePath,
+      totalRecordTime,
     });
   };
 
@@ -330,12 +337,22 @@ class MediaRecordDelegatee {
   }
 }
 
+type ProgressEvent = {
+  // {frames: 169, currentFps: 0, currentKbps: 235.8, targetSize: 168, timemark: '00:00:05.84'}
+  frames: number;
+  currentFps: number;
+  currentKbps: number;
+  targetSize: number;
+  timemark: string;
+};
+
 class PostProcessorDelegate {
   async postProcess(
     tempPath: string,
     outputPath: string,
     outputFormat: OutputFormat,
-    enableMic: boolean
+    enableMic: boolean,
+    onProgress: (progress: ProgressEvent) => void
   ): Promise<void> {
     return new Promise((resolve) => {
       const finalizer = () => {
@@ -356,7 +373,11 @@ class PostProcessorDelegate {
         ffmpegCmd.videoCodec('copy');
       }
 
-      ffmpegCmd.output(outputPath).on('end', finalizer).run();
+      ffmpegCmd
+        .output(outputPath)
+        .on('progress', onProgress)
+        .on('end', finalizer)
+        .run();
     });
   }
 
@@ -392,7 +413,21 @@ ipcRenderer.on('stop-record', (_event, _data) => {
 });
 
 ipcRenderer.on('start-post-process', async (_event, data) => {
-  const { tempPath, outputPath, outputFormat, enableMic } = data;
-  await postProc.postProcess(tempPath, outputPath, outputFormat, enableMic);
+  const { tempPath, outputPath, outputFormat, enableMic, totalRecordTime } =
+    data;
+  const handleProgress = (progress: ProgressEvent) => {
+    const currentFrameTime = getDurationFromString(progress.timemark);
+    const percent = Math.round((currentFrameTime / totalRecordTime) * 100);
+    ipcRenderer.send('post-processing', { progress: { percent } });
+  };
+
+  await postProc.postProcess(
+    tempPath,
+    outputPath,
+    outputFormat,
+    enableMic,
+    handleProgress
+  );
+
   ipcRenderer.send('post-process-done');
 });

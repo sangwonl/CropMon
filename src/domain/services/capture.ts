@@ -7,7 +7,11 @@ import {
   CaptureOptionsNotPreparedException,
   InvalidCaptureStatusException,
 } from '@domain/exceptions';
-import { CaptureContext, CaptureOptions } from '@domain/models/capture';
+import {
+  CaptureContext,
+  CaptureOptions,
+  Progress,
+} from '@domain/models/capture';
 import { CaptureStatus } from '@domain/models/common';
 import { PreferencesRepository } from '@domain/repositories/preferences';
 import { ScreenRecorder } from '@domain/services/recorder';
@@ -75,7 +79,8 @@ export default class CaptureSession {
   }
 
   async finishCapture(
-    finishingCallback: (curCaptureCtx: CaptureContext) => void
+    finishingCallback: (curCaptureCtx: CaptureContext) => void,
+    postProgressCallback: (progress: Progress) => void
   ): Promise<CaptureContext> {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const curCaptureCtx = this.curCaptureCtx!;
@@ -89,7 +94,7 @@ export default class CaptureSession {
     finishingCallback(curCaptureCtx);
 
     try {
-      await this.screenRecorder.finish(curCaptureCtx);
+      await this.screenRecorder.finish(curCaptureCtx, postProgressCallback);
       curCaptureCtx.finishCapture();
       this.captureStatus = CaptureStatus.FINISHED;
     } catch (e) {
