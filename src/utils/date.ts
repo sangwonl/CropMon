@@ -10,3 +10,18 @@ export const getNowAsYYYYMMDDHHmmss = () => {
 export const getTimeInSeconds = () => {
   return Math.floor(new Date().getTime() / 1000);
 };
+
+/**
+ * Returns duration in ms which is extracted from string
+ *
+ * @param durationStr - duration in string, e.g.) '00:00:05.84'
+ * @returns duration in ms
+ */
+export const getDurationFromString = (durationStr: string): number => {
+  const parts = durationStr.split(':');
+  const hours = Number.parseInt(parts[0], 10);
+  const minutes = Number.parseInt(parts[1], 10);
+  const seconds = Number.parseFloat(parts[2]);
+  const durationInSec = hours * 60 * 60 + minutes * 60 + seconds;
+  return durationInSec * 1000;
+};

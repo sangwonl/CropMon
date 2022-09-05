@@ -7,7 +7,7 @@ import { injectable } from 'inversify';
 
 import { getAllScreens, getIntersection, isEmptyBounds } from '@utils/bounds';
 
-import { CaptureContext } from '@domain/models/capture';
+import { CaptureContext, Progress } from '@domain/models/capture';
 import { Bounds, Screen } from '@domain/models/screen';
 import { ScreenRecorder } from '@domain/services/recorder';
 
@@ -78,7 +78,10 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
     });
   }
 
-  async finish(ctx: CaptureContext): Promise<void> {
+  async finish(
+    ctx: CaptureContext,
+    onPostProgress: (progres: Progress) => void
+  ): Promise<void> {
     const { outputPath, outputFormat, recordMicrophone: enableMic } = ctx;
 
     return new Promise((resolve, reject) => {
@@ -88,7 +91,12 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
           outputPath,
           outputFormat,
           enableMic,
+          totalRecordTime: data.totalRecordTime,
         });
+      };
+
+      const onPostProcessing = (_event: any, data: any) => {
+        onPostProgress({ percent: data.progress.percent });
       };
 
       const onPostProcessDone = async () => {
@@ -106,12 +114,14 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
       const setupIpcListeners = () => {
         ipcMain.on('recording-done', onRecordingDone);
         ipcMain.on('recording-failed', onRecordingFailed);
+        ipcMain.on('post-processing', onPostProcessing);
         ipcMain.on('post-process-done', onPostProcessDone);
       };
 
       const clearIpcListeners = () => {
         ipcMain.off('recording-done', onRecordingDone);
         ipcMain.off('recording-failed', onRecordingFailed);
+        ipcMain.off('post-processing', onPostProcessing);
         ipcMain.off('post-process-done', onPostProcessDone);
       };
 

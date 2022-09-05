@@ -22,6 +22,10 @@ export type CaptureOptions = {
   recordOptions: RecordOptions;
 };
 
+export type Progress = {
+  percent: number;
+};
+
 export class CaptureContext {
   createdAt: number;
   finishedAt?: number;
