@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { Progress } from '@domain/models/capture';
+import { CaptureContext, Progress } from '@domain/models/capture';
 import CaptureSession from '@domain/services/capture';
 
 import { UiDirector } from '@application/ports/director';
@@ -24,23 +24,32 @@ export default class FinishCaptureUseCase implements UseCase<void> {
 
     try {
       const finishedCtx = await this.captureSession.finishCapture(
-        (curCaptureCtx) => {
+        async (curCaptureCtx: CaptureContext) => {
           this.hookManager.emit('capture-finishing', {
             captureContext: curCaptureCtx,
           });
-        },
-        (progress: Progress) => {
-          console.log(progress.percent);
-        }
-      );
 
-      if (await this.captureSession.shouldRevealRecordedFile()) {
+          if (curCaptureCtx.outputFormat === 'gif') {
+            const done = await this.uiDirector.openPostProcessDialog();
+            if (!done) {
+              this.captureSession.abortPostProcess();
+            }
+          }
+        },
+        (progress: Progress) =>
+          this.uiDirector.progressPostProcess(progress.percent),
+        () => this.uiDirector.progressPostProcess(100)
+      );
+      this.uiDirector.closePostProcessDialog();
+
+      const done = this.captureSession.isFinished();
+      if (done && (await this.captureSession.shouldRevealRecordedFile())) {
         this.uiDirector.revealItemInFolder(finishedCtx.outputPath);
       }
 
       this.hookManager.emit('capture-finished', {
         captureContext: finishedCtx,
-        error: !this.captureSession.isFinished(),
+        error: !done,
       });
 
       this.captureSession.idle();

@@ -21,5 +21,8 @@ export interface UiDirector {
   revealItemInFolder(path: string): void;
   revealFolder(path: string): void;
   startDownloadAndInstall(onReady: () => void, onCancel: () => void, onQuitAndInstall: () => void): Promise<void>;
-  setUpdateDownloadProgress(percent: number): void;
+  progressUpdateDownload(percent: number): void;
+  openPostProcessDialog(): Promise<boolean>
+  closePostProcessDialog(): void
+  progressPostProcess(percent: number): void;
 }

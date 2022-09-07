@@ -78,4 +78,11 @@ export default class ProgressDialog extends Widget {
       setupIpcListeners();
     });
   }
+
+  close(): void {
+    this.setProgress(0);
+    setTimeout(() => {
+      this.hide();
+    });
+  }
 }

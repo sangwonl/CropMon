@@ -80,12 +80,15 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
 
   async finish(
     ctx: CaptureContext,
+    onRecordDone: () => void,
     onPostProgress: (progres: Progress) => void
   ): Promise<void> {
     const { outputPath, outputFormat, recordMicrophone: enableMic } = ctx;
 
     return new Promise((resolve, reject) => {
       const onRecordingDone = async (_event: any, data: any) => {
+        onRecordDone();
+
         this.delegate?.webContents.send('start-post-process', {
           tempPath: data.tempFilePath,
           outputPath,
@@ -99,9 +102,13 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
         onPostProgress({ percent: data.progress.percent });
       };
 
-      const onPostProcessDone = async () => {
+      const onPostProcessDone = async (_event: any, data: any) => {
         clearIpcListeners();
-        resolve();
+        if (!data.aborted) {
+          resolve();
+        } else {
+          reject(Error('recording aborted'));
+        }
         this.renewBuildRenderer();
       };
 
@@ -129,6 +136,10 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
 
       this.delegate?.webContents.send('stop-record', { outputPath });
     });
+  }
+
+  abortPostProcess(): void {
+    this.delegate?.webContents.send('abort-post-process', {});
   }
 
   private getSourceByScreenId(

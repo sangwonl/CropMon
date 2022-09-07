@@ -9,7 +9,7 @@ import path from 'path';
 
 import { ipcRenderer } from 'electron';
 import logger from 'electron-log';
-import ffmpeg from 'fluent-ffmpeg';
+import ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
 
 import { mergeScreenBounds } from '@utils/bounds';
 import { getDurationFromString, getNowAsYYYYMMDDHHmmss } from '@utils/date';
@@ -347,6 +347,8 @@ type ProgressEvent = {
 };
 
 class PostProcessorDelegate {
+  private ffmpegCmd?: FfmpegCommand;
+
   async postProcess(
     tempPath: string,
     outputPath: string,
@@ -360,25 +362,29 @@ class PostProcessorDelegate {
         resolve();
       };
 
-      const ffmpegCmd = ffmpeg(tempPath).setFfmpegPath(this.getFfmpegPath());
+      this.ffmpegCmd = ffmpeg(tempPath).setFfmpegPath(this.getFfmpegPath());
       if (outputFormat === 'gif') {
-        ffmpegCmd
+        this.ffmpegCmd
           .outputFormat('gif')
           .videoFilter(
             'fps=14,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse'
           );
       } else if (enableMic) {
-        ffmpegCmd.videoCodec('copy').audioCodec('aac');
+        this.ffmpegCmd.videoCodec('copy').audioCodec('aac');
       } else {
-        ffmpegCmd.videoCodec('copy');
+        this.ffmpegCmd.videoCodec('copy');
       }
 
-      ffmpegCmd
+      this.ffmpegCmd
         .output(outputPath)
         .on('progress', onProgress)
         .on('end', finalizer)
         .run();
     });
+  }
+
+  stopProcess(): void {
+    this.ffmpegCmd?.kill('SIGINT');
   }
 
   private getFfmpegPath(): string {
@@ -429,5 +435,11 @@ ipcRenderer.on('start-post-process', async (_event, data) => {
     handleProgress
   );
 
-  ipcRenderer.send('post-process-done');
+  ipcRenderer.send('post-process-done', { aborted: false });
+});
+
+ipcRenderer.on('abort-post-process', () => {
+  postProc.stopProcess();
+
+  ipcRenderer.send('post-process-done', { aborted: true });
 });

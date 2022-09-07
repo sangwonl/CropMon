@@ -42,10 +42,10 @@ export default class CheckUpdateUseCase implements UseCase<void> {
         (progressInfo.transferred / progressInfo.total) * 100 * maxPercentage
       );
     }
-    this.uiDirector.setUpdateDownloadProgress(percent);
+    this.uiDirector.progressUpdateDownload(percent);
   };
 
   private onUpdateDownloaded = () => {
-    this.uiDirector.setUpdateDownloadProgress(100);
+    this.uiDirector.progressUpdateDownload(100);
   };
 }
