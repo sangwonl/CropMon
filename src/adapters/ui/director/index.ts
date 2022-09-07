@@ -34,6 +34,7 @@ export default class ElectronUiDirector implements UiDirector {
   private relNoteModal?: StaticPageModal;
   private prefsModal?: PreferencesModal;
   private updateProgressDialog?: ProgressDialog;
+  private postProcessDialog?: ProgressDialog;
 
   private screenBoundsDetector?: ReturnType<typeof setInterval>;
   private recTimeHandle?: ReturnType<typeof setInterval>;
@@ -44,6 +45,17 @@ export default class ElectronUiDirector implements UiDirector {
   initialize(): void {
     this.appTray = createTray();
     this.captureOverlay = new CaptureOverlayWrap(this.uiStateApplier);
+
+    this.postProcessDialog = new ProgressDialog({
+      title: 'Processing',
+      message: 'Converting to GIF format...',
+      buttons: {
+        cancelTitle: 'Abort',
+      },
+      timeout: 300,
+      width: 400,
+      height: 200,
+    });
   }
 
   async refreshTrayState(
@@ -252,13 +264,28 @@ export default class ElectronUiDirector implements UiDirector {
     if (shouldUpdate) {
       onQuitAndInstall();
       // WORKAROUND: to make sure app quits completely
-      setTimeout(() => this.quitApplication(), 500);
+      setTimeout(() => this.quitApplication(), 2000);
     } else {
       onCancel();
     }
   }
 
-  setUpdateDownloadProgress(percent: number): void {
+  progressUpdateDownload(percent: number): void {
     this.updateProgressDialog?.setProgress(percent);
+  }
+
+  async openPostProcessDialog(): Promise<boolean> {
+    if (!this.postProcessDialog) {
+      return false;
+    }
+    return this.postProcessDialog.open();
+  }
+
+  closePostProcessDialog(): void {
+    this.postProcessDialog?.close();
+  }
+
+  progressPostProcess(percent: number): void {
+    this.postProcessDialog?.setProgress(percent);
   }
 }

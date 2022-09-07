@@ -79,8 +79,9 @@ export default class CaptureSession {
   }
 
   async finishCapture(
-    finishingCallback: (curCaptureCtx: CaptureContext) => void,
-    postProgressCallback: (progress: Progress) => void
+    onFinishing?: (curCaptureCtx: CaptureContext) => void,
+    onPostProgress?: (progress: Progress) => void,
+    onFinished?: () => void
   ): Promise<CaptureContext> {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const curCaptureCtx = this.curCaptureCtx!;
@@ -91,17 +92,26 @@ export default class CaptureSession {
       );
     }
 
-    finishingCallback(curCaptureCtx);
-
     try {
-      await this.screenRecorder.finish(curCaptureCtx, postProgressCallback);
+      await this.screenRecorder.finish(
+        curCaptureCtx,
+        () => onFinishing?.(curCaptureCtx),
+        (progress) => onPostProgress?.(progress)
+      );
+
       curCaptureCtx.finishCapture();
       this.captureStatus = CaptureStatus.FINISHED;
+
+      onFinished?.();
     } catch (e) {
       this.captureStatus = CaptureStatus.ERROR;
     }
 
     return curCaptureCtx;
+  }
+
+  abortPostProcess(): void {
+    this.screenRecorder.abortPostProcess();
   }
 
   async shouldRevealRecordedFile(): Promise<boolean> {

@@ -1,7 +1,7 @@
 export type ProgressDialogButtons = {
   cancelTitle: string;
-  actionTitle: string;
-  actionHideInProgress: boolean;
+  actionTitle?: string;
+  actionHideInProgress?: boolean;
 };
 
 export type ProgressDialogOptions = {

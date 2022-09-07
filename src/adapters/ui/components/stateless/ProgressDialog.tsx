@@ -14,8 +14,8 @@ import styles from './ProgressDialog.css';
 
 export type ProgressDialogButtonsProps = {
   cancelTitle: string;
-  actionTitle: string;
-  actionHideInProgress: boolean;
+  actionTitle?: string;
+  actionHideInProgress?: boolean;
 };
 
 export type ProgressDialogProps = {
@@ -29,6 +29,7 @@ export type ProgressDialogProps = {
 
 export const ProgressDialog = (props: ProgressDialogProps) => {
   const { title, message, buttons, progress } = props;
+  const { cancelTitle, actionTitle, actionHideInProgress = true } = buttons;
 
   return (
     <div className={styles.container}>
@@ -40,13 +41,13 @@ export const ProgressDialog = (props: ProgressDialogProps) => {
         <ProgressBar progress={progress} />
       </div>
       <div className={styles.buttons}>
-        {(!buttons.actionHideInProgress || progress >= 100) && (
+        {actionTitle && (!actionHideInProgress || progress >= 100) && (
           <button className={styles.buttonAction} onClick={props.onActionClick}>
-            {buttons.actionTitle}
+            {actionTitle}
           </button>
         )}
         <button className={styles.buttonCancel} onClick={props.onCancelClick}>
-          {buttons.cancelTitle}
+          {cancelTitle}
         </button>
       </div>
     </div>
