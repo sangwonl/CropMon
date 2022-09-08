@@ -25,4 +25,5 @@ export interface UiDirector {
   openPostProcessDialog(): Promise<boolean>
   closePostProcessDialog(): void
   progressPostProcess(percent: number): void;
+  updatePostProcessMsg(message: string): void;
 }

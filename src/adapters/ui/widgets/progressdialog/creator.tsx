@@ -10,6 +10,8 @@ import {
   IPC_EVT_SET_PROGRESS,
   IPC_EVT_ON_ACTION,
   IPC_EVT_ON_CANCEL,
+  IPC_EVT_SET_MESSAGE,
+  IpcEvtSetMessage,
 } from '@adapters/ui/widgets/progressdialog/shared';
 import { preventZoomKeyEvent } from '@adapters/ui/widgets/utils';
 
@@ -20,18 +22,23 @@ type PropTypes = {
 const Wrapper = (props: PropTypes) => {
   const { options } = props;
   const [progress, setProgress] = useState(0);
+  const [message, setMessage] = useState(options.message);
 
   useEffect(() => {
     ipcRenderer.on(
       IPC_EVT_SET_PROGRESS,
       (_event: any, data: IpcEvtSetProgress) => setProgress(data.progress)
     );
+
+    ipcRenderer.on(IPC_EVT_SET_MESSAGE, (_event: any, data: IpcEvtSetMessage) =>
+      setMessage(data.message)
+    );
   }, []);
 
   return (
     <ProgressDialog
       title={options.title}
-      message={options.message}
+      message={message}
       buttons={{
         cancelTitle: options.buttons.cancelTitle,
         actionTitle: options.buttons.actionTitle,

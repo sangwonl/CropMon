@@ -13,6 +13,7 @@ import {
   IPC_EVT_ON_ACTION,
   IPC_EVT_SET_PROGRESS,
   IPC_EVT_ON_CANCEL,
+  IPC_EVT_SET_MESSAGE,
 } from './shared';
 
 export default class ProgressDialog extends Widget {
@@ -44,6 +45,10 @@ export default class ProgressDialog extends Widget {
 
   setProgress(progress: number) {
     this.window.webContents.send(IPC_EVT_SET_PROGRESS, { progress });
+  }
+
+  setMessage(message: string) {
+    this.window.webContents.send(IPC_EVT_SET_MESSAGE, { message });
   }
 
   open(): Promise<boolean> {

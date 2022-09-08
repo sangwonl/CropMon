@@ -15,9 +15,14 @@ export type ProgressDialogOptions = {
 };
 
 export const IPC_EVT_SET_PROGRESS = 'set-progress';
+export const IPC_EVT_SET_MESSAGE = 'set-message';
 export const IPC_EVT_ON_ACTION = 'on-action';
 export const IPC_EVT_ON_CANCEL = 'on-cancel';
 
 export type IpcEvtSetProgress = {
   progress: number;
+};
+
+export type IpcEvtSetMessage = {
+  message: string;
 };

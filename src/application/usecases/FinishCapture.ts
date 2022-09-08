@@ -10,6 +10,8 @@ import HookManager from '@application/services/hook';
 import CaptureModeManager from '@application/services/ui/mode';
 import { UseCase } from '@application/usecases/UseCase';
 
+const CONTAINING_PROGRESS = 10;
+
 @injectable()
 export default class FinishCaptureUseCase implements UseCase<void> {
   constructor(
@@ -24,20 +26,26 @@ export default class FinishCaptureUseCase implements UseCase<void> {
 
     try {
       const finishedCtx = await this.captureSession.finishCapture(
-        async (curCaptureCtx: CaptureContext) => {
+        async (captureCtx: CaptureContext) => {
           this.hookManager.emit('capture-finishing', {
-            captureContext: curCaptureCtx,
+            captureContext: captureCtx,
           });
 
-          if (curCaptureCtx.outputFormat === 'gif') {
-            const done = await this.uiDirector.openPostProcessDialog();
-            if (!done) {
-              this.captureSession.abortPostProcess();
-            }
+          this.uiDirector.updatePostProcessMsg('Containing recorded media...');
+          this.uiDirector.progressPostProcess(CONTAINING_PROGRESS);
+          const done = await this.uiDirector.openPostProcessDialog();
+          if (!done) {
+            this.captureSession.abortPostProcess();
           }
         },
-        (progress: Progress) =>
-          this.uiDirector.progressPostProcess(progress.percent),
+        (progress: Progress, captureCtx: CaptureContext) => {
+          if (captureCtx.outputFormat === 'gif') {
+            this.uiDirector.updatePostProcessMsg('Converting to GIF format...');
+          }
+          this.uiDirector.progressPostProcess(
+            progress.percent + CONTAINING_PROGRESS
+          );
+        },
         () => this.uiDirector.progressPostProcess(100)
       );
       this.uiDirector.closePostProcessDialog();

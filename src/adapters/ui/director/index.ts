@@ -48,7 +48,7 @@ export default class ElectronUiDirector implements UiDirector {
 
     this.postProcessDialog = new ProgressDialog({
       title: 'Processing',
-      message: 'Converting to GIF format...',
+      message: '',
       buttons: {
         cancelTitle: 'Abort',
       },
@@ -287,5 +287,9 @@ export default class ElectronUiDirector implements UiDirector {
 
   progressPostProcess(percent: number): void {
     this.postProcessDialog?.setProgress(percent);
+  }
+
+  updatePostProcessMsg(message: string): void {
+    this.postProcessDialog?.setMessage(message);
   }
 }

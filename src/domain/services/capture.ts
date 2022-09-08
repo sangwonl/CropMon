@@ -79,8 +79,8 @@ export default class CaptureSession {
   }
 
   async finishCapture(
-    onFinishing?: (curCaptureCtx: CaptureContext) => void,
-    onPostProgress?: (progress: Progress) => void,
+    onFinishing?: (captureCtx: CaptureContext) => void,
+    onPostProgress?: (progress: Progress, captureCtx: CaptureContext) => void,
     onFinished?: () => void
   ): Promise<CaptureContext> {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -96,7 +96,7 @@ export default class CaptureSession {
       await this.screenRecorder.finish(
         curCaptureCtx,
         () => onFinishing?.(curCaptureCtx),
-        (progress) => onPostProgress?.(progress)
+        (progress) => onPostProgress?.(progress, curCaptureCtx)
       );
 
       curCaptureCtx.finishCapture();
