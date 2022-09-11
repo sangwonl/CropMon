@@ -66,11 +66,7 @@ export default class ElectronUiDirector implements UiDirector {
     await this.appTray?.refreshContextMenu(
       prefs.shortcut,
       updatable,
-      recording,
-      {
-        enableOutputAsGif: prefs.outputFormat === 'gif',
-        enableMicrophone: prefs.recordMicrophone,
-      }
+      recording
     );
   }
 

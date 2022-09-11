@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import {
   Tray,
   Menu,
@@ -8,8 +10,6 @@ import {
 
 import diContainer from '@di/containers/main';
 import TYPES from '@di/types';
-
-import { RecordOptions } from '@domain/models/capture';
 
 import { ActionDispatcher } from '@application/ports/action';
 
@@ -75,20 +75,6 @@ export default abstract class AppTray {
     this.dispatcher.openPreferences();
   };
 
-  protected onToggleOutGif = (m: MenuItem) => {
-    this.dispatcher.toggleRecordOptions({
-      enableOutputAsGif: m.checked,
-      enableMicrophone: false,
-    });
-  };
-
-  protected onToggleMic = (m: MenuItem) => {
-    this.dispatcher.toggleRecordOptions({
-      enableMicrophone: m.checked,
-      enableOutputAsGif: false,
-    });
-  };
-
   protected onOpenFolder = () => {
     this.dispatcher.openCaptureFolder();
   };
@@ -107,8 +93,7 @@ export default abstract class AppTray {
   async refreshContextMenu(
     shortcut?: string,
     isUpdatable?: boolean,
-    isRecording?: boolean,
-    recOptions?: RecordOptions
+    isRecording?: boolean
   ) {
     if (isRecording !== undefined) {
       this.isRecording = isRecording;
@@ -134,14 +119,6 @@ export default abstract class AppTray {
     const menuStopCapt = this.getMenuItemTemplById(templ, 'stop-capture');
     menuStopCapt.accelerator = shortcut;
     menuStopCapt.visible = this.isRecording;
-
-    // update recording options
-    const recOpts = this.getMenuItemTemplById(templ, 'recording-options');
-    const micOpt = this.getMenuItemTemplById(recOpts.submenu, 'record-mic');
-    micOpt.checked = recOptions?.enableMicrophone ?? false;
-
-    const gifOpt = this.getMenuItemTemplById(recOpts.submenu, 'out-gif');
-    gifOpt.checked = recOptions?.enableOutputAsGif ?? false;
 
     // update tray properties
     this.menu = Menu.buildFromTemplate(templ);

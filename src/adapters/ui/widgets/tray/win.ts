@@ -46,24 +46,6 @@ export default class WinAppTray extends AppTray {
         visible: false,
       },
       {
-        id: 'recording-options',
-        label: 'Options',
-        submenu: [
-          {
-            id: 'out-gif',
-            type: 'checkbox',
-            label: 'Output as GIF',
-            click: this.onToggleOutGif,
-          },
-          {
-            id: 'record-mic',
-            type: 'checkbox',
-            label: 'Record Microphone',
-            click: this.onToggleMic,
-          },
-        ],
-      },
-      {
         id: 'open-folder',
         label: '&Open Folder',
         click: this.onOpenFolder,
