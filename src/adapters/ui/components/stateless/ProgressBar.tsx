@@ -1,15 +1,14 @@
 /* eslint-disable react/display-name */
-/* eslint-disable import/prefer-default-export */
 
 import React from 'react';
 
 import styles from './ProgressBar.css';
 
-export type ProgressBarProps = {
+type Props = {
   progress: number;
 };
 
-export const ProgressBar = (props: ProgressBarProps) => {
+const ProgressBar = (props: Props) => {
   const { progress } = props;
   return (
     <div className={styles.wrapper}>
@@ -22,3 +21,5 @@ export const ProgressBar = (props: ProgressBarProps) => {
     </div>
   );
 };
+
+export default ProgressBar;

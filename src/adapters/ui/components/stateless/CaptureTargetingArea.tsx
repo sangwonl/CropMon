@@ -22,13 +22,13 @@ const COLOR_ALPHA_AREA = 0.2;
 const COLOR_ALPHA_AREA_SHADOW = 1.0;
 const COLOR_ALPHA_TEXT_SHADOW = 0.3;
 
-interface AreaSelectionCtx {
+type AreaSelectionCtx = {
   started: boolean;
   selected: boolean;
   startPt: Point;
   endPt: Point;
   cursorPt: Point;
-}
+};
 
 const initialSelCtx: AreaSelectionCtx = {
   started: false,
@@ -261,7 +261,7 @@ const handleMouseUp = (
   onFinish(bounds);
 };
 
-interface PropTypes {
+type Props = {
   targetBounds: Bounds;
   screenBounds: Bounds;
   startCursorPosition: Point | undefined;
@@ -271,9 +271,9 @@ interface PropTypes {
   onSelecting: (bounds: Bounds, cursorPosition: Point) => void;
   onCancel: () => void;
   onFinish: (bounds: Bounds) => void;
-}
+};
 
-const CaptureTargetingArea = (props: PropTypes) => {
+const CaptureTargetingArea = (props: Props) => {
   const {
     targetBounds,
     screenBounds,

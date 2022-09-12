@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { FC } from 'react';
+import React from 'react';
 
 import { Bounds } from '@domain/models/screen';
 
@@ -23,11 +23,11 @@ const getAreaStyles = (bounds: Bounds): any => {
   };
 };
 
-interface PropTypes {
+type Props = {
   targetBounds: Bounds;
-}
+};
 
-const CaptureRecording: FC<PropTypes> = (props: PropTypes) => {
+const CaptureRecording = (props: Props) => {
   const { targetBounds } = props;
 
   return (

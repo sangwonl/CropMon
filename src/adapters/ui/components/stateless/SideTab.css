@@ -1,0 +1,14 @@
+.tabItem {
+  user-select: none;
+  font-family: Roboto;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 16px 12px;
+  width: 100px;
+  color: #333933;
+}
+
+.tabItemSelected {
+  color: #efefef;
+  background-color: #3a9f3c;
+}

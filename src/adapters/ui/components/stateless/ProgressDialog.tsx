@@ -4,30 +4,29 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/display-name */
-/* eslint-disable import/prefer-default-export */
 
 import React from 'react';
 
-import { ProgressBar } from '@adapters/ui/components/stateless/ProgressBar';
+import ProgressBar from '@adapters/ui/components/stateless/ProgressBar';
 
 import styles from './ProgressDialog.css';
 
-export type ProgressDialogButtonsProps = {
+type ProgressDialogButtons = {
   cancelTitle: string;
   actionTitle?: string;
   actionHideInProgress?: boolean;
 };
 
-export type ProgressDialogProps = {
+type Props = {
   title: string;
   message: string;
-  buttons: ProgressDialogButtonsProps;
+  buttons: ProgressDialogButtons;
   progress: number;
   onCancelClick: () => void;
   onActionClick: () => void;
 };
 
-export const ProgressDialog = (props: ProgressDialogProps) => {
+const ProgressDialog = (props: Props) => {
   const { title, message, buttons, progress } = props;
   const { cancelTitle, actionTitle, actionHideInProgress = true } = buttons;
 
@@ -53,3 +52,5 @@ export const ProgressDialog = (props: ProgressDialogProps) => {
     </div>
   );
 };
+
+export default ProgressDialog;

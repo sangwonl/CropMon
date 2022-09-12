@@ -1,20 +1,17 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
-import { Story, Meta } from '@storybook/react';
+import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 
-import {
-  ProgressDialog,
-  ProgressDialogProps,
-} from '@adapters/ui/components/stateless/ProgressDialog';
+import ProgressDialog from '@adapters/ui/components/stateless/ProgressDialog';
 
 export default {
   title: 'Kropsaurus/ProgressDialog',
   component: ProgressDialog,
   argTypes: {},
-} as Meta;
+} as ComponentMeta<typeof ProgressDialog>;
 
-const Template: Story<ProgressDialogProps> = (args) => (
+const Template: ComponentStory<typeof ProgressDialog> = (args) => (
   <ProgressDialog {...args} />
 );
 

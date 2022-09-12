@@ -37,15 +37,15 @@ const getAreaStyles = (bounds: Bounds, colors: CaptureAreaColors): any => {
   return layoutStyle;
 };
 
-interface PropTypes {
+type Props = {
   targetBounds: Bounds;
   areaColors: CaptureAreaColors;
   onStart: (cursorPosition: Point) => void;
   onCancel: () => void;
   onFinish: () => void;
-}
+};
 
-const CaptureTargetingScreen = (props: PropTypes) => {
+const CaptureTargetingScreen = (props: Props) => {
   const { areaColors, targetBounds, onStart, onCancel, onFinish } = props;
 
   const handleMouseEvent = useCallback(

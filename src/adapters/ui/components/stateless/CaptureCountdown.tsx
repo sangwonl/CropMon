@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import Color from 'color';
-import React, { FC } from 'react';
+import React from 'react';
 
 import { Bounds } from '@domain/models/screen';
 
@@ -66,13 +66,13 @@ const getCountdownStyles = (bounds: Bounds, colors: CaptureAreaColors) => {
   };
 };
 
-interface PropTypes {
+type Props = {
   targetBounds: Bounds;
   areaColors: CaptureAreaColors;
   countdown: number;
-}
+};
 
-const CaptureCountdown: FC<PropTypes> = (props: PropTypes) => {
+const CaptureCountdown = (props: Props) => {
   const { targetBounds, countdown, areaColors } = props;
 
   return (
