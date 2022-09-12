@@ -1,24 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
 
-import { Story, Meta } from '@storybook/react';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
 
 import { RecordOptions } from '@domain/models/capture';
 import { CaptureMode } from '@domain/models/common';
 
-import {
-  CaptureOptions,
-  CaptureOptionsProps,
-} from '@adapters/ui/components/stateless/CaptureOptions';
+import CaptureControl from '@adapters/ui/components/stateless/CaptureControl';
 
 export default {
-  title: 'Kropsaurus/CaptureOptions',
-  component: CaptureOptions,
+  title: 'Kropsaurus/CaptureControl',
+  component: CaptureControl,
   argTypes: {},
-} as Meta;
+} as ComponentMeta<typeof CaptureControl>;
 
-const Template: Story<CaptureOptionsProps> = () => {
+const Template: ComponentStory<typeof CaptureControl> = () => {
   const [captMode, setCaptMode] = useState<CaptureMode>(CaptureMode.AREA);
   const [recOpts, setRecOpts] = useState<RecordOptions>({
     enableOutputAsGif: false,
@@ -32,7 +29,7 @@ const Template: Story<CaptureOptionsProps> = () => {
         height: 56,
       }}
     >
-      <CaptureOptions
+      <CaptureControl
         captureMode={captMode}
         recordOptions={recOpts}
         onCaptureModeChange={setCaptMode}

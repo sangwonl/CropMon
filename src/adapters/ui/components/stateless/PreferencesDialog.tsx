@@ -3,21 +3,18 @@
 /* eslint-disable no-alert */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/destructuring-assignment */
-/* eslint-disable import/prefer-default-export */
 
 import React, { useState, useCallback } from 'react';
 
 import { Preferences } from '@domain/models/preferences';
 
-import {
-  PrefsGeneralTabPanel,
-  PrefsAppearancesTabPanel,
-} from '@adapters/ui/components/stateless/PrefsTabPanels';
+import PrefsAppearancesTabPanel from '@adapters/ui/components/stateless/PrefsAppearancePanel';
+import PrefsGeneralPanel from '@adapters/ui/components/stateless/PrefsGeneralPanel';
 import SideTabs, { TabItem } from '@adapters/ui/components/stateless/SideTabs';
 
 import styles from './PreferencesDialog.css';
 
-export type AppPreferencesProps = {
+type Props = {
   origPrefs: Preferences;
   selectedRecordHome: string;
   onChooseRecordHome: () => void;
@@ -34,13 +31,13 @@ const TAB_ITEMS: TabItem[] = [
   { tabId: TAB_APPEARANCES, title: 'Appearances' },
 ];
 
-export const PreferencesDialog = ({
+const PreferencesDialog = ({
   origPrefs,
   selectedRecordHome,
   onChooseRecordHome,
   onSave,
   onClose,
-}: AppPreferencesProps) => {
+}: Props) => {
   const [curTabId, setCurTabId] = useState<string>(TAB_GENERAL);
 
   const handleChooseRecordHome = useCallback(() => {
@@ -71,7 +68,7 @@ export const PreferencesDialog = ({
         {
           {
             [TAB_GENERAL]: (
-              <PrefsGeneralTabPanel
+              <PrefsGeneralPanel
                 initialPrefs={origPrefs}
                 selectedRecordHome={selectedRecordHome}
                 onChooseRecordHome={handleChooseRecordHome}
@@ -99,3 +96,5 @@ export const PreferencesDialog = ({
     </div>
   );
 };
+
+export default PreferencesDialog;

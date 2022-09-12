@@ -10,8 +10,8 @@ import { RecordOptions } from '@domain/models/capture';
 import { CaptureMode } from '@domain/models/common';
 import { Bounds, Point } from '@domain/models/screen';
 
+import CaptureControl from '@adapters/ui/components/stateless/CaptureControl';
 import CaptureCountdown from '@adapters/ui/components/stateless/CaptureCountdown';
-import { CaptureOptions } from '@adapters/ui/components/stateless/CaptureOptions';
 import CaptureRecording from '@adapters/ui/components/stateless/CaptureRecording';
 import CaptureTargetingArea from '@adapters/ui/components/stateless/CaptureTargetingArea';
 import CaptureTargetingScreen from '@adapters/ui/components/stateless/CaptureTargetingScreen';
@@ -256,7 +256,7 @@ const CaptureOverlay = (props: PropTypes) => {
       )}
       {assignedScreen?.isPrimary && captureOverlay.show && controlPanel.show && (
         <div className={styles.options}>
-          <CaptureOptions
+          <CaptureControl
             captureMode={controlPanel.captureMode}
             recordOptions={{
               enableOutputAsGif: controlPanel.outputAsGif,

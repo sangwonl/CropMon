@@ -19,10 +19,10 @@ const COLOR_PRESETS = [
   '#8B98A3',
 ];
 
-interface ColorInputProps {
+type ColorInputProps = {
   defaultColor: string;
   onChange: (color: string) => void;
-}
+};
 
 const ColorPalette = ({ defaultColor, onChange }: ColorInputProps) => {
   const [curColor, setCurColor] = useState(defaultColor);

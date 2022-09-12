@@ -1,22 +1,19 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
-import { Story, Meta } from '@storybook/react';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
 import { CaptureMode } from '@domain/models/common';
 
-import {
-  PreferencesDialog,
-  AppPreferencesProps,
-} from '@adapters/ui/components/stateless/PreferencesDialog';
+import PreferencesDialog from '@adapters/ui/components/stateless/PreferencesDialog';
 
 export default {
   title: 'Kropsaurus/Preferences',
   component: PreferencesDialog,
   argTypes: {},
-} as Meta;
+} as ComponentMeta<typeof PreferencesDialog>;
 
-const Template: Story<AppPreferencesProps> = (args) => (
+const Template: ComponentStory<typeof PreferencesDialog> = (args) => (
   <div
     style={{
       width: 600,

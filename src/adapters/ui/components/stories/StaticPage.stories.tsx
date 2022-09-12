@@ -1,20 +1,17 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
-import { Story, Meta } from '@storybook/react';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
-import {
-  StaticPage,
-  StaticPageProps,
-} from '@adapters/ui/components/stateless/StaticPage';
+import StaticPage from '@adapters/ui/components/stateless/StaticPage';
 
 export default {
   title: 'Kropsaurus/StaticPage',
   component: StaticPage,
   argTypes: {},
-} as Meta;
+} as ComponentMeta<typeof StaticPage>;
 
-const Template: Story<StaticPageProps> = (args) => (
+const Template: ComponentStory<typeof StaticPage> = (args) => (
   <div style={{ width: 400, height: 300 }}>
     <StaticPage {...args} />
   </div>

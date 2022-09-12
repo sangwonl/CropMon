@@ -16,7 +16,7 @@ import { CaptureMode } from '@domain/models/common';
 
 import closeIcon from '@assets/close.png';
 
-import styles from './CaptureOptions.css';
+import styles from './CaptureControl.css';
 
 const withStopPropagation = (
   e: MouseEvent<HTMLButtonElement>,
@@ -29,7 +29,7 @@ const withStopPropagation = (
   return false;
 };
 
-export type CaptureOptionsProps = {
+type Props = {
   captureMode: CaptureMode;
   recordOptions: RecordOptions;
   onCaptureModeChange: (mode: CaptureMode) => void;
@@ -37,13 +37,13 @@ export type CaptureOptionsProps = {
   onCaptureCancel: () => void;
 };
 
-export const CaptureOptions = ({
+const CaptureControl = ({
   captureMode,
   recordOptions,
   onCaptureModeChange,
   onRecordOptionsChange,
   onCaptureCancel,
-}: CaptureOptionsProps) => {
+}: Props) => {
   const [captMode, setCaptMode] = useState<CaptureMode>(captureMode);
   const [recOpts, setRecOpts] = useState<RecordOptions>(recordOptions);
 
@@ -160,3 +160,5 @@ export const CaptureOptions = ({
     </div>
   );
 };
+
+export default CaptureControl;
