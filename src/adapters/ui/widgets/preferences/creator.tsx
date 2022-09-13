@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 
 import { Preferences } from '@domain/models/preferences';
 
-import { PreferencesDialog } from '@adapters/ui/components/stateless/PreferencesDialog';
+import PreferencesDialog from '@adapters/ui/components/stateless/PreferencesDialog';
 import {
   IPC_EVT_ON_CLOSE,
   IPC_EVT_ON_PREFS_UPDATED,

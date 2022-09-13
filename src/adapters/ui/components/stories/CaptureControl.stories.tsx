@@ -25,7 +25,7 @@ const Template: ComponentStory<typeof CaptureControl> = () => {
   return (
     <div
       style={{
-        width: 280,
+        width: 360,
         height: 56,
       }}
     >

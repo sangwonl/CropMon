@@ -3,7 +3,7 @@
 import { ipcRenderer } from 'electron';
 import React, { useEffect, useState } from 'react';
 
-import { ProgressDialog } from '@adapters/ui/components/stateless/ProgressDialog';
+import ProgressDialog from '@adapters/ui/components/stateless/ProgressDialog';
 import {
   ProgressDialogOptions,
   IpcEvtSetProgress,

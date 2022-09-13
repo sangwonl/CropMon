@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import classNames from 'classnames';
-import React, { useEffect, useState, useCallback, MouseEvent } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 import {
   shortcutForDisplay,
@@ -14,20 +13,38 @@ import {
 import { RecordOptions } from '@domain/models/capture';
 import { CaptureMode } from '@domain/models/common';
 
-import closeIcon from '@assets/close.png';
+import CloseButton from '@adapters/ui/components/stateless/CloseButton';
+import ToggleButton from '@adapters/ui/components/stateless/ToggleButton';
 
 import styles from './CaptureControl.css';
 
-const withStopPropagation = (
-  e: MouseEvent<HTMLButtonElement>,
-  handler?: () => void
-) => {
-  e.stopPropagation();
-  if (handler) {
-    handler();
-  }
-  return false;
-};
+const CAPTURE_MODES = [CaptureMode.SCREEN, CaptureMode.AREA];
+const TOGGLE_ITEMS_CAPT_MODES = [
+  {
+    title: 'Full Screen',
+    alt: `Record Full Screen (${shortcutForDisplay(
+      SHORTCUT_CAPTURE_MODE_SCREEN
+    )})`,
+  },
+  {
+    title: 'Selection',
+    alt: `Record Selected Area (${shortcutForDisplay(
+      SHORTCUT_CAPTURE_MODE_AREA
+    )})`,
+  },
+];
+
+const GIF_ENABLED = [false, true];
+const TOGGLE_ITEMS_REC_OPTS = [
+  {
+    title: 'MP4',
+    alt: `Output as MP4 (${shortcutForDisplay(SHORTCUT_OUTPUT_MP4)})`,
+  },
+  {
+    title: 'GIF',
+    alt: `Output as GIF (${shortcutForDisplay(SHORTCUT_OUTPUT_GIF)})`,
+  },
+];
 
 type Props = {
   captureMode: CaptureMode;
@@ -75,88 +92,28 @@ const CaptureControl = ({
 
   return (
     <div className={styles.container}>
-      <button
-        type="button"
-        title={`Record Full Screen (${shortcutForDisplay(
-          SHORTCUT_CAPTURE_MODE_SCREEN
-        )})`}
-        className={classNames(styles.btnToggleLeft, {
-          [styles.toggled]: captMode === CaptureMode.SCREEN,
-        })}
-        onClick={(e) =>
-          withStopPropagation(e, () => handleCaptModeChange(CaptureMode.SCREEN))
-        }
-        onMouseUp={(e) => withStopPropagation(e)}
-        onMouseDown={(e) => withStopPropagation(e)}
-      >
-        Full
-      </button>
-      <button
-        type="button"
-        title={`Record Selected Area (${shortcutForDisplay(
-          SHORTCUT_CAPTURE_MODE_AREA
-        )})`}
-        className={classNames(styles.btnToggleRight, {
-          [styles.toggled]: captMode === CaptureMode.AREA,
-        })}
-        onMouseUp={(e) => withStopPropagation(e)}
-        onMouseDown={(e) => withStopPropagation(e)}
-        onClick={(e) =>
-          withStopPropagation(e, () => handleCaptModeChange(CaptureMode.AREA))
-        }
-      >
-        Selection
-      </button>
+      <ToggleButton
+        activeItemIndex={CAPTURE_MODES.findIndex((mode) => mode === captMode)}
+        items={TOGGLE_ITEMS_CAPT_MODES}
+        onToggle={(index: number) => {
+          handleCaptModeChange(CAPTURE_MODES[index]);
+        }}
+      />
       <div className={styles.divider} />
-      <button
-        type="button"
-        title={`Output as MP4 (${shortcutForDisplay(SHORTCUT_OUTPUT_MP4)})`}
-        className={classNames(styles.btnToggleLeft, {
-          [styles.toggled]: !recOpts.enableOutputAsGif,
-        })}
-        onMouseUp={(e) => withStopPropagation(e)}
-        onMouseDown={(e) => withStopPropagation(e)}
-        onClick={(e) =>
-          withStopPropagation(e, () =>
-            handleRecOptsChange({
-              ...recOpts,
-              enableOutputAsGif: false,
-            })
-          )
-        }
-      >
-        MP4
-      </button>
-      <button
-        type="button"
-        title={`Output as GIF (${shortcutForDisplay(SHORTCUT_OUTPUT_GIF)})`}
-        className={classNames(styles.btnToggleRight, {
-          [styles.toggled]: recOpts.enableOutputAsGif,
-        })}
-        onMouseUp={(e) => withStopPropagation(e)}
-        onMouseDown={(e) => withStopPropagation(e)}
-        onClick={(e) =>
-          withStopPropagation(e, () =>
-            handleRecOptsChange({
-              ...recOpts,
-              enableOutputAsGif: true,
-            })
-          )
-        }
-      >
-        GIF
-      </button>
+      <ToggleButton
+        activeItemIndex={GIF_ENABLED.findIndex(
+          (gif) => gif === recOpts.enableOutputAsGif
+        )}
+        items={TOGGLE_ITEMS_REC_OPTS}
+        onToggle={(index: number) => {
+          handleRecOptsChange({
+            ...recOpts,
+            enableOutputAsGif: GIF_ENABLED[index],
+          });
+        }}
+      />
       <div className={styles.divider} />
-      <button
-        type="button"
-        title="Close"
-        className={styles.btnClose}
-        onMouseUp={(e) => withStopPropagation(e)}
-        onMouseDown={(e) => withStopPropagation(e)}
-        onClick={(e) => withStopPropagation(e, onCaptureCancel)}
-      >
-        <img src={closeIcon} alt="close" />
-      </button>
+      <CloseButton onClick={onCaptureCancel} />
     </div>
   );
 };

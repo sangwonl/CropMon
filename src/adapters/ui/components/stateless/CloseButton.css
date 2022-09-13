@@ -1,0 +1,32 @@
+.btn {
+  height: 100%;
+  outline: none;
+  box-shadow: none;
+  border: 0px;
+  border-radius: 3px;
+  background-color: #3a3a3a;
+  user-select: none;
+}
+
+.btn img {
+  display: flex;
+  justify-content: center;
+  height: 75%;
+}
+
+.btn:hover {
+  background-color: #565656;
+}
+
+.btn:hover img {
+  filter: invert(10%);
+}
+
+.btn:active {
+  /* background-color: #58bb76; */
+  background-color: #535353;
+}
+
+.btn:active img {
+  filter: invert(1%);
+}
