@@ -1,88 +1,12 @@
 .container {
-  height: 40px;
-  padding: 10px;
+  height: 36px;
+  padding: 14px;
   background-color: #3a3a3a;
   display: flex;
-  flex-grow: 1;
   flex-direction: row;
-  justify-content: center;
   align-items: center;
   column-gap: 4px;
-  border-radius: 6px;
-}
-
-.container .toggled {
-  background-color: #58bb76 !important;
-}
-
-.btnToggleLeft {
-  border-top-right-radius: 0px !important;
-  border-bottom-right-radius: 0px !important;
-  border-right: 0px !important;
-  height: 30px;
-  margin-right: -4px;
-  flex-basis: 58px !important;
-  user-select: none;
-}
-
-.btnToggleLeft:not(.toggled) {
-  background-color: #474747 !important;
-}
-
-.btnToggleRight {
-  border-top-left-radius: 0px !important;
-  border-bottom-left-radius: 0px !important;
-  border-left: 0px !important;
-  height: 30px;
-  flex-basis: 58px !important;
-  user-select: none;
-}
-
-.btnToggleRight:not(.toggled) {
-  background-color: #474747 !important;
-}
-
-.btnClose {
-  font-size: 18px !important;
-  height: 34px !important;
-  flex-basis: 34px !important;
-  user-select: none;
-}
-
-.btnClose img {
-  padding-top: 3px;
-  width: 28px;
-  height: 26px;
-}
-
-.container button {
-  outline: none;
-  box-shadow: none;
-  border: 0px !important;
   border-radius: 4px;
-  flex-basis: 44px;
-  font-family: Roboto;
-  font-size: 11px;
-  font-weight: 100;
-  text-shadow: 1px 1px 4px #aaa;
-  background-color: #3a3a3a !important;
-  color: #eee !important;
-}
-
-.container button:hover:not(.toggled) {
-  background-color: #565656 !important;
-}
-
-.container button:hover:not(.toggled) img {
-  filter: invert(10%) !important;
-}
-
-.container button:active:not(.toggled) {
-  background-color: #58bb76 !important;
-}
-
-.container button:active:not(.toggled) img {
-  filter: invert(5%) !important;
 }
 
 .divider {

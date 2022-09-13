@@ -1,0 +1,64 @@
+.container {
+  display: flex;
+  height: 100%;
+  flex-grow: 1;
+  flex-direction: row;
+  background-color: #3a3a3a;
+}
+
+.btn {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: center;
+  font-family: Roboto;
+  font-size: 11px;
+  font-weight: 100;
+  color: #eee;
+  user-select: none;
+  cursor: default;
+  padding: 10px;
+}
+
+.leftRounded {
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+.rightRounded {
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.btnIcon {
+  height: 100%;
+  width: auto;
+}
+
+.btnTitle {
+  white-space: nowrap;
+}
+
+.toggled {
+  background-color: #58bb76;
+}
+
+.btn:not(.toggled) {
+  background-color: #474747;
+}
+
+.btn:hover:not(.toggled) {
+  background-color: #565656;
+}
+
+.btn:hover:not(.toggled) span {
+  filter: invert(10%);
+}
+
+.btn:active:not(.toggled) {
+  background-color: #545454;
+}
+
+.btn:active:not(.toggled) span {
+  filter: invert(1%);
+}
