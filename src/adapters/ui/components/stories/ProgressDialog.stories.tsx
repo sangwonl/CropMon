@@ -12,7 +12,9 @@ export default {
 } as ComponentMeta<typeof ProgressDialog>;
 
 const Template: ComponentStory<typeof ProgressDialog> = (args) => (
-  <ProgressDialog {...args} />
+  <div style={{ height: '400px' }}>
+    <ProgressDialog {...args} />
+  </div>
 );
 
 export const InProgressState = Template.bind({});

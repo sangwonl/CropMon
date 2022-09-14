@@ -11,22 +11,21 @@ import {
 } from '@utils/shortcut';
 
 import { RecordOptions } from '@domain/models/capture';
-import { CaptureMode } from '@domain/models/common';
+import { CaptureMode, OutputFormat } from '@domain/models/common';
 
 import CloseButton from '@adapters/ui/components/stateless/CloseButton';
 import ToggleButton from '@adapters/ui/components/stateless/ToggleButton';
 
 import styles from './CaptureControl.css';
 
-const CAPTURE_MODES = [CaptureMode.SCREEN, CaptureMode.AREA];
 const TOGGLE_ITEMS_CAPT_MODES = [
   {
-    title: 'Full Screen',
-    alt: `Record Full Screen (${shortcutForDisplay(
-      SHORTCUT_CAPTURE_MODE_SCREEN
-    )})`,
+    value: CaptureMode.SCREEN,
+    title: 'Screen',
+    alt: `Record Screen (${shortcutForDisplay(SHORTCUT_CAPTURE_MODE_SCREEN)})`,
   },
   {
+    value: CaptureMode.AREA,
     title: 'Selection',
     alt: `Record Selected Area (${shortcutForDisplay(
       SHORTCUT_CAPTURE_MODE_AREA
@@ -34,13 +33,14 @@ const TOGGLE_ITEMS_CAPT_MODES = [
   },
 ];
 
-const GIF_ENABLED = [false, true];
 const TOGGLE_ITEMS_REC_OPTS = [
   {
+    value: 'mp4' as OutputFormat,
     title: 'MP4',
     alt: `Output as MP4 (${shortcutForDisplay(SHORTCUT_OUTPUT_MP4)})`,
   },
   {
+    value: 'gif' as OutputFormat,
     title: 'GIF',
     alt: `Output as GIF (${shortcutForDisplay(SHORTCUT_OUTPUT_GIF)})`,
   },
@@ -93,22 +93,26 @@ const CaptureControl = ({
   return (
     <div className={styles.container}>
       <ToggleButton
-        activeItemIndex={CAPTURE_MODES.findIndex((mode) => mode === captMode)}
+        activeItemIndex={TOGGLE_ITEMS_CAPT_MODES.findIndex(
+          (item) => item.value === captMode
+        )}
         items={TOGGLE_ITEMS_CAPT_MODES}
         onToggle={(index: number) => {
-          handleCaptModeChange(CAPTURE_MODES[index]);
+          handleCaptModeChange(TOGGLE_ITEMS_CAPT_MODES[index].value);
         }}
       />
       <div className={styles.divider} />
       <ToggleButton
-        activeItemIndex={GIF_ENABLED.findIndex(
-          (gif) => gif === recOpts.enableOutputAsGif
+        activeItemIndex={TOGGLE_ITEMS_REC_OPTS.findIndex((item) =>
+          recOpts.enableOutputAsGif
+            ? item.value === 'gif'
+            : item.value === 'mp4'
         )}
         items={TOGGLE_ITEMS_REC_OPTS}
         onToggle={(index: number) => {
           handleRecOptsChange({
             ...recOpts,
-            enableOutputAsGif: GIF_ENABLED[index],
+            enableOutputAsGif: TOGGLE_ITEMS_REC_OPTS[index].value === 'gif',
           });
         }}
       />
