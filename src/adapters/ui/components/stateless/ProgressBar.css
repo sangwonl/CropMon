@@ -1,10 +1,11 @@
 .wrapper {
+  height: 100%;
   background-color: #e5ece9;
-  border: 1px solid #c8d4cd;
+  border: 0px;
   padding: 1px;
 }
 
 .inner {
   background-color: #27a86e;
-  height: 22px;
+  height: 100%;
 }

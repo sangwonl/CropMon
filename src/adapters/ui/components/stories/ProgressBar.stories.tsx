@@ -12,7 +12,9 @@ export default {
 } as ComponentMeta<typeof ProgressBar>;
 
 const Template: ComponentStory<typeof ProgressBar> = (args) => (
-  <ProgressBar {...args} />
+  <div style={{ height: '40px' }}>
+    <ProgressBar {...args} />
+  </div>
 );
 
 export const ZeroProgress = Template.bind({});

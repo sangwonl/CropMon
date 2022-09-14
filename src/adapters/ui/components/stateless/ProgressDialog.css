@@ -1,8 +1,9 @@
 .container {
+  height: 100%;
   padding: 10px 20px;
-  background-color: rgb(250, 250, 250);
   display: flex;
   flex-direction: column;
+  background-color: rgb(250, 250, 250);
   justify-content: flex-start;
 }
 
@@ -27,59 +28,72 @@
 
 .progress {
   margin: 6px 0px;
+  height: 30px;
 }
 
 .buttons {
-  margin: 6px 0px;
+  height: 30px;
+  margin: 12px 0px;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
 }
 
 .buttonAction {
+  width: 80px;
   justify-content: flex-end;
-  box-shadow: inset 0px 1px 0px 0px #9acc85;
+  display: inline-block;
+  padding: 6px 12px;
+  margin-right: 10px;
+  outline: none;
+  box-shadow: none;
+  border: 0px;
+  border-radius: 3px;
+  user-select: none;
   background: linear-gradient(to bottom, #74ad5a 5%, #68a54b 100%);
   background-color: #74ad5a;
-  border: 1px solid #3b6e22;
-  display: inline-block;
-  cursor: pointer;
   color: #ffffff;
   font-family: Roboto;
   font-size: 13px;
   font-weight: normal;
-  padding: 6px 12px;
   text-decoration: none;
-  margin-right: 10px;
+  cursor: pointer;
 }
+
 .buttonAction:hover {
   background: linear-gradient(to bottom, #68a54b 5%, #74ad5a 100%);
   background-color: #68a54b;
 }
+
 .buttonAction:active {
   position: relative;
   top: 1px;
 }
 
 .buttonCancel {
+  width: 80px;
   justify-content: flex-end;
-  box-shadow: inset 0px 1px 0px 0px #9acc85;
+  display: inline-block;
+  padding: 6px 12px;
+  outline: none;
+  box-shadow: none;
+  border: 0px;
+  border-radius: 3px;
+  user-select: none;
   background: linear-gradient(to bottom, #adadad 5%, #a5a5a5 100%);
   background-color: #adadad;
-  border: 1px solid #6e6e6e;
-  display: inline-block;
-  cursor: pointer;
   color: #ffffff;
   font-family: Roboto;
   font-size: 13px;
   font-weight: normal;
-  padding: 6px 12px;
   text-decoration: none;
 }
+
 .buttonCancel:hover {
   background: linear-gradient(to bottom, #a5a5a5 5%, #adadad 100%);
   background-color: #a5a5a5;
 }
+
 .buttonCancel:active {
   position: relative;
   top: 1px;

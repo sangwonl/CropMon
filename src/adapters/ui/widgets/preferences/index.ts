@@ -74,7 +74,7 @@ export default class PreferencesModal extends Widget {
       icon: assetPathResolver('icon.png'),
       show: false,
       width: 640,
-      height: 520,
+      height: 500,
       resizable: false,
       minimizable: false,
       maximizable: false,

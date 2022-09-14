@@ -1,6 +1,6 @@
 .container {
   height: 36px;
-  padding: 14px;
+  padding: 14px 16px;
   background-color: #3a3a3a;
   display: flex;
   flex-direction: row;
