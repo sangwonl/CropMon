@@ -1,0 +1,68 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* References
+http://csscheckbox.com/css-checkbox-generator.php */
+.checkInput {
+  position: absolute;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  width: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+}
+
+.checkInput + label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  color: rgb(0, 0, 0);
+}
+
+.checkInput + label::before {
+  content: ' ';
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 3px;
+  width: 18px;
+  height: 18px;
+  background-color: white;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(204, 204, 204);
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.checkInput:checked + label::after {
+  content: ' ';
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjNThiYjc2IiBkPSJNMTczLjg5OCA0MzkuNDA0bC0xNjYuNC0xNjYuNGMtOS45OTctOS45OTctOS45OTctMjYuMjA2IDAtMzYuMjA0bDM2LjIwMy0zNi4yMDRjOS45OTctOS45OTggMjYuMjA3LTkuOTk4IDM2LjIwNCAwTDE5MiAzMTIuNjkgNDMyLjA5NSA3Mi41OTZjOS45OTctOS45OTcgMjYuMjA3LTkuOTk3IDM2LjIwNCAwbDM2LjIwMyAzNi4yMDRjOS45OTcgOS45OTcgOS45OTcgMjYuMjA2IDAgMzYuMjA0bC0yOTQuNCAyOTQuNDAxYy05Ljk5OCA5Ljk5Ny0yNi4yMDcgOS45OTctMzYuMjA0LS4wMDF6Ii8+PC9zdmc+');
+  background-repeat: no-repeat;
+  background-size: 13px 13px;
+  background-position: center center;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 0px;
+  left: 0px;
+  top: 0px;
+  text-align: center;
+  background-color: transparent;
+  font-size: 10px;
+  height: 20px;
+  width: 20px;
+}
+
+.title {
+  font-family: Roboto;
+  font-weight: 100;
+  font-size: 15px;
+  margin-left: 4px;
+}
