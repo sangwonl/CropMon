@@ -5,7 +5,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 
 import { withStopPropagation } from '@utils/events';
 
-import styles from './ToggleButton.css';
+import styles from './SwitchButton.css';
 
 type ButtonItem =
   | {
@@ -22,18 +22,18 @@ type ButtonItem =
 type Props = {
   activeItemIndex: number;
   items: ButtonItem[];
-  onToggle: (itemIndex: number) => void;
+  onSelect: (itemIndex: number) => void;
 };
 
-const ToggleButton = ({ activeItemIndex, items, onToggle }: Props) => {
+const SwitchButton = ({ activeItemIndex, items, onSelect }: Props) => {
   const [selectedBtnIndex, setSelectedBtnIndex] =
     useState<number>(activeItemIndex);
 
   const handleItemClick = useCallback(
     (index: number) => {
-      onToggle(index);
+      onSelect(index);
     },
-    [onToggle]
+    [onSelect]
   );
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const ToggleButton = ({ activeItemIndex, items, onToggle }: Props) => {
         <div
           key={item.title ?? item.icon}
           className={classNames(styles.btn, {
-            [styles.toggled]: index === selectedBtnIndex,
+            [styles.selected]: index === selectedBtnIndex,
             [styles.leftRounded]: index === 0,
             [styles.rightRounded]: index === items.length - 1,
           })}
@@ -68,4 +68,4 @@ const ToggleButton = ({ activeItemIndex, items, onToggle }: Props) => {
   );
 };
 
-export default ToggleButton;
+export default SwitchButton;

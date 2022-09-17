@@ -14,11 +14,11 @@ import { RecordOptions } from '@domain/models/capture';
 import { CaptureMode, OutputFormat } from '@domain/models/common';
 
 import CloseButton from '@adapters/ui/components/stateless/CloseButton';
-import ToggleButton from '@adapters/ui/components/stateless/ToggleButton';
+import SwitchButton from '@adapters/ui/components/stateless/SwitchButton';
 
 import styles from './CaptureControl.css';
 
-const TOGGLE_ITEMS_CAPT_MODES = [
+const BUTTON_ITEMS_CAPT_MODES = [
   {
     value: CaptureMode.SCREEN,
     title: 'Screen',
@@ -33,7 +33,7 @@ const TOGGLE_ITEMS_CAPT_MODES = [
   },
 ];
 
-const TOGGLE_ITEMS_REC_OPTS = [
+const BUTTON_ITEMS_REC_OPTS = [
   {
     value: 'mp4' as OutputFormat,
     title: 'MP4',
@@ -92,27 +92,27 @@ const CaptureControl = ({
 
   return (
     <div className={styles.container}>
-      <ToggleButton
-        activeItemIndex={TOGGLE_ITEMS_CAPT_MODES.findIndex(
+      <SwitchButton
+        activeItemIndex={BUTTON_ITEMS_CAPT_MODES.findIndex(
           (item) => item.value === captMode
         )}
-        items={TOGGLE_ITEMS_CAPT_MODES}
-        onToggle={(index: number) => {
-          handleCaptModeChange(TOGGLE_ITEMS_CAPT_MODES[index].value);
+        items={BUTTON_ITEMS_CAPT_MODES}
+        onSelect={(index: number) => {
+          handleCaptModeChange(BUTTON_ITEMS_CAPT_MODES[index].value);
         }}
       />
       <div className={styles.divider} />
-      <ToggleButton
-        activeItemIndex={TOGGLE_ITEMS_REC_OPTS.findIndex((item) =>
+      <SwitchButton
+        activeItemIndex={BUTTON_ITEMS_REC_OPTS.findIndex((item) =>
           recOpts.enableOutputAsGif
             ? item.value === 'gif'
             : item.value === 'mp4'
         )}
-        items={TOGGLE_ITEMS_REC_OPTS}
-        onToggle={(index: number) => {
+        items={BUTTON_ITEMS_REC_OPTS}
+        onSelect={(index: number) => {
           handleRecOptsChange({
             ...recOpts,
-            enableOutputAsGif: TOGGLE_ITEMS_REC_OPTS[index].value === 'gif',
+            enableOutputAsGif: BUTTON_ITEMS_REC_OPTS[index].value === 'gif',
           });
         }}
       />

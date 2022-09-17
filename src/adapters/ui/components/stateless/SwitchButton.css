@@ -3,7 +3,7 @@
   height: 100%;
   flex-grow: 1;
   flex-direction: row;
-  background-color: #3a3a3a;
+  background-color: transparent;
 }
 
 .btn {
@@ -39,26 +39,26 @@
   white-space: nowrap;
 }
 
-.toggled {
+.selected {
   background-color: #58bb76;
 }
 
-.btn:not(.toggled) {
+.btn:not(.selected) {
   background-color: #474747;
 }
 
-.btn:hover:not(.toggled) {
+.btn:hover:not(.selected) {
   background-color: #565656;
 }
 
-.btn:hover:not(.toggled) span {
+.btn:hover:not(.selected) span {
   filter: invert(10%);
 }
 
-.btn:active:not(.toggled) {
+.btn:active:not(.selected) {
   background-color: #545454;
 }
 
-.btn:active:not(.toggled) span {
+.btn:active:not(.selected) span {
   filter: invert(1%);
 }
