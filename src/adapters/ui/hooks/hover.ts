@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useRef, useEffect, MutableRefObject } from 'react';
+import { useEffect, RefObject } from 'react';
 
-const useOnClickOutside = (
-  handler?: (event: any) => void
-): MutableRefObject<any | undefined> => {
-  const ref = useRef<any>();
+function useOnClickOutside<T extends HTMLElement = HTMLElement>(
+  ref: RefObject<T>,
+  handler: (event: any) => void,
+  triggerEvent: 'mousedown' | 'mouseup' = 'mouseup'
+): void {
   useEffect(
     () => {
       const listener = (event: any) => {
@@ -13,13 +14,11 @@ const useOnClickOutside = (
         if (!ref.current || ref.current.contains(event.target)) {
           return;
         }
-        if (handler) {
-          handler(event);
-        }
+        handler(event);
       };
-      document.addEventListener('click', listener);
+      document.addEventListener(triggerEvent, listener);
       return () => {
-        document.removeEventListener('click', listener);
+        document.removeEventListener(triggerEvent, listener);
       };
     },
     // Add ref and handler to effect dependencies
@@ -28,9 +27,8 @@ const useOnClickOutside = (
     // ... callback/cleanup to run every render. It's not a big deal ...
     // ... but to optimize you can wrap handler in useCallback before ...
     // ... passing it into this hook.
-    [ref, handler]
+    [ref, handler, triggerEvent]
   );
-  return ref;
-};
+}
 
 export default useOnClickOutside;

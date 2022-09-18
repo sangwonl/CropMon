@@ -1,0 +1,95 @@
+.container {
+  display: flex;
+  height: 100%;
+  flex-grow: 1;
+  flex-direction: row;
+  background-color: transparent;
+}
+
+.btn {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: center;
+  font-family: Roboto;
+  font-size: 11px;
+  font-weight: 100;
+  color: #eee;
+  user-select: none;
+  cursor: default;
+  padding: 10px;
+}
+
+.leftRounded {
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+.rightRounded {
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.btnIcon {
+  height: 100%;
+  width: auto;
+}
+
+.btnTitle {
+  white-space: nowrap;
+}
+
+.selected {
+  background-color: #58bb76;
+}
+
+.btn:not(.selected) {
+  background-color: #474747;
+}
+
+.btn:hover:not(.selected) {
+  background-color: #565656;
+}
+
+.btn:hover:not(.selected) span {
+  filter: invert(10%);
+}
+
+.btn:active:not(.selected) {
+  background-color: #545454;
+}
+
+.btn:active:not(.selected) span {
+  filter: invert(1%);
+}
+
+.arrowBtn {
+  width: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.arrowBtn:not(.selected) {
+  background-color: #474747;
+}
+
+.arrowBtn:hover:not(.selected) {
+  background-color: #565656;
+}
+
+.arrowBtn svg {
+  fill: #eeeeee;
+}
+
+.arrowBtn:hover svg {
+  fill: #e1e1e1;
+}
+
+.checkList {
+  position: absolute;
+  padding: 10px;
+  margin-top: 2px;
+  border-radius: 2px;
+  border: 1px solid #efefef;
+  box-shadow: 0px 0px 4px #efefef;
+}

@@ -12,7 +12,10 @@ export default {
 
 const handleSelect = action('onSelect');
 
-const items = ['System Audio', 'System Microphone'];
+const items = [
+  { checked: false, title: 'System Audio' },
+  { checked: true, title: 'System Microphone' },
+];
 
 const Template: ComponentStory<typeof CheckList> = () => {
   return (
