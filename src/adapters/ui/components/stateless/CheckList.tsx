@@ -4,13 +4,18 @@ import React, { useCallback, useRef, useState } from 'react';
 
 import styles from './CheckList.css';
 
+type SelectableItem = {
+  checked: boolean;
+  title: string;
+};
+
 type Props = {
-  items: string[];
+  items: SelectableItem[];
   onSelect: (indices: number[]) => void;
 };
 
 const CheckList = ({ items, onSelect }: Props) => {
-  const checkStatesRef = useRef<boolean[]>(items.map(() => false));
+  const checkStatesRef = useRef<boolean[]>(items.map(({ checked }) => checked));
   const [checkStates, updateCheckStates] = useState<boolean[]>(
     checkStatesRef.current
   );
@@ -34,17 +39,17 @@ const CheckList = ({ items, onSelect }: Props) => {
 
   return (
     <div className={styles.container}>
-      {items.map((item, index) => (
-        <div key={item}>
+      {items.map(({ title }, index) => (
+        <div key={title}>
           <input
             type="checkbox"
-            id={item}
+            id={title}
             className={styles.checkInput}
             onChange={() => toggleCheck(index)}
             checked={checkStates[index]}
           />
-          <label htmlFor={item}>
-            <span className={styles.title}>{item}</span>
+          <label htmlFor={title}>
+            <span className={styles.title}>{title}</span>
           </label>
         </div>
       ))}
