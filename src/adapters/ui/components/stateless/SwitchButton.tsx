@@ -47,8 +47,6 @@ const SwitchButton = ({ activeItemIndex, items, onSelect }: Props) => {
           key={item.title ?? item.icon}
           className={classNames(styles.btn, {
             [styles.selected]: index === selectedBtnIndex,
-            [styles.leftRounded]: index === 0,
-            [styles.rightRounded]: index === items.length - 1,
           })}
           onClick={(e) => withStopPropagation(e, () => handleItemClick(index))}
           onMouseUp={withStopPropagation}

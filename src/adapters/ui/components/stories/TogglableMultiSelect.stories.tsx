@@ -4,7 +4,7 @@ import React from 'react';
 
 import TogglableMultiSelect from '@adapters/ui/components/stateless/TogglableMultiSelect';
 
-import closeIcon from '@assets/close.png';
+import micIcon from '@assets/mic.png';
 
 export default {
   title: 'Kropsaurus/TogglableMultiSelect',
@@ -15,10 +15,10 @@ export default {
 const handleToggle = action('onToggle');
 const handleSelect = action('onSelect');
 
-const togglButton = {
-  icon: closeIcon,
+const toggleButton = {
+  icon: micIcon,
   alt: 'Select items',
-  enabled: true,
+  enabled: false,
 };
 
 const items = [
@@ -28,12 +28,12 @@ const items = [
 
 const Template: ComponentStory<typeof TogglableMultiSelect> = () => {
   return (
-    <div style={{ width: '80px', height: '40px' }}>
+    <div style={{ width: '60px', height: '40px' }}>
       <TogglableMultiSelect
-        toggleButton={togglButton}
+        toggleButton={toggleButton}
         items={items}
         onToggle={(enabled: boolean) => {
-          togglButton.enabled = enabled;
+          toggleButton.enabled = enabled;
           handleToggle(enabled);
         }}
         onSelect={(indices: number[]) => {

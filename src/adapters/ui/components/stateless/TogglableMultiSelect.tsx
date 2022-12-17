@@ -36,7 +36,7 @@ const TogglableMultiSelect = ({
   onSelect,
 }: Props) => {
   const checkListRef = useRef<HTMLDivElement>(null);
-  const [toggleEnabled, enableToggle] = useState<boolean>(toggleButton.enabled);
+  const [toggleEnabled, changeToggle] = useState<boolean>(toggleButton.enabled);
   const [listExpanded, showList] = useState<boolean>(false);
   const [selectedIndices, setSelectedIndices] = useState<number[]>(
     items
@@ -45,7 +45,7 @@ const TogglableMultiSelect = ({
   );
 
   const handleToggleButtonClick = useCallback(() => {
-    enableToggle(!toggleEnabled);
+    changeToggle(!toggleEnabled);
     onToggle(!toggleEnabled);
   }, [toggleEnabled, onToggle]);
 
@@ -56,9 +56,9 @@ const TogglableMultiSelect = ({
   const handleSelect = useCallback(
     (indices: number[]) => {
       if (indices.length > 0) {
-        enableToggle(toggleButton.enabled);
+        changeToggle(toggleButton.enabled);
       } else {
-        enableToggle(false);
+        changeToggle(false);
       }
       setSelectedIndices(indices);
     },
@@ -80,7 +80,11 @@ const TogglableMultiSelect = ({
           className={classNames(styles.btn, {
             [styles.selected]: toggleEnabled,
           })}
-          onClick={handleToggleButtonClick}
+          onClick={(e) =>
+            withStopPropagation(e, () => handleToggleButtonClick())
+          }
+          onMouseUp={withStopPropagation}
+          onMouseDown={withStopPropagation}
         >
           <img
             className={styles.btnIcon}

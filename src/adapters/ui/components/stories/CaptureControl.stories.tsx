@@ -20,12 +20,7 @@ const Template: ComponentStory<typeof CaptureControl> = () => {
   });
 
   return (
-    <div
-      style={{
-        width: 360,
-        height: 56,
-      }}
-    >
+    <div style={{ width: '420px', height: '56px' }}>
       <CaptureControl
         captureMode={captMode}
         recordOptions={recOpts}

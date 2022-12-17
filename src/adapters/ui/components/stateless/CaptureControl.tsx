@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
+import classNames from 'classnames';
 import React, { useEffect, useState, useCallback } from 'react';
 
 import {
@@ -16,7 +17,10 @@ import { CaptureMode, OutputFormat } from '@domain/models/common';
 import CloseButton from '@adapters/ui/components/stateless/CloseButton';
 import SwitchButton from '@adapters/ui/components/stateless/SwitchButton';
 
+import micIcon from '@assets/mic.png';
+
 import styles from './CaptureControl.css';
+import TogglableMultiSelect from './TogglableMultiSelect';
 
 const BUTTON_ITEMS_CAPT_MODES = [
   {
@@ -44,6 +48,17 @@ const BUTTON_ITEMS_REC_OPTS = [
     title: 'GIF',
     alt: `Output as GIF (${shortcutForDisplay(SHORTCUT_OUTPUT_GIF)})`,
   },
+];
+
+const BUTTON_AUDIO_TOGGLE = {
+  icon: micIcon,
+  alt: 'Select items',
+  enabled: false,
+};
+
+const items = [
+  { checked: false, title: 'System Audio' },
+  { checked: true, title: 'System Microphone' },
 ];
 
 type Props = {
@@ -92,30 +107,43 @@ const CaptureControl = ({
 
   return (
     <div className={styles.container}>
-      <SwitchButton
-        activeItemIndex={BUTTON_ITEMS_CAPT_MODES.findIndex(
-          (item) => item.value === captMode
-        )}
-        items={BUTTON_ITEMS_CAPT_MODES}
-        onSelect={(index: number) => {
-          handleCaptModeChange(BUTTON_ITEMS_CAPT_MODES[index].value);
-        }}
-      />
+      <div className={styles.rounded}>
+        <SwitchButton
+          activeItemIndex={BUTTON_ITEMS_CAPT_MODES.findIndex(
+            (item) => item.value === captMode
+          )}
+          items={BUTTON_ITEMS_CAPT_MODES}
+          onSelect={(index: number) => {
+            handleCaptModeChange(BUTTON_ITEMS_CAPT_MODES[index].value);
+          }}
+        />
+      </div>
       <div className={styles.divider} />
-      <SwitchButton
-        activeItemIndex={BUTTON_ITEMS_REC_OPTS.findIndex((item) =>
-          recOpts.enableOutputAsGif
-            ? item.value === 'gif'
-            : item.value === 'mp4'
-        )}
-        items={BUTTON_ITEMS_REC_OPTS}
-        onSelect={(index: number) => {
-          handleRecOptsChange({
-            ...recOpts,
-            enableOutputAsGif: BUTTON_ITEMS_REC_OPTS[index].value === 'gif',
-          });
-        }}
-      />
+      <div className={styles.rounded}>
+        <SwitchButton
+          activeItemIndex={BUTTON_ITEMS_REC_OPTS.findIndex((item) =>
+            recOpts.enableOutputAsGif
+              ? item.value === 'gif'
+              : item.value === 'mp4'
+          )}
+          items={BUTTON_ITEMS_REC_OPTS}
+          onSelect={(index: number) => {
+            handleRecOptsChange({
+              ...recOpts,
+              enableOutputAsGif: BUTTON_ITEMS_REC_OPTS[index].value === 'gif',
+            });
+          }}
+        />
+      </div>
+      <div className={styles.divider} />
+      <div className={classNames(styles.audioWrapper, styles.rounded)}>
+        <TogglableMultiSelect
+          toggleButton={BUTTON_AUDIO_TOGGLE}
+          items={items}
+          onToggle={(enabled: boolean) => {}}
+          onSelect={(indices: number[]) => {}}
+        />
+      </div>
       <div className={styles.divider} />
       <CloseButton onClick={onCaptureCancel} />
     </div>

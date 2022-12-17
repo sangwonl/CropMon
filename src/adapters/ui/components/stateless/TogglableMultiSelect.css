@@ -3,7 +3,6 @@
   height: 100%;
   flex-grow: 1;
   flex-direction: row;
-  background-color: transparent;
 }
 
 .btn {
@@ -18,16 +17,6 @@
   user-select: none;
   cursor: default;
   padding: 10px;
-}
-
-.leftRounded {
-  border-top-left-radius: 3px;
-  border-bottom-left-radius: 3px;
-}
-
-.rightRounded {
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px;
 }
 
 .btnIcon {
@@ -67,10 +56,16 @@
   width: 24px;
   display: flex;
   align-items: center;
+  user-select: none;
+  cursor: default;
+}
+
+.arrowBtn:is(.selected) {
+  background-color: #656565;
 }
 
 .arrowBtn:not(.selected) {
-  background-color: #474747;
+  background-color: #505050;
 }
 
 .arrowBtn:hover:not(.selected) {
@@ -92,4 +87,5 @@
   border-radius: 2px;
   border: 1px solid #efefef;
   box-shadow: 0px 0px 4px #efefef;
+  background-color: white;
 }
