@@ -25,9 +25,7 @@ import initializeDevEnv from './devenv';
 const start = async () => {
   initializeDevEnv();
 
-  await diContainer
-    .get<ActionDispatcher>(TYPES.ActionDispatcher)
-    .initializeApp();
+  diContainer.get<ActionDispatcher>(TYPES.ActionDispatcher).initializeApp();
 };
 
 const instanceLock = app.requestSingleInstanceLock();

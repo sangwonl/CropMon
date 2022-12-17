@@ -16,7 +16,7 @@ const handleToggle = action('onToggle');
 
 const Template: ComponentStory<typeof SwitchButton> = () => {
   return (
-    <div style={{ width: '300px', height: '60px' }}>
+    <div style={{ width: '80px', height: '40px' }}>
       <SwitchButton
         activeItemIndex={0}
         items={[

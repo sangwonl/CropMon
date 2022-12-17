@@ -3,7 +3,6 @@
   height: 100%;
   flex-grow: 1;
   flex-direction: row;
-  background-color: transparent;
 }
 
 .btn {
@@ -18,16 +17,6 @@
   user-select: none;
   cursor: default;
   padding: 10px;
-}
-
-.leftRounded {
-  border-top-left-radius: 3px;
-  border-bottom-left-radius: 3px;
-}
-
-.rightRounded {
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px;
 }
 
 .btnIcon {
