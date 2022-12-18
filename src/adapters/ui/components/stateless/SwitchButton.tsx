@@ -12,11 +12,13 @@ type ButtonItem =
       title: string;
       icon?: never;
       alt?: string;
+      minWidth?: string;
     }
   | {
       title?: never;
       icon: string;
       alt?: string;
+      minWidth?: string;
     };
 
 type Props = {
@@ -48,6 +50,7 @@ const SwitchButton = ({ activeItemIndex, items, onSelect }: Props) => {
           className={classNames(styles.btn, {
             [styles.selected]: index === selectedBtnIndex,
           })}
+          style={{ minWidth: item.minWidth }}
           onClick={(e) => withStopPropagation(e, () => handleItemClick(index))}
           onMouseUp={withStopPropagation}
           onMouseDown={withStopPropagation}

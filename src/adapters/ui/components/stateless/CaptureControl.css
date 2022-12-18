@@ -18,11 +18,8 @@
   margin-right: 8px;
 }
 
-.audioWrapper {
+.btnGroup {
   height: 100%;
-}
-
-.rounded {
   border-radius: 3px;
   overflow: hidden;
 }
