@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import classNames from 'classnames';
 import React, { useEffect, useState, useCallback } from 'react';
 
 import {
@@ -17,23 +16,29 @@ import { CaptureMode, OutputFormat } from '@domain/models/common';
 import CloseButton from '@adapters/ui/components/stateless/CloseButton';
 import SwitchButton from '@adapters/ui/components/stateless/SwitchButton';
 
+import fullscreenIcon from '@assets/fullscreen.png';
 import micIcon from '@assets/mic.png';
+import selectionIcon from '@assets/selection.png';
 
 import styles from './CaptureControl.css';
 import TogglableMultiSelect from './TogglableMultiSelect';
 
+const buttonMinWidth = '40px';
+
 const BUTTON_ITEMS_CAPT_MODES = [
   {
     value: CaptureMode.SCREEN,
-    title: 'Screen',
+    icon: fullscreenIcon,
     alt: `Record Screen (${shortcutForDisplay(SHORTCUT_CAPTURE_MODE_SCREEN)})`,
+    minWidth: buttonMinWidth,
   },
   {
     value: CaptureMode.AREA,
-    title: 'Selection',
+    icon: selectionIcon,
     alt: `Record Selected Area (${shortcutForDisplay(
       SHORTCUT_CAPTURE_MODE_AREA
     )})`,
+    minWidth: buttonMinWidth,
   },
 ];
 
@@ -42,11 +47,13 @@ const BUTTON_ITEMS_REC_OPTS = [
     value: 'mp4' as OutputFormat,
     title: 'MP4',
     alt: `Output as MP4 (${shortcutForDisplay(SHORTCUT_OUTPUT_MP4)})`,
+    minWidth: buttonMinWidth,
   },
   {
     value: 'gif' as OutputFormat,
     title: 'GIF',
     alt: `Output as GIF (${shortcutForDisplay(SHORTCUT_OUTPUT_GIF)})`,
+    minWidth: buttonMinWidth,
   },
 ];
 
@@ -107,7 +114,7 @@ const CaptureControl = ({
 
   return (
     <div className={styles.container}>
-      <div className={styles.rounded}>
+      <div className={styles.btnGroup}>
         <SwitchButton
           activeItemIndex={BUTTON_ITEMS_CAPT_MODES.findIndex(
             (item) => item.value === captMode
@@ -119,7 +126,7 @@ const CaptureControl = ({
         />
       </div>
       <div className={styles.divider} />
-      <div className={styles.rounded}>
+      <div className={styles.btnGroup}>
         <SwitchButton
           activeItemIndex={BUTTON_ITEMS_REC_OPTS.findIndex((item) =>
             recOpts.enableOutputAsGif
@@ -136,7 +143,7 @@ const CaptureControl = ({
         />
       </div>
       <div className={styles.divider} />
-      <div className={classNames(styles.audioWrapper, styles.rounded)}>
+      <div className={styles.btnGroup}>
         <TogglableMultiSelect
           toggleButton={BUTTON_AUDIO_TOGGLE}
           items={items}
