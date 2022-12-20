@@ -7,8 +7,9 @@ import { injectable } from 'inversify';
 
 import { getAllScreens, getIntersection, isEmptyBounds } from '@utils/bounds';
 
-import { CaptureContext, Progress } from '@domain/models/capture';
+import { CaptureContext } from '@domain/models/capture';
 import { Bounds, Screen } from '@domain/models/screen';
+import { Progress } from '@domain/models/ui';
 import { ScreenRecorder } from '@domain/services/recorder';
 
 import RecorderDelegate from '@adapters/recorder/rec-delegate';
