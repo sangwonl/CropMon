@@ -2,7 +2,8 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { CaptureContext, Progress } from '@domain/models/capture';
+import { CaptureContext } from '@domain/models/capture';
+import { Progress } from '@domain/models/ui';
 import CaptureSession from '@domain/services/capture';
 
 import { UiDirector } from '@application/ports/director';

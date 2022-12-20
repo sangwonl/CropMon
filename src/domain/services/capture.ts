@@ -7,12 +7,9 @@ import {
   CaptureOptionsNotPreparedException,
   InvalidCaptureStatusException,
 } from '@domain/exceptions';
-import {
-  CaptureContext,
-  CaptureOptions,
-  Progress,
-} from '@domain/models/capture';
+import { CaptureContext, CaptureOptions } from '@domain/models/capture';
 import { CaptureStatus } from '@domain/models/common';
+import { Progress } from '@domain/models/ui';
 import { PreferencesRepository } from '@domain/repositories/preferences';
 import { ScreenRecorder } from '@domain/services/recorder';
 
