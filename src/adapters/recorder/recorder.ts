@@ -8,9 +8,10 @@ import { injectable } from 'inversify';
 import { getAllScreens, getIntersection, isEmptyBounds } from '@utils/bounds';
 
 import { CaptureContext } from '@domain/models/capture';
+import { AudioSource } from '@domain/models/common';
 import { Bounds, Screen } from '@domain/models/screen';
 import { Progress } from '@domain/models/ui';
-import { ScreenRecorder } from '@domain/services/recorder';
+import { RecorderSource, ScreenRecorder } from '@domain/services/recorder';
 
 import RecorderDelegate from '@adapters/recorder/rec-delegate';
 import {
@@ -21,7 +22,9 @@ import {
 const FRAMERATE = 30;
 
 @injectable()
-export default class ElectronScreenRecorder implements ScreenRecorder {
+export default class ElectronScreenRecorder
+  implements ScreenRecorder, RecorderSource
+{
   delegate?: RecorderDelegate;
 
   constructor() {
@@ -33,13 +36,17 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
       });
   }
 
-  renewBuildRenderer() {
-    this.delegate?.destroy();
-    this.delegate = new RecorderDelegate();
-    // this.delegate.webContents.openDevTools();
+  public fetchAudioSources(): Promise<AudioSource[]> {
+    return new Promise((resolve, reject) => {
+      ipcMain.once('onAudioSourcesFetched', async (_event: any, data: any) => {
+        resolve(data.audioSources);
+      });
+
+      this.delegate?.webContents.send('fetchAudioSources', {});
+    });
   }
 
-  async record(ctx: CaptureContext): Promise<void> {
+  public async record(ctx: CaptureContext): Promise<void> {
     const recordCtx = await this.createRecordContext(ctx);
     if (!recordCtx) {
       return Promise.reject(Error('fail to create record context'));
@@ -51,28 +58,21 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
     }
 
     return new Promise((resolve, reject) => {
-      const onRecordingStarted = (_event: any) => {
+      ipcMain.once('onRecordingStarted', (_event: any) => {
         resolve();
-      };
+      });
 
-      const onRecordingFailed = (_event: any, _data: any) => {
+      ipcMain.once('onRecordingFailed', (_event: any, _data: any) => {
         reject(Error('recording failed'));
-      };
+      });
 
-      const setupIpcListeners = () => {
-        ipcMain.once('recording-started', onRecordingStarted);
-        ipcMain.once('recording-failed', onRecordingFailed);
-      };
-
-      setupIpcListeners();
-
-      this.delegate?.webContents.send('start-record', {
+      this.delegate?.webContents.send('startRecord', {
         recordContext: recordCtx,
       });
     });
   }
 
-  async finish(
+  public async finish(
     ctx: CaptureContext,
     onRecordDone: () => void,
     onPostProgress: (progres: Progress) => void
@@ -80,51 +80,48 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
     const { outputPath, outputFormat, recordMicrophone: enableMic } = ctx;
 
     return new Promise((resolve, reject) => {
-      const onRecordingDone = async (_event: any, data: any) => {
+      ipcMain.once('onRecordingDone', async (_event: any, data: any) => {
         onRecordDone();
 
-        this.delegate?.webContents.send('start-post-process', {
+        this.delegate?.webContents.send('startPostProcess', {
           tempPath: data.tempFilePath,
           outputPath,
           outputFormat,
           enableMic,
           totalRecordTime: data.totalRecordTime,
         });
-      };
+      });
 
-      const onPostProcessing = (_event: any, data: any) => {
+      ipcMain.once('onRecordingFailed', (_event: any, _data: any) => {
+        reject(Error('recording failed'));
+        this.renewBuildRenderer();
+      });
+
+      ipcMain.once('onPostProcessing', (_event: any, data: any) => {
         onPostProgress({ percent: data.progress.percent });
-      };
+      });
 
-      const onPostProcessDone = async (_event: any, data: any) => {
+      ipcMain.once('onPostProcessDone', async (_event: any, data: any) => {
         if (!data.aborted) {
           resolve();
         } else {
           reject(Error('recording aborted'));
         }
         this.renewBuildRenderer();
-      };
+      });
 
-      const onRecordingFailed = (_event: any, _data: any) => {
-        reject(Error('recording failed'));
-        this.renewBuildRenderer();
-      };
-
-      const setupIpcListeners = () => {
-        ipcMain.once('recording-done', onRecordingDone);
-        ipcMain.once('recording-failed', onRecordingFailed);
-        ipcMain.once('post-processing', onPostProcessing);
-        ipcMain.once('post-process-done', onPostProcessDone);
-      };
-
-      setupIpcListeners();
-
-      this.delegate?.webContents.send('stop-record', { outputPath });
+      this.delegate?.webContents.send('stopRecord', { outputPath });
     });
   }
 
-  abortPostProcess(): void {
-    this.delegate?.webContents.send('abort-post-process', {});
+  public abortPostProcess(): void {
+    this.delegate?.webContents.send('abortPostProcess', {});
+  }
+
+  private renewBuildRenderer(): void {
+    this.delegate?.destroy();
+    this.delegate = new RecorderDelegate();
+    // this.delegate.webContents.openDevTools();
   }
 
   private getSourceByScreenId(
