@@ -45,7 +45,7 @@ import UpdateAppUseCase from '@application/usecases/UpdateApp';
 
 import ActionDispatcherProxy from '@adapters/actions/proxy';
 import BuiltinHooks from '@adapters/hook';
-import PlatformApiProxy from '@adapters/platform/proxy';
+import PlatformApiForMain from '@adapters/platform/main';
 import ElectronPreferencesStore from '@adapters/preferences';
 import ElectronScreenRecorder from '@adapters/recorder/recorder';
 import PrefsRepositoryImpl from '@adapters/repositories/preferences';
@@ -92,7 +92,7 @@ diContainer
 
 diContainer
   .bind<PlatformApi>(TYPES.PlatformApi)
-  .to(PlatformApiProxy)
+  .to(PlatformApiForMain)
   .inSingletonScope();
 
 diContainer

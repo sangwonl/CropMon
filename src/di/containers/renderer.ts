@@ -8,7 +8,7 @@ import { ActionDispatcher } from '@application/ports/action';
 import { PlatformApi } from '@application/ports/platform';
 
 import ActionDispatcherClient from '@adapters/actions/client';
-import PlatformApiClient from '@adapters/platform/client';
+import PlatformApiForRenderer from '@adapters/platform/renderer';
 
 const diContainer = new Container();
 
@@ -19,7 +19,7 @@ diContainer
 
 diContainer
   .bind<PlatformApi>(TYPES.PlatformApi)
-  .to(PlatformApiClient)
+  .to(PlatformApiForRenderer)
   .inSingletonScope();
 
 export default diContainer;
