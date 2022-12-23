@@ -1,7 +1,5 @@
-import { ipcMain } from 'electron';
-import { inject, injectable } from 'inversify';
-
-import TYPES from '@di/types';
+import { ipcRenderer } from 'electron';
+import { injectable } from 'inversify';
 
 import { RecordOptions, CaptureOptions } from '@domain/models/capture';
 import { Bounds, Point } from '@domain/models/screen';
@@ -10,35 +8,7 @@ import { UiState } from '@application/models/ui';
 import { ActionDispatcher } from '@application/ports/action';
 
 @injectable()
-export default class ActionDispatcherProxy implements ActionDispatcher {
-  constructor(
-    @inject(TYPES.ActionDispatcher) private actionDispatcher: ActionDispatcher
-  ) {
-    ipcMain.on('disableCaptureMode', () => this.disableCaptureMode());
-    ipcMain.on(
-      'startTargetSelection',
-      (_event, targetBounds, cursorPosition): void => {
-        this.startTargetSelection(targetBounds, cursorPosition);
-      }
-    );
-    ipcMain.on(
-      'selectingTarget',
-      (_event, targetBounds, cursorPosition): void => {
-        this.selectingTarget(targetBounds, cursorPosition);
-      }
-    );
-    ipcMain.on('finishTargetSelection', (_event, targetBounds): void => {
-      this.finishTargetSelection(targetBounds);
-    });
-    ipcMain.on('startCapture', () => this.startCapture());
-    ipcMain.on('changeCaptureOptions', (_event, options) => {
-      this.changeCaptureOptions(options);
-    });
-    ipcMain.on('getUiState', (event) => {
-      event.returnValue = this.getUiState();
-    });
-  }
-
+export default class ActionDispatcherForRenderer implements ActionDispatcher {
   initializeApp(): void {
     throw new Error('Method not implemented.');
   }
@@ -68,7 +38,7 @@ export default class ActionDispatcherProxy implements ActionDispatcher {
   }
 
   openCaptureFolder(): void {
-    this.actionDispatcher.openCaptureFolder();
+    throw new Error('Method not implemented.');
   }
 
   toggleRecordOptions(_recordOptions: RecordOptions): void {
@@ -80,27 +50,27 @@ export default class ActionDispatcherProxy implements ActionDispatcher {
   }
 
   disableCaptureMode(): void {
-    this.actionDispatcher.disableCaptureMode();
+    ipcRenderer.send('disableCaptureMode');
   }
 
   changeCaptureOptions(options: CaptureOptions): void {
-    this.actionDispatcher.changeCaptureOptions(options);
+    ipcRenderer.send('changeCaptureOptions', options);
   }
 
   startTargetSelection(targetBounds: Bounds, cursorPosition: Point): void {
-    this.actionDispatcher.startTargetSelection(targetBounds, cursorPosition);
+    ipcRenderer.send('startTargetSelection', targetBounds, cursorPosition);
   }
 
   selectingTarget(targetBounds: Bounds, cursorPosition: Point): void {
-    this.actionDispatcher.selectingTarget(targetBounds, cursorPosition);
+    ipcRenderer.send('selectingTarget', targetBounds, cursorPosition);
   }
 
   finishTargetSelection(targetBounds: Bounds): void {
-    this.actionDispatcher.finishTargetSelection(targetBounds);
+    ipcRenderer.send('finishTargetSelection', targetBounds);
   }
 
   startCapture(): void {
-    this.actionDispatcher.startCapture();
+    ipcRenderer.send('startCapture');
   }
 
   startCaptureWithCurrentStates(): void {
@@ -116,6 +86,6 @@ export default class ActionDispatcherProxy implements ActionDispatcher {
   }
 
   getUiState(): UiState {
-    return this.actionDispatcher.getUiState();
+    return ipcRenderer.sendSync('getUiState');
   }
 }

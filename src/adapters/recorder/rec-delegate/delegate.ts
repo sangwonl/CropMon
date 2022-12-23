@@ -104,7 +104,17 @@ class MediaRecordDelegatee {
 
   public fetchAudioSources = async (): Promise<AudioSource[]> => {
     const devices = await navigator.mediaDevices.enumerateDevices();
-    return [{ id: '1', name: 'name', active: false }];
+
+    devices.forEach((s) => logger.info(s.toJSON()));
+
+    return devices
+      .filter((d) => d.deviceId !== 'default' && d.kind === 'audioinput')
+      .map((d) => ({
+        id: d.deviceId,
+        kind: d.kind === 'audioinput' ? 'input' : 'output',
+        name: d.label,
+        active: false,
+      }));
   };
 
   private recorderOpts(mimeType?: string, videoBitrates?: number) {
@@ -118,9 +128,12 @@ class MediaRecordDelegatee {
     return { mimeType: mType };
   }
 
-  private getAudioConstraint(): any {
+  private getAudioConstraint(audioSource: AudioSource): any {
     return {
-      audio: true,
+      audio: {
+        deviceId: audioSource.id,
+      },
+      video: false,
     };
   }
 
@@ -221,10 +234,13 @@ class MediaRecordDelegatee {
     return new MediaStream([generator]);
   };
 
-  private attachAudioStreamForMic = async (stream: MediaStream) => {
+  private attachAudioTrack = async (
+    stream: MediaStream,
+    audioSource: AudioSource
+  ): Promise<void> => {
     try {
       const audioStream = await navigator.mediaDevices.getUserMedia(
-        this.getAudioConstraint()
+        this.getAudioConstraint(audioSource)
       );
 
       const tracks = audioStream.getAudioTracks();
@@ -234,14 +250,12 @@ class MediaRecordDelegatee {
     } catch (e) {
       logger.error('no available audio stream found', e);
     }
-
-    return stream;
   };
 
   private createStreamToRecord = async (
     recordCtx: RecordContext
   ): Promise<MediaStream> => {
-    const { outputFormat, recordMicrophone } = recordCtx;
+    const { outputFormat, audioSources } = recordCtx;
 
     const drawContext = await this.createDrawContext(recordCtx);
     const videoStream =
@@ -249,9 +263,13 @@ class MediaRecordDelegatee {
         ? this.createBypassStream(drawContext)
         : this.createTransformStream(drawContext);
 
-    if (recordMicrophone && outputFormat !== 'gif') {
-      await this.attachAudioStreamForMic(videoStream);
+    if (outputFormat === 'gif') {
+      return videoStream;
     }
+
+    await Promise.all(
+      audioSources.map((s) => this.attachAudioTrack(videoStream, s))
+    );
 
     return videoStream;
   };

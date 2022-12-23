@@ -1,4 +1,4 @@
-import { CaptureMode, OutputFormat } from '@domain/models/common';
+import { AudioSource, CaptureMode, OutputFormat } from '@domain/models/common';
 import { Bounds } from '@domain/models/screen';
 
 export type TargetSlice = {
@@ -11,7 +11,7 @@ export type RecordContext = {
   captureMode: CaptureMode;
   targetSlices: TargetSlice[];
   outputFormat: OutputFormat;
-  recordMicrophone: boolean;
+  audioSources: AudioSource[];
   frameRate: number;
   scaleDownFactor: number;
   videoBitrates?: number;

@@ -62,8 +62,8 @@ export default class FinishSelectionUseCase
         screenId: captureOverlay.selectedScreenId,
       },
       recordOptions: {
-        enableOutputAsGif: controlPanel.outputAsGif,
-        enableMicrophone: controlPanel.microphone,
+        outputAsGif: controlPanel.outputAsGif,
+        audioSources: controlPanel.audioSources.filter((s) => s.active),
       },
     });
   }

@@ -1,4 +1,4 @@
-import { CaptureMode, OutputFormat } from '@domain/models/common';
+import { AudioSource, CaptureMode, OutputFormat } from '@domain/models/common';
 
 export type AppearancesColors = {
   selectingBackground: string;
@@ -15,7 +15,7 @@ export type Preferences = {
   recordHome: string;
   openRecordHomeWhenRecordCompleted: boolean;
   showCountdown: boolean;
-  recordMicrophone: boolean;
+  audioSources: AudioSource[];
   outputFormat: OutputFormat;
   captureMode: CaptureMode;
   colors: AppearancesColors;

@@ -44,19 +44,19 @@ export default class PrefsRepositoryImpl implements PreferencesRepository {
   }
 
   applyRecOptionsToPrefs(prefs: Preferences, recOpts: RecordOptions) {
-    if (recOpts.enableOutputAsGif !== undefined) {
-      prefs.outputFormat = recOpts.enableOutputAsGif ? 'gif' : 'mp4';
+    if (recOpts.outputAsGif !== undefined) {
+      prefs.outputFormat = recOpts.outputAsGif ? 'gif' : 'mp4';
     }
 
-    if (recOpts.enableMicrophone !== undefined) {
-      prefs.recordMicrophone = recOpts.enableMicrophone;
+    if (recOpts.audioSources?.length > 0) {
+      prefs.audioSources = recOpts.audioSources;
     }
   }
 
   getRecOptionsFromPrefs(prefs: Preferences): RecordOptions {
     return {
-      enableOutputAsGif: prefs.outputFormat === 'gif',
-      enableMicrophone: prefs.recordMicrophone,
+      outputAsGif: prefs.outputFormat === 'gif',
+      audioSources: prefs.audioSources,
     };
   }
 }

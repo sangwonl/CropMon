@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useState, useRef } from 'react';
 
 import { emptyBounds, getIntersection, isEmptyBounds } from '@utils/bounds';
 
-import { RecordOptions } from '@domain/models/capture';
+import { CaptureOptions, RecordOptions } from '@domain/models/capture';
 import { CaptureMode } from '@domain/models/common';
 import { Bounds, Point } from '@domain/models/screen';
 
@@ -125,16 +125,14 @@ const CaptureOverlay = (props: PropTypes) => {
   }, []);
 
   const composeOptions = useCallback(
-    (mode?: CaptureMode, recOpts?: RecordOptions) => {
+    (mode?: CaptureMode, recOpts?: RecordOptions): CaptureOptions => {
       return {
         target: {
           mode: mode ?? controlPanel.captureMode,
         },
         recordOptions: {
-          enableOutputAsGif:
-            recOpts?.enableOutputAsGif ?? controlPanel.outputAsGif,
-          enableMicrophone:
-            recOpts?.enableMicrophone ?? controlPanel.microphone,
+          outputAsGif: recOpts?.outputAsGif ?? controlPanel.outputAsGif,
+          audioSources: recOpts?.audioSources ?? controlPanel.audioSources,
         },
       };
     },
@@ -259,8 +257,8 @@ const CaptureOverlay = (props: PropTypes) => {
           <CaptureControl
             captureMode={controlPanel.captureMode}
             recordOptions={{
-              enableOutputAsGif: controlPanel.outputAsGif,
-              enableMicrophone: controlPanel.microphone,
+              outputAsGif: controlPanel.outputAsGif,
+              audioSources: controlPanel.audioSources,
             }}
             onCaptureModeChange={onCaptureModeChange}
             onRecordOptionsChange={onRecOptionsChange}

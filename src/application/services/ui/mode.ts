@@ -1,9 +1,11 @@
+import { systemPreferences } from 'electron';
 import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { CaptureMode } from '@domain/models/common';
+import { AudioSource, CaptureMode } from '@domain/models/common';
 import { Screen } from '@domain/models/screen';
+import { RecorderSource } from '@domain/services/recorder';
 
 import { INITIAL_UI_STATE, UiState } from '@application/models/ui';
 import { UiDirector } from '@application/ports/director';
@@ -17,11 +19,25 @@ export default class CaptureModeManager {
     // eslint-disable-next-line prettier/prettier
     @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository,
     @inject(TYPES.UiDirector) private uiDirector: UiDirector,
+    @inject(TYPES.RecorderSource) private recorderSource: RecorderSource,
     private stateManager: StateManager
   ) {}
 
   async enableCaptureMode(captureMode: CaptureMode) {
     const prefs = await this.prefsRepo.fetchUserPreferences();
+
+    const micGranted =
+      systemPreferences.getMediaAccessStatus('microphone') === 'granted';
+
+    const enabledAudioSrcIds = prefs.audioSources
+      .filter((s) => s.active)
+      .map((s) => s.id);
+
+    const audioSources = await this.recorderSource.fetchAudioSources();
+    audioSources.forEach((s) => {
+      s.active = micGranted && enabledAudioSrcIds.includes(s.id);
+    });
+
     this.uiDirector.enableCaptureMode(
       captureMode,
       async (screens: Screen[], screenCursorOn?: Screen) => {
@@ -38,7 +54,7 @@ export default class CaptureModeManager {
               show: true,
               captureMode,
               outputAsGif: prefs.outputFormat === 'gif',
-              microphone: prefs.recordMicrophone,
+              audioSources,
             },
             captureOverlay: {
               ...INITIAL_UI_STATE.captureOverlay,

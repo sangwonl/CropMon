@@ -43,7 +43,7 @@ import ToggleCaptureUseCase from '@application/usecases/ToggleCaptureUseCase';
 import ToggleRecordOptionsUseCase from '@application/usecases/ToggleRecordOptions';
 import UpdateAppUseCase from '@application/usecases/UpdateApp';
 
-import ActionDispatcherProxy from '@adapters/actions/proxy';
+import ActionDispatcherForMain from '@adapters/actions/main';
 import BuiltinHooks from '@adapters/hook';
 import PlatformApiForMain from '@adapters/platform/main';
 import ElectronPreferencesStore from '@adapters/preferences';
@@ -110,7 +110,7 @@ diContainer
   .inSingletonScope();
 
 diContainer
-  .bind<ActionDispatcherProxy>(ActionDispatcherProxy)
+  .bind<ActionDispatcherForMain>(ActionDispatcherForMain)
   .toSelf()
   .inSingletonScope();
 
@@ -246,7 +246,7 @@ diContainer
 
 diContainer.get<PlatformApi>(TYPES.PlatformApi);
 
-diContainer.get(ActionDispatcherProxy);
+diContainer.get(ActionDispatcherForMain);
 
 diContainer.get(BuiltinHooks);
 

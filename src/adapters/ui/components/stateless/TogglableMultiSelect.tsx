@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
 import { withStopPropagation } from '@utils/events';
 
@@ -61,15 +61,10 @@ const TogglableMultiSelect = ({
         changeToggle(false);
       }
       setSelectedIndices(indices);
+      onSelect(indices);
     },
-    [toggleButton.enabled]
+    [toggleButton.enabled, onSelect]
   );
-
-  useEffect(() => {
-    if (!listExpanded) {
-      onSelect(selectedIndices);
-    }
-  }, [listExpanded, onSelect]);
 
   useOnClickOutside(checkListRef, () => showList(false));
 
