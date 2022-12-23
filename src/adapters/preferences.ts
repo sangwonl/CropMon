@@ -4,7 +4,7 @@ import { injectable } from 'inversify';
 
 import { DEFAULT_SHORTCUT_CAPTURE } from '@utils/shortcut';
 
-import { CaptureMode, OutputFormat } from '@domain/models/common';
+import { AudioSource, CaptureMode, OutputFormat } from '@domain/models/common';
 import {
   Preferences,
   AppearancesColors,
@@ -21,7 +21,8 @@ const PREFS_GENERAL_SHOWCOUNTDOWN = 'general.showCountdown';
 const PREFS_GENERAL_SHORTCUT = 'general.shortcut';
 const PREFS_GENERAL_RECORDHOME = 'general.recrodHomeDir';
 const PREFS_GENERAL_REVEALRECORDEDFILE = 'general.revealRecordedFile';
-const PREFS_RECORDING_MICROPHONE = 'recording.microphone';
+const PREFS_RECORDING_MICROPHONE = 'recording.microphone'; /* deprecated */
+const PREFS_RECORDING_AUDIOSOURCES = 'recording.audioSources';
 const PREFS_RECORDING_QUALITYMODE = 'recording.qualityMode';
 const PREFS_RECORDING_OUTPUTFORMAT = 'recording.outputFormat';
 const PREFS_RECORDING_CAPTUREMODE = 'recording.captureMode';
@@ -56,7 +57,7 @@ export default class ElectronPreferencesStore implements PreferencesStore {
               'openRecordHomeDirWhenRecordCompleted',
               true
             ) as boolean,
-            recordMicrophone: store.get('recordMicrophone', false) as boolean,
+            audioSources: [],
             outputFormat: store.get('outputFormat', 'mp4') as OutputFormat,
             captureMode: CaptureMode.AREA, // newly added on 0.7.0
             colors: DEFAULT_APPEAR_COLORS,
@@ -70,7 +71,6 @@ export default class ElectronPreferencesStore implements PreferencesStore {
             PREFS_GENERAL_REVEALRECORDEDFILE,
             curPrefs.openRecordHomeWhenRecordCompleted
           );
-          store.set(PREFS_RECORDING_MICROPHONE, curPrefs.recordMicrophone);
           store.set(PREFS_RECORDING_OUTPUTFORMAT, curPrefs.outputFormat);
 
           store.delete('runAtStartup');
@@ -104,6 +104,10 @@ export default class ElectronPreferencesStore implements PreferencesStore {
         '0.8.3': (store) => {
           store.delete(PREFS_RECORDING_QUALITYMODE);
         },
+        '0.9.0': (store) => {
+          store.set(PREFS_RECORDING_AUDIOSOURCES, []);
+          store.delete(PREFS_RECORDING_MICROPHONE);
+        },
       },
     });
   }
@@ -130,7 +134,7 @@ export default class ElectronPreferencesStore implements PreferencesStore {
       prefs.openRecordHomeWhenRecordCompleted
     );
     this.store.set(PREFS_GENERAL_SHOWCOUNTDOWN, prefs.showCountdown);
-    this.store.set(PREFS_RECORDING_MICROPHONE, prefs.recordMicrophone);
+    this.store.set(PREFS_RECORDING_AUDIOSOURCES, prefs.audioSources);
     this.store.set(PREFS_RECORDING_OUTPUTFORMAT, prefs.outputFormat);
     this.store.set(PREFS_RECORDING_CAPTUREMODE, prefs.captureMode);
     this.store.set(
@@ -157,7 +161,7 @@ export default class ElectronPreferencesStore implements PreferencesStore {
       recordHome: app.getPath('videos'),
       openRecordHomeWhenRecordCompleted: true,
       showCountdown: true,
-      recordMicrophone: false,
+      audioSources: [],
       outputFormat: 'mp4',
       captureMode: CaptureMode.AREA,
       colors: DEFAULT_APPEAR_COLORS,
@@ -203,10 +207,10 @@ export default class ElectronPreferencesStore implements PreferencesStore {
         PREFS_GENERAL_SHOWCOUNTDOWN,
         true
       ) as boolean,
-      recordMicrophone: this.store.get(
-        PREFS_RECORDING_MICROPHONE,
-        false
-      ) as boolean,
+      audioSources: this.store.get(
+        PREFS_RECORDING_AUDIOSOURCES,
+        []
+      ) as AudioSource[],
       outputFormat: this.store.get(
         PREFS_RECORDING_OUTPUTFORMAT,
         'mp4'

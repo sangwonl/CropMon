@@ -1,6 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  ComponentProps,
+} from 'react';
 
 import {
   shortcutForDisplay,
@@ -63,11 +69,6 @@ const BUTTON_AUDIO_TOGGLE = {
   enabled: false,
 };
 
-const items = [
-  { checked: false, title: 'System Audio' },
-  { checked: true, title: 'System Microphone' },
-];
-
 type Props = {
   captureMode: CaptureMode;
   recordOptions: RecordOptions;
@@ -85,6 +86,16 @@ const CaptureControl = ({
 }: Props) => {
   const [captMode, setCaptMode] = useState<CaptureMode>(captureMode);
   const [recOpts, setRecOpts] = useState<RecordOptions>(recordOptions);
+
+  const audioItems: ComponentProps<typeof TogglableMultiSelect>['items'] =
+    useMemo(
+      () =>
+        recOpts.audioSources.map((s) => ({
+          title: s.name,
+          checked: s.active,
+        })),
+      [recOpts]
+    );
 
   const handleCaptModeChange = useCallback(
     (mode: CaptureMode) => {
@@ -129,15 +140,13 @@ const CaptureControl = ({
       <div className={styles.btnGroup}>
         <SwitchButton
           activeItemIndex={BUTTON_ITEMS_REC_OPTS.findIndex((item) =>
-            recOpts.enableOutputAsGif
-              ? item.value === 'gif'
-              : item.value === 'mp4'
+            recOpts.outputAsGif ? item.value === 'gif' : item.value === 'mp4'
           )}
           items={BUTTON_ITEMS_REC_OPTS}
           onSelect={(index: number) => {
             handleRecOptsChange({
               ...recOpts,
-              enableOutputAsGif: BUTTON_ITEMS_REC_OPTS[index].value === 'gif',
+              outputAsGif: BUTTON_ITEMS_REC_OPTS[index].value === 'gif',
             });
           }}
         />
@@ -146,9 +155,18 @@ const CaptureControl = ({
       <div className={styles.btnGroup}>
         <TogglableMultiSelect
           toggleButton={BUTTON_AUDIO_TOGGLE}
-          items={items}
+          items={audioItems}
           onToggle={(enabled: boolean) => {}}
-          onSelect={(indices: number[]) => {}}
+          onSelect={(indices: number[]) => {
+            const audioSources = recOpts.audioSources.map((s) => ({
+              ...s,
+              active: false,
+            }));
+            indices.forEach((i) => {
+              audioSources[i].active = true;
+            });
+            handleRecOptsChange({ ...recOpts, audioSources });
+          }}
         />
       </div>
       <div className={styles.divider} />

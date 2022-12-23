@@ -15,8 +15,8 @@ export default {
 const Template: ComponentStory<typeof CaptureControl> = () => {
   const [captMode, setCaptMode] = useState<CaptureMode>(CaptureMode.AREA);
   const [recOpts, setRecOpts] = useState<RecordOptions>({
-    enableOutputAsGif: false,
-    enableMicrophone: false,
+    outputAsGif: false,
+    audioSources: [],
   });
 
   return (

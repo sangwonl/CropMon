@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { app, desktopCapturer, ipcMain, systemPreferences } from 'electron';
+import { app, desktopCapturer, ipcMain } from 'electron';
 import logger from 'electron-log';
 import { injectable } from 'inversify';
 
@@ -52,11 +52,6 @@ export default class ElectronScreenRecorder
       return Promise.reject(Error('fail to create record context'));
     }
 
-    if (recordCtx.recordMicrophone) {
-      recordCtx.recordMicrophone =
-        systemPreferences.getMediaAccessStatus('microphone') === 'granted';
-    }
-
     return new Promise((resolve, reject) => {
       ipcMain.once('onRecordingStarted', (_event: any) => {
         resolve();
@@ -77,7 +72,7 @@ export default class ElectronScreenRecorder
     onRecordDone: () => void,
     onPostProgress: (progres: Progress) => void
   ): Promise<void> {
-    const { outputPath, outputFormat, recordMicrophone: enableMic } = ctx;
+    const { outputPath, outputFormat, audioSources } = ctx;
 
     return new Promise((resolve, reject) => {
       ipcMain.once('onRecordingDone', async (_event: any, data: any) => {
@@ -87,7 +82,7 @@ export default class ElectronScreenRecorder
           tempPath: data.tempFilePath,
           outputPath,
           outputFormat,
-          enableMic,
+          audioSources,
           totalRecordTime: data.totalRecordTime,
         });
       });
@@ -191,7 +186,7 @@ export default class ElectronScreenRecorder
   private async createRecordContext(
     ctx: CaptureContext
   ): Promise<RecordContext | null> {
-    const { outputFormat, recordMicrophone } = ctx;
+    const { outputFormat, audioSources } = ctx;
     const {
       mode: captureMode,
       bounds: targetBounds,
@@ -219,7 +214,7 @@ export default class ElectronScreenRecorder
       captureMode,
       targetSlices,
       outputFormat,
-      recordMicrophone,
+      audioSources,
       frameRate,
       scaleDownFactor,
     };

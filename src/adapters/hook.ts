@@ -178,14 +178,14 @@ export default class BuiltinHooks {
 
     // tracking
     if (!error) {
-      const { target, outputFormat, recordMicrophone } =
+      const { target, outputFormat, audioSources } =
         args.captureContext;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const { width, height } = target.bounds!;
       this.tracker.eventL('capture', 'start-capture', `mode:${target.mode}`);
       this.tracker.eventL('capture', 'start-capture', `area:${width}x${height}`);
       this.tracker.eventL('capture', 'start-capture', `outfmt:${outputFormat}`);
-      this.tracker.eventL('capture', 'start-capture', `mic:${String(recordMicrophone)}`);
+      this.tracker.eventL('capture', 'start-capture', `audio:${audioSources.map((s) => s.name).join(',')}`);
       this.tracker.view('in-recording');
     } else {
       this.tracker.eventL('capture', 'start-capture', 'fail');
@@ -245,7 +245,7 @@ export default class BuiltinHooks {
       target: { mode: mode ?? prefs.captureMode },
       recordOptions: {
         ...recOpts,
-        enableOutputAsGif: (fmt ?? prefs.outputFormat) === 'gif',
+        outputAsGif: (fmt ?? prefs.outputFormat) === 'gif',
       },
     });
   };
@@ -319,7 +319,8 @@ export default class BuiltinHooks {
       await desktopCapturer.getSources({ types: ['screen'] });
     }
 
-    if (prefs.recordMicrophone && isMac()) {
+    const needMic = prefs.audioSources.some((s) => s.kind === 'input');
+    if (needMic && isMac()) {
       const micAccess = systemPreferences.getMediaAccessStatus('microphone');
       if (micAccess !== 'granted') {
         systemPreferences.askForMediaAccess('microphone');

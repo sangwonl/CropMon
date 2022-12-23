@@ -7,14 +7,14 @@ import TYPES from '@di/types';
 import { ActionDispatcher } from '@application/ports/action';
 import { PlatformApi } from '@application/ports/platform';
 
-import ActionDispatcherClient from '@adapters/actions/client';
+import ActionDispatcherForRenderer from '@adapters/actions/renderer';
 import PlatformApiForRenderer from '@adapters/platform/renderer';
 
 const diContainer = new Container();
 
 diContainer
   .bind<ActionDispatcher>(TYPES.ActionDispatcher)
-  .to(ActionDispatcherClient)
+  .to(ActionDispatcherForRenderer)
   .inSingletonScope();
 
 diContainer

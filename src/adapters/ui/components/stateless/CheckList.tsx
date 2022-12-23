@@ -2,6 +2,8 @@
 
 import React, { useCallback, useRef, useState } from 'react';
 
+import { withStopPropagation } from '@utils/events';
+
 import styles from './CheckList.css';
 
 type SelectableItem = {
@@ -40,7 +42,11 @@ const CheckList = ({ items, onSelect }: Props) => {
   return (
     <div className={styles.container}>
       {items.map(({ title }, index) => (
-        <div key={title}>
+        <div
+          key={title}
+          onMouseUp={withStopPropagation}
+          onMouseDown={withStopPropagation}
+        >
           <input
             type="checkbox"
             id={title}

@@ -1,4 +1,4 @@
-import { CaptureMode } from '@domain/models/common';
+import { AudioSource, CaptureMode } from '@domain/models/common';
 import { Preferences, DEFAULT_APPEAR_COLORS } from '@domain/models/preferences';
 import { Screen, Bounds, Point } from '@domain/models/screen';
 
@@ -11,7 +11,7 @@ export type ControlPanel = {
   show: boolean;
   captureMode: CaptureMode;
   outputAsGif: boolean;
-  microphone: boolean;
+  audioSources: AudioSource[];
   confirmedToCaptureAsIs: boolean;
 };
 
@@ -45,7 +45,7 @@ export const INITIAL_UI_STATE: UiState = {
   controlPanel: {
     show: false,
     captureMode: CaptureMode.AREA,
-    microphone: false,
+    audioSources: [],
     outputAsGif: false,
     confirmedToCaptureAsIs: false,
   },

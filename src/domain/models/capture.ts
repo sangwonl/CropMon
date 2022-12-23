@@ -13,9 +13,8 @@ export type CaptureTarget = {
 };
 
 export type RecordOptions = {
-  enableOutputAsGif?: boolean;
-  enableMicrophone?: boolean;
-  enabledAudioSources: AudioSource[];
+  outputAsGif?: boolean;
+  audioSources: AudioSource[];
 };
 
 export type CaptureOptions = {
@@ -31,7 +30,7 @@ export class CaptureContext {
     public target: CaptureTarget,
     public outputPath: string,
     public outputFormat: OutputFormat,
-    public recordMicrophone: boolean
+    public audioSources: AudioSource[]
   ) {
     this.createdAt = getTimeInSeconds();
   }
@@ -54,8 +53,8 @@ export class CaptureContext {
     return new CaptureContext(
       target,
       output,
-      recordOptions.enableOutputAsGif ? 'gif' : 'mp4',
-      recordOptions.enableMicrophone ?? false
+      recordOptions.outputAsGif ? 'gif' : 'mp4',
+      recordOptions.audioSources
     );
   }
 }
