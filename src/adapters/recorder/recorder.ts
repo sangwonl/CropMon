@@ -52,23 +52,16 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
 
     return new Promise((resolve, reject) => {
       const onRecordingStarted = (_event: any) => {
-        clearIpcListeners();
         resolve();
       };
 
       const onRecordingFailed = (_event: any, _data: any) => {
-        clearIpcListeners();
         reject(Error('recording failed'));
       };
 
       const setupIpcListeners = () => {
-        ipcMain.on('recording-started', onRecordingStarted);
-        ipcMain.on('recording-failed', onRecordingFailed);
-      };
-
-      const clearIpcListeners = () => {
-        ipcMain.off('recording-started', onRecordingStarted);
-        ipcMain.off('recording-failed', onRecordingFailed);
+        ipcMain.once('recording-started', onRecordingStarted);
+        ipcMain.once('recording-failed', onRecordingFailed);
       };
 
       setupIpcListeners();
@@ -104,7 +97,6 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
       };
 
       const onPostProcessDone = async (_event: any, data: any) => {
-        clearIpcListeners();
         if (!data.aborted) {
           resolve();
         } else {
@@ -114,23 +106,15 @@ export default class ElectronScreenRecorder implements ScreenRecorder {
       };
 
       const onRecordingFailed = (_event: any, _data: any) => {
-        clearIpcListeners();
         reject(Error('recording failed'));
         this.renewBuildRenderer();
       };
 
       const setupIpcListeners = () => {
-        ipcMain.on('recording-done', onRecordingDone);
-        ipcMain.on('recording-failed', onRecordingFailed);
-        ipcMain.on('post-processing', onPostProcessing);
-        ipcMain.on('post-process-done', onPostProcessDone);
-      };
-
-      const clearIpcListeners = () => {
-        ipcMain.off('recording-done', onRecordingDone);
-        ipcMain.off('recording-failed', onRecordingFailed);
-        ipcMain.off('post-processing', onPostProcessing);
-        ipcMain.off('post-process-done', onPostProcessDone);
+        ipcMain.once('recording-done', onRecordingDone);
+        ipcMain.once('recording-failed', onRecordingFailed);
+        ipcMain.once('post-processing', onPostProcessing);
+        ipcMain.once('post-process-done', onPostProcessDone);
       };
 
       setupIpcListeners();
