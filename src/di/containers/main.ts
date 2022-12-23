@@ -8,7 +8,7 @@ import TYPES from '@di/types';
 
 import { PreferencesRepository } from '@domain/repositories/preferences';
 import CaptureSession from '@domain/services/capture';
-import { ScreenRecorder } from '@domain/services/recorder';
+import { RecorderSource, ScreenRecorder } from '@domain/services/recorder';
 
 import ActionDispatcherCore from '@application/controllers/dispatcher';
 import { ActionDispatcher } from '@application/ports/action';
@@ -60,6 +60,10 @@ diContainer
   .bind<ScreenRecorder>(TYPES.ScreenRecorder)
   .to(ElectronScreenRecorder)
   .inSingletonScope();
+
+diContainer
+  .bind<RecorderSource>(TYPES.RecorderSource)
+  .toConstantValue(diContainer.get<RecorderSource>(TYPES.ScreenRecorder));
 
 diContainer
   .bind<PreferencesStore>(TYPES.PreferencesStore)

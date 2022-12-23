@@ -2,7 +2,7 @@ import path from 'path';
 
 import { getNowAsYYYYMMDDHHmmss, getTimeInSeconds } from '@utils/date';
 
-import { CaptureMode, OutputFormat } from '@domain/models/common';
+import { CaptureMode, AudioSource, OutputFormat } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
 import { Bounds } from '@domain/models/screen';
 
@@ -15,6 +15,7 @@ export type CaptureTarget = {
 export type RecordOptions = {
   enableOutputAsGif?: boolean;
   enableMicrophone?: boolean;
+  enabledAudioSources: AudioSource[];
 };
 
 export type CaptureOptions = {

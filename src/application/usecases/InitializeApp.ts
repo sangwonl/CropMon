@@ -9,8 +9,9 @@ import { UseCase } from '@application/usecases/UseCase';
 @injectable()
 export default class InitializeAppUseCase implements UseCase<void> {
   constructor(
-    private hookManager: HookManager,
-    @inject(TYPES.UiDirector) private uiDirector: UiDirector
+    // eslint-disable-next-line prettier/prettier
+    @inject(TYPES.UiDirector) private uiDirector: UiDirector,
+    private hookManager: HookManager
   ) {}
 
   async execute() {
