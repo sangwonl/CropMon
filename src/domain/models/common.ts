@@ -13,4 +13,10 @@ export enum CaptureMode {
   SCREEN = 'screen',
 }
 
+export type AudioSource = {
+  id: string;
+  name: string;
+  active: boolean;
+};
+
 export type OutputFormat = 'mp4' | 'webm' | 'gif';

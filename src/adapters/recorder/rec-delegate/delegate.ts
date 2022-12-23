@@ -18,7 +18,7 @@ import { isProduction, isWin } from '@utils/process';
 import diContainer from '@di/containers/renderer';
 import TYPES from '@di/types';
 
-import { CaptureMode, OutputFormat } from '@domain/models/common';
+import { AudioSource, CaptureMode, OutputFormat } from '@domain/models/common';
 import { Bounds } from '@domain/models/screen';
 
 import { PlatformApi } from '@application/ports/platform';
@@ -65,7 +65,7 @@ class MediaRecordDelegatee {
     this.tranformWorker = new Worker(this.getWorkerPath());
   }
 
-  start = async (recordCtx: RecordContext) => {
+  public start = async (recordCtx: RecordContext) => {
     const { videoBitrates } = recordCtx;
 
     const stream = await this.createStreamToRecord(recordCtx);
@@ -84,22 +84,27 @@ class MediaRecordDelegatee {
     });
   };
 
-  stop = () => {
+  public stop = () => {
     if (this.mediaRecorder === undefined) {
-      ipcRenderer.send('recording-failed', {
+      ipcRenderer.send('onRecordingFailed', {
         message: 'invalid media recorder state',
       });
       return;
     }
 
     if (this.totalRecordedChunks === 0) {
-      ipcRenderer.send('recording-failed', {
+      ipcRenderer.send('onRecordingFailed', {
         message: 'empty recorded chunks',
       });
       return;
     }
 
     this.recordState = 'stopping';
+  };
+
+  public fetchAudioSources = async (): Promise<AudioSource[]> => {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    return [{ id: '1', name: 'name', active: false }];
   };
 
   private recorderOpts(mimeType?: string, videoBitrates?: number) {
@@ -295,7 +300,7 @@ class MediaRecordDelegatee {
       CHUNK_HANLER_INTERVAL
     );
 
-    ipcRenderer.send('recording-started', {});
+    ipcRenderer.send('onRecordingStarted', {});
   };
 
   private handleRecordStop = (_event: Event) => {
@@ -304,7 +309,7 @@ class MediaRecordDelegatee {
     const recordStoppedAt = new Date().getTime();
     const totalRecordTime = recordStoppedAt - this.recordStartedAt!;
 
-    ipcRenderer.send('recording-done', {
+    ipcRenderer.send('onRecordingDone', {
       tempFilePath: this.tempFilePath,
       totalRecordTime,
     });
@@ -410,21 +415,21 @@ class PostProcessorDelegate {
 const recorder = new MediaRecordDelegatee();
 const postProc = new PostProcessorDelegate();
 
-ipcRenderer.on('start-record', async (_event, data) => {
+ipcRenderer.on('startRecord', async (_event, data) => {
   await recorder.start(data.recordContext);
 });
 
-ipcRenderer.on('stop-record', (_event, _data) => {
+ipcRenderer.on('stopRecord', (_event, _data) => {
   recorder.stop();
 });
 
-ipcRenderer.on('start-post-process', async (_event, data) => {
+ipcRenderer.on('startPostProcess', async (_event, data) => {
   const { tempPath, outputPath, outputFormat, enableMic, totalRecordTime } =
     data;
   const handleProgress = (progress: ProgressEvent) => {
     const currentFrameTime = getDurationFromString(progress.timemark);
     const percent = Math.round((currentFrameTime / totalRecordTime) * 100);
-    ipcRenderer.send('post-processing', { progress: { percent } });
+    ipcRenderer.send('onPostProcessing', { progress: { percent } });
   };
 
   await postProc.postProcess(
@@ -435,11 +440,16 @@ ipcRenderer.on('start-post-process', async (_event, data) => {
     handleProgress
   );
 
-  ipcRenderer.send('post-process-done', { aborted: false });
+  ipcRenderer.send('onPostProcessDone', { aborted: false });
 });
 
-ipcRenderer.on('abort-post-process', () => {
+ipcRenderer.on('abortPostProcess', () => {
   postProc.stopProcess();
 
-  ipcRenderer.send('post-process-done', { aborted: true });
+  ipcRenderer.send('onPostProcessDone', { aborted: true });
+});
+
+ipcRenderer.on('fetchAudioSources', async () => {
+  const audioSources = await recorder.fetchAudioSources();
+  ipcRenderer.send('onAudioSourcesFetched', { audioSources });
 });
