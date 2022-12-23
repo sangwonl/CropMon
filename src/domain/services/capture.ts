@@ -17,42 +17,42 @@ import { ScreenRecorder } from '@domain/services/recorder';
 export default class CaptureSession {
   private curCaptureOptions?: CaptureOptions;
   private curCaptureCtx?: CaptureContext;
-  private captureStatus: CaptureStatus;
+  private curCaptureStatus: CaptureStatus;
 
   constructor(
     // eslint-disable-next-line prettier/prettier
     @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository,
     @inject(TYPES.ScreenRecorder) private screenRecorder: ScreenRecorder
   ) {
-    this.captureStatus = CaptureStatus.IN_IDLE;
+    this.curCaptureStatus = CaptureStatus.IN_IDLE;
   }
 
-  idle(): void {
-    this.captureStatus = CaptureStatus.IN_IDLE;
+  public idle(): void {
+    this.curCaptureStatus = CaptureStatus.IN_IDLE;
   }
 
-  selecting(): void {
-    this.captureStatus = CaptureStatus.IN_SELECTING;
+  public selecting(): void {
+    this.curCaptureStatus = CaptureStatus.IN_SELECTING;
   }
 
-  prepare(captureOptions: CaptureOptions): void {
+  public prepare(captureOptions: CaptureOptions): void {
     this.curCaptureOptions = captureOptions;
-    this.captureStatus = CaptureStatus.PREPARED;
+    this.curCaptureStatus = CaptureStatus.PREPARED;
   }
 
-  isIdle(): boolean {
-    return this.captureStatus === CaptureStatus.IN_IDLE;
+  public isIdle(): boolean {
+    return this.curCaptureStatus === CaptureStatus.IN_IDLE;
   }
 
-  isInProgress(): boolean {
-    return this.captureStatus === CaptureStatus.IN_PROGRESS;
+  public isInProgress(): boolean {
+    return this.curCaptureStatus === CaptureStatus.IN_PROGRESS;
   }
 
-  isFinished(): boolean {
-    return this.captureStatus === CaptureStatus.FINISHED;
+  public isFinished(): boolean {
+    return this.curCaptureStatus === CaptureStatus.FINISHED;
   }
 
-  async startCapture(): Promise<CaptureContext> {
+  public async startCapture(): Promise<CaptureContext> {
     if (!this.curCaptureOptions) {
       throw new CaptureOptionsNotPreparedException();
     }
@@ -64,9 +64,9 @@ export default class CaptureSession {
 
     try {
       await this.screenRecorder.record(newCaptureCtx);
-      this.captureStatus = CaptureStatus.IN_PROGRESS;
+      this.curCaptureStatus = CaptureStatus.IN_PROGRESS;
     } catch (e) {
-      this.captureStatus = CaptureStatus.ERROR;
+      this.curCaptureStatus = CaptureStatus.ERROR;
       logger.info(e);
     }
 
@@ -75,7 +75,7 @@ export default class CaptureSession {
     return newCaptureCtx;
   }
 
-  async finishCapture(
+  public async finishCapture(
     onFinishing?: (captureCtx: CaptureContext) => void,
     onPostProgress?: (progress: Progress, captureCtx: CaptureContext) => void,
     onFinished?: () => void
@@ -83,7 +83,7 @@ export default class CaptureSession {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const curCaptureCtx = this.curCaptureCtx!;
 
-    if (this.captureStatus !== CaptureStatus.IN_PROGRESS) {
+    if (this.curCaptureStatus !== CaptureStatus.IN_PROGRESS) {
       throw new InvalidCaptureStatusException(
         `Can't finish capturing which is not in progress`
       );
@@ -97,24 +97,24 @@ export default class CaptureSession {
       );
 
       curCaptureCtx.finishCapture();
-      this.captureStatus = CaptureStatus.FINISHED;
+      this.curCaptureStatus = CaptureStatus.FINISHED;
 
       onFinished?.();
     } catch (e) {
-      this.captureStatus = CaptureStatus.ERROR;
+      this.curCaptureStatus = CaptureStatus.ERROR;
     }
 
     return curCaptureCtx;
   }
 
-  abortPostProcess(): void {
+  public abortPostProcess(): void {
     this.screenRecorder.abortPostProcess();
   }
 
-  async shouldRevealRecordedFile(): Promise<boolean> {
+  public async shouldRevealRecordedFile(): Promise<boolean> {
     const prefs = await this.prefsRepo.fetchUserPreferences();
     return (
-      this.captureStatus === CaptureStatus.FINISHED &&
+      this.curCaptureStatus === CaptureStatus.FINISHED &&
       prefs.openRecordHomeWhenRecordCompleted
     );
   }
