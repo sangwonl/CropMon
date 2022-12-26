@@ -26,7 +26,7 @@ export default class StartCaptureUseCase implements UseCase<void> {
 
       this.disableCaptureModeWhenFailToStartRecording();
 
-      this.hookManager.emit('capture-starting', {
+      this.hookManager.emit('onCaptureStarting', {
         captureContext: newCaptureCtx,
         error: !this.captureSession.isInProgress(),
       });

@@ -19,7 +19,7 @@ export default class OpenPrefsModalUseCase implements UseCase<void> {
   ) {}
 
   async execute() {
-    this.hookManager.emit('prefs-modal-opening', {});
+    this.hookManager.emit('onPrefsModalOpening', {});
 
     const prefs = await this.prefsRepo.fetchUserPreferences();
     await this.uiDirector.openPreferencesModal(

@@ -31,7 +31,7 @@ export default class CheckVersionUseCase implements UseCase<void> {
     }
 
     if (semver.gt(curVersion, oldVersion)) {
-      this.hookManager.emit('app-updated', { oldVersion, curVersion });
+      this.hookManager.emit('onAppUpdated', { oldVersion, curVersion });
     }
   }
 }

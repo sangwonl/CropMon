@@ -50,7 +50,7 @@ export default class FinishSelectionUseCase
       this.prepareForCapture(state);
     });
 
-    this.hookManager.emit('capture-selection-finished', {});
+    this.hookManager.emit('onCaptureSelectionFinished', {});
   }
 
   private prepareForCapture(state: UiState) {

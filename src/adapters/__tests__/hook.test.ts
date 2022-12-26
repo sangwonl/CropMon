@@ -2,6 +2,7 @@
 
 import { CaptureMode } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
+
 import HookManager from '@application/services/hook';
 
 describe('HookManager', () => {
@@ -29,14 +30,14 @@ describe('HookManager', () => {
     let prefsLoadedHookCalled = 0;
 
     hookMgr
-      .on('prefs-loaded', () => {
+      .on('onPrefsLoaded', () => {
         prefsLoadedHookCalled += 1;
       })
-      .on('prefs-loaded', () => {
+      .on('onPrefsLoaded', () => {
         prefsLoadedHookCalled += 1;
       });
 
-    hookMgr.emit('prefs-loaded', { loadedPrefs: defaultPrefs });
+    hookMgr.emit('onPrefsLoaded', { loadedPrefs: defaultPrefs });
 
     expect(prefsLoadedHookCalled).toEqual(2);
   });
@@ -46,24 +47,24 @@ describe('HookManager', () => {
     let prefsUpdatedHookCalled = 0;
 
     hookMgr
-      .on('prefs-loaded', () => {
+      .on('onPrefsLoaded', () => {
         prefsLoadedHookCalled += 1;
       })
-      .on('prefs-loaded', () => {
+      .on('onPrefsLoaded', () => {
         prefsLoadedHookCalled += 1;
       })
-      .on('prefs-updated', () => {
+      .on('onPrefsUpdated', () => {
         prefsUpdatedHookCalled += 1;
       })
-      .on('prefs-updated', () => {
+      .on('onPrefsUpdated', () => {
         prefsUpdatedHookCalled += 1;
       })
-      .on('prefs-updated', () => {
+      .on('onPrefsUpdated', () => {
         prefsUpdatedHookCalled += 1;
       });
 
-    hookMgr.emit('prefs-loaded', { loadedPrefs: defaultPrefs });
-    hookMgr.emit('prefs-updated', {
+    hookMgr.emit('onPrefsLoaded', { loadedPrefs: defaultPrefs });
+    hookMgr.emit('onPrefsUpdated', {
       prevPrefs: defaultPrefs,
       newPrefs: defaultPrefs,
     });
@@ -78,9 +79,9 @@ describe('HookManager', () => {
       prefsLoadedHookCalled += 1;
     };
 
-    hookMgr.on('prefs-loaded', handler).on('prefs-loaded', handler);
+    hookMgr.on('onPrefsLoaded', handler).on('onPrefsLoaded', handler);
 
-    hookMgr.emit('prefs-loaded', { loadedPrefs: defaultPrefs });
+    hookMgr.emit('onPrefsLoaded', { loadedPrefs: defaultPrefs });
 
     expect(prefsLoadedHookCalled).toEqual(1);
   });

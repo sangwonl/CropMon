@@ -43,6 +43,6 @@ export default class StartSelectionUseCase
       };
     });
 
-    this.hookManager.emit('capture-selection-starting', {});
+    this.hookManager.emit('onCaptureSelectionStarting', {});
   }
 }

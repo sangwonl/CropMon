@@ -17,6 +17,6 @@ export default class InitializeAppUseCase implements UseCase<void> {
   async execute() {
     this.uiDirector.initialize();
 
-    this.hookManager.emit('app-launched', {});
+    this.hookManager.emit('onAppLaunched', {});
   }
 }
