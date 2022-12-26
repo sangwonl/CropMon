@@ -38,11 +38,6 @@ const TogglableMultiSelect = ({
   const checkListRef = useRef<HTMLDivElement>(null);
   const [toggleEnabled, changeToggle] = useState<boolean>(toggleButton.enabled);
   const [listExpanded, showList] = useState<boolean>(false);
-  const [selectedIndices, setSelectedIndices] = useState<number[]>(
-    items
-      .map(({ checked }, index) => (checked ? index : -1))
-      .filter((index) => index >= 0)
-  );
 
   const handleToggleButtonClick = useCallback(() => {
     changeToggle(!toggleEnabled);
@@ -60,7 +55,6 @@ const TogglableMultiSelect = ({
       } else {
         changeToggle(false);
       }
-      setSelectedIndices(indices);
       onSelect(indices);
     },
     [toggleButton.enabled, onSelect]
