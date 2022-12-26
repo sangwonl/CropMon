@@ -26,9 +26,9 @@ export default class PrefsRepositoryImpl implements PreferencesRepository {
       this.cachedUserPrefs = loadedPrefs;
 
       if (loadedPrefs.initialLoaded) {
-        this.hookManager.emit('initial-prefs-loaded', { loadedPrefs });
+        this.hookManager.emit('onInitialPrefsLoaded', { loadedPrefs });
       }
-      this.hookManager.emit('prefs-loaded', { loadedPrefs });
+      this.hookManager.emit('onPrefsLoaded', { loadedPrefs });
     }
 
     return this.cachedUserPrefs;
@@ -40,7 +40,7 @@ export default class PrefsRepositoryImpl implements PreferencesRepository {
     await this.preferencesStore.savePreferences(newPrefs);
     this.cachedUserPrefs = newPrefs;
 
-    this.hookManager.emit('prefs-updated', { prevPrefs, newPrefs });
+    this.hookManager.emit('onPrefsUpdated', { prevPrefs, newPrefs });
   }
 
   applyRecOptionsToPrefs(prefs: Preferences, recOpts: RecordOptions) {

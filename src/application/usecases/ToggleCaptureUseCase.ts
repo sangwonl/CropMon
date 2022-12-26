@@ -22,7 +22,7 @@ export default class ToggleCaptureUseCase implements UseCase<void> {
     } else {
       this.enableCaptureUseCase.execute();
 
-      this.hookManager.emit('capture-shortcut-triggered', {});
+      this.hookManager.emit('onCaptureShortcutTriggered', {});
     }
   }
 }

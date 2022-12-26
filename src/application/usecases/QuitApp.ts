@@ -17,6 +17,6 @@ export default class QuitAppUseCase implements UseCase<void> {
 
   execute() {
     this.uiDirector.quitApplication();
-    this.hookManager.emit('app-quit', {});
+    this.hookManager.emit('onAppQuit', {});
   }
 }

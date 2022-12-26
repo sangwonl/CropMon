@@ -28,7 +28,7 @@ export default class FinishCaptureUseCase implements UseCase<void> {
     try {
       const finishedCtx = await this.captureSession.finishCapture(
         async (captureCtx: CaptureContext) => {
-          this.hookManager.emit('capture-finishing', {
+          this.hookManager.emit('onCaptureFinishing', {
             captureContext: captureCtx,
           });
 
@@ -56,7 +56,7 @@ export default class FinishCaptureUseCase implements UseCase<void> {
         this.uiDirector.revealItemInFolder(finishedCtx.outputPath);
       }
 
-      this.hookManager.emit('capture-finished', {
+      this.hookManager.emit('onCaptureFinished', {
         captureContext: finishedCtx,
         error: !done,
       });

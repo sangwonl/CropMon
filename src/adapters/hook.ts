@@ -63,23 +63,23 @@ export default class BuiltinHooks {
     private checkUpdateUseCase: CheckUpdateUseCase,
     private checkVersionUseCase: CheckVersionUseCase
   ) {
-    this.hookManager.on('app-launched', this.onAppLaunched);
-    this.hookManager.on('app-quit', this.onAppQuit);
-    this.hookManager.on('app-update-checked', this.onAppUpdateChecked);
-    this.hookManager.on('app-updated', this.onAppUpdated);
-    this.hookManager.on('initial-prefs-loaded', this.onInitialPrefsLoaded);
-    this.hookManager.on('prefs-loaded', this.onPrefsLoaded);
-    this.hookManager.on('prefs-updated', this.onPrefsUpdated);
-    this.hookManager.on('prefs-modal-opening', this.onPrefsModalOpening);
-    this.hookManager.on('capture-options-changed', this.onCaptureOptionsChanged);
-    this.hookManager.on('capture-shortcut-triggered', this.onCaptureShortcutTriggered);
-    this.hookManager.on('capture-mode-enabled', this.onCaptureModeEnabled);
-    this.hookManager.on('capture-mode-disabled', this.onCaptureModeDisabled);
-    this.hookManager.on('capture-selection-starting', this.onCaptureSelectionStarting);
-    this.hookManager.on('capture-selection-finished', this.onCaptureSelectionFinished);
-    this.hookManager.on('capture-starting', this.onCaptureStarting);
-    this.hookManager.on('capture-finishing', this.onCaptureFinishing);
-    this.hookManager.on('capture-finished', this.onCaptureFinished);
+    this.hookManager.on('onAppLaunched', this.onAppLaunched);
+    this.hookManager.on('onAppQuit', this.onAppQuit);
+    this.hookManager.on('onAppUpdateChecked', this.onAppUpdateChecked);
+    this.hookManager.on('onAppUpdated', this.onAppUpdated);
+    this.hookManager.on('onInitialPrefsLoaded', this.onInitialPrefsLoaded);
+    this.hookManager.on('onPrefsLoaded', this.onPrefsLoaded);
+    this.hookManager.on('onPrefsUpdated', this.onPrefsUpdated);
+    this.hookManager.on('onPrefsModalOpening', this.onPrefsModalOpening);
+    this.hookManager.on('onCaptureOptionsChanged', this.onCaptureOptionsChanged);
+    this.hookManager.on('onCaptureShortcutTriggered', this.onCaptureShortcutTriggered);
+    this.hookManager.on('onCaptureModeEnabled', this.onCaptureModeEnabled);
+    this.hookManager.on('onCaptureModeDisabled', this.onCaptureModeDisabled);
+    this.hookManager.on('onCaptureSelectionStarting', this.onCaptureSelectionStarting);
+    this.hookManager.on('onCaptureSelectionFinished', this.onCaptureSelectionFinished);
+    this.hookManager.on('onCaptureStarting', this.onCaptureStarting);
+    this.hookManager.on('onCaptureFinishing', this.onCaptureFinishing);
+    this.hookManager.on('onCaptureFinished', this.onCaptureFinished);
   }
 
   onAppLaunched = async () => {

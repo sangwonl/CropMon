@@ -19,6 +19,6 @@ export default class DisableCaptureUseCase implements UseCase<void> {
 
     this.captureSession.idle();
 
-    this.hookManager.emit('capture-mode-disabled', {});
+    this.hookManager.emit('onCaptureModeDisabled', {});
   }
 }

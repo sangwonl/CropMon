@@ -45,23 +45,23 @@ export type HookArgsCaptureFinished = {
 interface HookArgsBlank {}
 
 type HookTypeArgsMap = {
-  'app-launched': HookArgsBlank;
-  'app-quit': HookArgsBlank;
-  'app-updated': HookArgsAppUpdated;
-  'app-update-checked': HookArgsAppUpdateChecked;
-  'initial-prefs-loaded': HookArgsInitialPrefsLoaded;
-  'prefs-loaded': HookArgsPrefsLoaded;
-  'prefs-updated': HookArgsPrefsUpdated;
-  'prefs-modal-opening': HookArgsBlank;
-  'capture-options-changed': HookArgsBlank;
-  'capture-shortcut-triggered': HookArgsBlank;
-  'capture-mode-enabled': HookArgsBlank;
-  'capture-mode-disabled': HookArgsBlank;
-  'capture-selection-starting': HookArgsBlank;
-  'capture-selection-finished': HookArgsBlank;
-  'capture-starting': HookArgsCaptureStarting;
-  'capture-finishing': HookArgsCaptureFinishing;
-  'capture-finished': HookArgsCaptureFinished;
+  onAppLaunched: HookArgsBlank;
+  onAppQuit: HookArgsBlank;
+  onAppUpdated: HookArgsAppUpdated;
+  onAppUpdateChecked: HookArgsAppUpdateChecked;
+  onInitialPrefsLoaded: HookArgsInitialPrefsLoaded;
+  onPrefsLoaded: HookArgsPrefsLoaded;
+  onPrefsUpdated: HookArgsPrefsUpdated;
+  onPrefsModalOpening: HookArgsBlank;
+  onCaptureOptionsChanged: HookArgsBlank;
+  onCaptureShortcutTriggered: HookArgsBlank;
+  onCaptureModeEnabled: HookArgsBlank;
+  onCaptureModeDisabled: HookArgsBlank;
+  onCaptureSelectionStarting: HookArgsBlank;
+  onCaptureSelectionFinished: HookArgsBlank;
+  onCaptureStarting: HookArgsCaptureStarting;
+  onCaptureFinishing: HookArgsCaptureFinishing;
+  onCaptureFinished: HookArgsCaptureFinished;
 };
 
 export type HookType = keyof HookTypeArgsMap;

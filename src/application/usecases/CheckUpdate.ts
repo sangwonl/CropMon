@@ -27,11 +27,11 @@ export default class CheckUpdateUseCase implements UseCase<void> {
   }
 
   private onUpdateAvailable = async () => {
-    this.hookManager.emit('app-update-checked', { updateAvailable: true });
+    this.hookManager.emit('onAppUpdateChecked', { updateAvailable: true });
   };
 
   private onUpdateNotAvailable = () => {
-    this.hookManager.emit('app-update-checked', { updateAvailable: false });
+    this.hookManager.emit('onAppUpdateChecked', { updateAvailable: false });
   };
 
   private onDownloadProgress = (progressInfo: any) => {

@@ -55,6 +55,6 @@ export default class ChangeCaptureOptionsUseCase
       };
     });
 
-    this.hookManager.emit('capture-options-changed', {});
+    this.hookManager.emit('onCaptureOptionsChanged', {});
   }
 }

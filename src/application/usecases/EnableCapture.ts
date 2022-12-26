@@ -32,7 +32,7 @@ export default class EnableCaptureUseCase implements UseCase<void> {
 
     this.captureSession.selecting();
 
-    this.hookManager.emit('capture-mode-enabled', {
+    this.hookManager.emit('onCaptureModeEnabled', {
       captureMode: lastCaptureMode,
     });
   }
