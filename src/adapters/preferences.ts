@@ -22,10 +22,11 @@ const PREFS_GENERAL_SHORTCUT = 'general.shortcut';
 const PREFS_GENERAL_RECORDHOME = 'general.recrodHomeDir';
 const PREFS_GENERAL_REVEALRECORDEDFILE = 'general.revealRecordedFile';
 const PREFS_RECORDING_MICROPHONE = 'recording.microphone'; /* deprecated */
+const PREFS_RECORDING_CAPTUREMODE = 'recording.captureMode';
+const PREFS_RECORDING_OUTPUTFORMAT = 'recording.outputFormat';
+const PREFS_RECORDING_RECORDAUDIO = 'recording.recordAudio';
 const PREFS_RECORDING_AUDIOSOURCES = 'recording.audioSources';
 const PREFS_RECORDING_QUALITYMODE = 'recording.qualityMode';
-const PREFS_RECORDING_OUTPUTFORMAT = 'recording.outputFormat';
-const PREFS_RECORDING_CAPTUREMODE = 'recording.captureMode';
 const PREFS_APPEAR_COLOR_SELECT_BG = 'appearances.colors.selectingBackground';
 const PREFS_APPEAR_COLOR_SELECT_TEXT = 'appearances.colors.selectingText';
 const PREFS_APPEAR_COLOR_COUNTDOWN_BG =
@@ -57,9 +58,10 @@ export default class ElectronPreferencesStore implements PreferencesStore {
               'openRecordHomeDirWhenRecordCompleted',
               true
             ) as boolean,
-            audioSources: [],
-            outputFormat: store.get('outputFormat', 'mp4') as OutputFormat,
             captureMode: CaptureMode.AREA, // newly added on 0.7.0
+            outputFormat: store.get('outputFormat', 'mp4') as OutputFormat,
+            recordAudio: false,
+            audioSources: [],
             colors: DEFAULT_APPEAR_COLORS,
           };
 
@@ -105,6 +107,7 @@ export default class ElectronPreferencesStore implements PreferencesStore {
           store.delete(PREFS_RECORDING_QUALITYMODE);
         },
         '0.9.0': (store) => {
+          store.set(PREFS_RECORDING_RECORDAUDIO, false);
           store.set(PREFS_RECORDING_AUDIOSOURCES, []);
           store.delete(PREFS_RECORDING_MICROPHONE);
         },
@@ -134,9 +137,10 @@ export default class ElectronPreferencesStore implements PreferencesStore {
       prefs.openRecordHomeWhenRecordCompleted
     );
     this.store.set(PREFS_GENERAL_SHOWCOUNTDOWN, prefs.showCountdown);
-    this.store.set(PREFS_RECORDING_AUDIOSOURCES, prefs.audioSources);
-    this.store.set(PREFS_RECORDING_OUTPUTFORMAT, prefs.outputFormat);
     this.store.set(PREFS_RECORDING_CAPTUREMODE, prefs.captureMode);
+    this.store.set(PREFS_RECORDING_OUTPUTFORMAT, prefs.outputFormat);
+    this.store.set(PREFS_RECORDING_RECORDAUDIO, prefs.recordAudio);
+    this.store.set(PREFS_RECORDING_AUDIOSOURCES, prefs.audioSources);
     this.store.set(
       PREFS_APPEAR_COLOR_SELECT_BG,
       prefs.colors.selectingBackground
@@ -161,9 +165,10 @@ export default class ElectronPreferencesStore implements PreferencesStore {
       recordHome: app.getPath('videos'),
       openRecordHomeWhenRecordCompleted: true,
       showCountdown: true,
-      audioSources: [],
-      outputFormat: 'mp4',
       captureMode: CaptureMode.AREA,
+      outputFormat: 'mp4',
+      recordAudio: false,
+      audioSources: [],
       colors: DEFAULT_APPEAR_COLORS,
     };
   }
@@ -207,18 +212,22 @@ export default class ElectronPreferencesStore implements PreferencesStore {
         PREFS_GENERAL_SHOWCOUNTDOWN,
         true
       ) as boolean,
-      audioSources: this.store.get(
-        PREFS_RECORDING_AUDIOSOURCES,
-        []
-      ) as AudioSource[],
-      outputFormat: this.store.get(
-        PREFS_RECORDING_OUTPUTFORMAT,
-        'mp4'
-      ) as OutputFormat,
       captureMode: this.store.get(
         PREFS_RECORDING_CAPTUREMODE,
         CaptureMode.AREA
       ) as CaptureMode,
+      outputFormat: this.store.get(
+        PREFS_RECORDING_OUTPUTFORMAT,
+        'mp4'
+      ) as OutputFormat,
+      recordAudio: this.store.get(
+        PREFS_RECORDING_RECORDAUDIO,
+        false
+      ) as boolean,
+      audioSources: this.store.get(
+        PREFS_RECORDING_AUDIOSOURCES,
+        []
+      ) as AudioSource[],
       colors,
     };
   }

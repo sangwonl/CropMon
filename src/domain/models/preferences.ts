@@ -15,6 +15,7 @@ export type Preferences = {
   recordHome: string;
   openRecordHomeWhenRecordCompleted: boolean;
   showCountdown: boolean;
+  recordAudio: boolean;
   audioSources: AudioSource[];
   outputFormat: OutputFormat;
   captureMode: CaptureMode;

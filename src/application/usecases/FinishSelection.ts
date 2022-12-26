@@ -63,6 +63,7 @@ export default class FinishSelectionUseCase
       },
       recordOptions: {
         outputAsGif: controlPanel.outputAsGif,
+        recordAudio: controlPanel.recordAudio,
         audioSources: controlPanel.audioSources.filter((s) => s.active),
       },
     });

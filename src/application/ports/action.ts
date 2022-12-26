@@ -1,4 +1,4 @@
-import { CaptureOptions, RecordOptions } from '@domain/models/capture';
+import { CaptureOptions } from '@domain/models/capture';
 import { Bounds, Point } from '@domain/models/screen';
 
 import { UiState } from '@application/models/ui';
@@ -12,7 +12,6 @@ export interface ActionDispatcher {
   quitApplication(): void;
   openPreferences(): void;
   openCaptureFolder(): void;
-  toggleRecordOptions(recordOptions: RecordOptions): void;
   enableCaptureMode(): void;
   disableCaptureMode(): void;
   changeCaptureOptions(options: CaptureOptions): void;

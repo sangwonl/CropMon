@@ -154,18 +154,25 @@ const CaptureControl = ({
       <div className={styles.divider} />
       <div className={styles.btnGroup}>
         <TogglableMultiSelect
-          toggleButton={BUTTON_AUDIO_TOGGLE}
+          toggleButton={{
+            ...BUTTON_AUDIO_TOGGLE,
+            enabled: recOpts.recordAudio,
+          }}
           items={audioItems}
-          onToggle={(enabled: boolean) => {}}
-          onSelect={(indices: number[]) => {
-            const audioSources = recOpts.audioSources.map((s) => ({
-              ...s,
-              active: false,
-            }));
-            indices.forEach((i) => {
-              audioSources[i].active = true;
+          onToggle={(enabled: boolean) => {
+            handleRecOptsChange({
+              ...recOpts,
+              recordAudio: enabled,
             });
-            handleRecOptsChange({ ...recOpts, audioSources });
+          }}
+          onSelect={(indices: number[]) => {
+            handleRecOptsChange({
+              ...recOpts,
+              audioSources: recOpts.audioSources.map((src, i) => ({
+                ...src,
+                active: indices.includes(i),
+              })),
+            });
           }}
         />
       </div>
