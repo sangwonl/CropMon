@@ -46,7 +46,6 @@ import CheckVersionUseCase from '@application/usecases/CheckVersion';
 import PreferencesRepository from '@adapters/repositories/preferences';
 
 
-
 const UPDATE_CHECK_DELAY = 5 * 60 * 1000;
 const UPDATE_CHECK_INTERVAL = 4 * 60 * 60 * 1000;
 

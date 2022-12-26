@@ -30,7 +30,7 @@ export default class ElectronScreenRecorder
   constructor() {
     app
       .whenReady()
-      .then(() => this.renewBuildRenderer())
+      .then(() => this.renewBuildRenderer(this.fetchAudioSources.bind(this)))
       .catch((e) => {
         logger.info(e);
       });
@@ -113,10 +113,13 @@ export default class ElectronScreenRecorder
     this.delegate?.webContents.send('abortPostProcess', {});
   }
 
-  private renewBuildRenderer(): void {
+  private renewBuildRenderer(onDidLoad?: () => void): void {
     this.delegate?.destroy();
     this.delegate = new RecorderDelegate();
     // this.delegate.webContents.openDevTools();
+    if (onDidLoad) {
+      this.delegate.webContents.on('did-finish-load', onDidLoad);
+    }
   }
 
   private getSourceByScreenId(
