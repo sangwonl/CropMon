@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { RecordOptions, CaptureOptions } from '@domain/models/capture';
+import { CaptureOptions } from '@domain/models/capture';
 import { Bounds, Point } from '@domain/models/screen';
 
 import { UiState } from '@application/models/ui';
@@ -69,10 +69,6 @@ export default class ActionDispatcherForMain implements ActionDispatcher {
 
   openCaptureFolder(): void {
     this.actionDispatcher.openCaptureFolder();
-  }
-
-  toggleRecordOptions(_recordOptions: RecordOptions): void {
-    throw new Error('Method not implemented.');
   }
 
   enableCaptureMode(): void {

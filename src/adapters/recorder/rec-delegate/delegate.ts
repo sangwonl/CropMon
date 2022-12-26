@@ -105,8 +105,6 @@ class MediaRecordDelegatee {
   public fetchAudioSources = async (): Promise<AudioSource[]> => {
     const devices = await navigator.mediaDevices.enumerateDevices();
 
-    devices.forEach((s) => logger.info(s.toJSON()));
-
     return devices
       .filter((d) => d.deviceId !== 'default' && d.kind === 'audioinput')
       .map((d) => ({
@@ -255,7 +253,7 @@ class MediaRecordDelegatee {
   private createStreamToRecord = async (
     recordCtx: RecordContext
   ): Promise<MediaStream> => {
-    const { outputFormat, audioSources } = recordCtx;
+    const { outputFormat, recordAudio, audioSources } = recordCtx;
 
     const drawContext = await this.createDrawContext(recordCtx);
     const videoStream =
@@ -263,7 +261,7 @@ class MediaRecordDelegatee {
         ? this.createBypassStream(drawContext)
         : this.createTransformStream(drawContext);
 
-    if (outputFormat === 'gif') {
+    if (outputFormat === 'gif' || !recordAudio) {
       return videoStream;
     }
 

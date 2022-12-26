@@ -186,7 +186,7 @@ export default class ElectronScreenRecorder
   private async createRecordContext(
     ctx: CaptureContext
   ): Promise<RecordContext | null> {
-    const { outputFormat, audioSources } = ctx;
+    const { outputFormat, recordAudio, audioSources } = ctx;
     const {
       mode: captureMode,
       bounds: targetBounds,
@@ -214,6 +214,7 @@ export default class ElectronScreenRecorder
       captureMode,
       targetSlices,
       outputFormat,
+      recordAudio,
       audioSources,
       frameRate,
       scaleDownFactor,

@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 
-import { CaptureOptions, RecordOptions } from '@domain/models/capture';
+import { CaptureOptions } from '@domain/models/capture';
 import { Bounds, Point } from '@domain/models/screen';
 
 import { UiState } from '@application/models/ui';
@@ -23,7 +23,6 @@ import StartCaptureUseCase from '@application/usecases/StartCapture';
 import StartCaptureAsIsUseCase from '@application/usecases/StartCaptureAsIs';
 import StartSelectionUseCase from '@application/usecases/StartSelection';
 import ToggleCaptureUseCase from '@application/usecases/ToggleCaptureUseCase';
-import ToggleRecordOptionsUseCase from '@application/usecases/ToggleRecordOptions';
 import UpdateAppUseCase from '@application/usecases/UpdateApp';
 
 @injectable()
@@ -37,7 +36,6 @@ export default class ActionDispatcherCore implements ActionDispatcher {
     private openHelpPopupUseCase: OpenHelpPopupUseCase,
     private openPrefsModalUseCase: OpenPrefsModalUseCase,
     private openCaptureFolderUseCase: OpenCaptureFolderUseCase,
-    private toggleRecordOptionsUseCase: ToggleRecordOptionsUseCase,
     private startSelectionUseCase: StartSelectionUseCase,
     private selectingTargetUseCase: SelectingTargetUseCase,
     private startCaptureAsIsUseCase: StartCaptureAsIsUseCase,
@@ -81,10 +79,6 @@ export default class ActionDispatcherCore implements ActionDispatcher {
 
   openCaptureFolder = () => {
     this.openCaptureFolderUseCase.execute();
-  };
-
-  toggleRecordOptions = (recordOptions: RecordOptions) => {
-    this.toggleRecordOptionsUseCase.execute({ recordOptions });
   };
 
   enableCaptureMode = () => {

@@ -11,6 +11,7 @@ export type RecordContext = {
   captureMode: CaptureMode;
   targetSlices: TargetSlice[];
   outputFormat: OutputFormat;
+  recordAudio: boolean;
   audioSources: AudioSource[];
   frameRate: number;
   scaleDownFactor: number;

@@ -11,6 +11,7 @@ export type ControlPanel = {
   show: boolean;
   captureMode: CaptureMode;
   outputAsGif: boolean;
+  recordAudio: boolean;
   audioSources: AudioSource[];
   confirmedToCaptureAsIs: boolean;
 };
@@ -47,6 +48,7 @@ export const INITIAL_UI_STATE: UiState = {
     captureMode: CaptureMode.AREA,
     audioSources: [],
     outputAsGif: false,
+    recordAudio: false,
     confirmedToCaptureAsIs: false,
   },
   captureOverlay: {

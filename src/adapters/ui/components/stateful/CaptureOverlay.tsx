@@ -132,6 +132,7 @@ const CaptureOverlay = (props: PropTypes) => {
         },
         recordOptions: {
           outputAsGif: recOpts?.outputAsGif ?? controlPanel.outputAsGif,
+          recordAudio: recOpts?.recordAudio ?? controlPanel.recordAudio,
           audioSources: recOpts?.audioSources ?? controlPanel.audioSources,
         },
       };
@@ -258,6 +259,7 @@ const CaptureOverlay = (props: PropTypes) => {
             captureMode={controlPanel.captureMode}
             recordOptions={{
               outputAsGif: controlPanel.outputAsGif,
+              recordAudio: controlPanel.recordAudio,
               audioSources: controlPanel.audioSources,
             }}
             onCaptureModeChange={onCaptureModeChange}

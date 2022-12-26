@@ -40,7 +40,6 @@ import StartCaptureUseCase from '@application/usecases/StartCapture';
 import StartCaptureAsIsUseCase from '@application/usecases/StartCaptureAsIs';
 import StartSelectionUseCase from '@application/usecases/StartSelection';
 import ToggleCaptureUseCase from '@application/usecases/ToggleCaptureUseCase';
-import ToggleRecordOptionsUseCase from '@application/usecases/ToggleRecordOptions';
 import UpdateAppUseCase from '@application/usecases/UpdateApp';
 
 import ActionDispatcherForMain from '@adapters/actions/main';
@@ -181,11 +180,6 @@ diContainer
 
 diContainer
   .bind<OpenCaptureFolderUseCase>(OpenCaptureFolderUseCase)
-  .toSelf()
-  .inSingletonScope();
-
-diContainer
-  .bind<ToggleRecordOptionsUseCase>(ToggleRecordOptionsUseCase)
   .toSelf()
   .inSingletonScope();
 

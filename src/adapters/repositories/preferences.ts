@@ -44,10 +44,8 @@ export default class PrefsRepositoryImpl implements PreferencesRepository {
   }
 
   applyRecOptionsToPrefs(prefs: Preferences, recOpts: RecordOptions) {
-    if (recOpts.outputAsGif !== undefined) {
-      prefs.outputFormat = recOpts.outputAsGif ? 'gif' : 'mp4';
-    }
-
+    prefs.outputFormat = recOpts.outputAsGif ? 'gif' : 'mp4';
+    prefs.recordAudio = recOpts.recordAudio;
     if (recOpts.audioSources?.length > 0) {
       prefs.audioSources = recOpts.audioSources;
     }
@@ -56,6 +54,7 @@ export default class PrefsRepositoryImpl implements PreferencesRepository {
   getRecOptionsFromPrefs(prefs: Preferences): RecordOptions {
     return {
       outputAsGif: prefs.outputFormat === 'gif',
+      recordAudio: prefs.recordAudio,
       audioSources: prefs.audioSources,
     };
   }

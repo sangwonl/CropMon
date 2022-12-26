@@ -47,10 +47,9 @@ export default class ChangeCaptureOptionsUseCase
         controlPanel: {
           ...state.controlPanel,
           captureMode: options.target.mode,
-          outputAsGif:
-            options.recordOptions.outputAsGif ?? prefs.outputFormat === 'gif',
-          audioSources:
-            options.recordOptions.audioSources ?? prefs.audioSources,
+          outputAsGif: options.recordOptions.outputAsGif,
+          recordAudio: options.recordOptions.recordAudio,
+          audioSources: options.recordOptions.audioSources,
           confirmedToCaptureAsIs: false,
         },
       };
