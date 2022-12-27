@@ -16,11 +16,25 @@ const Template: ComponentStory<typeof CaptureControl> = () => {
   const [captMode, setCaptMode] = useState<CaptureMode>(CaptureMode.AREA);
   const [recOpts, setRecOpts] = useState<RecordOptions>({
     outputAsGif: false,
-    audioSources: [],
+    recordAudio: false,
+    audioSources: [
+      {
+        id: '1234',
+        kind: 'output',
+        name: 'PC Speakers',
+        active: false,
+      },
+      {
+        id: '1235',
+        kind: 'input',
+        name: 'Builtin Microphone (Apple Silicon Macbook)',
+        active: false,
+      },
+    ],
   });
 
   return (
-    <div style={{ width: '400px', height: '56px' }}>
+    <div style={{ width: '420px', height: '56px' }}>
       <CaptureControl
         captureMode={captMode}
         recordOptions={recOpts}
