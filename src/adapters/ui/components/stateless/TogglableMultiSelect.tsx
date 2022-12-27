@@ -40,9 +40,22 @@ const TogglableMultiSelect = ({
   const [listExpanded, showList] = useState<boolean>(false);
 
   const handleToggleButtonClick = useCallback(() => {
-    changeToggle(!toggleEnabled);
-    onToggle(!toggleEnabled);
-  }, [toggleEnabled, onToggle]);
+    if (
+      !listExpanded &&
+      !toggleEnabled &&
+      !items.some((item) => item.checked)
+    ) {
+      showList(true);
+      return;
+    }
+
+    if (items.some((item) => item.checked)) {
+      changeToggle(!toggleEnabled);
+      onToggle(!toggleEnabled);
+    }
+
+    showList(false);
+  }, [items, listExpanded, toggleEnabled, onToggle]);
 
   const handleSelectButtonClick = useCallback(() => {
     showList(!listExpanded);
@@ -50,9 +63,7 @@ const TogglableMultiSelect = ({
 
   const handleSelect = useCallback(
     (indices: number[]) => {
-      if (indices.length > 0) {
-        changeToggle(toggleButton.enabled);
-      } else {
+      if (indices.length === 0) {
         changeToggle(false);
       }
       onSelect(indices);

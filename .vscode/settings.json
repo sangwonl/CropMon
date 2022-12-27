@@ -37,6 +37,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
+
   "eslint.validate": ["typescript", "javascript"],
 
   "jestrunner.jestCommand": "npm run test --"
