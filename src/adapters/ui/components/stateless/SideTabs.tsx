@@ -7,7 +7,7 @@ import SideTab from '@adapters/ui/components/stateless/SideTab';
 
 import styles from './SideTabs.css';
 
-type TabItem = {
+export type TabItem = {
   tabId: string;
   title: string;
 };

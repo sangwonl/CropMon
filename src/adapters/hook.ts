@@ -318,7 +318,7 @@ export default class BuiltinHooks {
       await desktopCapturer.getSources({ types: ['screen'] });
     }
 
-    const needMic = prefs.audioSources.some((s) => s.kind === 'input');
+    const needMic = prefs.audioSources.length > 0;
     if (needMic && isMac()) {
       const micAccess = systemPreferences.getMediaAccessStatus('microphone');
       if (micAccess !== 'granted') {

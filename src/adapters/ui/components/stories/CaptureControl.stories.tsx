@@ -20,13 +20,11 @@ const Template: ComponentStory<typeof CaptureControl> = () => {
     audioSources: [
       {
         id: '1234',
-        kind: 'output',
         name: 'PC Speakers',
         active: false,
       },
       {
         id: '1235',
-        kind: 'input',
         name: 'Builtin Microphone (Apple Silicon Macbook)',
         active: false,
       },

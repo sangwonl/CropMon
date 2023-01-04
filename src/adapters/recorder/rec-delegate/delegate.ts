@@ -103,16 +103,29 @@ class MediaRecordDelegatee {
   };
 
   public fetchAudioSources = async (): Promise<AudioSource[]> => {
-    const devices = await navigator.mediaDevices.enumerateDevices();
+    const deviceIds = new Set();
+    const audioSources: AudioSource[] = [];
 
-    return devices
-      .filter((d) => d.deviceId !== 'default' && d.kind === 'audioinput')
-      .map((d) => ({
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    devices.forEach((d) => {
+      if (
+        d.deviceId === 'default' ||
+        d.kind !== 'audioinput' ||
+        deviceIds.has(d.deviceId)
+      ) {
+        return;
+      }
+
+      deviceIds.add(d.deviceId);
+
+      audioSources.push({
         id: d.deviceId,
-        kind: d.kind === 'audioinput' ? 'input' : 'output',
         name: d.label,
         active: false,
-      }));
+      });
+    });
+
+    return audioSources;
   };
 
   private recorderOpts(mimeType?: string, videoBitrates?: number) {
