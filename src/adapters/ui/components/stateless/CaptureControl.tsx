@@ -87,14 +87,19 @@ const CaptureControl = ({
   const [captMode, setCaptMode] = useState<CaptureMode>(captureMode);
   const [recOpts, setRecOpts] = useState<RecordOptions>(recordOptions);
 
-  const audioItems: ComponentProps<typeof TogglableSelect>['items'] = useMemo(
-    () =>
-      recOpts.audioSources.map((s) => ({
+  const audioItems: ComponentProps<typeof TogglableSelect>['items'] =
+    useMemo(() => {
+      const items = recOpts.audioSources.map((s) => ({
         title: s.name,
         checked: s.active,
-      })),
-    [recOpts]
-  );
+      }));
+
+      if (items.length > 0 && !items.some(({ checked }) => checked)) {
+        items[0].checked = true;
+      }
+
+      return items;
+    }, [recOpts.audioSources]);
 
   const handleCaptModeChange = useCallback(
     (mode: CaptureMode) => {
