@@ -27,7 +27,7 @@ import micIcon from '@assets/mic.png';
 import selectionIcon from '@assets/selection.png';
 
 import styles from './CaptureControl.css';
-import TogglableMultiSelect from './TogglableMultiSelect';
+import TogglableSelect from './TogglableSelect';
 
 const buttonMinWidth = '40px';
 
@@ -87,15 +87,14 @@ const CaptureControl = ({
   const [captMode, setCaptMode] = useState<CaptureMode>(captureMode);
   const [recOpts, setRecOpts] = useState<RecordOptions>(recordOptions);
 
-  const audioItems: ComponentProps<typeof TogglableMultiSelect>['items'] =
-    useMemo(
-      () =>
-        recOpts.audioSources.map((s) => ({
-          title: s.name,
-          checked: s.active,
-        })),
-      [recOpts]
-    );
+  const audioItems: ComponentProps<typeof TogglableSelect>['items'] = useMemo(
+    () =>
+      recOpts.audioSources.map((s) => ({
+        title: s.name,
+        checked: s.active,
+      })),
+    [recOpts]
+  );
 
   const handleCaptModeChange = useCallback(
     (mode: CaptureMode) => {
@@ -153,7 +152,7 @@ const CaptureControl = ({
       </div>
       <div className={styles.divider} />
       <div className={styles.btnGroup}>
-        <TogglableMultiSelect
+        <TogglableSelect
           toggleButton={{
             ...BUTTON_AUDIO_TOGGLE,
             enabled: recOpts.recordAudio,

@@ -36,7 +36,8 @@ Default.args = {
     openRecordHomeWhenRecordCompleted: true,
     shortcut: 'Win + Shift + E',
     showCountdown: true,
-    recordMicrophone: false,
+    recordAudio: false,
+    audioSources: [],
     outputFormat: 'mp4',
     captureMode: CaptureMode.AREA,
     colors: {

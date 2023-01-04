@@ -6,10 +6,10 @@ import React, { useCallback, useRef, useState } from 'react';
 
 import { withStopPropagation } from '@utils/events';
 
-import CheckList from '@adapters/ui/components/stateless/CheckList';
+import SelectList from '@adapters/ui/components/stateless/SelectList';
 import useOnClickOutside from '@adapters/ui/hooks/hover';
 
-import styles from './TogglableMultiSelect.css';
+import styles from './TogglableSelect.css';
 
 type ToggleButton = {
   icon: string;
@@ -29,7 +29,7 @@ type Props = {
   onSelect: (indices: number[]) => void;
 };
 
-const TogglableMultiSelect = ({
+const TogglableSelect = ({
   toggleButton,
   items,
   onToggle,
@@ -113,11 +113,15 @@ const TogglableMultiSelect = ({
       </div>
       {listExpanded && (
         <div ref={checkListRef} className={styles.checkList}>
-          <CheckList items={items} onSelect={handleSelect} />
+          <SelectList
+            multiSelect={false}
+            items={items}
+            onSelect={handleSelect}
+          />
         </div>
       )}
     </>
   );
 };
 
-export default TogglableMultiSelect;
+export default TogglableSelect;

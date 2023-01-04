@@ -2,15 +2,15 @@ import { action } from '@storybook/addon-actions';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
-import TogglableMultiSelect from '@adapters/ui/components/stateless/TogglableMultiSelect';
+import TogglableSelect from '@adapters/ui/components/stateless/TogglableSelect';
 
 import micIcon from '@assets/mic.png';
 
 export default {
-  title: 'Kropsaurus/TogglableMultiSelect',
-  component: TogglableMultiSelect,
+  title: 'Kropsaurus/TogglableSelect',
+  component: TogglableSelect,
   argTypes: {},
-} as ComponentMeta<typeof TogglableMultiSelect>;
+} as ComponentMeta<typeof TogglableSelect>;
 
 const handleToggle = action('onToggle');
 const handleSelect = action('onSelect');
@@ -26,10 +26,10 @@ const items = [
   { checked: true, title: 'System Microphone' },
 ];
 
-const Template: ComponentStory<typeof TogglableMultiSelect> = () => {
+const Template: ComponentStory<typeof TogglableSelect> = () => {
   return (
     <div style={{ width: '60px', height: '40px' }}>
-      <TogglableMultiSelect
+      <TogglableSelect
         toggleButton={toggleButton}
         items={items}
         onToggle={(enabled: boolean) => {

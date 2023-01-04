@@ -4,7 +4,7 @@ import React, { useCallback, useRef, useState } from 'react';
 
 import { withStopPropagation } from '@utils/events';
 
-import styles from './CheckList.css';
+import styles from './SelectList.css';
 
 type SelectableItem = {
   checked: boolean;
@@ -12,11 +12,12 @@ type SelectableItem = {
 };
 
 type Props = {
+  multiSelect: boolean;
   items: SelectableItem[];
   onSelect: (indices: number[]) => void;
 };
 
-const CheckList = ({ items, onSelect }: Props) => {
+const SelectList = ({ multiSelect, items, onSelect }: Props) => {
   const checkStatesRef = useRef<boolean[]>(items.map(({ checked }) => checked));
   const [checkStates, updateCheckStates] = useState<boolean[]>(
     checkStatesRef.current
@@ -47,20 +48,38 @@ const CheckList = ({ items, onSelect }: Props) => {
           onMouseUp={withStopPropagation}
           onMouseDown={withStopPropagation}
         >
-          <input
-            type="checkbox"
-            id={title}
-            className={styles.checkInput}
-            onChange={() => toggleCheck(index)}
-            checked={checkStates[index]}
-          />
-          <label htmlFor={title}>
-            <span className={styles.title}>{title}</span>
-          </label>
+          {multiSelect ? (
+            <>
+              <input
+                type="checkbox"
+                id={title}
+                className={styles.checkInput}
+                onChange={() => toggleCheck(index)}
+                checked={checkStates[index]}
+              />
+              <label htmlFor={title}>
+                <span className={styles.title}>{title}</span>
+              </label>
+            </>
+          ) : (
+            <>
+              <input
+                type="radio"
+                id={title}
+                name="select"
+                className={styles.radioInput}
+                onChange={() => toggleCheck(index)}
+                checked={checkStates[index]}
+              />
+              <label htmlFor={title}>
+                <span className={styles.title}>{title}</span>
+              </label>
+            </>
+          )}
         </div>
       ))}
     </div>
   );
 };
 
-export default CheckList;
+export default SelectList;

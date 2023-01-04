@@ -16,7 +16,6 @@ export enum CaptureMode {
 export type AudioSource = {
   id: string;
   name: string;
-  kind: 'input' | 'output';
   active: boolean;
 };
 
