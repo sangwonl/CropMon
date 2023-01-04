@@ -26,6 +26,14 @@ const SelectList = ({ multiSelect, items, onSelect }: Props) => {
   const toggleCheck = useCallback(
     (index: number) => {
       const orig = checkStatesRef.current[index];
+
+      if (!multiSelect) {
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < checkStatesRef.current.length; i++) {
+          checkStatesRef.current[i] = false;
+        }
+      }
+
       checkStatesRef.current[index] = !orig;
       updateCheckStates([...checkStatesRef.current]);
 
@@ -37,7 +45,7 @@ const SelectList = ({ multiSelect, items, onSelect }: Props) => {
       });
       onSelect(indices);
     },
-    [onSelect]
+    [onSelect, multiSelect]
   );
 
   return (
@@ -66,7 +74,7 @@ const SelectList = ({ multiSelect, items, onSelect }: Props) => {
               <input
                 type="radio"
                 id={title}
-                name="select"
+                name={title}
                 className={styles.radioInput}
                 onChange={() => toggleCheck(index)}
                 checked={checkStates[index]}
