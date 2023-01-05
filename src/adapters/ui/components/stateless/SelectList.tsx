@@ -1,5 +1,8 @@
+/* eslint-disable no-plusplus */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 
+import classNames from 'classnames';
 import React, { useCallback, useRef, useState } from 'react';
 
 import { withStopPropagation } from '@utils/events';
@@ -27,14 +30,15 @@ const SelectList = ({ multiSelect, items, onSelect }: Props) => {
     (index: number) => {
       const orig = checkStatesRef.current[index];
 
-      if (!multiSelect) {
-        // eslint-disable-next-line no-plusplus
+      if (multiSelect) {
+        checkStatesRef.current[index] = !orig;
+      } else {
         for (let i = 0; i < checkStatesRef.current.length; i++) {
           checkStatesRef.current[i] = false;
         }
+        checkStatesRef.current[index] = true;
       }
 
-      checkStatesRef.current[index] = !orig;
       updateCheckStates([...checkStatesRef.current]);
 
       const indices: number[] = [];
@@ -56,34 +60,36 @@ const SelectList = ({ multiSelect, items, onSelect }: Props) => {
           onMouseUp={withStopPropagation}
           onMouseDown={withStopPropagation}
         >
-          {multiSelect ? (
-            <>
-              <input
-                type="checkbox"
-                id={title}
-                className={styles.checkInput}
-                onChange={() => toggleCheck(index)}
-                checked={checkStates[index]}
-              />
-              <label htmlFor={title}>
-                <span className={styles.title}>{title}</span>
-              </label>
-            </>
-          ) : (
-            <>
-              <input
-                type="radio"
-                id={title}
-                name={title}
-                className={styles.radioInput}
-                onChange={() => toggleCheck(index)}
-                checked={checkStates[index]}
-              />
-              <label htmlFor={title}>
-                <span className={styles.title}>{title}</span>
-              </label>
-            </>
-          )}
+          <div className={styles.item} onMouseUp={() => toggleCheck(index)}>
+            {multiSelect ? (
+              <>
+                <input
+                  type="checkbox"
+                  id={title}
+                  className={classNames(styles.checkInput, styles.item)}
+                  checked={checkStates[index]}
+                  onChange={() => {}}
+                />
+                <label htmlFor={title}>
+                  <span className={styles.title}>{title}</span>
+                </label>
+              </>
+            ) : (
+              <>
+                <input
+                  type="radio"
+                  id={title}
+                  name={title}
+                  className={styles.radioInput}
+                  checked={checkStates[index]}
+                  onChange={() => {}}
+                />
+                <label htmlFor={title}>
+                  <span className={styles.title}>{title}</span>
+                </label>
+              </>
+            )}
+          </div>
         </div>
       ))}
     </div>

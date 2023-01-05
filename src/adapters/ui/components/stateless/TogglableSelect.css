@@ -80,12 +80,6 @@
   fill: #e1e1e1;
 }
 
-.checkList {
+.selectList {
   position: absolute;
-  padding: 10px;
-  margin-top: 2px;
-  border-radius: 2px;
-  border: 1px solid #efefef;
-  box-shadow: 0px 0px 4px #efefef;
-  background-color: white;
 }
