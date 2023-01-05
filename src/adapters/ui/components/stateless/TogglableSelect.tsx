@@ -112,7 +112,7 @@ const TogglableSelect = ({
         </div>
       </div>
       {listExpanded && (
-        <div ref={checkListRef} className={styles.checkList}>
+        <div ref={checkListRef} className={styles.selectList}>
           <SelectList
             multiSelect={false}
             items={items}
