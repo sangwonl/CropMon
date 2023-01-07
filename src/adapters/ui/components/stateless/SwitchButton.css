@@ -11,11 +11,12 @@
   align-items: center;
   justify-content: center;
   font-family: Roboto;
-  font-size: 12px;
+  font-size: 11px;
   color: #eee;
   user-select: none;
   cursor: default;
-  padding: 4px;
+  padding: 5px;
+  min-width: 32px;
 }
 
 .btnIcon {

@@ -35,5 +35,5 @@ Default.args = {
 export const WithIcon = Template.bind({});
 WithIcon.args = {
   ...Default.args,
-  items: [{ icon: micIcon, minWidth: '60px' }, { icon: closeIcon }],
+  items: [{ icon: micIcon }, { icon: closeIcon }],
 };

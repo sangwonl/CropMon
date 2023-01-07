@@ -1,5 +1,5 @@
 .container {
-  height: 44px;
+  height: 40px;
   padding: 14px 16px;
   background-color: #3a3a3a;
   display: flex;
@@ -21,7 +21,7 @@
 }
 
 .btnGroup {
-  height: 40px;
+  height: 38px;
   border-radius: 3px;
   overflow: hidden;
 }

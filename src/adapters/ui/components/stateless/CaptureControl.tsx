@@ -8,6 +8,7 @@ import React, {
   ComponentProps,
 } from 'react';
 
+import { withStopPropagation } from '@utils/events';
 import {
   shortcutForDisplay,
   SHORTCUT_CAPTURE_MODE_AREA,
@@ -29,14 +30,11 @@ import selectionIcon from '@assets/selection.png';
 import styles from './CaptureControl.css';
 import TogglableSelect from './TogglableSelect';
 
-const buttonMinWidth = '40px';
-
 const BUTTON_ITEMS_CAPT_MODES = [
   {
     value: CaptureMode.SCREEN,
     icon: fullscreenIcon,
     alt: `Record Screen (${shortcutForDisplay(SHORTCUT_CAPTURE_MODE_SCREEN)})`,
-    minWidth: buttonMinWidth,
   },
   {
     value: CaptureMode.AREA,
@@ -44,7 +42,6 @@ const BUTTON_ITEMS_CAPT_MODES = [
     alt: `Record Selected Area (${shortcutForDisplay(
       SHORTCUT_CAPTURE_MODE_AREA
     )})`,
-    minWidth: buttonMinWidth,
   },
 ];
 
@@ -53,13 +50,11 @@ const BUTTON_ITEMS_REC_OPTS = [
     value: 'mp4' as OutputFormat,
     title: 'MP4',
     alt: `Output as MP4 (${shortcutForDisplay(SHORTCUT_OUTPUT_MP4)})`,
-    minWidth: buttonMinWidth,
   },
   {
     value: 'gif' as OutputFormat,
     title: 'GIF',
     alt: `Output as GIF (${shortcutForDisplay(SHORTCUT_OUTPUT_GIF)})`,
-    minWidth: buttonMinWidth,
   },
 ];
 
@@ -128,7 +123,11 @@ const CaptureControl = ({
   }, [captureMode, recordOptions]);
 
   return (
-    <div className={styles.container}>
+    <div
+      className={styles.container}
+      onMouseDown={withStopPropagation}
+      onMouseUp={withStopPropagation}
+    >
       <div className={styles.btnGroup}>
         <SwitchButton
           activeItemIndex={BUTTON_ITEMS_CAPT_MODES.findIndex(
