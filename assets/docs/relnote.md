@@ -1,5 +1,13 @@
 ## Release Notes
 
+### v0.9.0
+
+_9 Jan 2023_
+
+- Support for various audio sources (expiremental)
+- Add capture mode icons
+- Fix minor issues in capture control panel
+
 ### v0.8.4
 
 _30 Aug 2022_
