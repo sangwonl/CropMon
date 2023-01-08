@@ -2,12 +2,13 @@
  * Base webpack config used across other specific configs
  */
 
-import path from 'path';
-import webpack from 'webpack';
-import { dependencies as externals } from '../../src/package.json';
+const path = require('path');
+const webpack = require('webpack');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const { dependencies } = require('../../src/package.json');
 
-export default {
-  externals: [...Object.keys(externals || {})],
+module.exports = {
+  externals: [...Object.keys(dependencies || {})],
 
   module: {
     rules: [
@@ -36,6 +37,7 @@ export default {
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx', '.css', '.scss', '.sass'],
     modules: [path.join(__dirname, '../src'), 'node_modules'],
+    plugins: [new TsconfigPathsPlugin({})],
   },
 
   plugins: [

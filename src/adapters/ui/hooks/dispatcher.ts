@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 
-import diContainer from '@di/containers/renderer';
+import diContainer from '@di/containers';
 import TYPES from '@di/types';
 
 import { ActionDispatcher } from '@application/ports/action';

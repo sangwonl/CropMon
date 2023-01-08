@@ -8,14 +8,14 @@ interface PropTypes {
   assignedScreenId: number;
 }
 
-const Wrapper = (props: PropTypes) => {
+function Wrapper(props: PropTypes) {
   const { assignedScreenId } = props;
   return <CaptureOverlay assignedScreenId={assignedScreenId} />;
-};
+}
 
-export default (options: CaptureOverlayOptions) => {
+export default function (options: CaptureOverlayOptions) {
   const { screenId } = options;
   return <Wrapper assignedScreenId={screenId} />;
-};
+}
 
 preventZoomKeyEvent();

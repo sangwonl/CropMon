@@ -1,5 +1,6 @@
 const TYPES = {
   AppUpdater: Symbol.for('AppUpdater'),
+  AppTray: Symbol.for('AppTray'),
   UiDirector: Symbol.for('UiDirector'),
   UiStateApplier: Symbol.for('UiStateApplier'),
   ScreenRecorder: Symbol.for('ScreenRecorder'),

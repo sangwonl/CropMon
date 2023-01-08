@@ -4,6 +4,8 @@
 import { ipcRenderer } from 'electron';
 import { createRoot } from 'react-dom/client';
 
+import '@di/containers/renderer';
+
 import overlaysCreator from '@adapters/ui/widgets/overlays/creator';
 import preferencesModalCreator from '@adapters/ui/widgets/preferences/creator';
 import progressDialogCreator from '@adapters/ui/widgets/progressdialog/creator';

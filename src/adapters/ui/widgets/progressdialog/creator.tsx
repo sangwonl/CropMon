@@ -19,7 +19,7 @@ type PropTypes = {
   options: ProgressDialogOptions;
 };
 
-const Wrapper = (props: PropTypes) => {
+function Wrapper(props: PropTypes) {
   const { options } = props;
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState(options.message);
@@ -53,10 +53,10 @@ const Wrapper = (props: PropTypes) => {
       }}
     />
   );
-};
+}
 
-export default (options: ProgressDialogOptions) => {
+export default function (options: ProgressDialogOptions) {
   return <Wrapper options={options} />;
-};
+}
 
 preventZoomKeyEvent();

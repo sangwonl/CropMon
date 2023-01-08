@@ -15,7 +15,8 @@ import { mergeScreenBounds } from '@utils/bounds';
 import { getDurationFromString, getNowAsYYYYMMDDHHmmss } from '@utils/date';
 import { isProduction, isWin } from '@utils/process';
 
-import diContainer from '@di/containers/renderer';
+import diContainer from '@di/containers';
+import '@di/containers/renderer';
 import TYPES from '@di/types';
 
 import { AudioSource, CaptureMode, OutputFormat } from '@domain/models/common';
@@ -392,6 +393,7 @@ class PostProcessorDelegate {
   ): Promise<void> {
     return new Promise((resolve) => {
       const finalizer = () => {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         fs.unlink(tempPath, () => {});
         resolve();
       };

@@ -11,7 +11,7 @@
     "url": "https://pineple.com"
   },
   "scripts": {
-    "electron-rebuild": "node -r ../.erb/scripts/BabelRegister.js ../.erb/scripts/ElectronRebuild.js",
+    "electron-rebuild": "node -r ../.build/scripts/BabelRegister.js ../.build/scripts/ElectronRebuild.js",
     "postinstall": "npm run electron-rebuild"
   },
   "license": "MIT",

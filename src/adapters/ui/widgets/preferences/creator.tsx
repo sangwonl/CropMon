@@ -20,7 +20,7 @@ interface PropTypes {
   initialPrefs: Preferences;
 }
 
-const Wrapper = (props: PropTypes) => {
+function Wrapper(props: PropTypes) {
   const { initialPrefs } = props;
 
   const [readyToShow, setReadyToShow] = useState<boolean>(true);
@@ -55,11 +55,11 @@ const Wrapper = (props: PropTypes) => {
       }}
     />
   ) : null;
-};
+}
 
-export default (options: PreferencesModalOptions) => {
+export default function (options: PreferencesModalOptions) {
   const { preferences } = options;
   return <Wrapper initialPrefs={preferences} />;
-};
+}
 
 preventZoomKeyEvent();

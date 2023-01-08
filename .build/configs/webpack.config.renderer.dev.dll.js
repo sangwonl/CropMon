@@ -2,18 +2,18 @@
  * Builds the DLL for development electron renderer process
  */
 
-import webpack from 'webpack';
-import path from 'path';
-import { merge } from 'webpack-merge';
-import baseConfig from './webpack.config.base';
-import { dependencies } from '../../package.json';
-import CheckNodeEnv from '../scripts/CheckNodeEnv';
+const webpack = require('webpack');
+const path = require('path');
+const { merge } = require('webpack-merge');
+const baseConfig = require('./webpack.config.base');
+const { dependencies } = require('../../package.json');
+const CheckNodeEnv = require('../scripts/CheckNodeEnv');
 
 CheckNodeEnv('development');
 
 const dist = path.join(__dirname, '../dll');
 
-export default merge(baseConfig, {
+module.exports = merge(baseConfig, {
   context: path.join(__dirname, '../..'),
 
   devtool: 'eval',
@@ -24,10 +24,7 @@ export default merge(baseConfig, {
 
   externals: ['fsevents', 'crypto-browserify'],
 
-  /**
-   * Use `module` from `webpack.config.renderer.dev.js`
-   */
-  module: require('./webpack.config.renderer.dev.babel').default.module,
+  module: require('./webpack.config.renderer.dev').module,
 
   entry: {
     renderer: Object.keys(dependencies || {}),

@@ -1,4 +1,4 @@
-/* eslint global-require: off, import/no-extraneous-dependencies: off */
+/* eslint global-require: off */
 
 const developmentEnvironments = ['development', 'test'];
 
@@ -64,19 +64,7 @@ module.exports = (api) => {
 
       ...(development ? developmentPlugins : productionPlugins),
 
-      [
-        'module-resolver',
-        {
-          alias: {
-            '@domain': './src/domain',
-            '@application': './src/application',
-            '@adapters': './src/adapters',
-            '@utils': './src/utils',
-            '@di': './src/di',
-            '@assets': './assets',
-          },
-        },
-      ],
+      ['tsconfig-paths-module-resolver', {}],
     ],
   };
 };

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+// eslint-disable-next-line import/order
 import {
   Tray,
   Menu,
@@ -7,9 +8,6 @@ import {
   MenuItem,
   MenuItemConstructorOptions,
 } from 'electron';
-
-import diContainer from '@di/containers/main';
-import TYPES from '@di/types';
 
 import { ActionDispatcher } from '@application/ports/action';
 
@@ -19,7 +17,7 @@ const TOOLTIP_GREETING = "Roar! I'm here to help you record the screen";
 const TOOLTIP_UPDATE = 'New update available, please make me stronger!';
 const TOOLTIP_RECORDING = 'Now recording. Click to stop';
 
-export default abstract class AppTray {
+export default class AppTrayCore {
   iconProvider: TrayIconProvider;
 
   tray: Tray;
@@ -28,60 +26,51 @@ export default abstract class AppTray {
   isRecording = false;
   isUpdatable = false;
 
-  dispatcher: ActionDispatcher;
-
-  constructor() {
+  constructor(
+    private dispatcher: ActionDispatcher,
+    private buildMenuTempl: any
+  ) {
     this.iconProvider = new TrayIconProvider();
 
     this.tray = new Tray(this.iconProvider.icon('default'));
     this.tray.setToolTip(TOOLTIP_GREETING);
-
-    this.dispatcher = diContainer.get<ActionDispatcher>(TYPES.ActionDispatcher);
-
-    this.setupClickHandler();
   }
 
-  protected abstract buildMenuTempl(): Array<
-    MenuItemConstructorOptions | MenuItem
-  >;
-
-  protected abstract setupClickHandler(): void;
-
-  protected onAbout = () => {
+  onAbout() {
     this.dispatcher.showAbout();
-  };
+  }
 
-  protected onHelp = () => {
+  onHelp() {
     this.dispatcher.showHelp();
-  };
+  }
 
-  protected onCheckForUpdates = () => {
+  onCheckForUpdates() {
     this.dispatcher.checkForUpdates();
-  };
+  }
 
-  protected onDownloadAndInstall = () => {
+  onDownloadAndInstall() {
     this.dispatcher.downloadAndInstall();
-  };
+  }
 
-  protected onStartRecording = () => {
+  onStartRecording() {
     this.dispatcher.enableCaptureMode();
-  };
+  }
 
-  protected onStopRecording = () => {
+  onStopRecording() {
     this.dispatcher.finishCapture();
-  };
+  }
 
-  protected onPreferences = () => {
+  onPreferences() {
     this.dispatcher.openPreferences();
-  };
+  }
 
-  protected onOpenFolder = () => {
+  onOpenFolder() {
     this.dispatcher.openCaptureFolder();
-  };
+  }
 
-  protected onQuit = () => {
+  onQuit() {
     this.dispatcher.quitApplication();
-  };
+  }
 
   private getMenuItemTemplById(
     contextMenuTempl: any,

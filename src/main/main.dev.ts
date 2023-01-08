@@ -15,16 +15,24 @@ import 'regenerator-runtime/runtime';
 import { app } from 'electron';
 import log from 'electron-log';
 
-import diContainer from '@di/containers/main';
+import diContainer from '@di/containers';
+import '@di/containers/main';
 import TYPES from '@di/types';
 
 import { ActionDispatcher } from '@application/ports/action';
+import { PlatformApi } from '@application/ports/platform';
+
+import ActionDispatcherForMain from '@adapters/actions/main';
+import BuiltinHooks from '@adapters/hook';
 
 import initializeDevEnv from './devenv';
 
 const start = async () => {
   initializeDevEnv();
 
+  diContainer.get<PlatformApi>(TYPES.PlatformApi);
+  diContainer.get(ActionDispatcherForMain);
+  diContainer.get(BuiltinHooks);
   diContainer.get<ActionDispatcher>(TYPES.ActionDispatcher).initializeApp();
 };
 

@@ -1,9 +1,8 @@
 /* eslint-disable prettier/prettier */
 
-import 'reflect-metadata';
-// eslint-disable-next-line import/order
-import { Container } from 'inversify';
+import { isMac } from '@utils/process';
 
+import diContainer from '@di/containers';
 import TYPES from '@di/types';
 
 import { PreferencesRepository } from '@domain/repositories/preferences';
@@ -17,6 +16,7 @@ import { PlatformApi } from '@application/ports/platform';
 import { PreferencesStore } from '@application/ports/preferences';
 import { UiStateApplier } from '@application/ports/state';
 import { AnalyticsTracker } from '@application/ports/tracker';
+import { AppTray } from '@application/ports/tray';
 import { AppUpdater } from '@application/ports/updater';
 import HookManager from '@application/services/hook';
 import CaptureModeManager from '@application/services/ui/mode';
@@ -51,9 +51,10 @@ import PrefsRepositoryImpl from '@adapters/repositories/preferences';
 import ElectronUiStateApplier from '@adapters/state';
 import GoogleAnalyticsTracker from '@adapters/tracker';
 import ElectronUiDirector from '@adapters/ui/director';
+import MacAppTray from '@adapters/ui/widgets/tray/mac';
+import WinAppTray from '@adapters/ui/widgets/tray/win';
 import ElectronAppUpdater from '@adapters/updater';
 
-const diContainer = new Container();
 
 diContainer
   .bind<ScreenRecorder>(TYPES.ScreenRecorder)
@@ -238,10 +239,16 @@ diContainer
   .toSelf()
   .inSingletonScope();
 
-diContainer.get<PlatformApi>(TYPES.PlatformApi);
-
-diContainer.get(ActionDispatcherForMain);
-
-diContainer.get(BuiltinHooks);
+if (isMac()) {
+  diContainer
+    .bind<AppTray>(TYPES.AppTray)
+    .to(MacAppTray)
+    .inSingletonScope();
+} else {
+  diContainer
+    .bind<AppTray>(TYPES.AppTray)
+    .to(WinAppTray)
+    .inSingletonScope();
+}
 
 export default diContainer;

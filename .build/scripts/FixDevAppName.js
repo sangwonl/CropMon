@@ -1,6 +1,5 @@
 const path = require('path');
 const { app } = require('electron');
-
 const { productName } = require('../../src/package.json');
 
 app.setName(productName);

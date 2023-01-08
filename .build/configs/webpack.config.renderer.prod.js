@@ -1,43 +1,29 @@
-import path from 'path';
-import fs from 'fs';
-import webpack from 'webpack';
-import chalk from 'chalk';
-import { merge } from 'webpack-merge';
-import { spawn, execSync } from 'child_process';
-import baseConfig from './webpack.config.base';
-import CheckNodeEnv from '../scripts/CheckNodeEnv';
-import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
-
-// When an ESLint server is running, we can't set the NODE_ENV so we'll check if it's
-// at the dev webpack config is not accidentally run in a production environment
-if (process.env.NODE_ENV === 'production') {
-  CheckNodeEnv('development');
-}
-
-const port = process.env.PORT || 1212;
-const publicPath = `http://localhost:${port}/dist`;
-const dllDir = path.join(__dirname, '../dll');
-const manifest = path.resolve(dllDir, 'renderer.json');
-const requiredByDLLConfig = module.parent.filename.includes(
-  'webpack.config.renderer.dev.dll'
-);
-
 /**
- * Warn if the DLL is not built
+ * Build config for electron renderer process
  */
-if (!requiredByDLLConfig && !(fs.existsSync(dllDir) && fs.existsSync(manifest))) {
-  console.log(
-    chalk.black.bgYellow.bold(
-      'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'
-    )
-  );
-  execSync('npm run build-dll');
-}
 
-export default merge(baseConfig, {
-  devtool: 'inline-source-map',
+const path = require('path');
+const webpack = require('webpack');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const { merge } = require('webpack-merge');
+const TerserPlugin = require('terser-webpack-plugin');
+const baseConfig = require('./webpack.config.base');
+const CheckNodeEnv = require('../scripts/CheckNodeEnv');
+const DeleteSourceMaps = require('../scripts/DeleteSourceMaps');
 
-  mode: 'development',
+CheckNodeEnv('production');
+DeleteSourceMaps();
+
+const devtoolsConfig = process.env.DEBUG_PROD === 'true' ? {
+  devtool: 'source-map'
+} : {};
+
+module.exports = merge(baseConfig, {
+  ...devtoolsConfig,
+
+  mode: 'production',
 
   target: 'electron-renderer',
 
@@ -60,27 +46,13 @@ export default merge(baseConfig, {
   },
 
   output: {
-    publicPath: `http://localhost:${port}/dist/`,
-    filename: '[name].dev.js',
+    path: path.join(__dirname, '../../src/dist'),
+    publicPath: './dist/',
+    filename: '[name].prod.js',
   },
 
   module: {
     rules: [
-      {
-        test: /\.[jt]sx?$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: require.resolve('babel-loader'),
-            options: {
-              plugins: [
-                require.resolve('react-refresh/babel'),
-              ].filter(Boolean),
-            },
-          },
-        ],
-      },
-      // SASS support - compile all .global.scss files and pipe it to style.css
       {
         test: /\.global\.(c|sc|sa)ss$/,
         use: [
@@ -103,11 +75,17 @@ export default merge(baseConfig, {
         test: /^((?!\.global).)*\.(c|sc|sa)ss$/,
         use: [
           {
-            loader: 'style-loader',
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              // `./dist` can't be inerhited for publicPath for styles. Otherwise generated paths will be ./dist/dist
+              publicPath: './',
+            },
           },
-          {
-            loader: 'css-modules-typescript-loader',
-          },
+          // Shouldn't use style-loader with mini-css-extract-plugin
+          // https://github.com/webpack-contrib/mini-css-extract-plugin/issues/173#issuecomment-398144318
+          // {
+          //   loader: 'style-loader',
+          // },
           {
             loader: 'css-loader',
             options: {
@@ -190,18 +168,19 @@ export default merge(baseConfig, {
       },
     ],
   },
-  plugins: [
 
-    requiredByDLLConfig
-      ? null
-      : new webpack.DllReferencePlugin({
-          context: path.join(__dirname, '../dll'),
-          manifest: require(manifest),
-          sourceType: 'var',
+  optimization: {
+    minimize: true,
+    minimizer:
+      [
+        new TerserPlugin({
+          parallel: true,
         }),
+        new CssMinimizerPlugin(),
+      ],
+  },
 
-    new webpack.NoEmitOnErrorsPlugin(),
-
+  plugins: [
     /**
      * Create global constants which can be configured at compile time.
      *
@@ -210,51 +189,20 @@ export default merge(baseConfig, {
      *
      * NODE_ENV should be production so that modules do not perform certain
      * development checks
-     *
-     * By default, use 'development' as NODE_ENV. This can be overriden with
-     * 'staging', for example, by changing the ENV variables in the npm scripts
      */
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'development',
+      NODE_ENV: 'production',
+      DEBUG_PROD: false,
     }),
 
-    new webpack.LoaderOptionsPlugin({
-      debug: true,
+    new MiniCssExtractPlugin({
+      filename: '[name].style.css',
     }),
 
-    new ReactRefreshWebpackPlugin(),
+    new BundleAnalyzerPlugin({
+      analyzerMode:
+        process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
+      openAnalyzer: process.env.OPEN_ANALYZER === 'true',
+    }),
   ],
-
-  node: {
-    __dirname: false,
-    __filename: false,
-  },
-
-  devServer: {
-    host: 'localhost',
-    port,
-    compress: true,
-    hot: false,
-    liveReload: true,
-    headers: { 'Access-Control-Allow-Origin': '*' },
-    static: {
-      directory: path.join(__dirname, 'dist'),
-      watch: {
-        usePolling: false,
-        interval: 100,
-        ignored: /node_modules/,
-      },
-    },
-    devMiddleware: {
-      publicPath,
-      stats: 'errors-only',
-    },
-    historyApiFallback: {
-      verbose: true,
-      disableDotRule: false,
-    },
-    client: {
-      logging: 'info',
-    },
-  },
 });

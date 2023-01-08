@@ -1,13 +1,28 @@
 module.exports = {
-  // https://github.com/electron-react-boilerplate/eslint-config-erb
-  extends: ['erb', 'plugin:storybook/recommended'],
+  extends: [
+    'airbnb',
+    'airbnb-typescript',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:jest/recommended',
+    'plugin:import/recommended',
+    'plugin:promise/recommended',
+    'plugin:compat/recommended',
+    'plugin:prettier/recommended',
+    'plugin:storybook/recommended',
+  ],
+  env: {
+    browser: true,
+    node: true,
+  },
   rules: {
     // A temporary hack related to IDE not resolving correct package.json
     'import/no-extraneous-dependencies': 'off',
     'compat/compat': 'off',
     'class-methods-use-this': 'off',
+    'lines-between-class-members': 'off',
     'no-unused-vars': 'off',
     'jsx-a11y/no-static-element-interactions': 'off',
+    '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/lines-between-class-members': 'off',
     'prettier/prettier': [
@@ -70,6 +85,7 @@ module.exports = {
       },
     ],
   },
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: 'module',
@@ -82,7 +98,7 @@ module.exports = {
       // See https://github.com/benmosher/eslint-plugin-import/issues/1396#issuecomment-575727774 for line below
       node: {},
       webpack: {
-        config: require.resolve('./.erb/configs/webpack.config.eslint.js'),
+        config: './.build/configs/webpack.config.base.js',
       },
     },
     'import/parsers': {
