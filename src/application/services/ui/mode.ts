@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { AudioSource, CaptureMode } from '@domain/models/common';
+import { CaptureMode } from '@domain/models/common';
 import { Screen } from '@domain/models/screen';
 import { RecorderSource } from '@domain/services/recorder';
 
@@ -35,7 +35,6 @@ export default class CaptureModeManager {
 
     const audioSources = await this.recorderSource.fetchAudioSources();
     audioSources.forEach((s) => {
-      // eslint-disable-next-line no-param-reassign
       s.active = micGranted && enabledAudioSrcIds.includes(s.id);
     });
 

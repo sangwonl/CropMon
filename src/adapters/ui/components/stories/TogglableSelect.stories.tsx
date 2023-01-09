@@ -39,7 +39,6 @@ const Template: ComponentStory<typeof TogglableSelect> = () => {
         }}
         onSelect={(indices: number[]) => {
           items.forEach((item, index) => {
-            // eslint-disable-next-line no-param-reassign
             item.checked = indices.includes(index);
           });
           handleSelect(indices);

@@ -21,6 +21,7 @@ module.exports = {
     'class-methods-use-this': 'off',
     'lines-between-class-members': 'off',
     'no-unused-vars': 'off',
+    'no-param-reassign': 'off',
     'jsx-a11y/no-static-element-interactions': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-unused-vars': 'off',

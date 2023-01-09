@@ -35,7 +35,6 @@ export default class ActionDispatcherForMain implements ActionDispatcher {
       this.changeCaptureOptions(options);
     });
     ipcMain.on('getUiState', (event) => {
-      // eslint-disable-next-line no-param-reassign
       event.returnValue = this.getUiState();
     });
   }
