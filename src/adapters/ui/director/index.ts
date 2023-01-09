@@ -244,19 +244,21 @@ export default class ElectronUiDirector implements UiDirector {
     onCancel: () => void,
     onQuitAndInstall: () => void
   ): Promise<void> {
-    this.updateProgressDialog = new ProgressDialog({
-      title: 'Update Download',
-      message: 'Downloading a new update...',
-      buttons: {
-        cancelTitle: 'Cancel',
-        actionTitle: 'Quit & Install',
-        actionHideInProgress: true,
+    this.updateProgressDialog = new ProgressDialog(
+      {
+        title: 'Update Download',
+        message: 'Downloading a new update...',
+        buttons: {
+          cancelTitle: 'Cancel',
+          actionTitle: 'Quit & Install',
+          actionHideInProgress: true,
+        },
+        timeout: 300,
+        width: 400,
+        height: 200,
       },
-      timeout: 300,
-      width: 400,
-      height: 200,
-      onReady,
-    });
+      onReady
+    );
 
     const shouldUpdate = await this.updateProgressDialog?.open();
     this.updateProgressDialog?.destroy();

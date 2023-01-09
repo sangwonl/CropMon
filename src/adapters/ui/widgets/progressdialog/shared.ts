@@ -11,7 +11,6 @@ export type ProgressDialogOptions = {
   timeout?: number;
   width?: number;
   height?: number;
-  onReady?: () => void;
 };
 
 export const IPC_EVT_SET_PROGRESS = 'set-progress';

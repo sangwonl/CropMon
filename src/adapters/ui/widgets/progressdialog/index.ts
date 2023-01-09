@@ -17,12 +17,12 @@ import {
 } from './shared';
 
 export default class ProgressDialog extends Widget {
-  constructor(private options: ProgressDialogOptions) {
+  constructor(private options: ProgressDialogOptions, onReady?: () => void) {
     super(WidgetType.PROGRESS_DIALOG, options);
 
     this.window.loadURL(`file://${__dirname}/../progressdialog/index.html`);
 
-    this.window.on('ready-to-show', () => options.onReady?.());
+    this.window.on('ready-to-show', () => onReady?.());
   }
 
   protected createWindow({ width, height }: any): BrowserWindow {

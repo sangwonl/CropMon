@@ -37,12 +37,10 @@ export default class ElectronAppUpdater implements AppUpdater {
     onDownloadProgress: (progressInfo: any) => void,
     onUpdateDownloaded: () => void
   ): Promise<void> {
-    this.clearListeners();
-
-    autoUpdater.on('update-available', onUpdateAvailable);
-    autoUpdater.on('update-not-available', onUpdateNotAvailable);
-    autoUpdater.on('download-progress', onDownloadProgress);
-    autoUpdater.on('update-downloaded', onUpdateDownloaded);
+    autoUpdater.once('update-available', onUpdateAvailable);
+    autoUpdater.once('update-not-available', onUpdateNotAvailable);
+    autoUpdater.once('download-progress', onDownloadProgress);
+    autoUpdater.once('update-downloaded', onUpdateDownloaded);
 
     return autoUpdater
       .checkForUpdates()
@@ -60,17 +58,5 @@ export default class ElectronAppUpdater implements AppUpdater {
 
   quitAndInstall() {
     autoUpdater.quitAndInstall(true, true);
-  }
-
-  private clearListeners() {
-    const offListener = (eventName: any) => {
-      autoUpdater.listeners(eventName).forEach((l: any) => {
-        autoUpdater.off(eventName, l);
-      });
-    };
-    offListener('update-available');
-    offListener('update-not-available');
-    offListener('download-progress');
-    offListener('update-downloaded');
   }
 }
