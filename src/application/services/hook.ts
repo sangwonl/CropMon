@@ -4,6 +4,7 @@
 import { injectable } from 'inversify';
 
 import { CaptureContext } from '@domain/models/capture';
+import { CaptureMode } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
 
 export type HookArgsAppUpdateChecked = {
@@ -26,6 +27,14 @@ export type HookArgsPrefsLoaded = {
 export type HookArgsPrefsUpdated = {
   prevPrefs?: Preferences;
   newPrefs: Preferences;
+};
+
+export type HookArgsCaptureOptionsChanged = {
+  captureMode: CaptureMode;
+};
+
+export type HookArgsCaptureModeEnabled = {
+  captureMode: CaptureMode;
 };
 
 export type HookArgsCaptureStarting = {
@@ -53,9 +62,9 @@ type HookTypeArgsMap = {
   onPrefsLoaded: HookArgsPrefsLoaded;
   onPrefsUpdated: HookArgsPrefsUpdated;
   onPrefsModalOpening: HookArgsBlank;
-  onCaptureOptionsChanged: HookArgsBlank;
+  onCaptureOptionsChanged: HookArgsCaptureOptionsChanged;
   onCaptureShortcutTriggered: HookArgsBlank;
-  onCaptureModeEnabled: HookArgsBlank;
+  onCaptureModeEnabled: HookArgsCaptureModeEnabled;
   onCaptureModeDisabled: HookArgsBlank;
   onCaptureSelectionStarting: HookArgsBlank;
   onCaptureSelectionFinished: HookArgsBlank;

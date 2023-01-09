@@ -35,6 +35,7 @@ export default class CaptureModeManager {
 
     const audioSources = await this.recorderSource.fetchAudioSources();
     audioSources.forEach((s) => {
+      // eslint-disable-next-line no-param-reassign
       s.active = micGranted && enabledAudioSrcIds.includes(s.id);
     });
 

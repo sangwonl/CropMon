@@ -36,9 +36,11 @@ import HookManager, {
   HookArgsInitialPrefsLoaded,
   HookArgsPrefsLoaded,
   HookArgsPrefsUpdated,
+  HookArgsCaptureModeEnabled,
   HookArgsCaptureStarting,
   HookArgsCaptureFinishing,
   HookArgsCaptureFinished,
+  HookArgsCaptureOptionsChanged,
 } from '@application/services/hook';
 import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
 import CheckVersionUseCase from '@application/usecases/CheckVersion';
@@ -125,7 +127,9 @@ export default class BuiltinHooks {
     this.tracker.view('preferences-modal');
   };
 
-  onCaptureOptionsChanged = async () => {
+  onCaptureOptionsChanged = async (args: HookArgsCaptureOptionsChanged) => {
+    await this.setupInSelectionShortcut(true, args.captureMode);
+
     const prefs = await this.prefsRepo.fetchUserPreferences();
     this.tracker.eventL(
       'capture',
@@ -144,8 +148,8 @@ export default class BuiltinHooks {
     this.tracker.eventL('capture', 'shortcut-triggered', prefs.shortcut);
   };
 
-  onCaptureModeEnabled = async () => {
-    await this.setupInSelectionShortcut(true);
+  onCaptureModeEnabled = async (args: HookArgsCaptureModeEnabled) => {
+    await this.setupInSelectionShortcut(true, args.captureMode);
   };
 
   onCaptureModeDisabled = async () => {
@@ -249,11 +253,13 @@ export default class BuiltinHooks {
     });
   };
 
-  private setupInSelectionShortcut = async (enable: boolean) => {
+  private setupInSelectionShortcut = async (enable: boolean, captureMode?: CaptureMode) => {
     if (enable) {
-      globalShortcut.register(SHORTCUT_ENTER, () =>
-        this.actionDispatcher.startCaptureWithCurrentStates()
-      );
+      if (captureMode === CaptureMode.SCREEN) {
+        globalShortcut.register(SHORTCUT_ENTER, () =>
+          this.actionDispatcher.startCaptureWithCurrentStates()
+        );
+      }
 
       globalShortcut.register(SHORTCUT_ESCAPE, () =>
         this.actionDispatcher.disableCaptureMode()
