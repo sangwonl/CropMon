@@ -29,12 +29,19 @@ const Template: ComponentStory<typeof SwitchButton> = (args) => {
 export const Default = Template.bind({});
 Default.args = {
   activeItemIndex: 0,
-  items: [{ title: 'MP4' }, { title: 'GIF' }, { icon: closeIcon }],
+  items: [
+    { title: 'MP4', alt: 'Record as MP4' },
+    { title: 'GIF', alt: 'Record as GIF' },
+    { icon: closeIcon, alt: 'Close' },
+  ],
   onSelect: handleToggle,
 };
 
 export const WithIcon = Template.bind({});
 WithIcon.args = {
   ...Default.args,
-  items: [{ icon: micIcon }, { icon: closeIcon }],
+  items: [
+    { icon: micIcon, alt: 'Record audio' },
+    { icon: closeIcon, alt: 'Close' },
+  ],
 };

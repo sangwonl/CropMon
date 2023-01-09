@@ -7,7 +7,7 @@ import { createRoot } from 'react-dom/client';
 
 import '@di/containers/renderer';
 
-import OverlaysCreator from '@adapters/ui/widgets/overlays/creator';
+import CaptureOverlayCreator from '@adapters/ui/widgets/overlays/creator';
 import PreferencesModalCreator from '@adapters/ui/widgets/preferences/creator';
 import ProgressDialogCreator from '@adapters/ui/widgets/progressdialog/creator';
 import StaticPagePopupCreator from '@adapters/ui/widgets/staticpage/creator';
@@ -22,7 +22,7 @@ const creators: WidgetCreatorMap = {
   [WidgetType.PROGRESS_DIALOG]: ProgressDialogCreator,
   [WidgetType.STATIC_PAGE_POPUP]: StaticPagePopupCreator,
   [WidgetType.PREFERENECS_MODAL]: PreferencesModalCreator,
-  [WidgetType.CAPTURE_OVERLAY]: OverlaysCreator,
+  [WidgetType.CAPTURE_OVERLAY]: CaptureOverlayCreator,
 };
 
 ipcRenderer.on('loadWidget', (_event, data) => {

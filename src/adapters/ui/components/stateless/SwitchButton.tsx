@@ -42,26 +42,29 @@ function SwitchButton({ activeItemIndex, items, onSelect }: Props) {
 
   return (
     <div className={styles.container}>
-      {items.map((item, index) => (
-        <div
-          key={item.title ?? item.icon}
-          className={classNames(styles.btn, {
-            [styles.selected]: index === selectedBtnIndex,
-          })}
-          onClick={(e) => withStopPropagation(e, () => handleItemClick(index))}
-          onMouseUp={withStopPropagation}
-          onMouseDown={withStopPropagation}
-        >
-          {item.icon && (
-            <img className={styles.btnIcon} src={item.icon} alt={item.alt} />
-          )}
-          {item.title && (
-            <span className={styles.btnTitle} title={item.alt}>
-              {item.title}
-            </span>
-          )}
-        </div>
-      ))}
+      {items.map((item, index) => {
+        const itemId = item.title ?? item.icon;
+        return (
+          <div
+            key={itemId}
+            className={classNames(styles.btn, {
+              [styles.selected]: index === selectedBtnIndex,
+            })}
+            onMouseUp={withStopPropagation}
+            onMouseDown={withStopPropagation}
+            onClick={(e) =>
+              withStopPropagation(e, () => handleItemClick(index))
+            }
+          >
+            {item.icon && (
+              <img className={styles.btnIcon} src={item.icon} alt={item.alt} />
+            )}
+            {item.title && (
+              <span className={styles.btnTitle}>{item.title}</span>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
