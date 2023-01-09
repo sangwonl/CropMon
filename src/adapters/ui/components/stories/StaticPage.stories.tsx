@@ -11,6 +11,7 @@ export default {
   argTypes: {},
 } as ComponentMeta<typeof StaticPage>;
 
+// eslint-disable-next-line react/function-component-definition
 const Template: ComponentStory<typeof StaticPage> = (args) => (
   <div style={{ width: 400, height: 300 }}>
     <StaticPage {...args} />

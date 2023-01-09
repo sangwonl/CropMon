@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import Color from 'color';
@@ -72,7 +71,7 @@ type Props = {
   countdown: number;
 };
 
-const CaptureCountdown = (props: Props) => {
+function CaptureCountdown(props: Props) {
   const { targetBounds, countdown, areaColors } = props;
 
   return (
@@ -92,6 +91,6 @@ const CaptureCountdown = (props: Props) => {
       </div>
     </div>
   );
-};
+}
 
 export default CaptureCountdown;

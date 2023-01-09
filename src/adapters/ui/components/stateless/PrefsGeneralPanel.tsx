@@ -34,13 +34,13 @@ type Props = {
 type OptionType = string | number | boolean;
 const isChanged = (a: OptionType, b: OptionType) => a !== b;
 
-const PrefsGeneralPanel = ({
+function PrefsGeneralPanel({
   initialPrefs,
   selectedRecordHome,
   onChooseRecordHome,
   onSave,
   onCancel,
-}: Props) => {
+}: Props) {
   // General options
   const [runAtStartup, setRunAtStartup] = useState<boolean>(
     initialPrefs.runAtStartup
@@ -227,6 +227,6 @@ const PrefsGeneralPanel = ({
       </div>
     </div>
   );
-};
+}
 
 export default PrefsGeneralPanel;

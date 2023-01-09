@@ -13,7 +13,7 @@ type Props = {
   html?: string;
 };
 
-const StaticPage = (props: Props) => {
+function StaticPage(props: Props) {
   const { markdown, html } = props;
   return (
     <div className={styles.container}>
@@ -21,6 +21,6 @@ const StaticPage = (props: Props) => {
       {html && <div dangerouslySetInnerHTML={{ __html: html }} />}
     </div>
   );
-};
+}
 
 export default StaticPage;

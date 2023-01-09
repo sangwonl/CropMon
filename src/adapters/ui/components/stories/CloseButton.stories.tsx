@@ -12,6 +12,7 @@ export default {
 
 const handleClick = action('onClick');
 
+// eslint-disable-next-line react/function-component-definition
 const Template: ComponentStory<typeof CloseButton> = () => {
   return (
     <div style={{ height: '40px' }}>

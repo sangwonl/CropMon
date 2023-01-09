@@ -20,7 +20,7 @@ type Props = {
   onSelect: (indices: number[]) => void;
 };
 
-const SelectList = ({ multiSelect, items, onSelect }: Props) => {
+function SelectList({ multiSelect, items, onSelect }: Props) {
   const checkStatesRef = useRef<boolean[]>(items.map(({ checked }) => checked));
   const [checkStates, updateCheckStates] = useState<boolean[]>(
     checkStatesRef.current
@@ -94,6 +94,6 @@ const SelectList = ({ multiSelect, items, onSelect }: Props) => {
       ))}
     </div>
   );
-};
+}
 
 export default SelectList;

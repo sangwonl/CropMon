@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-
 import React, {
   useEffect,
   useState,
@@ -72,13 +70,13 @@ type Props = {
   onCaptureCancel: () => void;
 };
 
-const CaptureControl = ({
+function CaptureControl({
   captureMode,
   recordOptions,
   onCaptureModeChange,
   onRecordOptionsChange,
   onCaptureCancel,
-}: Props) => {
+}: Props) {
   const [captMode, setCaptMode] = useState<CaptureMode>(captureMode);
   const [recOpts, setRecOpts] = useState<RecordOptions>(recordOptions);
 
@@ -183,6 +181,6 @@ const CaptureControl = ({
       <CloseButton onClick={onCaptureCancel} />
     </div>
   );
-};
+}
 
 export default CaptureControl;

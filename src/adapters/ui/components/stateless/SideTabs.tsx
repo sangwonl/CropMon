@@ -19,7 +19,7 @@ type Props = {
   onTabItemSelect: (tabId: string) => void;
 };
 
-const SideTabs = ({ defaultTabId, tabItems, onTabItemSelect }: Props) => {
+function SideTabs({ defaultTabId, tabItems, onTabItemSelect }: Props) {
   const [selectedTabId, setSelectedTabId] = useState(
     () => defaultTabId ?? tabItems[0].tabId
   );
@@ -44,6 +44,6 @@ const SideTabs = ({ defaultTabId, tabItems, onTabItemSelect }: Props) => {
       ))}
     </div>
   );
-};
+}
 
 export default SideTabs;

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
 import classNames from 'classnames';
@@ -29,12 +28,7 @@ type Props = {
   onSelect: (indices: number[]) => void;
 };
 
-const TogglableSelect = ({
-  toggleButton,
-  items,
-  onToggle,
-  onSelect,
-}: Props) => {
+function TogglableSelect({ toggleButton, items, onToggle, onSelect }: Props) {
   const checkListRef = useRef<HTMLDivElement>(null);
   const [toggleEnabled, changeToggle] = useState<boolean>(toggleButton.enabled);
   const [listExpanded, showList] = useState<boolean>(false);
@@ -122,6 +116,6 @@ const TogglableSelect = ({
       )}
     </>
   );
-};
+}
 
 export default TogglableSelect;

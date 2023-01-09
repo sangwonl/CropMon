@@ -11,6 +11,7 @@ export default {
   argTypes: {},
 } as ComponentMeta<typeof ProgressDialog>;
 
+// eslint-disable-next-line react/function-component-definition
 const Template: ComponentStory<typeof ProgressDialog> = (args) => (
   <div style={{ height: '400px' }}>
     <ProgressDialog {...args} />

@@ -31,13 +31,13 @@ const TAB_ITEMS: TabItem[] = [
   { tabId: TAB_APPEARANCES, title: 'Appearances' },
 ];
 
-const PreferencesDialog = ({
+function PreferencesDialog({
   origPrefs,
   selectedRecordHome,
   onChooseRecordHome,
   onSave,
   onClose,
-}: Props) => {
+}: Props) {
   const [curTabId, setCurTabId] = useState<string>(TAB_GENERAL);
 
   const handleChooseRecordHome = useCallback(() => {
@@ -95,6 +95,6 @@ const PreferencesDialog = ({
       </div>
     </div>
   );
-};
+}
 
 export default PreferencesDialog;

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import classNames from 'classnames';
@@ -33,7 +32,7 @@ interface PropTypes {
   assignedScreenId: number;
 }
 
-const CaptureOverlay = (props: PropTypes) => {
+function CaptureOverlay(props: PropTypes) {
   const { assignedScreenId } = props;
 
   const dispatcher = useActionDispatcher();
@@ -253,23 +252,25 @@ const CaptureOverlay = (props: PropTypes) => {
             )}
         </>
       )}
-      {assignedScreen?.isPrimary && captureOverlay.show && controlPanel.show && (
-        <div className={styles.options}>
-          <CaptureControl
-            captureMode={controlPanel.captureMode}
-            recordOptions={{
-              outputAsGif: controlPanel.outputAsGif,
-              recordAudio: controlPanel.recordAudio,
-              audioSources: controlPanel.audioSources,
-            }}
-            onCaptureModeChange={onCaptureModeChange}
-            onRecordOptionsChange={onRecOptionsChange}
-            onCaptureCancel={onCaptureCancel}
-          />
-        </div>
-      )}
+      {assignedScreen?.isPrimary &&
+        captureOverlay.show &&
+        controlPanel.show && (
+          <div className={styles.options}>
+            <CaptureControl
+              captureMode={controlPanel.captureMode}
+              recordOptions={{
+                outputAsGif: controlPanel.outputAsGif,
+                recordAudio: controlPanel.recordAudio,
+                audioSources: controlPanel.audioSources,
+              }}
+              onCaptureModeChange={onCaptureModeChange}
+              onRecordOptionsChange={onRecOptionsChange}
+              onCaptureCancel={onCaptureCancel}
+            />
+          </div>
+        )}
     </div>
   );
-};
+}
 
 export default CaptureOverlay;

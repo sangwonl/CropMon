@@ -16,12 +16,10 @@ import {
 } from '@adapters/ui/widgets/preferences/shared';
 import { preventZoomKeyEvent } from '@adapters/ui/widgets/utils';
 
-interface PropTypes {
-  initialPrefs: Preferences;
-}
-
-function Wrapper(props: PropTypes) {
-  const { initialPrefs } = props;
+export default function PreferencesModalCreator(
+  options: PreferencesModalOptions
+) {
+  const { preferences: initialPrefs } = options;
 
   const [readyToShow, setReadyToShow] = useState<boolean>(true);
   const [origPrefs, setOrigPrefs] = useState<Preferences>(initialPrefs);
@@ -54,12 +52,9 @@ function Wrapper(props: PropTypes) {
         ipcRenderer.send(IPC_EVT_ON_RECORD_HOME_SELECTION, { prefs });
       }}
     />
-  ) : null;
-}
-
-export default function (options: PreferencesModalOptions) {
-  const { preferences } = options;
-  return <Wrapper initialPrefs={preferences} />;
+  ) : (
+    <div />
+  );
 }
 
 preventZoomKeyEvent();

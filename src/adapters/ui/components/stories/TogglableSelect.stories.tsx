@@ -26,6 +26,7 @@ const items = [
   { checked: true, title: 'System Microphone' },
 ];
 
+// eslint-disable-next-line react/function-component-definition
 const Template: ComponentStory<typeof TogglableSelect> = () => {
   return (
     <div style={{ width: '60px', height: '40px' }}>
@@ -38,6 +39,7 @@ const Template: ComponentStory<typeof TogglableSelect> = () => {
         }}
         onSelect={(indices: number[]) => {
           items.forEach((item, index) => {
+            // eslint-disable-next-line no-param-reassign
             item.checked = indices.includes(index);
           });
           handleSelect(indices);

@@ -19,6 +19,7 @@ const items = [
   { checked: true, title: 'System Microphone' },
 ];
 
+// eslint-disable-next-line react/function-component-definition
 const Template: ComponentStory<typeof SelectList> = (args) => {
   return (
     <div style={{ height: '80px' }}>

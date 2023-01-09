@@ -12,6 +12,7 @@ export default {
   argTypes: {},
 } as ComponentMeta<typeof CaptureControl>;
 
+// eslint-disable-next-line react/function-component-definition
 const Template: ComponentStory<typeof CaptureControl> = () => {
   const [captMode, setCaptMode] = useState<CaptureMode>(CaptureMode.AREA);
   const [recOpts, setRecOpts] = useState<RecordOptions>({

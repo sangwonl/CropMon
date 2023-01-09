@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import classNames from 'classnames';
@@ -273,7 +273,7 @@ type Props = {
   onFinish: (bounds: Bounds) => void;
 };
 
-const CaptureTargetingArea = (props: Props) => {
+function CaptureTargetingArea(props: Props) {
   const {
     targetBounds,
     screenBounds,
@@ -346,6 +346,6 @@ const CaptureTargetingArea = (props: Props) => {
       )}
     </>
   );
-};
+}
 
 export default CaptureTargetingArea;

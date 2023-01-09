@@ -11,6 +11,7 @@ export default {
   argTypes: {},
 } as ComponentMeta<typeof ProgressBar>;
 
+// eslint-disable-next-line react/function-component-definition
 const Template: ComponentStory<typeof ProgressBar> = (args) => (
   <div style={{ height: '40px' }}>
     <ProgressBar {...args} />

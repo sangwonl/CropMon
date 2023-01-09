@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import Color from 'color';
@@ -45,7 +44,7 @@ type Props = {
   onFinish: () => void;
 };
 
-const CaptureTargetingScreen = (props: Props) => {
+function CaptureTargetingScreen(props: Props) {
   const { areaColors, targetBounds, onStart, onCancel, onFinish } = props;
 
   const handleMouseEvent = useCallback(
@@ -67,6 +66,6 @@ const CaptureTargetingScreen = (props: Props) => {
       onMouseUp={handleMouseEvent}
     />
   );
-};
+}
 
 export default CaptureTargetingScreen;

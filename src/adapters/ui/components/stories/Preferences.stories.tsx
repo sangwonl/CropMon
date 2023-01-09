@@ -13,6 +13,7 @@ export default {
   argTypes: {},
 } as ComponentMeta<typeof PreferencesDialog>;
 
+// eslint-disable-next-line react/function-component-definition
 const Template: ComponentStory<typeof PreferencesDialog> = (args) => (
   <div
     style={{

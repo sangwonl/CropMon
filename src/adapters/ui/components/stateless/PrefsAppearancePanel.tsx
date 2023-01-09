@@ -21,7 +21,7 @@ type Props = {
 type OptionType = string | number | boolean;
 const isChanged = (a: OptionType, b: OptionType) => a !== b;
 
-const PrefsAppearancesPanel = ({ initialPrefs, onSave, onCancel }: Props) => {
+function PrefsAppearancesPanel({ initialPrefs, onSave, onCancel }: Props) {
   const [colorSelectingBg, setColorSelectingBg] = useState(
     initialPrefs.colors.selectingBackground
   );
@@ -143,6 +143,6 @@ const PrefsAppearancesPanel = ({ initialPrefs, onSave, onCancel }: Props) => {
       </div>
     </div>
   );
-};
+}
 
 export default PrefsAppearancesPanel;

@@ -15,14 +15,10 @@ import {
 } from '@adapters/ui/widgets/progressdialog/shared';
 import { preventZoomKeyEvent } from '@adapters/ui/widgets/utils';
 
-type PropTypes = {
-  options: ProgressDialogOptions;
-};
-
-function Wrapper(props: PropTypes) {
-  const { options } = props;
+export default function ProgressDialogCreator(options: ProgressDialogOptions) {
+  const { message: givenMsg, title, buttons } = options;
   const [progress, setProgress] = useState(0);
-  const [message, setMessage] = useState(options.message);
+  const [message, setMessage] = useState(givenMsg);
 
   useEffect(() => {
     ipcRenderer.on(
@@ -37,12 +33,12 @@ function Wrapper(props: PropTypes) {
 
   return (
     <ProgressDialog
-      title={options.title}
+      title={title}
       message={message}
       buttons={{
-        cancelTitle: options.buttons.cancelTitle,
-        actionTitle: options.buttons.actionTitle,
-        actionHideInProgress: options.buttons.actionHideInProgress,
+        cancelTitle: buttons.cancelTitle,
+        actionTitle: buttons.actionTitle,
+        actionHideInProgress: buttons.actionHideInProgress,
       }}
       progress={progress}
       onActionClick={() => {
@@ -53,10 +49,6 @@ function Wrapper(props: PropTypes) {
       }}
     />
   );
-}
-
-export default function (options: ProgressDialogOptions) {
-  return <Wrapper options={options} />;
 }
 
 preventZoomKeyEvent();

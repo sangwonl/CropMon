@@ -10,7 +10,7 @@ type Props = {
   onClick: () => void;
 };
 
-const CloseButton = ({ onClick }: Props) => {
+function CloseButton({ onClick }: Props) {
   return (
     <button
       type="button"
@@ -23,6 +23,6 @@ const CloseButton = ({ onClick }: Props) => {
       <img src={closeIcon} alt="close" />
     </button>
   );
-};
+}
 
 export default CloseButton;

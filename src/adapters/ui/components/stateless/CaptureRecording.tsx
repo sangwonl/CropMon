@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React from 'react';
@@ -27,7 +26,7 @@ type Props = {
   targetBounds: Bounds;
 };
 
-const CaptureRecording = (props: Props) => {
+function CaptureRecording(props: Props) {
   const { targetBounds } = props;
 
   return (
@@ -35,6 +34,6 @@ const CaptureRecording = (props: Props) => {
       <div className={styles.area} style={getAreaStyles(targetBounds)} />
     </div>
   );
-};
+}
 
 export default CaptureRecording;

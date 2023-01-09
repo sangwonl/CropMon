@@ -24,7 +24,7 @@ type ColorInputProps = {
   onChange: (color: string) => void;
 };
 
-const ColorPalette = ({ defaultColor, onChange }: ColorInputProps) => {
+function ColorPalette({ defaultColor, onChange }: ColorInputProps) {
   const [curColor, setCurColor] = useState(defaultColor);
 
   const handleChange = useCallback(
@@ -59,6 +59,6 @@ const ColorPalette = ({ defaultColor, onChange }: ColorInputProps) => {
       </div>
     </div>
   );
-};
+}
 
 export default ColorPalette;

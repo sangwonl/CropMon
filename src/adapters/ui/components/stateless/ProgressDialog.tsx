@@ -1,7 +1,6 @@
 /* eslint-disable react/button-has-type */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/display-name */
 
@@ -26,7 +25,7 @@ type Props = {
   onActionClick: () => void;
 };
 
-const ProgressDialog = (props: Props) => {
+function ProgressDialog(props: Props) {
   const { title, message, buttons, progress } = props;
   const { cancelTitle, actionTitle, actionHideInProgress = true } = buttons;
 
@@ -51,6 +50,6 @@ const ProgressDialog = (props: Props) => {
       </div>
     </div>
   );
-};
+}
 
 export default ProgressDialog;

@@ -17,6 +17,7 @@ export default {
 
 const handleToggle = action('onToggle');
 
+// eslint-disable-next-line react/function-component-definition
 const Template: ComponentStory<typeof SwitchButton> = (args) => {
   return (
     <div style={{ width: '80px', height: '40px' }}>
