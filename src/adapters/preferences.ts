@@ -106,7 +106,7 @@ export default class ElectronPreferencesStore implements PreferencesStore {
         '0.8.3': (store) => {
           store.delete(PREFS_RECORDING_QUALITYMODE);
         },
-        '0.9.2': (store) => {
+        '0.9.3': (store) => {
           store.set(PREFS_RECORDING_RECORDAUDIO, false);
           store.set(PREFS_RECORDING_AUDIOSOURCES, []);
           store.delete(PREFS_RECORDING_MICROPHONE);
