@@ -40,7 +40,7 @@
 }
 
 .buttonAction {
-  width: 80px;
+  min-width: 80px;
   justify-content: flex-end;
   display: inline-block;
   padding: 6px 12px;
@@ -48,7 +48,7 @@
   outline: none;
   box-shadow: none;
   border: 0px;
-  border-radius: 3px;
+  border-radius: 2px;
   user-select: none;
   background: linear-gradient(to bottom, #74ad5a 5%, #68a54b 100%);
   background-color: #74ad5a;
@@ -71,14 +71,14 @@
 }
 
 .buttonCancel {
-  width: 80px;
+  min-width: 80px;
   justify-content: flex-end;
   display: inline-block;
   padding: 6px 12px;
   outline: none;
   box-shadow: none;
   border: 0px;
-  border-radius: 3px;
+  border-radius: 2px;
   user-select: none;
   background: linear-gradient(to bottom, #adadad 5%, #a5a5a5 100%);
   background-color: #adadad;

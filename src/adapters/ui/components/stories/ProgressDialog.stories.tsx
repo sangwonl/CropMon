@@ -48,7 +48,7 @@ CompletedState.args = {
   message: 'This is message',
   buttons: {
     cancelTitle: 'Cancel',
-    actionTitle: 'Restart',
+    actionTitle: 'Quit & Install',
     actionHideInProgress: true,
   },
   progress: 100,
