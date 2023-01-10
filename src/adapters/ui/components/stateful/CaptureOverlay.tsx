@@ -256,17 +256,19 @@ function CaptureOverlay(props: PropTypes) {
         captureOverlay.show &&
         controlPanel.show && (
           <div className={styles.options}>
-            <CaptureControl
-              captureMode={controlPanel.captureMode}
-              recordOptions={{
-                outputAsGif: controlPanel.outputAsGif,
-                recordAudio: controlPanel.recordAudio,
-                audioSources: controlPanel.audioSources,
-              }}
-              onCaptureModeChange={onCaptureModeChange}
-              onRecordOptionsChange={onRecOptionsChange}
-              onCaptureCancel={onCaptureCancel}
-            />
+            <div className={styles.controlWrapper}>
+              <CaptureControl
+                captureMode={controlPanel.captureMode}
+                recordOptions={{
+                  outputAsGif: controlPanel.outputAsGif,
+                  recordAudio: controlPanel.recordAudio,
+                  audioSources: controlPanel.audioSources,
+                }}
+                onCaptureModeChange={onCaptureModeChange}
+                onRecordOptionsChange={onRecOptionsChange}
+                onCaptureCancel={onCaptureCancel}
+              />
+            </div>
           </div>
         )}
     </div>
