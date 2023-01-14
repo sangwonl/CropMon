@@ -4,6 +4,7 @@
   background-color: #3a3a3a;
   display: flex;
   flex-direction: row;
+  justify-content: center;
   column-gap: 4px;
   border-radius: 4px;
   cursor: auto;

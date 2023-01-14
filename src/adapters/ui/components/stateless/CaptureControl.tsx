@@ -20,13 +20,13 @@ import { CaptureMode, OutputFormat } from '@domain/models/common';
 
 import CloseButton from '@adapters/ui/components/stateless/CloseButton';
 import SwitchButton from '@adapters/ui/components/stateless/SwitchButton';
+import TogglableSelect from '@adapters/ui/components/stateless/TogglableSelect';
 
 import fullscreenIcon from '@assets/fullscreen.png';
 import micIcon from '@assets/mic.png';
 import selectionIcon from '@assets/selection.png';
 
 import styles from './CaptureControl.css';
-import TogglableSelect from './TogglableSelect';
 
 const BUTTON_ITEMS_CAPT_MODES = [
   {
@@ -94,6 +94,10 @@ function CaptureControl({
       return items;
     }, [recOpts.audioSources]);
 
+  const toggleEnabled = useMemo(() => {
+    return !recOpts.outputAsGif && recOpts.audioSources.length > 0;
+  }, [recOpts.outputAsGif, recOpts.audioSources]);
+
   const handleCaptModeChange = useCallback(
     (mode: CaptureMode) => {
       setCaptMode(mode);
@@ -155,9 +159,10 @@ function CaptureControl({
       <div className={styles.divider} />
       <div className={styles.btnGroup}>
         <TogglableSelect
+          enabled={toggleEnabled}
           toggleButton={{
             ...BUTTON_AUDIO_TOGGLE,
-            enabled: recOpts.recordAudio,
+            active: recOpts.recordAudio,
           }}
           items={audioItems}
           onToggle={(enabled: boolean) => {
