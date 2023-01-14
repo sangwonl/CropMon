@@ -1,5 +1,11 @@
 ## Release Notes
 
+### v0.9.5
+
+_14 Jan 2023_
+
+- Handle audio toggle button properly for no-audio
+
 ### v0.9.4
 
 _10 Jan 2023_
