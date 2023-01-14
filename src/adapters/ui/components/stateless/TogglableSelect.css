@@ -39,7 +39,7 @@
   background-color: #565656;
 }
 
-.btn:hover:not(.selected) span {
+.btn:hover:not(.selected) img {
   filter: invert(10%);
 }
 
@@ -47,7 +47,7 @@
   background-color: #545454;
 }
 
-.btn:active:not(.selected) span {
+.btn:active:not(.selected) img {
   filter: invert(1%);
 }
 
@@ -77,6 +77,22 @@
 
 .arrowBtn:hover svg {
   fill: #e1e1e1;
+}
+
+.container:is(.disabled) .btn {
+  background-color: #555555;
+}
+
+.container:is(.disabled) .btn img {
+  filter: invert(30%);
+}
+
+.container:is(.disabled) .arrowBtn {
+  background-color: #5e5e5e;
+}
+
+.container:is(.disabled) .arrowBtn svg {
+  filter: invert(30%);
 }
 
 .selectList {

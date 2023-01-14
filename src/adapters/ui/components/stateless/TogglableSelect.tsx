@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
 import classNames from 'classnames';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { withStopPropagation } from '@utils/events';
 
@@ -13,7 +13,7 @@ import styles from './TogglableSelect.css';
 type ToggleButton = {
   icon: string;
   alt: string;
-  enabled: boolean;
+  active: boolean;
 };
 
 type SelectableItem = {
@@ -22,34 +22,43 @@ type SelectableItem = {
 };
 
 type Props = {
+  enabled: boolean;
   toggleButton: ToggleButton;
   items: SelectableItem[];
-  onToggle: (enabled: boolean) => void;
+  onToggle: (active: boolean) => void;
   onSelect: (indices: number[]) => void;
 };
 
-function TogglableSelect({ toggleButton, items, onToggle, onSelect }: Props) {
+function TogglableSelect({
+  enabled,
+  toggleButton,
+  items,
+  onToggle,
+  onSelect,
+}: Props) {
   const checkListRef = useRef<HTMLDivElement>(null);
-  const [toggleEnabled, changeToggle] = useState<boolean>(toggleButton.enabled);
+  const [isToggleOn, switchToggle] = useState<boolean>(
+    enabled && toggleButton.active
+  );
   const [listExpanded, showList] = useState<boolean>(false);
 
+  useEffect(() => {
+    switchToggle(enabled && toggleButton.active);
+  }, [toggleButton]);
+
   const handleToggleButtonClick = useCallback(() => {
-    if (
-      !listExpanded &&
-      !toggleEnabled &&
-      !items.some((item) => item.checked)
-    ) {
+    if (!listExpanded && !isToggleOn && !items.some((item) => item.checked)) {
       showList(true);
       return;
     }
 
     if (items.some((item) => item.checked)) {
-      changeToggle(!toggleEnabled);
-      onToggle(!toggleEnabled);
+      switchToggle(!isToggleOn);
+      onToggle(!isToggleOn);
     }
 
     showList(false);
-  }, [items, listExpanded, toggleEnabled, onToggle]);
+  }, [items, listExpanded, isToggleOn, onToggle]);
 
   const handleSelectButtonClick = useCallback(() => {
     showList(!listExpanded);
@@ -58,24 +67,28 @@ function TogglableSelect({ toggleButton, items, onToggle, onSelect }: Props) {
   const handleSelect = useCallback(
     (indices: number[]) => {
       if (indices.length === 0) {
-        changeToggle(false);
+        switchToggle(false);
       }
       onSelect(indices);
     },
-    [toggleButton.enabled, onSelect]
+    [toggleButton, onSelect]
   );
 
   useOnClickOutside(checkListRef, () => showList(false));
 
   return (
     <>
-      <div className={styles.container}>
+      <div
+        className={classNames(styles.container, {
+          [styles.disabled]: !enabled,
+        })}
+      >
         <div
           className={classNames(styles.btn, {
-            [styles.selected]: toggleEnabled,
+            [styles.selected]: isToggleOn,
           })}
           onClick={(e) =>
-            withStopPropagation(e, () => handleToggleButtonClick())
+            enabled && withStopPropagation(e, () => handleToggleButtonClick())
           }
           onMouseUp={withStopPropagation}
           onMouseDown={withStopPropagation}
@@ -90,7 +103,9 @@ function TogglableSelect({ toggleButton, items, onToggle, onSelect }: Props) {
           className={classNames(styles.arrowBtn, {
             [styles.selected]: listExpanded,
           })}
-          onClick={handleSelectButtonClick}
+          onClick={(e) =>
+            enabled && withStopPropagation(e, () => handleSelectButtonClick())
+          }
           onMouseUp={withStopPropagation}
           onMouseDown={withStopPropagation}
         >
