@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
 
@@ -13,24 +15,12 @@ export default {
 } as ComponentMeta<typeof CaptureControl>;
 
 // eslint-disable-next-line react/function-component-definition
-const Template: ComponentStory<typeof CaptureControl> = () => {
-  const [captMode, setCaptMode] = useState<CaptureMode>(CaptureMode.AREA);
-  const [recOpts, setRecOpts] = useState<RecordOptions>({
-    outputAsGif: false,
-    recordAudio: false,
-    audioSources: [
-      {
-        id: '1234',
-        name: 'PC Speakers',
-        active: false,
-      },
-      {
-        id: '1235',
-        name: 'Builtin Microphone (Apple Silicon Macbook)',
-        active: false,
-      },
-    ],
-  });
+const Template: ComponentStory<typeof CaptureControl> = ({
+  captureMode,
+  recordOptions,
+}) => {
+  const [captMode, setCaptMode] = useState<CaptureMode>(captureMode);
+  const [recOpts, setRecOpts] = useState<RecordOptions>(recordOptions);
 
   return (
     <div style={{ width: '400px', height: '56px' }}>
@@ -46,3 +36,32 @@ const Template: ComponentStory<typeof CaptureControl> = () => {
 };
 
 export const Default = Template.bind({});
+Default.args = {
+  captureMode: CaptureMode.AREA,
+  recordOptions: {
+    outputAsGif: false,
+    recordAudio: true,
+    audioSources: [
+      {
+        id: '1234',
+        name: 'PC Speakers',
+        active: false,
+      },
+      {
+        id: '1235',
+        name: 'Builtin Microphone (Apple Silicon Macbook)',
+        active: true,
+      },
+    ],
+  },
+};
+
+export const NoAudioSources = Template.bind({});
+NoAudioSources.args = {
+  captureMode: CaptureMode.AREA,
+  recordOptions: {
+    outputAsGif: false,
+    recordAudio: true,
+    audioSources: [],
+  },
+};
