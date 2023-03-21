@@ -109,6 +109,7 @@ export default class ElectronUiDirector implements UiDirector {
 
     const aboutHtmlPath = assetPathResolver('docs/about.html');
     const aboutContent = (await fs.promises.readFile(aboutHtmlPath, 'utf-8'))
+      .replace('__registration__', 'PLACEHOLDER')
       .replace('__shortcut__', shortcutForDisplay(prefs.shortcut))
       .replace('__version__', curVersion);
 

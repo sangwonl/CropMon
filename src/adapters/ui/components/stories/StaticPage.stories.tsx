@@ -1,3 +1,4 @@
+/* eslint-disable react/function-component-definition */
 /* eslint-disable react/jsx-props-no-spreading */
 
 import { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -11,12 +12,13 @@ export default {
   argTypes: {},
 } as ComponentMeta<typeof StaticPage>;
 
-// eslint-disable-next-line react/function-component-definition
-const Template: ComponentStory<typeof StaticPage> = (args) => (
-  <div style={{ width: 400, height: 300 }}>
-    <StaticPage {...args} />
-  </div>
-);
+const Template: ComponentStory<typeof StaticPage> = (args) => {
+  return <StaticPage {...args} />;
+};
+
+const AsyncTemplate: ComponentStory<typeof StaticPage> = (_, { loaded }) => {
+  return <StaticPage {...loaded} />;
+};
 
 export const MarkdownPage = Template.bind({});
 MarkdownPage.args = {
@@ -27,3 +29,29 @@ export const HtmlPage = Template.bind({});
 HtmlPage.args = {
   html: '<p>The best handy screen recorder, <b>Kropsaurus</b></p>',
 };
+
+export const UnregisteredAboutPage = AsyncTemplate.bind({});
+UnregisteredAboutPage.loaders = [
+  async () => {
+    const html = (await (await fetch('assets/docs/about.html')).text())
+      .replace('__registration__', 'Unregistered')
+      .replace('__shortcut__', 'Cmd + Shift + Enter')
+      .replace('__version__', '1.0.0');
+    return {
+      html,
+    };
+  },
+];
+
+export const RegisteredAboutPage = AsyncTemplate.bind({});
+RegisteredAboutPage.loaders = [
+  async () => {
+    const html = (await (await fetch('assets/docs/about.html')).text())
+      .replace('__registration__', 'Registered')
+      .replace('__shortcut__', 'Cmd + Shift + Enter')
+      .replace('__version__', '1.0.0');
+    return {
+      html,
+    };
+  },
+];
