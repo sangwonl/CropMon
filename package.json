@@ -15,7 +15,7 @@
     "start:main": "cross-env NODE_ENV=development electron -r ./.build/scripts/FixDevAppName.js -r ./.build/scripts/BabelRegister ./src/main/main.dev.ts --inspect=5858 --remote-debugging-port=9223",
     "start:renderer": "cross-env NODE_ENV=development webpack serve --config ./.build/configs/webpack.config.renderer.dev.js",
     "test": "jest",
-    "storybook": "start-storybook -p 6006",
+    "storybook": "start-storybook -p 6006 -s ./",
     "build-storybook": "build-storybook"
   },
   "lint-staged": {
@@ -335,8 +335,8 @@
     "uuid": "^9.0.0"
   },
   "devEngines": {
-    "node": ">=12.x",
-    "npm": ">=6.x"
+    "node": ">=18.x",
+    "npm": ">=8.x"
   },
   "collective": {
     "url": "https://opencollective.com/..."
