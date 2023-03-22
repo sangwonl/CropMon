@@ -12,6 +12,7 @@ import { RecorderSource, ScreenRecorder } from '@domain/services/recorder';
 import ActionDispatcherCore from '@application/controllers/dispatcher';
 import { ActionDispatcher } from '@application/ports/action';
 import { UiDirector } from '@application/ports/director';
+import { LicenseManager } from '@application/ports/license';
 import { PlatformApi } from '@application/ports/platform';
 import { PreferencesStore } from '@application/ports/preferences';
 import { UiStateApplier } from '@application/ports/state';
@@ -44,6 +45,7 @@ import UpdateAppUseCase from '@application/usecases/UpdateApp';
 
 import ActionDispatcherForMain from '@adapters/actions/main';
 import BuiltinHooks from '@adapters/hook';
+import SimpleLicenseManager from '@adapters/license';
 import PlatformApiForMain from '@adapters/platform/main';
 import ElectronPreferencesStore from '@adapters/preferences';
 import ElectronScreenRecorder from '@adapters/recorder/recorder';
@@ -97,6 +99,11 @@ diContainer
 diContainer
   .bind<PlatformApi>(TYPES.PlatformApi)
   .to(PlatformApiForMain)
+  .inSingletonScope();
+
+diContainer
+  .bind<LicenseManager>(TYPES.LicenseManager)
+  .to(SimpleLicenseManager)
   .inSingletonScope();
 
 diContainer
