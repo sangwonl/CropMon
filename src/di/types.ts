@@ -10,6 +10,7 @@ const TYPES = {
   AnalyticsTracker: Symbol.for('AnalyticsTracker'),
   PlatformApi: Symbol.for('PlatformApi'),
   PreferencesRepository: Symbol.for('PreferencesRepository'),
+  LicenseManager: Symbol.for('LicenseManager'),
 };
 
 export default TYPES;

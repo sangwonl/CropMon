@@ -1,7 +1,7 @@
 import fs from 'fs';
 
 import { app, shell } from 'electron';
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 
 import { assetPathResolver } from '@utils/asset';
 import { getAllScreens, getScreenCursorOn } from '@utils/bounds';
@@ -17,6 +17,7 @@ import { Preferences } from '@domain/models/preferences';
 import { Screen } from '@domain/models/screen';
 
 import { UiDirector } from '@application/ports/director';
+import { LicenseManager } from '@application/ports/license';
 import { AppTray } from '@application/ports/tray';
 
 import ElectronUiStateApplier from '@adapters/state';
@@ -44,7 +45,10 @@ export default class ElectronUiDirector implements UiDirector {
   private recTimeStart?: number;
 
   // eslint-disable-next-line no-useless-constructor
-  constructor(private uiStateApplier: ElectronUiStateApplier) {}
+  constructor(
+    @inject(TYPES.LicenseManager) private licenseManager: LicenseManager,
+    private uiStateApplier: ElectronUiStateApplier
+  ) {}
 
   initialize(): void {
     this.appTray = diContainer.get<AppTray>(TYPES.AppTray);
@@ -107,9 +111,14 @@ export default class ElectronUiDirector implements UiDirector {
       return;
     }
 
+    const license = this.licenseManager.retrieveLicense();
+
     const aboutHtmlPath = assetPathResolver('docs/about.html');
     const aboutContent = (await fs.promises.readFile(aboutHtmlPath, 'utf-8'))
-      .replace('__registration__', 'PLACEHOLDER')
+      .replace(
+        '__registration__',
+        license?.validated ? 'Registered' : 'Unregistered'
+      )
       .replace('__shortcut__', shortcutForDisplay(prefs.shortcut))
       .replace('__version__', curVersion);
 
