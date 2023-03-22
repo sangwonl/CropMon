@@ -1,7 +1,5 @@
 export type License = {
   key: string;
-  ownerName: string;
-  ownerEmail: string;
-  validated: boolean;
+  email: string;
   validatedAt: Date;
 };
