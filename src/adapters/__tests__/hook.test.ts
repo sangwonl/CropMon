@@ -1,4 +1,4 @@
-/* eslint-disable jest/expect-expect */
+import 'reflect-metadata';
 
 import { CaptureMode } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
@@ -8,14 +8,15 @@ import HookManager from '@application/services/hook';
 describe('HookManager', () => {
   const hookMgr: HookManager = new HookManager();
   const defaultPrefs: Preferences = {
-    initialLoaded: false,
+    initialLoaded: true,
     version: '0.0.1',
     runAtStartup: true,
     shortcut: 'Ctrl+Shift+S',
     recordHome: '/var/capture',
     openRecordHomeWhenRecordCompleted: true,
     showCountdown: false,
-    recordMicrophone: false,
+    recordAudio: false,
+    audioSources: [],
     outputFormat: 'mp4',
     captureMode: CaptureMode.AREA,
     colors: {
