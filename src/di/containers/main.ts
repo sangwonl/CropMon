@@ -51,6 +51,7 @@ import ElectronPreferencesStore from '@adapters/preferences';
 import ElectronScreenRecorder from '@adapters/recorder/recorder';
 import PrefsRepositoryImpl from '@adapters/repositories/preferences';
 import ElectronUiStateApplier from '@adapters/state';
+import SecureStore from '@adapters/store';
 import GoogleAnalyticsTracker from '@adapters/tracker';
 import ElectronUiDirector from '@adapters/ui/director';
 import MacAppTray from '@adapters/ui/widgets/tray/mac';
@@ -99,6 +100,11 @@ diContainer
 diContainer
   .bind<PlatformApi>(TYPES.PlatformApi)
   .to(PlatformApiForMain)
+  .inSingletonScope();
+
+diContainer
+  .bind<SecureStore>(SecureStore)
+  .toSelf()
   .inSingletonScope();
 
 diContainer

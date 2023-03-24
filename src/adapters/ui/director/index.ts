@@ -13,6 +13,7 @@ import diContainer from '@di/containers';
 import TYPES from '@di/types';
 
 import { CaptureMode } from '@domain/models/common';
+import { License } from '@domain/models/license';
 import { Preferences } from '@domain/models/preferences';
 import { Screen } from '@domain/models/screen';
 
@@ -44,7 +45,6 @@ export default class ElectronUiDirector implements UiDirector {
   private recTimeHandle?: ReturnType<typeof setInterval>;
   private recTimeStart?: number;
 
-  // eslint-disable-next-line no-useless-constructor
   constructor(
     @inject(TYPES.LicenseManager) private licenseManager: LicenseManager,
     private uiStateApplier: ElectronUiStateApplier
@@ -111,11 +111,22 @@ export default class ElectronUiDirector implements UiDirector {
       return;
     }
 
+    // const licenseData: License = {
+    //   key: 'B3BA2A2B37CEC3AD-7901A1A9-119DD0D3-F47EE96105D8A63D-66006A5406EAEFEB',
+    //   email: 'gamzabaw@gmail.com',
+    //   validated: true,
+    //   lastCheckedAt: new Date().getTime(),
+    // };
+    // this.licenseManager.storeLicense(licenseData);
+
     const license = this.licenseManager.retrieveLicense();
 
     const aboutHtmlPath = assetPathResolver('docs/about.html');
     const aboutContent = (await fs.promises.readFile(aboutHtmlPath, 'utf-8'))
-      .replace('__registration__', license ? 'Registered' : 'Unregistered')
+      .replace(
+        '__registration__',
+        license?.validated ? 'Registered' : 'Unregistered'
+      )
       .replace('__shortcut__', shortcutForDisplay(prefs.shortcut))
       .replace('__version__', curVersion);
 
