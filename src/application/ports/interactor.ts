@@ -5,7 +5,7 @@ import { Bounds, Point } from '@domain/models/screen';
 
 import { UiState } from '@application/models/ui';
 
-export interface ActionDispatcher {
+export interface UseCaseInteractor {
   initializeApp(): void;
   checkForUpdates(): void;
   downloadAndInstall(): void;

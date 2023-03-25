@@ -9,12 +9,12 @@ import { Preferences } from '@domain/models/preferences';
 import { Bounds, Point } from '@domain/models/screen';
 
 import { UiState } from '@application/models/ui';
-import { ActionDispatcher } from '@application/ports/action';
+import { UseCaseInteractor } from '@application/ports/interactor';
 
 @injectable()
-export default class ActionDispatcherForMain implements ActionDispatcher {
+export default class UseCaseInteractorForMain implements UseCaseInteractor {
   constructor(
-    @inject(TYPES.ActionDispatcher) private actionDispatcher: ActionDispatcher
+    @inject(TYPES.UseCaseInteractor) private interactor: UseCaseInteractor
   ) {
     ipcMain.on('disableCaptureMode', () => this.disableCaptureMode());
     ipcMain.on(
@@ -72,7 +72,7 @@ export default class ActionDispatcherForMain implements ActionDispatcher {
   }
 
   openCaptureFolder(): void {
-    this.actionDispatcher.openCaptureFolder();
+    this.interactor.openCaptureFolder();
   }
 
   enableCaptureMode(): void {
@@ -80,27 +80,27 @@ export default class ActionDispatcherForMain implements ActionDispatcher {
   }
 
   disableCaptureMode(): void {
-    this.actionDispatcher.disableCaptureMode();
+    this.interactor.disableCaptureMode();
   }
 
   changeCaptureOptions(options: CaptureOptions): void {
-    this.actionDispatcher.changeCaptureOptions(options);
+    this.interactor.changeCaptureOptions(options);
   }
 
   startTargetSelection(targetBounds: Bounds, cursorPosition: Point): void {
-    this.actionDispatcher.startTargetSelection(targetBounds, cursorPosition);
+    this.interactor.startTargetSelection(targetBounds, cursorPosition);
   }
 
   selectingTarget(targetBounds: Bounds, cursorPosition: Point): void {
-    this.actionDispatcher.selectingTarget(targetBounds, cursorPosition);
+    this.interactor.selectingTarget(targetBounds, cursorPosition);
   }
 
   finishTargetSelection(targetBounds: Bounds): void {
-    this.actionDispatcher.finishTargetSelection(targetBounds);
+    this.interactor.finishTargetSelection(targetBounds);
   }
 
   startCapture(): void {
-    this.actionDispatcher.startCapture();
+    this.interactor.startCapture();
   }
 
   startCaptureWithCurrentStates(): void {
@@ -116,14 +116,14 @@ export default class ActionDispatcherForMain implements ActionDispatcher {
   }
 
   getUiState(): UiState {
-    return this.actionDispatcher.getUiState();
+    return this.interactor.getUiState();
   }
 
   savePreferences(prefs: Preferences): Promise<Preferences> {
-    return this.actionDispatcher.savePreferences(prefs);
+    return this.interactor.savePreferences(prefs);
   }
 
   getLicense(): Promise<License | null> {
-    return this.actionDispatcher.getLicense();
+    return this.interactor.getLicense();
   }
 }

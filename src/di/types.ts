@@ -5,7 +5,7 @@ const TYPES = {
   UiStateApplier: Symbol.for('UiStateApplier'),
   ScreenRecorder: Symbol.for('ScreenRecorder'),
   RecorderSource: Symbol.for('RecorderSource'),
-  ActionDispatcher: Symbol.for('ActionDispatcher'),
+  UseCaseInteractor: Symbol.for('UseCaseInteractor'),
   PreferencesStore: Symbol.for('PreferencesStore'),
   AnalyticsTracker: Symbol.for('AnalyticsTracker'),
   PlatformApi: Symbol.for('PlatformApi'),

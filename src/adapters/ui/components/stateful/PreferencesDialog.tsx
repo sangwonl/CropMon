@@ -8,7 +8,7 @@ import { License } from '@domain/models/license';
 import { Preferences } from '@domain/models/preferences';
 
 import PrefsPanels from '@adapters/ui/components/stateless/PrefsPanels';
-import { useActionDispatcher } from '@adapters/ui/hooks/dispatcher';
+import { useUseCaseInteractor } from '@adapters/ui/hooks/dispatcher';
 import { usePlatformApi } from '@adapters/ui/hooks/platform';
 import { IPC_EVT_ON_CLOSE } from '@adapters/ui/widgets/preferences/shared';
 
@@ -18,7 +18,7 @@ interface PropTypes {
 }
 
 function PreferencesDialog({ version, preferences }: PropTypes) {
-  const dispatcher = useActionDispatcher();
+  const interactor = useUseCaseInteractor();
   const platformApi = usePlatformApi();
 
   const [prefs, setPrefs] = useState<Preferences>(preferences);
@@ -26,7 +26,7 @@ function PreferencesDialog({ version, preferences }: PropTypes) {
   const [recordHome, setRecordHome] = useState<string>(preferences.recordHome);
 
   useEffect(() => {
-    dispatcher.getLicense().then(setLicense);
+    interactor.getLicense().then(setLicense);
   }, []);
 
   const handleRecordHome = useCallback(() => {
@@ -37,7 +37,7 @@ function PreferencesDialog({ version, preferences }: PropTypes) {
   const handleRegister = useCallback((licenseKey: string) => {}, []);
 
   const handleSave = useCallback((newPrefs: Preferences) => {
-    dispatcher.savePreferences(newPrefs).then(setPrefs);
+    interactor.savePreferences(newPrefs).then(setPrefs);
   }, []);
 
   const handleClose = useCallback(() => {

@@ -9,7 +9,7 @@ import {
   MenuItemConstructorOptions,
 } from 'electron';
 
-import { ActionDispatcher } from '@application/ports/action';
+import { UseCaseInteractor } from '@application/ports/interactor';
 
 import TrayIconProvider from '@adapters/ui/widgets/tray/icon';
 
@@ -27,7 +27,7 @@ export default class AppTrayCore {
   isUpdatable = false;
 
   constructor(
-    private dispatcher: ActionDispatcher,
+    private dispatcher: UseCaseInteractor,
     private buildMenuTempl: any
   ) {
     this.iconProvider = new TrayIconProvider();

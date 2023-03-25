@@ -14,7 +14,7 @@ import CaptureCountdown from '@adapters/ui/components/stateless/CaptureCountdown
 import CaptureRecording from '@adapters/ui/components/stateless/CaptureRecording';
 import CaptureTargetingArea from '@adapters/ui/components/stateless/CaptureTargetingArea';
 import CaptureTargetingScreen from '@adapters/ui/components/stateless/CaptureTargetingScreen';
-import { useActionDispatcher } from '@adapters/ui/hooks/dispatcher';
+import { useUseCaseInteractor } from '@adapters/ui/hooks/dispatcher';
 import { useRootUiState } from '@adapters/ui/hooks/state';
 
 import styles from './CaptureOverlay.css';
@@ -35,7 +35,7 @@ interface PropTypes {
 function CaptureOverlay(props: PropTypes) {
   const { assignedScreenId } = props;
 
-  const dispatcher = useActionDispatcher();
+  const interactor = useUseCaseInteractor();
 
   const { controlPanel, captureOverlay, captureAreaColors } = useRootUiState();
   const assignedScreen = captureOverlay.screens[assignedScreenId.toString()];
@@ -100,27 +100,27 @@ function CaptureOverlay(props: PropTypes) {
   };
 
   const onSelectionStart = useCallback((cursorPosition: Point) => {
-    dispatcher.startTargetSelection(emptyBounds(), cursorPosition);
+    interactor.startTargetSelection(emptyBounds(), cursorPosition);
   }, []);
 
   const onSelectingTarget = useCallback(
     (bounds: Bounds, cursorPosition: Point) => {
-      dispatcher.selectingTarget(bounds, cursorPosition);
+      interactor.selectingTarget(bounds, cursorPosition);
     },
     []
   );
 
   const onSelectionFinish = useCallback(
     (bounds?: Bounds) => {
-      dispatcher.finishTargetSelection(bounds ?? screenBounds);
+      interactor.finishTargetSelection(bounds ?? screenBounds);
 
-      startCountdown(() => dispatcher.startCapture());
+      startCountdown(() => interactor.startCapture());
     },
     [controlPanel.captureMode, captureOverlay.showCountdown]
   );
 
   const onCaptureCancel = useCallback(() => {
-    dispatcher.disableCaptureMode();
+    interactor.disableCaptureMode();
   }, []);
 
   const composeOptions = useCallback(
@@ -141,14 +141,14 @@ function CaptureOverlay(props: PropTypes) {
 
   const onCaptureModeChange = useCallback(
     (mode: CaptureMode) => {
-      dispatcher.changeCaptureOptions(composeOptions(mode));
+      interactor.changeCaptureOptions(composeOptions(mode));
     },
     [controlPanel]
   );
 
   const onRecOptionsChange = useCallback(
     (recOpts: RecordOptions) => {
-      dispatcher.changeCaptureOptions(composeOptions(undefined, recOpts));
+      interactor.changeCaptureOptions(composeOptions(undefined, recOpts));
     },
     [controlPanel]
   );

@@ -6,7 +6,7 @@ import { Preferences } from '@domain/models/preferences';
 import { Bounds, Point } from '@domain/models/screen';
 
 import { UiState } from '@application/models/ui';
-import { ActionDispatcher } from '@application/ports/action';
+import { UseCaseInteractor } from '@application/ports/interactor';
 import ChangeCaptureOptionsUseCase from '@application/usecases/ChangeCaptureOptions';
 import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
 import DisableCaptureUseCase from '@application/usecases/DisableCapture';
@@ -30,7 +30,7 @@ import ToggleCaptureUseCase from '@application/usecases/ToggleCaptureUseCase';
 import UpdateAppUseCase from '@application/usecases/UpdateApp';
 
 @injectable()
-export default class ActionDispatcherCore implements ActionDispatcher {
+export default class UseCaseInteractorCore implements UseCaseInteractor {
   constructor(
     private initializeAppUseCase: InitializeAppUseCase,
     private quitAppUseCase: QuitAppUseCase,
