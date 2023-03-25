@@ -50,15 +50,6 @@ export default class WinAppTray implements AppTray {
         type: 'separator',
       },
       {
-        label: '&About',
-        click: () => this.core.onAbout(),
-      },
-      // NOTE: Hiding this item because of nothing in help page for now
-      // {
-      //   label: '&Help',
-      //   click: this.trayCore.onHelp,
-      // },
-      {
         label: '&Preferences',
         click: () => this.core.onPreferences(),
       },

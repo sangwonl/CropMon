@@ -7,7 +7,6 @@ export interface ActionDispatcher {
   initializeApp(): void;
   checkForUpdates(): void;
   downloadAndInstall(): void;
-  showAbout(): void;
   showHelp(): void;
   quitApplication(): void;
   openPreferences(): void;

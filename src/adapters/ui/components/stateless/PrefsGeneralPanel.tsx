@@ -24,7 +24,7 @@ import { Preferences } from '@domain/models/preferences';
 import styles from './PrefsTabPanels.css';
 
 type Props = {
-  initialPrefs: Preferences;
+  prefs: Preferences;
   onSave: (prefs: Preferences) => void;
   onCancel: () => void;
   selectedRecordHome: string;
@@ -35,28 +35,26 @@ type OptionType = string | number | boolean;
 const isChanged = (a: OptionType, b: OptionType) => a !== b;
 
 function PrefsGeneralPanel({
-  initialPrefs,
+  prefs,
   selectedRecordHome,
   onChooseRecordHome,
   onSave,
   onCancel,
 }: Props) {
   // General options
-  const [runAtStartup, setRunAtStartup] = useState<boolean>(
-    initialPrefs.runAtStartup
-  );
+  const [runAtStartup, setRunAtStartup] = useState<boolean>(prefs.runAtStartup);
   const [showCountdown, setShowCountdown] = useState<boolean>(
-    initialPrefs.showCountdown
+    prefs.showCountdown
   );
 
   // Output options
   const [recordHome, setRecordHome] = useState<string>(selectedRecordHome);
   const [openRecordHome, setOpenRecordHome] = useState<boolean>(
-    initialPrefs.openRecordHomeWhenRecordCompleted
+    prefs.openRecordHomeWhenRecordCompleted
   );
 
   // Shortcut options
-  const [shortcut, setShortcut] = useState<string>(initialPrefs.shortcut);
+  const [shortcut, setShortcut] = useState<string>(prefs.shortcut);
   const [shortcutFocused, setShortcutFocused] = useState<boolean>(false);
   const [shortcutValidated, setShortcutValidated] = useState<boolean>(true);
   const setShortcutKey = useCallback((s: string) => {
@@ -64,9 +62,9 @@ function PrefsGeneralPanel({
     setShortcut(s);
   }, []);
   const resetShortcut = useCallback(() => {
-    setShortcutValidated(validateShortcut(initialPrefs.shortcut));
-    setShortcut(initialPrefs.shortcut);
-  }, [initialPrefs.shortcut]);
+    setShortcutValidated(validateShortcut(prefs.shortcut));
+    setShortcut(prefs.shortcut);
+  }, [prefs.shortcut]);
   const handleShortcutKeyEvent = useCallback(
     (event: KeyboardEvent) => {
       const extracted = extractShortcut(event);
@@ -81,17 +79,17 @@ function PrefsGeneralPanel({
 
   // Dirty and saveability check
   const canSave = useCallback(() => {
-    const { openRecordHomeWhenRecordCompleted } = initialPrefs;
+    const { openRecordHomeWhenRecordCompleted } = prefs;
     return (
       shortcutValidated &&
-      (isChanged(initialPrefs.runAtStartup, runAtStartup) ||
-        isChanged(initialPrefs.showCountdown, showCountdown) ||
-        isChanged(initialPrefs.recordHome, recordHome) ||
+      (isChanged(prefs.runAtStartup, runAtStartup) ||
+        isChanged(prefs.showCountdown, showCountdown) ||
+        isChanged(prefs.recordHome, recordHome) ||
         isChanged(openRecordHomeWhenRecordCompleted, openRecordHome) ||
-        isChanged(initialPrefs.shortcut, shortcut))
+        isChanged(prefs.shortcut, shortcut))
     );
   }, [
-    initialPrefs,
+    prefs,
     runAtStartup,
     showCountdown,
     recordHome,
@@ -103,7 +101,7 @@ function PrefsGeneralPanel({
   // Save handler
   const handleSave = useCallback(() => {
     const newPrefs: Preferences = {
-      ...initialPrefs,
+      ...prefs,
       runAtStartup,
       showCountdown,
       recordHome,
@@ -112,7 +110,7 @@ function PrefsGeneralPanel({
     };
     onSave(newPrefs);
   }, [
-    initialPrefs,
+    prefs,
     onSave,
     runAtStartup,
     showCountdown,
@@ -123,12 +121,12 @@ function PrefsGeneralPanel({
 
   // Update states
   useEffect(() => {
-    setRunAtStartup(initialPrefs.runAtStartup);
-    setShowCountdown(initialPrefs.showCountdown);
+    setRunAtStartup(prefs.runAtStartup);
+    setShowCountdown(prefs.showCountdown);
     setRecordHome(selectedRecordHome);
-    setOpenRecordHome(initialPrefs.openRecordHomeWhenRecordCompleted);
-    setShortcutKey(initialPrefs.shortcut);
-  }, [initialPrefs, selectedRecordHome, setShortcutKey]);
+    setOpenRecordHome(prefs.openRecordHomeWhenRecordCompleted);
+    setShortcutKey(prefs.shortcut);
+  }, [prefs, selectedRecordHome, setShortcutKey]);
 
   return (
     <div className={styles.container}>
@@ -163,7 +161,7 @@ function PrefsGeneralPanel({
           </div>
         </fieldset>
         <fieldset>
-          <legend>Shortcut to start or stop capturing</legend>
+          <legend>Shortcut to start or stop recording</legend>
           <div className={styles.optionRow}>
             <div
               className={classNames(styles.shortcut, {
@@ -183,10 +181,9 @@ function PrefsGeneralPanel({
               />
               <span
                 className={classNames({
-                  [styles.shortcutCancelIcon]:
-                    shortcut !== initialPrefs.shortcut,
+                  [styles.shortcutCancelIcon]: shortcut !== prefs.shortcut,
                   [styles.shortcutCancelIconHidden]:
-                    shortcut === initialPrefs.shortcut,
+                    shortcut === prefs.shortcut,
                 })}
               >
                 Press <b>ESC</b> to reset
