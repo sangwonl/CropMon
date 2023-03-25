@@ -4,6 +4,8 @@ import { inject, injectable } from 'inversify';
 import TYPES from '@di/types';
 
 import { CaptureOptions } from '@domain/models/capture';
+import { License } from '@domain/models/license';
+import { Preferences } from '@domain/models/preferences';
 import { Bounds, Point } from '@domain/models/screen';
 
 import { UiState } from '@application/models/ui';
@@ -36,6 +38,12 @@ export default class ActionDispatcherForMain implements ActionDispatcher {
     });
     ipcMain.on('getUiState', (event) => {
       event.returnValue = this.getUiState();
+    });
+    ipcMain.on('savePreferences', async (event, prefs: Preferences) => {
+      event.returnValue = await this.savePreferences(prefs);
+    });
+    ipcMain.on('getLicense', async (event) => {
+      event.returnValue = await this.getLicense();
     });
   }
 
@@ -109,5 +117,13 @@ export default class ActionDispatcherForMain implements ActionDispatcher {
 
   getUiState(): UiState {
     return this.actionDispatcher.getUiState();
+  }
+
+  savePreferences(prefs: Preferences): Promise<Preferences> {
+    return this.actionDispatcher.savePreferences(prefs);
+  }
+
+  getLicense(): Promise<License | null> {
+    return this.actionDispatcher.getLicense();
   }
 }

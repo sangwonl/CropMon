@@ -1,4 +1,4 @@
-export type StaticPageModalOptions = {
+export type StaticPageDialogOptions = {
   markdown?: string;
   html?: string;
   width?: number;

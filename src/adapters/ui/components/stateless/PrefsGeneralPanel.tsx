@@ -1,7 +1,4 @@
-/* eslint-disable jsx-a11y/interactive-supports-focus */
 /* eslint-disable jsx-a11y/tabindex-no-positive */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 
 import classNames from 'classnames';
@@ -25,9 +22,9 @@ import styles from './PrefsTabPanels.css';
 
 type Props = {
   prefs: Preferences;
+  recordHome: string;
   onSave: (prefs: Preferences) => void;
   onCancel: () => void;
-  selectedRecordHome: string;
   onChooseRecordHome: () => void;
 };
 
@@ -36,7 +33,7 @@ const isChanged = (a: OptionType, b: OptionType) => a !== b;
 
 function PrefsGeneralPanel({
   prefs,
-  selectedRecordHome,
+  recordHome,
   onChooseRecordHome,
   onSave,
   onCancel,
@@ -48,7 +45,6 @@ function PrefsGeneralPanel({
   );
 
   // Output options
-  const [recordHome, setRecordHome] = useState<string>(selectedRecordHome);
   const [openRecordHome, setOpenRecordHome] = useState<boolean>(
     prefs.openRecordHomeWhenRecordCompleted
   );
@@ -74,7 +70,7 @@ function PrefsGeneralPanel({
         setShortcutKey(extracted);
       }
     },
-    [setShortcutKey, resetShortcut]
+    [resetShortcut]
   );
 
   // Dirty and saveability check
@@ -123,10 +119,9 @@ function PrefsGeneralPanel({
   useEffect(() => {
     setRunAtStartup(prefs.runAtStartup);
     setShowCountdown(prefs.showCountdown);
-    setRecordHome(selectedRecordHome);
     setOpenRecordHome(prefs.openRecordHomeWhenRecordCompleted);
     setShortcutKey(prefs.shortcut);
-  }, [prefs, selectedRecordHome, setShortcutKey]);
+  }, [prefs]);
 
   return (
     <div className={styles.container}>

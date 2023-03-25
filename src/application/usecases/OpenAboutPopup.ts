@@ -18,7 +18,7 @@ export default class OpenAboutPopupUseCase implements UseCase<void> {
   ) {}
 
   async execute() {
-    const prefs = await this.prefsRepo.fetchUserPreferences();
+    const prefs = await this.prefsRepo.fetchPreferences();
     await this.uiDirector.openAboutPageModal(prefs);
   }
 }

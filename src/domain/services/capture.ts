@@ -57,7 +57,7 @@ export default class CaptureSession {
       throw new CaptureOptionsNotPreparedException();
     }
 
-    const prefs = await this.prefsRepo.fetchUserPreferences();
+    const prefs = await this.prefsRepo.fetchPreferences();
     const { target, recordOptions } = this.curCaptureOptions;
 
     const newCaptureCtx = CaptureContext.create(prefs, target, recordOptions);
@@ -112,7 +112,7 @@ export default class CaptureSession {
   }
 
   public async shouldRevealRecordedFile(): Promise<boolean> {
-    const prefs = await this.prefsRepo.fetchUserPreferences();
+    const prefs = await this.prefsRepo.fetchPreferences();
     return (
       this.curCaptureStatus === CaptureStatus.FINISHED &&
       prefs.openRecordHomeWhenRecordCompleted

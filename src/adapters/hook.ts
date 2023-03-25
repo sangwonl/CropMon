@@ -87,7 +87,7 @@ export default class BuiltinHooks {
     await this.checkVersionUseCase.execute();
 
     this.uiDirector.refreshTrayState(
-      await this.prefsRepo.fetchUserPreferences()
+      await this.prefsRepo.fetchPreferences()
     );
 
     this.tracker.eventL('app-lifecycle', 'launch', getPlatform());
@@ -100,7 +100,7 @@ export default class BuiltinHooks {
 
   onAppUpdateChecked = async (args: HookArgsAppUpdateChecked) => {
     this.uiDirector.refreshTrayState(
-      await this.prefsRepo.fetchUserPreferences(),
+      await this.prefsRepo.fetchPreferences(),
       args.updateAvailable
     );
 
@@ -108,7 +108,7 @@ export default class BuiltinHooks {
   };
 
   onAppUpdated = async (_args: HookArgsAppUpdated) => {
-    await this.uiDirector.openReleaseNotesModal();
+    await this.uiDirector.openReleaseNotes();
   };
 
   onInitialPrefsLoaded = async (_args: HookArgsInitialPrefsLoaded) => {
@@ -130,7 +130,7 @@ export default class BuiltinHooks {
   onCaptureOptionsChanged = async (args: HookArgsCaptureOptionsChanged) => {
     await this.setupInSelectionShortcut(true, args.captureMode);
 
-    const prefs = await this.prefsRepo.fetchUserPreferences();
+    const prefs = await this.prefsRepo.fetchPreferences();
     this.tracker.eventL(
       'capture',
       'options-changed',
@@ -144,7 +144,7 @@ export default class BuiltinHooks {
   };
 
   onCaptureShortcutTriggered = async () => {
-    const prefs = await this.prefsRepo.fetchUserPreferences();
+    const prefs = await this.prefsRepo.fetchPreferences();
     this.tracker.eventL('capture', 'shortcut-triggered', prefs.shortcut);
   };
 
@@ -170,7 +170,7 @@ export default class BuiltinHooks {
     const { error } = args;
 
     await this.uiDirector.refreshTrayState(
-      await this.prefsRepo.fetchUserPreferences(),
+      await this.prefsRepo.fetchPreferences(),
       undefined,
       !error
     );
@@ -197,7 +197,7 @@ export default class BuiltinHooks {
 
   onCaptureFinishing = async (_args: HookArgsCaptureFinishing) => {
     await this.uiDirector.refreshTrayState(
-      await this.prefsRepo.fetchUserPreferences(),
+      await this.prefsRepo.fetchPreferences(),
       undefined,
       false
     );
@@ -242,7 +242,7 @@ export default class BuiltinHooks {
     mode?: CaptureMode,
     fmt?: OutputFormat
   ) => {
-    const prefs = await this.prefsRepo.fetchUserPreferences();
+    const prefs = await this.prefsRepo.fetchPreferences();
     const recOpts = this.prefsRepo.getRecOptionsFromPrefs(prefs);
     this.actionDispatcher.changeCaptureOptions({
       target: { mode: mode ?? prefs.captureMode },

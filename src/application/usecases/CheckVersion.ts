@@ -21,13 +21,13 @@ export default class CheckVersionUseCase implements UseCase<void> {
   ) {}
 
   async execute() {
-    const prefs = await this.prefsRepo.fetchUserPreferences();
+    const prefs = await this.prefsRepo.fetchPreferences();
     const oldVersion = prefs.version;
     const curVersion = this.appUpdater.getCurAppVersion();
 
     if (curVersion !== oldVersion) {
       prefs.version = curVersion;
-      await this.prefsRepo.updateUserPreference(prefs);
+      await this.prefsRepo.updatePreference(prefs);
     }
 
     if (semver.gt(curVersion, oldVersion)) {

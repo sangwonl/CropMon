@@ -24,7 +24,7 @@ export default class CaptureModeManager {
   ) {}
 
   async enableCaptureMode(captureMode: CaptureMode) {
-    const prefs = await this.prefsRepo.fetchUserPreferences();
+    const prefs = await this.prefsRepo.fetchPreferences();
 
     const micGranted =
       systemPreferences.getMediaAccessStatus('microphone') === 'granted';

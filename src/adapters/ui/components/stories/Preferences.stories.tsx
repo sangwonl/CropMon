@@ -5,7 +5,7 @@ import React from 'react';
 
 import { CaptureMode } from '@domain/models/common';
 
-import PreferencesDialog from '@adapters/ui/components/stateless/PreferencesDialog';
+import PreferencesDialog from '@adapters/ui/components/stateless/PrefsPanels';
 
 export default {
   title: 'Kropsaurus/Preferences',
@@ -30,7 +30,6 @@ const Template: ComponentStory<typeof PreferencesDialog> = (args) => (
 export const Default = Template.bind({});
 Default.args = {
   version: '0.9.5',
-  license: null,
   prefs: {
     initialLoaded: false,
     version: '0.0.1',
@@ -49,8 +48,8 @@ Default.args = {
       countdownBackground: '#efefef',
       countdownText: '#232323',
     },
+    license: null,
   },
-  selectedRecordHome: '/home/pineple/kropsaurus',
   onChooseRecordHome: () => {},
   onClose: () => {},
 };

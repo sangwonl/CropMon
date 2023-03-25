@@ -22,4 +22,5 @@ export type PathType =
 export interface PlatformApi {
   getPath(name: PathType): string;
   getCursorScreenPoint(): Point;
+  promptDirectory(defaultPath: string): Promise<string>;
 }

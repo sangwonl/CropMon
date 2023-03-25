@@ -2,6 +2,8 @@ import { ipcRenderer } from 'electron';
 import { injectable } from 'inversify';
 
 import { CaptureOptions } from '@domain/models/capture';
+import { License } from '@domain/models/license';
+import { Preferences } from '@domain/models/preferences';
 import { Bounds, Point } from '@domain/models/screen';
 
 import { UiState } from '@application/models/ui';
@@ -79,5 +81,13 @@ export default class ActionDispatcherForRenderer implements ActionDispatcher {
 
   getUiState(): UiState {
     return ipcRenderer.sendSync('getUiState');
+  }
+
+  savePreferences(prefs: Preferences): Promise<Preferences> {
+    return Promise.resolve(ipcRenderer.sendSync('savePreferences', prefs));
+  }
+
+  getLicense(): Promise<License | null> {
+    return Promise.resolve(ipcRenderer.sendSync('getLicense'));
   }
 }

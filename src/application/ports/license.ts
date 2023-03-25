@@ -5,6 +5,6 @@ import { License } from '@domain/models/license';
 // Usecase #3: 로컬에 저장된 라이센스 정보를 불러옴
 export interface LicenseManager {
   validateLicenseKey(key: string): Promise<License | null>;
-  storeLicense(license: License): boolean;
-  retrieveLicense(): License | null;
+  storeLicense(license: License): Promise<void>;
+  retrieveLicense(): Promise<License | null>;
 }

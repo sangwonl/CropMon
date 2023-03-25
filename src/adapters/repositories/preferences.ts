@@ -18,7 +18,7 @@ export default class PrefsRepositoryImpl implements PreferencesRepository {
     @inject(TYPES.PreferencesStore) private preferencesStore: PreferencesStore
   ) {}
 
-  async fetchUserPreferences(): Promise<Preferences> {
+  async fetchPreferences(): Promise<Preferences> {
     if (this.cachedUserPrefs === undefined) {
       // load pref from persistent storage
       // it returns new default one if no pref info in storage
@@ -34,7 +34,7 @@ export default class PrefsRepositoryImpl implements PreferencesRepository {
     return this.cachedUserPrefs;
   }
 
-  async updateUserPreference(newPrefs: Preferences): Promise<void> {
+  async updatePreference(newPrefs: Preferences): Promise<void> {
     const prevPrefs = this.cachedUserPrefs;
 
     await this.preferencesStore.savePreferences(newPrefs);

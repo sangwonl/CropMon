@@ -14,4 +14,10 @@ export default class PlatformApiForRenderer implements PlatformApi {
   getCursorScreenPoint(): Point {
     return ipcRenderer.sendSync('getCursorScreenPoint');
   }
+
+  promptDirectory(defaultPath: string): Promise<string> {
+    return Promise.resolve(
+      ipcRenderer.sendSync('promptDirectory', defaultPath)
+    );
+  }
 }
