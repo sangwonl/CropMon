@@ -1,29 +1,46 @@
-/* eslint-disable prettier/prettier */
-
 import { CaptureMode } from '@domain/models/common';
+import { License } from '@domain/models/license';
 import { Preferences } from '@domain/models/preferences';
 import { Screen } from '@domain/models/screen';
 
 export interface UiDirector {
   initialize(): void;
-  refreshTrayState(prefs: Preferences, updatable?: boolean, recording?: boolean): Promise<void>;
+  refreshTrayState(
+    prefs: Preferences,
+    updatable?: boolean,
+    recording?: boolean
+  ): Promise<void>;
   toggleRecordingTime(activate: boolean): void;
   quitApplication(): void;
-  openAboutPageModal(prefs: Preferences): Promise<void>;
   openReleaseNotesModal(): Promise<void>;
-  openHelpPageModal(): Promise<void>;
-  openPreferencesModal(preferences: Preferences, onSave: (updatedPrefs: Preferences) => void): Promise<void>;
-  enableCaptureMode(mode: CaptureMode, onActiveScreenBoundsChange: (screens: Screen[], screenCursorOn?: Screen) => void): void;
+  openPreferencesModal(
+    version: string,
+    preferences: Preferences,
+    license: License | null,
+    onSave: (updatedPrefs: Preferences) => void,
+    onRegister: (licenseKey: string) => License | null
+  ): Promise<void>;
+  enableCaptureMode(
+    mode: CaptureMode,
+    onActiveScreenBoundsChange: (
+      screens: Screen[],
+      screenCursorOn?: Screen
+    ) => void
+  ): void;
   disableCaptureMode(): void;
   startTargetSelection(): void;
   resetScreenBoundsDetector(): void;
   enableUserInteraction(): void;
   revealItemInFolder(path: string): void;
   revealFolder(path: string): void;
-  startDownloadAndInstall(onReady: () => void, onCancel: () => void, onQuitAndInstall: () => void): Promise<void>;
+  startDownloadAndInstall(
+    onReady: () => void,
+    onCancel: () => void,
+    onQuitAndInstall: () => void
+  ): Promise<void>;
   progressUpdateDownload(percent: number): void;
-  openPostProcessDialog(): Promise<boolean>
-  closePostProcessDialog(): void
+  openPostProcessDialog(): Promise<boolean>;
+  closePostProcessDialog(): void;
   progressPostProcess(percent: number): void;
   updatePostProcessMsg(message: string): void;
 }

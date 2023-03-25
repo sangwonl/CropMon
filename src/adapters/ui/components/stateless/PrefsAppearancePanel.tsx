@@ -13,7 +13,7 @@ import ColorPalette from '@adapters/ui/components/stateless/ColorPalette';
 import styles from './PrefsTabPanels.css';
 
 type Props = {
-  initialPrefs: Preferences;
+  prefs: Preferences;
   onSave: (prefs: Preferences) => void;
   onCancel: () => void;
 };
@@ -21,25 +21,25 @@ type Props = {
 type OptionType = string | number | boolean;
 const isChanged = (a: OptionType, b: OptionType) => a !== b;
 
-function PrefsAppearancesPanel({ initialPrefs, onSave, onCancel }: Props) {
+function PrefsAppearancesPanel({ prefs, onSave, onCancel }: Props) {
   const [colorSelectingBg, setColorSelectingBg] = useState(
-    initialPrefs.colors.selectingBackground
+    prefs.colors.selectingBackground
   );
 
   const [colorSelectingText, setColorSelectingText] = useState(
-    initialPrefs.colors.selectingText
+    prefs.colors.selectingText
   );
 
   const [colorCountdownBg, setColorCountdownBg] = useState(
-    initialPrefs.colors.countdownBackground
+    prefs.colors.countdownBackground
   );
 
   const [colorCountdownText, setColorCountdownText] = useState(
-    initialPrefs.colors.countdownText
+    prefs.colors.countdownText
   );
 
   const canSave = useCallback(() => {
-    const { colors: initialColors } = initialPrefs;
+    const { colors: initialColors } = prefs;
     return (
       isChanged(initialColors.selectingBackground, colorSelectingBg) ||
       isChanged(initialColors.selectingText, colorSelectingText) ||
@@ -51,12 +51,12 @@ function PrefsAppearancesPanel({ initialPrefs, onSave, onCancel }: Props) {
     colorCountdownText,
     colorSelectingBg,
     colorSelectingText,
-    initialPrefs,
+    prefs,
   ]);
 
   const handleSave = useCallback(() => {
     const newPrefs: Preferences = {
-      ...initialPrefs,
+      ...prefs,
       colors: {
         selectingBackground: colorSelectingBg,
         selectingText: colorSelectingText,
@@ -70,7 +70,7 @@ function PrefsAppearancesPanel({ initialPrefs, onSave, onCancel }: Props) {
     colorCountdownText,
     colorSelectingBg,
     colorSelectingText,
-    initialPrefs,
+    prefs,
     onSave,
   ]);
 

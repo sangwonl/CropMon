@@ -36,14 +36,6 @@ export default class AppTrayCore {
     this.tray.setToolTip(TOOLTIP_GREETING);
   }
 
-  onAbout() {
-    this.dispatcher.showAbout();
-  }
-
-  onHelp() {
-    this.dispatcher.showHelp();
-  }
-
   onCheckForUpdates() {
     this.dispatcher.checkForUpdates();
   }

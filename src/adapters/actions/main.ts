@@ -51,10 +51,6 @@ export default class ActionDispatcherForMain implements ActionDispatcher {
     throw new Error('Method not implemented.');
   }
 
-  showAbout(): void {
-    throw new Error('Method not implemented.');
-  }
-
   showHelp(): void {
     throw new Error('Method not implemented.');
   }

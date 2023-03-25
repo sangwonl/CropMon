@@ -30,28 +30,12 @@ HtmlPage.args = {
   html: '<p>The best handy screen recorder, <b>Kropsaurus</b></p>',
 };
 
-export const UnregisteredAboutPage = AsyncTemplate.bind({});
-UnregisteredAboutPage.loaders = [
+export const ReleaseNotePage = AsyncTemplate.bind({});
+ReleaseNotePage.loaders = [
   async () => {
-    const html = (await (await fetch('assets/docs/about.html')).text())
-      .replace('__registration__', 'Unregistered')
-      .replace('__shortcut__', 'Cmd + Shift + Enter')
-      .replace('__version__', '1.0.0');
+    const content = await (await fetch('assets/docs/relnote.md')).text();
     return {
-      html,
-    };
-  },
-];
-
-export const RegisteredAboutPage = AsyncTemplate.bind({});
-RegisteredAboutPage.loaders = [
-  async () => {
-    const html = (await (await fetch('assets/docs/about.html')).text())
-      .replace('__registration__', 'Registered')
-      .replace('__shortcut__', 'Cmd + Shift + Enter')
-      .replace('__version__', '1.0.0');
-    return {
-      html,
+      markdown: content,
     };
   },
 ];

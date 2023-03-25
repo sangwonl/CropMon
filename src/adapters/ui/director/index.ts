@@ -1,13 +1,12 @@
 import fs from 'fs';
 
 import { app, shell } from 'electron';
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 
 import { assetPathResolver } from '@utils/asset';
 import { getAllScreens, getScreenCursorOn } from '@utils/bounds';
 import { getTimeInSeconds } from '@utils/date';
 import { isMac } from '@utils/process';
-import { shortcutForDisplay } from '@utils/shortcut';
 
 import diContainer from '@di/containers';
 import TYPES from '@di/types';
@@ -18,7 +17,6 @@ import { Preferences } from '@domain/models/preferences';
 import { Screen } from '@domain/models/screen';
 
 import { UiDirector } from '@application/ports/director';
-import { LicenseManager } from '@application/ports/license';
 import { AppTray } from '@application/ports/tray';
 
 import ElectronUiStateApplier from '@adapters/state';
@@ -27,15 +25,11 @@ import PreferencesModal from '@adapters/ui/widgets/preferences';
 import ProgressDialog from '@adapters/ui/widgets/progressdialog';
 import StaticPageModal from '@adapters/ui/widgets/staticpage';
 
-import { version as curVersion } from '../../../package.json';
-
 @injectable()
 export default class ElectronUiDirector implements UiDirector {
   private appTray?: AppTray;
   private captureOverlay?: CaptureOverlayWrap;
 
-  private aboutModal?: StaticPageModal;
-  private helpModal?: StaticPageModal;
   private relNoteModal?: StaticPageModal;
   private prefsModal?: PreferencesModal;
   private updateProgressDialog?: ProgressDialog;
@@ -45,10 +39,7 @@ export default class ElectronUiDirector implements UiDirector {
   private recTimeHandle?: ReturnType<typeof setInterval>;
   private recTimeStart?: number;
 
-  constructor(
-    @inject(TYPES.LicenseManager) private licenseManager: LicenseManager,
-    private uiStateApplier: ElectronUiStateApplier
-  ) {}
+  constructor(private uiStateApplier: ElectronUiStateApplier) {}
 
   initialize(): void {
     this.appTray = diContainer.get<AppTray>(TYPES.AppTray);
@@ -105,42 +96,6 @@ export default class ElectronUiDirector implements UiDirector {
     app.quit();
   }
 
-  async openAboutPageModal(prefs: Preferences): Promise<void> {
-    if (this.aboutModal) {
-      this.aboutModal.focus();
-      return;
-    }
-
-    // const licenseData: License = {
-    //   key: 'B3BA2A2B37CEC3AD-7901A1A9-119DD0D3-F47EE96105D8A63D-66006A5406EAEFEB',
-    //   email: 'gamzabaw@gmail.com',
-    //   validated: true,
-    //   lastCheckedAt: new Date().getTime(),
-    // };
-    // this.licenseManager.storeLicense(licenseData);
-
-    const license = this.licenseManager.retrieveLicense();
-
-    const aboutHtmlPath = assetPathResolver('docs/about.html');
-    const aboutContent = (await fs.promises.readFile(aboutHtmlPath, 'utf-8'))
-      .replace(
-        '__registration__',
-        license?.validated ? 'Registered' : 'Unregistered'
-      )
-      .replace('__shortcut__', shortcutForDisplay(prefs.shortcut))
-      .replace('__version__', curVersion);
-
-    this.aboutModal = StaticPageModal.create({
-      width: 300,
-      height: 240,
-      html: aboutContent,
-    });
-
-    await this.aboutModal.doModal();
-
-    this.aboutModal = undefined;
-  }
-
   async openReleaseNotesModal(): Promise<void> {
     if (this.relNoteModal) {
       this.relNoteModal.focus();
@@ -161,40 +116,25 @@ export default class ElectronUiDirector implements UiDirector {
     this.relNoteModal = undefined;
   }
 
-  async openHelpPageModal(): Promise<void> {
-    if (this.helpModal) {
-      this.helpModal.focus();
-      return;
-    }
-
-    const helpHtmlPath = assetPathResolver('docs/help.html');
-    const helpContent = (
-      await fs.promises.readFile(helpHtmlPath, 'utf-8')
-    ).replace('__assets__', assetPathResolver(''));
-
-    this.helpModal = StaticPageModal.create({
-      width: 600,
-      height: 800,
-      html: helpContent,
-    });
-
-    await this.helpModal.doModal();
-
-    this.helpModal = undefined;
-  }
-
   async openPreferencesModal(
+    version: string,
     preferences: Preferences,
-    onSave: (updatedPrefs: Preferences) => void
+    license: License,
+    onSave: (updatedPrefs: Preferences) => void,
+    onRegister: (licenseKey: string) => License
   ): Promise<void> {
     if (this.prefsModal) {
       this.prefsModal.focus();
       return;
     }
 
-    this.prefsModal = PreferencesModal.create({ preferences });
+    this.prefsModal = PreferencesModal.create({
+      version,
+      preferences,
+      license,
+    });
 
-    await this.prefsModal.doModal(onSave);
+    await this.prefsModal.doModal(onSave, onRegister);
 
     this.prefsModal = undefined;
   }

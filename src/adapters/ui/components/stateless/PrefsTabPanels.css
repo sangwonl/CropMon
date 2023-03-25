@@ -27,6 +27,7 @@
   font-weight: 400;
   color: #4c4c4c;
   padding: 0px 6px;
+  cursor: default;
 }
 
 .optionRow {
@@ -188,4 +189,120 @@
 :global(.react-colorful__alpha-pointer) {
   width: 14px !important;
   border-radius: 2px !important;
+}
+
+/* about tab */
+.aboutContainer {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  font-family: Roboto;
+  background-color: #fcfcfc;
+  padding: 16px 20px;
+}
+
+.aboutAppInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.aboutAppTitle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: default;
+}
+
+.aboutAppInfo h2 {
+  margin: 0px;
+  font-size: 28px;
+}
+
+.aboutVersion {
+  margin-left: 12px;
+  font-size: 12px;
+  font-weight: 400;
+  background-color: #6f9f6f;
+  border-radius: 4px;
+  color: white;
+  padding: 4px 8px;
+  align-items: flex-start;
+  cursor: default;
+}
+
+.aboutLicense {
+  margin: 0px;
+  font-size: 16px;
+  font-weight: 200;
+  cursor: default;
+}
+
+.aboutLicenseUnregistered {
+  color: red;
+}
+
+.aboutItems {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 24px;
+}
+
+.aboutItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.aboutItem h2 {
+  margin: 0px;
+  font-size: 17px;
+  font-weight: 500;
+  color: #333333;
+  cursor: default;
+}
+
+.aboutShortcutKey {
+  align-self: flex-start;
+  font-size: 12px;
+  font-weight: 400;
+  color: #555555;
+  background-color: #dddddd;
+  padding: 8px 10px;
+  border-radius: 2px;
+  cursor: default;
+}
+
+.aboutShortcutPlus {
+  margin: 0px 4px;
+  color: #5c5c5c;
+  cursor: default;
+}
+
+.aboutRegDesc:first-of-type {
+  margin-top: 14px;
+}
+
+.aboutRegDesc {
+  margin: 6px 0px;
+  font-size: 14px;
+  cursor: default;
+}
+
+.aboutRegLink {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.aboutCopyright {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.aboutCopyright h2 {
+  font-size: 14px;
+  font-weight: 500;
+  cursor: default;
 }

@@ -17,7 +17,7 @@ export default {
 const Template: ComponentStory<typeof PreferencesDialog> = (args) => (
   <div
     style={{
-      width: 600,
+      width: 700,
       height: 500,
       backgroundColor: '#ffffff',
       border: '1px solid #000',
@@ -29,7 +29,9 @@ const Template: ComponentStory<typeof PreferencesDialog> = (args) => (
 
 export const Default = Template.bind({});
 Default.args = {
-  origPrefs: {
+  version: '0.9.5',
+  license: null,
+  prefs: {
     initialLoaded: false,
     version: '0.0.1',
     runAtStartup: true,
