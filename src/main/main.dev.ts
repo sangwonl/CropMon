@@ -19,11 +19,11 @@ import diContainer from '@di/containers';
 import '@di/containers/main';
 import TYPES from '@di/types';
 
-import { ActionDispatcher } from '@application/ports/action';
+import { UseCaseInteractor } from '@application/ports/interactor';
 import { PlatformApi } from '@application/ports/platform';
 
-import ActionDispatcherForMain from '@adapters/actions/main';
 import BuiltinHooks from '@adapters/hook';
+import UseCaseInteractorForMain from '@adapters/interactor/main';
 
 import initializeDevEnv from './devenv';
 
@@ -31,9 +31,9 @@ const start = async () => {
   initializeDevEnv();
 
   diContainer.get<PlatformApi>(TYPES.PlatformApi);
-  diContainer.get(ActionDispatcherForMain);
+  diContainer.get(UseCaseInteractorForMain);
   diContainer.get(BuiltinHooks);
-  diContainer.get<ActionDispatcher>(TYPES.ActionDispatcher).initializeApp();
+  diContainer.get<UseCaseInteractor>(TYPES.UseCaseInteractor).initializeApp();
 };
 
 const instanceLock = app.requestSingleInstanceLock();

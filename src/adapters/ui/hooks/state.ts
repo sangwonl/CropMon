@@ -3,7 +3,7 @@ import { useState, useRef, useEffect, SetStateAction, Dispatch } from 'react';
 
 import { UiState } from '@application/models/ui';
 
-import { useActionDispatcher } from '@adapters/ui/hooks/dispatcher';
+import { useUseCaseInteractor } from '@adapters/ui/hooks/dispatcher';
 
 export const useStateWithGetter = <S>(
   initialState: S
@@ -18,10 +18,8 @@ export const useStateWithGetter = <S>(
 };
 
 export const useRootUiState = (): UiState => {
-  const actionDispatcher = useActionDispatcher();
-  const [uiState, setUiState] = useState<UiState>(
-    actionDispatcher.getUiState()
-  );
+  const interactor = useUseCaseInteractor();
+  const [uiState, setUiState] = useState<UiState>(interactor.getUiState());
 
   useEffect(() => {
     const handleSyncStates = (_event: IpcRendererEvent, newState: UiState) => {

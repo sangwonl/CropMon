@@ -7,10 +7,10 @@ import { Preferences } from '@domain/models/preferences';
 import { Bounds, Point } from '@domain/models/screen';
 
 import { UiState } from '@application/models/ui';
-import { ActionDispatcher } from '@application/ports/action';
+import { UseCaseInteractor } from '@application/ports/interactor';
 
 @injectable()
-export default class ActionDispatcherForRenderer implements ActionDispatcher {
+export default class UseCaseInteractorForRenderer implements UseCaseInteractor {
   initializeApp(): void {
     throw new Error('Method not implemented.');
   }

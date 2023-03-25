@@ -9,9 +9,9 @@ import { PreferencesRepository } from '@domain/repositories/preferences';
 import CaptureSession from '@domain/services/capture';
 import { RecorderSource, ScreenRecorder } from '@domain/services/recorder';
 
-import ActionDispatcherCore from '@application/controllers/dispatcher';
-import { ActionDispatcher } from '@application/ports/action';
+import UseCaseInteractorCore from '@application/controllers/dispatcher';
 import { UiDirector } from '@application/ports/director';
+import { UseCaseInteractor } from '@application/ports/interactor';
 import { LicenseManager } from '@application/ports/license';
 import { PlatformApi } from '@application/ports/platform';
 import { PreferencesStore } from '@application/ports/preferences';
@@ -45,9 +45,9 @@ import StartSelectionUseCase from '@application/usecases/StartSelection';
 import ToggleCaptureUseCase from '@application/usecases/ToggleCaptureUseCase';
 import UpdateAppUseCase from '@application/usecases/UpdateApp';
 
-import ActionDispatcherForMain from '@adapters/actions/main';
 import SecureStore from '@adapters/crypto';
 import BuiltinHooks from '@adapters/hook';
+import UseCaseInteractorForMain from '@adapters/interactor/main';
 import SimpleLicenseManager from '@adapters/license';
 import PlatformApiForMain from '@adapters/platform/main';
 import ElectronPreferencesStore from '@adapters/preferences';
@@ -120,12 +120,12 @@ diContainer
   .inSingletonScope();
 
 diContainer
-  .bind<ActionDispatcher>(TYPES.ActionDispatcher)
-  .to(ActionDispatcherCore)
+  .bind<UseCaseInteractor>(TYPES.UseCaseInteractor)
+  .to(UseCaseInteractorCore)
   .inSingletonScope();
 
 diContainer
-  .bind<ActionDispatcherForMain>(ActionDispatcherForMain)
+  .bind<UseCaseInteractorForMain>(UseCaseInteractorForMain)
   .toSelf()
   .inSingletonScope();
 

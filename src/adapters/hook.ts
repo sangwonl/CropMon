@@ -27,8 +27,8 @@ import {
 } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
 
-import { ActionDispatcher } from '@application/ports/action';
 import { UiDirector } from '@application/ports/director';
+import { UseCaseInteractor } from '@application/ports/interactor';
 import { AnalyticsTracker } from '@application/ports/tracker';
 import HookManager, {
   HookArgsAppUpdateChecked,
@@ -59,7 +59,7 @@ export default class BuiltinHooks {
     @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository,
     @inject(TYPES.UiDirector) private uiDirector: UiDirector,
     @inject(TYPES.AnalyticsTracker) private tracker: AnalyticsTracker,
-    @inject(TYPES.ActionDispatcher) private actionDispatcher: ActionDispatcher,
+    @inject(TYPES.UseCaseInteractor) private interactor: UseCaseInteractor,
     private hookManager: HookManager,
     private checkUpdateUseCase: CheckUpdateUseCase,
     private checkVersionUseCase: CheckVersionUseCase
@@ -244,7 +244,7 @@ export default class BuiltinHooks {
   ) => {
     const prefs = await this.prefsRepo.fetchPreferences();
     const recOpts = this.prefsRepo.getRecOptionsFromPrefs(prefs);
-    this.actionDispatcher.changeCaptureOptions({
+    this.interactor.changeCaptureOptions({
       target: { mode: mode ?? prefs.captureMode },
       recordOptions: {
         ...recOpts,
@@ -257,12 +257,12 @@ export default class BuiltinHooks {
     if (enable) {
       if (captureMode === CaptureMode.SCREEN) {
         globalShortcut.register(SHORTCUT_ENTER, () =>
-          this.actionDispatcher.startCaptureWithCurrentStates()
+          this.interactor.startCaptureWithCurrentStates()
         );
       }
 
       globalShortcut.register(SHORTCUT_ESCAPE, () =>
-        this.actionDispatcher.disableCaptureMode()
+        this.interactor.disableCaptureMode()
       );
 
       globalShortcut.register(SHORTCUT_CAPTURE_MODE_SCREEN, () =>
@@ -302,7 +302,7 @@ export default class BuiltinHooks {
       }
       globalShortcut.register(
         newPrefs.shortcut.replace(/Win|Cmd/, 'Meta'),
-        this.actionDispatcher.onCaptureToggleShortcut
+        this.interactor.onCaptureToggleShortcut
       );
     }
   };

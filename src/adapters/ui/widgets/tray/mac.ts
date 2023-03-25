@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { ActionDispatcher } from '@application/ports/action';
+import { UseCaseInteractor } from '@application/ports/interactor';
 import { AppTray } from '@application/ports/tray';
 
 import AppTrayCore from '@adapters/ui/widgets/tray/base';
@@ -13,7 +13,7 @@ export default class MacAppTray implements AppTray {
   private core: AppTrayCore;
 
   constructor(
-    @inject(TYPES.ActionDispatcher) private dispatcher: ActionDispatcher
+    @inject(TYPES.UseCaseInteractor) private dispatcher: UseCaseInteractor
   ) {
     this.core = new AppTrayCore(
       this.dispatcher,
