@@ -20,6 +20,7 @@ export type Preferences = {
   outputFormat: OutputFormat;
   captureMode: CaptureMode;
   colors: AppearancesColors;
+  license: string | null;
 };
 
 export const DEFAULT_APPEAR_COLORS: AppearancesColors = {

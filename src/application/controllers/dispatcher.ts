@@ -1,6 +1,8 @@
 import { injectable } from 'inversify';
 
 import { CaptureOptions } from '@domain/models/capture';
+import { License } from '@domain/models/license';
+import { Preferences } from '@domain/models/preferences';
 import { Bounds, Point } from '@domain/models/screen';
 
 import { UiState } from '@application/models/ui';
@@ -11,6 +13,7 @@ import DisableCaptureUseCase from '@application/usecases/DisableCapture';
 import EnableCaptureUseCase from '@application/usecases/EnableCapture';
 import FinishCaptureUseCase from '@application/usecases/FinishCapture';
 import FinishSelectionUseCase from '@application/usecases/FinishSelection';
+import GetLicenseUseCase from '@application/usecases/GetLicenseUseCase';
 import GetUiStateUseCase from '@application/usecases/GetUiStateUseCase';
 import InitializeAppUseCase from '@application/usecases/InitializeApp';
 import OpenAboutPopupUseCase from '@application/usecases/OpenAboutPopup';
@@ -18,6 +21,7 @@ import OpenCaptureFolderUseCase from '@application/usecases/OpenCaptureFolder';
 import OpenHelpPopupUseCase from '@application/usecases/OpenHelpPopup';
 import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
 import QuitAppUseCase from '@application/usecases/QuitApp';
+import SavePrefsUseCase from '@application/usecases/SavePrefsUseCase';
 import SelectingTargetUseCase from '@application/usecases/SelectingTarget';
 import StartCaptureUseCase from '@application/usecases/StartCapture';
 import StartCaptureAsIsUseCase from '@application/usecases/StartCaptureAsIs';
@@ -46,7 +50,9 @@ export default class ActionDispatcherCore implements ActionDispatcher {
     private startCaptureUseCase: StartCaptureUseCase,
     private finishCaptureUseCase: FinishCaptureUseCase,
     private toggleCaptureUseCase: ToggleCaptureUseCase,
-    private getUiStateUseCase: GetUiStateUseCase
+    private getUiStateUseCase: GetUiStateUseCase,
+    private savePrefsUseCase: SavePrefsUseCase,
+    private getLicenseUseCase: GetLicenseUseCase
   ) {}
 
   initializeApp = () => {
@@ -133,4 +139,14 @@ export default class ActionDispatcherCore implements ActionDispatcher {
     const ouptput = this.getUiStateUseCase.execute();
     return ouptput.uiState;
   };
+
+  async savePreferences(prefs: Preferences): Promise<Preferences> {
+    const output = await this.savePrefsUseCase.execute({ prefs });
+    return output.prefs;
+  }
+
+  async getLicense(): Promise<License | null> {
+    const output = await this.getLicenseUseCase.execute();
+    return output.license;
+  }
 }

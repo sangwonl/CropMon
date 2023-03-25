@@ -5,21 +5,15 @@ import { BrowserWindow } from 'electron';
 import { assetPathResolver } from '@utils/asset';
 import { isDebugMode } from '@utils/process';
 
-import { StaticPageModalOptions } from '@adapters/ui/widgets/staticpage/shared';
+import { StaticPageDialogOptions } from '@adapters/ui/widgets/staticpage/shared';
 import { WidgetType } from '@adapters/ui/widgets/types';
 import Widget from '@adapters/ui/widgets/widget';
 
-export default class StaticPageModal extends Widget {
-  private closeResolver?: any;
-
-  private constructor(options: StaticPageModalOptions) {
+export default class StaticPageDialog extends Widget {
+  private constructor(options: StaticPageDialogOptions) {
     super(WidgetType.STATIC_PAGE_POPUP, options);
 
     this.window.loadURL(`file://${__dirname}/../staticpage/index.html`);
-
-    this.window.on('close', () => {
-      this.closeResolver?.();
-    });
   }
 
   protected createWindow({ width, height }: any): BrowserWindow {
@@ -40,22 +34,7 @@ export default class StaticPageModal extends Widget {
     });
   }
 
-  private async openAsModal(): Promise<void> {
-    this.window.webContents.on('did-finish-load', () => {
-      this.show();
-      this.focus();
-    });
-
-    return new Promise((resolve) => {
-      this.closeResolver = resolve;
-    });
-  }
-
-  async doModal(): Promise<void> {
-    await this.openAsModal();
-  }
-
-  static create(options: StaticPageModalOptions): StaticPageModal {
-    return new StaticPageModal(options);
+  static create(options: StaticPageDialogOptions): StaticPageDialog {
+    return new StaticPageDialog(options);
   }
 }

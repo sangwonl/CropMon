@@ -2,19 +2,22 @@
 import classNames from 'classnames';
 import React, { useCallback } from 'react';
 
+import { shortcutForDisplay } from '@utils/shortcut';
+
 import { License } from '@domain/models/license';
+import { Preferences } from '@domain/models/preferences';
 
 import styles from './PrefsTabPanels.css';
 
 type Props = {
   version: string;
+  prefs: Preferences;
   license: License | null;
-  shortcut: string;
   onRegister: (licenseKey: string) => void;
 };
 
 function mapShortcutKeys(shortcut: string) {
-  const keys = shortcut.split('+');
+  const keys = shortcutForDisplay(shortcut).split('+');
   return keys.map((k, i) => (
     <>
       <span className={styles.aboutShortcutKey}>{k}</span>
@@ -25,7 +28,9 @@ function mapShortcutKeys(shortcut: string) {
   ));
 }
 
-function PrefsAboutPanel({ license, version, shortcut, onRegister }: Props) {
+function PrefsAboutPanel({ version, prefs, license, onRegister }: Props) {
+  const { shortcut } = prefs;
+
   const handlePurchaseClick = useCallback(() => {
     window.open('https://kropsaurus.pineple.com', '_blank');
   }, []);

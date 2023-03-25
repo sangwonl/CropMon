@@ -21,17 +21,17 @@ import { AppTray } from '@application/ports/tray';
 
 import ElectronUiStateApplier from '@adapters/state';
 import CaptureOverlayWrap from '@adapters/ui/director/overlay';
-import PreferencesModal from '@adapters/ui/widgets/preferences';
+import PreferencesDialog from '@adapters/ui/widgets/preferences';
 import ProgressDialog from '@adapters/ui/widgets/progressdialog';
-import StaticPageModal from '@adapters/ui/widgets/staticpage';
+import StaticPageDialog from '@adapters/ui/widgets/staticpage';
 
 @injectable()
 export default class ElectronUiDirector implements UiDirector {
   private appTray?: AppTray;
   private captureOverlay?: CaptureOverlayWrap;
 
-  private relNoteModal?: StaticPageModal;
-  private prefsModal?: PreferencesModal;
+  private relNoteDialog?: StaticPageDialog;
+  private prefsDialog?: PreferencesDialog;
   private updateProgressDialog?: ProgressDialog;
   private postProcessDialog?: ProgressDialog;
 
@@ -96,47 +96,36 @@ export default class ElectronUiDirector implements UiDirector {
     app.quit();
   }
 
-  async openReleaseNotesModal(): Promise<void> {
-    if (this.relNoteModal) {
-      this.relNoteModal.focus();
+  async openReleaseNotes(): Promise<void> {
+    if (this.relNoteDialog && !this.relNoteDialog.isDestroyed()) {
+      this.relNoteDialog.show();
       return;
     }
 
     const relNotePath = assetPathResolver('docs/relnote.md');
     const relNoteContent = await fs.promises.readFile(relNotePath, 'utf-8');
 
-    this.relNoteModal = StaticPageModal.create({
+    this.relNoteDialog = StaticPageDialog.create({
       width: 440,
       height: 480,
       markdown: relNoteContent,
     });
 
-    await this.relNoteModal.doModal();
-
-    this.relNoteModal = undefined;
+    this.relNoteDialog.open();
   }
 
-  async openPreferencesModal(
+  async openPreferences(
     version: string,
-    preferences: Preferences,
-    license: License,
-    onSave: (updatedPrefs: Preferences) => void,
-    onRegister: (licenseKey: string) => License
+    preferences: Preferences
   ): Promise<void> {
-    if (this.prefsModal) {
-      this.prefsModal.focus();
+    if (this.prefsDialog && !this.prefsDialog.isDestroyed()) {
+      this.prefsDialog.show();
       return;
     }
 
-    this.prefsModal = PreferencesModal.create({
-      version,
-      preferences,
-      license,
-    });
+    this.prefsDialog = PreferencesDialog.create({ version, preferences });
 
-    await this.prefsModal.doModal(onSave, onRegister);
-
-    this.prefsModal = undefined;
+    this.prefsDialog.open();
   }
 
   enableCaptureMode(

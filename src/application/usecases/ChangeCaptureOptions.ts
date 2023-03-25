@@ -30,7 +30,7 @@ export default class ChangeCaptureOptionsUseCase
   async execute(input: ChangeCaptureOptionsUseCaseInput) {
     const { captureOptions: options } = input;
 
-    const prefs = await this.prefsRepo.fetchUserPreferences();
+    const prefs = await this.prefsRepo.fetchPreferences();
 
     if (prefs.captureMode !== options.target.mode) {
       this.captureModeManager.enableCaptureMode(options.target.mode);
@@ -39,7 +39,7 @@ export default class ChangeCaptureOptionsUseCase
 
     this.prefsRepo.applyRecOptionsToPrefs(prefs, options.recordOptions);
 
-    await this.prefsRepo.updateUserPreference(prefs);
+    await this.prefsRepo.updatePreference(prefs);
 
     this.stateManager.updateUiState((state: UiState): UiState => {
       return {

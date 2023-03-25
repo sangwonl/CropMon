@@ -31,6 +31,13 @@ export default abstract class Widget {
     return this.window.webContents;
   }
 
+  open() {
+    this.window.webContents.on('did-finish-load', () => {
+      this.show();
+      this.focus();
+    });
+  }
+
   show() {
     this.window.show();
   }
@@ -53,6 +60,10 @@ export default abstract class Widget {
 
   destroy() {
     this.window.destroy();
+  }
+
+  isDestroyed(): boolean {
+    return this.window.isDestroyed();
   }
 
   setIgnoreMouseEvents(ignore: boolean) {

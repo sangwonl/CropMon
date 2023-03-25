@@ -8,13 +8,13 @@ import PrefsAppearancesTabPanel from '@adapters/ui/components/stateless/PrefsApp
 import PrefsGeneralPanel from '@adapters/ui/components/stateless/PrefsGeneralPanel';
 import SideTabs, { TabItem } from '@adapters/ui/components/stateless/SideTabs';
 
-import styles from './PreferencesDialog.css';
+import styles from './PrefsPanels.css';
 
 type Props = {
   version: string;
-  license: License | null;
   prefs: Preferences;
-  selectedRecordHome: string;
+  license: License | null;
+  recordHome: string;
   onChooseRecordHome: () => void;
   onRegister: (licenseKey: string) => void;
   onSave: (preferences: Preferences) => void;
@@ -30,11 +30,11 @@ const TAB_ITEMS: TabItem[] = [
   { tabId: TAB_ABOUT, title: 'About' },
 ];
 
-function PreferencesDialog({
+function PrefsPanels({
   version,
-  license,
   prefs,
-  selectedRecordHome,
+  license,
+  recordHome,
   onChooseRecordHome,
   onRegister,
   onSave,
@@ -57,7 +57,7 @@ function PreferencesDialog({
             [TAB_GENERAL]: (
               <PrefsGeneralPanel
                 prefs={prefs}
-                selectedRecordHome={selectedRecordHome}
+                recordHome={recordHome}
                 onChooseRecordHome={onChooseRecordHome}
                 onSave={onSave}
                 onCancel={onClose}
@@ -73,8 +73,8 @@ function PreferencesDialog({
             [TAB_ABOUT]: (
               <PrefsAboutPanel
                 version={version}
+                prefs={prefs}
                 license={license}
-                shortcut={prefs.shortcut}
                 onRegister={onRegister}
               />
             ),
@@ -85,4 +85,4 @@ function PreferencesDialog({
   );
 }
 
-export default PreferencesDialog;
+export default PrefsPanels;

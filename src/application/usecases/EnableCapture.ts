@@ -25,7 +25,7 @@ export default class EnableCaptureUseCase implements UseCase<void> {
       return;
     }
 
-    const prefs = await this.prefsRepo.fetchUserPreferences();
+    const prefs = await this.prefsRepo.fetchPreferences();
     const lastCaptureMode = prefs.captureMode;
 
     this.captureModeManager.enableCaptureMode(lastCaptureMode);

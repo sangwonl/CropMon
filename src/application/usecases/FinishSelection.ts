@@ -30,7 +30,7 @@ export default class FinishSelectionUseCase
   ) {}
 
   async execute(input: FinishSelectionUseCaseInput) {
-    const prefs = await this.prefsRepo.fetchUserPreferences();
+    const prefs = await this.prefsRepo.fetchPreferences();
 
     this.uiDirector.enableUserInteraction();
 

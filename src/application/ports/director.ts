@@ -1,5 +1,4 @@
 import { CaptureMode } from '@domain/models/common';
-import { License } from '@domain/models/license';
 import { Preferences } from '@domain/models/preferences';
 import { Screen } from '@domain/models/screen';
 
@@ -12,14 +11,8 @@ export interface UiDirector {
   ): Promise<void>;
   toggleRecordingTime(activate: boolean): void;
   quitApplication(): void;
-  openReleaseNotesModal(): Promise<void>;
-  openPreferencesModal(
-    version: string,
-    preferences: Preferences,
-    license: License | null,
-    onSave: (updatedPrefs: Preferences) => void,
-    onRegister: (licenseKey: string) => License | null
-  ): Promise<void>;
+  openReleaseNotes(): Promise<void>;
+  openPreferences(version: string, preferences: Preferences): Promise<void>;
   enableCaptureMode(
     mode: CaptureMode,
     onActiveScreenBoundsChange: (

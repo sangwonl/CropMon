@@ -25,21 +25,7 @@ export default class OpenPrefsModalUseCase implements UseCase<void> {
   async execute() {
     this.hookManager.emit('onPrefsModalOpening', {});
 
-    const license = this.licenseManager.retrieveLicense();
-
-    const prefs = await this.prefsRepo.fetchUserPreferences();
-    await this.uiDirector.openPreferencesModal(
-      curVersion,
-      prefs,
-      license,
-      (updatedPrefs: Preferences) => {
-        if (updatedPrefs !== undefined) {
-          this.prefsRepo.updateUserPreference(updatedPrefs);
-        }
-      },
-      (licenseKey: string) => {
-        return license;
-      }
-    );
+    const prefs = await this.prefsRepo.fetchPreferences();
+    await this.uiDirector.openPreferences(curVersion, prefs);
   }
 }

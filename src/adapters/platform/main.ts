@@ -1,4 +1,4 @@
-import { app, screen, ipcMain, ipcRenderer } from 'electron';
+import { app, screen, ipcMain, dialog, BrowserWindow } from 'electron';
 import { injectable } from 'inversify';
 
 import { isMac } from '@utils/process';
@@ -17,6 +17,10 @@ export default class PlatformApiForMain implements PlatformApi {
     ipcMain.on('getCursorScreenPoint', (event) => {
       event.returnValue = this.getCursorScreenPoint();
     });
+
+    ipcMain.on('promptDirectory', async (event, defaultPath) => {
+      event.returnValue = await this.promptDirectory(defaultPath);
+    });
   }
 
   getPath(name: PathType): string {
@@ -32,5 +36,23 @@ export default class PlatformApiForMain implements PlatformApi {
       return screen.getCursorScreenPoint();
     }
     return screen.dipToScreenPoint(screen.getCursorScreenPoint());
+  }
+
+  async promptDirectory(defaultPath: string): Promise<string> {
+    const window = BrowserWindow.getFocusedWindow();
+    if (!window) {
+      return defaultPath;
+    }
+
+    const { filePaths } = await dialog.showOpenDialog(window, {
+      defaultPath,
+      properties: ['openDirectory'],
+    });
+
+    if (filePaths.length > 0) {
+      return filePaths[0];
+    }
+
+    return defaultPath;
   }
 }

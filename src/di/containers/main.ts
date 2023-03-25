@@ -29,6 +29,7 @@ import DisableCaptureUseCase from '@application/usecases/DisableCapture';
 import EnableCaptureUseCase from '@application/usecases/EnableCapture';
 import FinishCaptureUseCase from '@application/usecases/FinishCapture';
 import FinishSelectionUseCase from '@application/usecases/FinishSelection';
+import GetLicenseUseCase from '@application/usecases/GetLicenseUseCase';
 import GetUiStateUseCase from '@application/usecases/GetUiStateUseCase';
 import InitializeAppUseCase from '@application/usecases/InitializeApp';
 import OpenAboutPopupUseCase from '@application/usecases/OpenAboutPopup';
@@ -36,6 +37,7 @@ import OpenCaptureFolderUseCase from '@application/usecases/OpenCaptureFolder';
 import OpenHelpPopupUseCase from '@application/usecases/OpenHelpPopup';
 import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
 import QuitAppUseCase from '@application/usecases/QuitApp';
+import SavePrefsUseCase from '@application/usecases/SavePrefsUseCase';
 import SelectingTargetUseCase from '@application/usecases/SelectingTarget';
 import StartCaptureUseCase from '@application/usecases/StartCapture';
 import StartCaptureAsIsUseCase from '@application/usecases/StartCaptureAsIs';
@@ -44,6 +46,7 @@ import ToggleCaptureUseCase from '@application/usecases/ToggleCaptureUseCase';
 import UpdateAppUseCase from '@application/usecases/UpdateApp';
 
 import ActionDispatcherForMain from '@adapters/actions/main';
+import SecureStore from '@adapters/crypto';
 import BuiltinHooks from '@adapters/hook';
 import SimpleLicenseManager from '@adapters/license';
 import PlatformApiForMain from '@adapters/platform/main';
@@ -51,7 +54,6 @@ import ElectronPreferencesStore from '@adapters/preferences';
 import ElectronScreenRecorder from '@adapters/recorder/recorder';
 import PrefsRepositoryImpl from '@adapters/repositories/preferences';
 import ElectronUiStateApplier from '@adapters/state';
-import SecureStore from '@adapters/store';
 import GoogleAnalyticsTracker from '@adapters/tracker';
 import ElectronUiDirector from '@adapters/ui/director';
 import MacAppTray from '@adapters/ui/widgets/tray/mac';
@@ -249,6 +251,16 @@ diContainer
 
 diContainer
   .bind<GetUiStateUseCase>(GetUiStateUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<SavePrefsUseCase>(SavePrefsUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<GetLicenseUseCase>(GetLicenseUseCase)
   .toSelf()
   .inSingletonScope();
 
