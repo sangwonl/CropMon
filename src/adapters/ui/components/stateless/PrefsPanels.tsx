@@ -16,7 +16,7 @@ type Props = {
   license: License | null;
   recordHome: string;
   onChooseRecordHome: () => void;
-  onRegister: (licenseKey: string) => void;
+  onRegister: (email: string, licenseKey: string) => void;
   onSave: (preferences: Preferences) => void;
   onClose: () => void;
 };
@@ -40,7 +40,8 @@ function PrefsPanels({
   onSave,
   onClose,
 }: Props) {
-  const [curTabId, setCurTabId] = useState<string>(TAB_GENERAL);
+  // const [curTabId, setCurTabId] = useState<string>(TAB_GENERAL);
+  const [curTabId, setCurTabId] = useState<string>(TAB_ABOUT);
 
   return (
     <div className={styles.container}>

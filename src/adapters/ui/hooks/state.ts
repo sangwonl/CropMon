@@ -3,7 +3,7 @@ import { useState, useRef, useEffect, SetStateAction, Dispatch } from 'react';
 
 import { UiState } from '@application/models/ui';
 
-import { useUseCaseInteractor } from '@adapters/ui/hooks/dispatcher';
+import { useUseCaseInteractor } from '@adapters/ui/hooks/interactor';
 
 export const useStateWithGetter = <S>(
   initialState: S

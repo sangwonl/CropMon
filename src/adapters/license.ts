@@ -28,10 +28,13 @@ export default class SimpleLicenseManager implements LicenseManager {
     }
   }
 
-  async validateLicenseKey(key: string): Promise<License | null> {
+  async validateLicenseKey(
+    email: string,
+    licenseKey: string
+  ): Promise<License | null> {
     const res = await fetch(`${this.apiBaseUrl}/validateLicenseKey`, {
       method: 'POST',
-      body: JSON.stringify({ licenseKey: key }),
+      body: JSON.stringify({ email, licenseKey }),
       headers: { 'Content-Type': 'application/json' },
     });
 
@@ -40,14 +43,13 @@ export default class SimpleLicenseManager implements LicenseManager {
       return null;
     }
 
-    const { licenseKey, email } = data;
-    if (key !== licenseKey) {
+    if (data.key !== licenseKey) {
       return null;
     }
 
     return {
-      key,
-      email,
+      key: data.key,
+      email: data.email,
       validated: true,
       lastCheckedAt: new Date().getTime(),
     };

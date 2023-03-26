@@ -14,7 +14,7 @@ import CaptureCountdown from '@adapters/ui/components/stateless/CaptureCountdown
 import CaptureRecording from '@adapters/ui/components/stateless/CaptureRecording';
 import CaptureTargetingArea from '@adapters/ui/components/stateless/CaptureTargetingArea';
 import CaptureTargetingScreen from '@adapters/ui/components/stateless/CaptureTargetingScreen';
-import { useUseCaseInteractor } from '@adapters/ui/hooks/dispatcher';
+import { useUseCaseInteractor } from '@adapters/ui/hooks/interactor';
 import { useRootUiState } from '@adapters/ui/hooks/state';
 
 import styles from './CaptureOverlay.css';
