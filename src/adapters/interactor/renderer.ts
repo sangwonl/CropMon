@@ -90,4 +90,10 @@ export default class UseCaseInteractorForRenderer implements UseCaseInteractor {
   getLicense(): Promise<License | null> {
     return Promise.resolve(ipcRenderer.sendSync('getLicense'));
   }
+
+  registerLicense(email: string, licenseKey: string): Promise<License | null> {
+    return Promise.resolve(
+      ipcRenderer.sendSync('registerLicense', email, licenseKey)
+    );
+  }
 }

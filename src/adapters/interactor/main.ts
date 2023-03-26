@@ -45,6 +45,9 @@ export default class UseCaseInteractorForMain implements UseCaseInteractor {
     ipcMain.on('getLicense', async (event) => {
       event.returnValue = await this.getLicense();
     });
+    ipcMain.on('registerLicense', async (event, email, licenseKey) => {
+      event.returnValue = await this.registerLicense(email, licenseKey);
+    });
   }
 
   initializeApp(): void {
@@ -125,5 +128,9 @@ export default class UseCaseInteractorForMain implements UseCaseInteractor {
 
   getLicense(): Promise<License | null> {
     return this.interactor.getLicense();
+  }
+
+  registerLicense(email: string, licenseKey: string): Promise<License | null> {
+    return this.interactor.registerLicense(email, licenseKey);
   }
 }

@@ -9,7 +9,7 @@ import { PreferencesRepository } from '@domain/repositories/preferences';
 import CaptureSession from '@domain/services/capture';
 import { RecorderSource, ScreenRecorder } from '@domain/services/recorder';
 
-import UseCaseInteractorCore from '@application/controllers/dispatcher';
+import UseCaseInteractorCore from '@application/controllers/interactor';
 import { UiDirector } from '@application/ports/director';
 import { UseCaseInteractor } from '@application/ports/interactor';
 import { LicenseManager } from '@application/ports/license';
@@ -37,6 +37,7 @@ import OpenCaptureFolderUseCase from '@application/usecases/OpenCaptureFolder';
 import OpenHelpPopupUseCase from '@application/usecases/OpenHelpPopup';
 import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
 import QuitAppUseCase from '@application/usecases/QuitApp';
+import RegisterLicenseUseCase from '@application/usecases/RegisterLicenseUseCase';
 import SavePrefsUseCase from '@application/usecases/SavePrefsUseCase';
 import SelectingTargetUseCase from '@application/usecases/SelectingTarget';
 import StartCaptureUseCase from '@application/usecases/StartCapture';
@@ -261,6 +262,11 @@ diContainer
 
 diContainer
   .bind<GetLicenseUseCase>(GetLicenseUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<RegisterLicenseUseCase>(RegisterLicenseUseCase)
   .toSelf()
   .inSingletonScope();
 

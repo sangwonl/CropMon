@@ -5,16 +5,16 @@ import React from 'react';
 
 import { CaptureMode } from '@domain/models/common';
 
-import PreferencesDialog from '@adapters/ui/components/stateless/PrefsPanels';
+import PrefsPanels from '@adapters/ui/components/stateless/PrefsPanels';
 
 export default {
   title: 'Kropsaurus/Preferences',
-  component: PreferencesDialog,
+  component: PrefsPanels,
   argTypes: {},
-} as ComponentMeta<typeof PreferencesDialog>;
+} as ComponentMeta<typeof PrefsPanels>;
 
 // eslint-disable-next-line react/function-component-definition
-const Template: ComponentStory<typeof PreferencesDialog> = (args) => (
+const Template: ComponentStory<typeof PrefsPanels> = (args) => (
   <div
     style={{
       width: 700,
@@ -23,13 +23,15 @@ const Template: ComponentStory<typeof PreferencesDialog> = (args) => (
       border: '1px solid #000',
     }}
   >
-    <PreferencesDialog {...args} />
+    <PrefsPanels {...args} />
   </div>
 );
 
 export const Default = Template.bind({});
 Default.args = {
   version: '0.9.5',
+  license: null,
+  recordHome: '/home/pineple/kropsaurus',
   prefs: {
     initialLoaded: false,
     version: '0.0.1',

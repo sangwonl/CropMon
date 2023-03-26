@@ -26,4 +26,5 @@ export interface UseCaseInteractor {
   getUiState(): UiState;
   savePreferences(prefs: Preferences): Promise<Preferences>;
   getLicense(): Promise<License | null>;
+  registerLicense(email: string, licenseKey: string): Promise<License | null>;
 }

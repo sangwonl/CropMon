@@ -21,6 +21,7 @@ import OpenCaptureFolderUseCase from '@application/usecases/OpenCaptureFolder';
 import OpenHelpPopupUseCase from '@application/usecases/OpenHelpPopup';
 import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
 import QuitAppUseCase from '@application/usecases/QuitApp';
+import RegisterLicenseUseCase from '@application/usecases/RegisterLicenseUseCase';
 import SavePrefsUseCase from '@application/usecases/SavePrefsUseCase';
 import SelectingTargetUseCase from '@application/usecases/SelectingTarget';
 import StartCaptureUseCase from '@application/usecases/StartCapture';
@@ -52,7 +53,8 @@ export default class UseCaseInteractorCore implements UseCaseInteractor {
     private toggleCaptureUseCase: ToggleCaptureUseCase,
     private getUiStateUseCase: GetUiStateUseCase,
     private savePrefsUseCase: SavePrefsUseCase,
-    private getLicenseUseCase: GetLicenseUseCase
+    private getLicenseUseCase: GetLicenseUseCase,
+    private registerLicenseUseCase: RegisterLicenseUseCase
   ) {}
 
   initializeApp = () => {
@@ -147,6 +149,17 @@ export default class UseCaseInteractorCore implements UseCaseInteractor {
 
   async getLicense(): Promise<License | null> {
     const output = await this.getLicenseUseCase.execute();
+    return output.license;
+  }
+
+  async registerLicense(
+    email: string,
+    licenseKey: string
+  ): Promise<License | null> {
+    const output = await this.registerLicenseUseCase.execute({
+      email,
+      licenseKey,
+    });
     return output.license;
   }
 }

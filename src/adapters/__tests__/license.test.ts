@@ -68,7 +68,10 @@ describe('LicenseManager', () => {
   });
 
   it('should validate given license key through api', async () => {
-    const license = await licenseManager.validateLicenseKey(TEST_KEY);
+    const license = await licenseManager.validateLicenseKey(
+      licenseData.email,
+      licenseData.key
+    );
     expect(license).not.toBeNull();
     expect(license?.key).toEqual(TEST_KEY);
   });

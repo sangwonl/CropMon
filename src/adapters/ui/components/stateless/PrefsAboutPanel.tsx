@@ -13,7 +13,7 @@ type Props = {
   version: string;
   prefs: Preferences;
   license: License | null;
-  onRegister: (licenseKey: string) => void;
+  onRegister: (email: string, licenseKey: string) => void;
 };
 
 function mapShortcutKeys(shortcut: string) {

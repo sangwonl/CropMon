@@ -8,7 +8,7 @@ import { License } from '@domain/models/license';
 import { Preferences } from '@domain/models/preferences';
 
 import PrefsPanels from '@adapters/ui/components/stateless/PrefsPanels';
-import { useUseCaseInteractor } from '@adapters/ui/hooks/dispatcher';
+import { useUseCaseInteractor } from '@adapters/ui/hooks/interactor';
 import { usePlatformApi } from '@adapters/ui/hooks/platform';
 import { IPC_EVT_ON_CLOSE } from '@adapters/ui/widgets/preferences/shared';
 
@@ -25,16 +25,18 @@ function PreferencesDialog({ version, preferences }: PropTypes) {
   const [license, setLicense] = useState<License | null>(null);
   const [recordHome, setRecordHome] = useState<string>(preferences.recordHome);
 
-  useEffect(() => {
-    interactor.getLicense().then(setLicense);
-  }, []);
-
   const handleRecordHome = useCallback(() => {
     const defaultPath = prefs.recordHome ?? platformApi.getPath('videos');
     platformApi.promptDirectory(defaultPath).then(setRecordHome);
   }, [prefs]);
 
-  const handleRegister = useCallback((licenseKey: string) => {}, []);
+  const handleRegister = useCallback((email: string, licenseKey: string) => {
+    interactor.registerLicense(email, licenseKey).then(setLicense);
+  }, []);
+
+  useEffect(() => {
+    interactor.getLicense().then(setLicense);
+  }, []);
 
   const handleSave = useCallback((newPrefs: Preferences) => {
     interactor.savePreferences(newPrefs).then(setPrefs);
