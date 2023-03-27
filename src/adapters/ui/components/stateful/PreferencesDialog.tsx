@@ -24,6 +24,7 @@ function PreferencesDialog({ version, preferences }: PropTypes) {
   const [prefs, setPrefs] = useState<Preferences>(preferences);
   const [license, setLicense] = useState<License | null>(null);
   const [recordHome, setRecordHome] = useState<string>(preferences.recordHome);
+  const [registerError, setRegisterError] = useState<string | null>(null);
 
   const handleRecordHome = useCallback(() => {
     const defaultPath = prefs.recordHome ?? platformApi.getPath('videos');
@@ -31,7 +32,14 @@ function PreferencesDialog({ version, preferences }: PropTypes) {
   }, [prefs]);
 
   const handleRegister = useCallback((email: string, licenseKey: string) => {
-    interactor.registerLicense(email, licenseKey).then(setLicense);
+    setRegisterError(null);
+    interactor.registerLicense(email, licenseKey).then((validatedLicense) => {
+      if (validatedLicense) {
+        setLicense(validatedLicense);
+      } else {
+        setRegisterError('Invalid license!');
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -51,6 +59,7 @@ function PreferencesDialog({ version, preferences }: PropTypes) {
       version={version}
       prefs={prefs}
       license={license}
+      registerError={registerError}
       recordHome={recordHome}
       onChooseRecordHome={handleRecordHome}
       onRegister={handleRegister}

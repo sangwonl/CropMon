@@ -1,6 +1,7 @@
 export type License = {
+  validated: boolean;
   key: string;
   email: string;
-  validated: boolean;
+  registeredAt: number;
   lastCheckedAt: number;
 };

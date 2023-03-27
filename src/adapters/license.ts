@@ -43,14 +43,15 @@ export default class SimpleLicenseManager implements LicenseManager {
       return null;
     }
 
-    if (data.key !== licenseKey) {
+    if (data.licenseKey !== licenseKey) {
       return null;
     }
 
     return {
+      validated: true,
       key: data.key,
       email: data.email,
-      validated: true,
+      registeredAt: data.registeredAt,
       lastCheckedAt: new Date().getTime(),
     };
   }
