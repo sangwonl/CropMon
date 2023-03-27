@@ -1,9 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
 import { ComponentMeta, ComponentStory } from '@storybook/react';
-import React from 'react';
+import React, { ComponentProps } from 'react';
 
 import { CaptureMode } from '@domain/models/common';
+import { Preferences } from '@domain/models/preferences';
 
 import PrefsPanels from '@adapters/ui/components/stateless/PrefsPanels';
 
@@ -27,8 +28,7 @@ const Template: ComponentStory<typeof PrefsPanels> = (args) => (
   </div>
 );
 
-export const Default = Template.bind({});
-Default.args = {
+const defaultArgs: ComponentProps<typeof PrefsPanels> = {
   version: '0.9.5',
   license: null,
   recordHome: '/home/pineple/kropsaurus',
@@ -52,6 +52,30 @@ Default.args = {
     },
     license: null,
   },
+  registerError: null,
   onChooseRecordHome: () => {},
   onClose: () => {},
+  onRegister: (email: string, licenseKey: string) => {},
+  onSave: (preferences: Preferences) => {},
+};
+
+export const Default = Template.bind({});
+Default.args = defaultArgs;
+
+export const RegisterError = Template.bind({});
+RegisterError.args = {
+  ...defaultArgs,
+  registerError: 'Invalid license!',
+};
+
+export const Registered = Template.bind({});
+Registered.args = {
+  ...defaultArgs,
+  license: {
+    validated: true,
+    key: 'ABCD',
+    email: 'gamzabaw@gmail.com',
+    registeredAt: 1679902671075,
+    lastCheckedAt: 1679902671075,
+  },
 };

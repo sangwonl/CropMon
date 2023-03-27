@@ -21,6 +21,7 @@ describe('LicenseManager', () => {
     key: TEST_KEY,
     email: 'gamz@gmail.com',
     validated: true,
+    registeredAt: 1000,
     lastCheckedAt: 1000,
   };
 

@@ -32,6 +32,11 @@ export default class RegisterLicenseUseCase
       email,
       licenseKey
     );
+
+    if (license) {
+      await this.licenseManager.storeLicense(license);
+    }
+
     return { license };
   }
 }
