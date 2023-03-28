@@ -15,6 +15,7 @@ import { Preferences } from '@domain/models/preferences';
 
 import ModalDialog from '@adapters/ui/components/stateless/ModalDialog';
 
+import commStyles from './CommonStyles.css';
 import styles from './PrefsAboutPanel.css';
 
 const LINK_LICENSE_BUY = 'https://kropsaurus.pineple.com/buy';
@@ -163,12 +164,17 @@ function PrefsAboutPanel({
               <div className={styles.modalButtons}>
                 <button
                   type="button"
+                  className={commStyles.primaryBtn}
                   disabled={!!errorText || !licenseText}
                   onClick={handleLicenseRegister}
                 >
                   Register
                 </button>
-                <button type="button" onClick={handleRegModalClose}>
+                <button
+                  type="button"
+                  className={commStyles.secondaryBtn}
+                  onClick={handleRegModalClose}
+                >
                   Cancel
                 </button>
               </div>

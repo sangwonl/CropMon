@@ -10,6 +10,7 @@ import { Preferences } from '@domain/models/preferences';
 
 import ColorPalette from '@adapters/ui/components/stateless/ColorPalette';
 
+import commStyles from './CommonStyles.css';
 import styles from './PrefsTabPanels.css';
 
 type Props = {
@@ -134,10 +135,20 @@ function PrefsAppearancesPanel({ prefs, onSave, onCancel }: Props) {
         </fieldset>
       </div>
       <div className={styles.panelButtons}>
-        <button type="button" disabled={!canSave()} onClick={handleSave}>
+        <button
+          type="button"
+          className={commStyles.primaryBtn}
+          disabled={!canSave()}
+          onClick={handleSave}
+        >
           Save
         </button>
-        <button tabIndex={1} type="button" onClick={onCancel}>
+        <button
+          tabIndex={1}
+          type="button"
+          className={commStyles.secondaryBtn}
+          onClick={onCancel}
+        >
           Close
         </button>
       </div>
