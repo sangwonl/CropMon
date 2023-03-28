@@ -39,14 +39,14 @@ export default class UseCaseInteractorForMain implements UseCaseInteractor {
     ipcMain.on('getUiState', (event) => {
       event.returnValue = this.getUiState();
     });
-    ipcMain.on('savePreferences', async (event, prefs: Preferences) => {
-      event.returnValue = await this.savePreferences(prefs);
+    ipcMain.handle('savePreferences', async (event, prefs: Preferences) => {
+      return this.savePreferences(prefs);
     });
-    ipcMain.on('getLicense', async (event) => {
-      event.returnValue = await this.getLicense();
+    ipcMain.handle('getLicense', async (event) => {
+      return this.getLicense();
     });
-    ipcMain.on('registerLicense', async (event, email, licenseKey) => {
-      event.returnValue = await this.registerLicense(email, licenseKey);
+    ipcMain.handle('registerLicense', async (event, email, licenseKey) => {
+      return this.registerLicense(email, licenseKey);
     });
   }
 

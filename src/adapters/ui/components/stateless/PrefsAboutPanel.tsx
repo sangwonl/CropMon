@@ -58,6 +58,7 @@ function PrefsAboutPanel({
   const [licenseText, setLicenseText] = useState<string>('');
   const licenseTextRef = useRef<HTMLTextAreaElement>(null);
   const [errorText, setErrorText] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleLicenseTextChange = useCallback(
     (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -68,6 +69,7 @@ function PrefsAboutPanel({
   );
 
   const handleLicenseRegister = useCallback(() => {
+    setLoading(true);
     const licenseKey = licenseTextRef.current?.value ?? '';
     onRegister('', licenseKey);
   }, [onRegister]);
@@ -80,6 +82,7 @@ function PrefsAboutPanel({
     setShowRegModal(true);
     setLicenseText('');
     setErrorText(null);
+    setLoading(false);
   }, []);
 
   const handlePurchaseClick = useCallback(() => {
@@ -92,6 +95,7 @@ function PrefsAboutPanel({
     } else {
       setErrorText(registerError);
     }
+    setLoading(false);
   }, [license, registerError]);
 
   return (
@@ -157,7 +161,8 @@ function PrefsAboutPanel({
             </div>
             <div className={styles.modalFooter}>
               <p className={styles.modalRegisterResult}>
-                {errorText && (
+                {loading && <span className={commStyles.spinner} />}
+                {!loading && errorText && (
                   <span className={styles.modalRegisterError}>{errorText}</span>
                 )}
               </p>
