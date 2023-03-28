@@ -170,7 +170,7 @@ function PrefsAboutPanel({
                 <button
                   type="button"
                   className={commStyles.primaryBtn}
-                  disabled={!!errorText || !licenseText}
+                  disabled={!!errorText || !licenseText || loading}
                   onClick={handleLicenseRegister}
                 >
                   Register
@@ -178,6 +178,7 @@ function PrefsAboutPanel({
                 <button
                   type="button"
                   className={commStyles.secondaryBtn}
+                  disabled={loading}
                   onClick={handleRegModalClose}
                 >
                   Cancel
