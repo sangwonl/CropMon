@@ -84,16 +84,14 @@ export default class UseCaseInteractorForRenderer implements UseCaseInteractor {
   }
 
   savePreferences(prefs: Preferences): Promise<Preferences> {
-    return Promise.resolve(ipcRenderer.sendSync('savePreferences', prefs));
+    return ipcRenderer.invoke('savePreferences', prefs);
   }
 
   getLicense(): Promise<License | null> {
-    return Promise.resolve(ipcRenderer.sendSync('getLicense'));
+    return ipcRenderer.invoke('getLicense');
   }
 
   registerLicense(email: string, licenseKey: string): Promise<License | null> {
-    return Promise.resolve(
-      ipcRenderer.sendSync('registerLicense', email, licenseKey)
-    );
+    return ipcRenderer.invoke('registerLicense', email, licenseKey);
   }
 }

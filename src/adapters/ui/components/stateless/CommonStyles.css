@@ -1,5 +1,5 @@
 .primaryBtn {
-  padding: 8px 12px;
+  padding: 4px 12px;
   font-size: 14px;
   font-weight: 500;
   appearance: none;
@@ -27,7 +27,7 @@
 }
 
 .secondaryBtn {
-  padding: 8px 12px;
+  padding: 4px 12px;
   font-size: 14px;
   font-weight: 500;
   appearance: none;
@@ -64,14 +64,10 @@
   content: '';
   box-sizing: border-box;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 20px;
-  height: 20px;
-  margin-top: -10px;
-  margin-left: -10px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   border: 2px solid #ccc;
-  border-top-color: #000;
-  animation: spinner 0.6s linear infinite;
+  border-top-color: #3a9f3c;
+  animation: spinner 1s linear infinite;
 }
