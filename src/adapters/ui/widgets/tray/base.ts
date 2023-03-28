@@ -4,14 +4,16 @@
 import {
   Tray,
   Menu,
-  NativeImage,
-  MenuItem,
   MenuItemConstructorOptions,
+  MenuItem,
+  NativeImage,
 } from 'electron';
+
+import { Preferences } from '@domain/models/preferences';
 
 import { UseCaseInteractor } from '@application/ports/interactor';
 
-import TrayIconProvider from '@adapters/ui/widgets/tray/icon';
+import TrayIconProvider, { TrayIconType } from '@adapters/ui/widgets/tray/icon';
 
 const TOOLTIP_GREETING = "Roar! I'm here to help you record the screen";
 const TOOLTIP_UPDATE = 'New update available, please make me stronger!';
@@ -21,91 +23,49 @@ export default class AppTrayCore {
   iconProvider: TrayIconProvider;
 
   tray: Tray;
-  menu: Menu | null = null;
+  menu: Menu | null;
 
-  isRecording = false;
-  isUpdatable = false;
+  prefs?: Preferences;
+  recording = false;
+  checkable = true;
+  updatable = false;
 
   constructor(
-    private dispatcher: UseCaseInteractor,
+    private interactor: UseCaseInteractor,
     private buildMenuTempl: any
   ) {
     this.iconProvider = new TrayIconProvider();
-
     this.tray = new Tray(this.iconProvider.icon('default'));
-    this.tray.setToolTip(TOOLTIP_GREETING);
+    this.menu = null;
+    this.updateTray();
   }
 
   onCheckForUpdates() {
-    this.dispatcher.checkForUpdates();
+    this.interactor.checkForUpdates();
   }
 
   onDownloadAndInstall() {
-    this.dispatcher.downloadAndInstall();
+    this.interactor.downloadAndInstall();
   }
 
   onStartRecording() {
-    this.dispatcher.enableCaptureMode();
+    this.interactor.enableCaptureMode();
   }
 
   onStopRecording() {
-    this.dispatcher.finishCapture();
+    this.interactor.finishCapture();
   }
 
   onPreferences() {
-    this.dispatcher.openPreferences();
+    this.interactor.openPreferences();
   }
 
   onOpenFolder() {
-    this.dispatcher.openCaptureFolder();
+    this.interactor.openCaptureFolder();
   }
 
   onQuit() {
-    this.dispatcher.quitApplication();
-  }
-
-  private getMenuItemTemplById(
-    contextMenuTempl: any,
-    id: string
-  ): MenuItemConstructorOptions | MenuItem {
-    return contextMenuTempl.find((m: any) => m.id === id);
-  }
-
-  async refreshContextMenu(
-    shortcut?: string,
-    isUpdatable?: boolean,
-    isRecording?: boolean
-  ) {
-    if (isRecording !== undefined) {
-      this.isRecording = isRecording;
-    }
-    if (isUpdatable !== undefined) {
-      this.isUpdatable = isUpdatable;
-    }
-
-    const templ = this.buildMenuTempl();
-
-    // update app update or install menu items
-    const menuCheckUpdate = this.getMenuItemTemplById(templ, 'check-update');
-    menuCheckUpdate.visible = !this.isUpdatable;
-
-    const menuUpdate = this.getMenuItemTemplById(templ, 'update');
-    menuUpdate.visible = this.isUpdatable;
-
-    // update recording operation
-    const menuStartCapt = this.getMenuItemTemplById(templ, 'start-capture');
-    menuStartCapt.accelerator = shortcut;
-    menuStartCapt.visible = !this.isRecording;
-
-    const menuStopCapt = this.getMenuItemTemplById(templ, 'stop-capture');
-    menuStopCapt.accelerator = shortcut;
-    menuStopCapt.visible = this.isRecording;
-
-    // update tray properties
-    this.menu = Menu.buildFromTemplate(templ);
-    this.tray.setContextMenu(this.menu);
-    this.tray.setImage(this.chooseTrayIcon());
-    this.tray.setToolTip(this.chooseTrayTooltip());
+    this.interactor.quitApplication();
   }
 
   refreshRecTime(elapsedTimeInSec?: number) {
@@ -121,25 +81,88 @@ export default class AppTrayCore {
     }
   }
 
-  private chooseTrayIcon = (): NativeImage => {
-    if (this.isRecording) {
-      return this.iconProvider.icon('recording');
-    }
-    if (this.isUpdatable) {
-      return this.iconProvider.icon('updatable');
-    }
-    return this.iconProvider.icon('default');
-  };
+  syncPrefs(prefs: Preferences): void {
+    this.prefs = prefs;
+    this.updateTray();
+  }
 
-  private chooseTrayTooltip = (): string => {
-    if (this.isRecording) {
+  setRecording(recording: boolean): void {
+    this.recording = recording;
+    this.updateTray();
+  }
+
+  setUpdater(checkable: boolean, updatable: boolean): void {
+    this.checkable = checkable;
+    this.updatable = updatable;
+    this.updateTray();
+  }
+
+  private updateTray(): void {
+    this.menu = this.composeContextMenu();
+    this.tray.setContextMenu(this.menu);
+    this.tray.setToolTip(this.composeTooltip());
+    this.tray.setImage(this.getTrayIcon());
+  }
+
+  private composeContextMenu(): Menu {
+    const menuTmpl = this.buildMenuTempl();
+
+    // update menu for recording state
+    const menuStartCapt = this.getMenuItemTemplById(menuTmpl, 'start-capture');
+    menuStartCapt.visible = !this.recording;
+    menuStartCapt.accelerator = this.prefs?.shortcut;
+
+    const menuStopCapt = this.getMenuItemTemplById(menuTmpl, 'stop-capture');
+    menuStopCapt.visible = this.recording;
+    menuStopCapt.accelerator = this.prefs?.shortcut;
+
+    // update menu for updater
+    const menuCheckUpdate = this.getMenuItemTemplById(menuTmpl, 'check-update');
+    const menuUpdate = this.getMenuItemTemplById(menuTmpl, 'update');
+    const menuSeparator = this.getMenuItemTemplById(menuTmpl, 'separator1');
+    if (!this.checkable && !this.updatable) {
+      menuCheckUpdate.visible = false;
+      menuUpdate.visible = false;
+      menuSeparator.visible = false;
+    } else if (this.updatable) {
+      menuCheckUpdate.visible = false;
+      menuUpdate.visible = true;
+      menuSeparator.visible = true;
+    } else {
+      menuCheckUpdate.visible = true;
+      menuUpdate.visible = false;
+      menuSeparator.visible = true;
+    }
+
+    return Menu.buildFromTemplate(menuTmpl);
+  }
+
+  private composeTooltip(): string {
+    if (this.recording) {
       return TOOLTIP_RECORDING;
     }
-    if (this.isUpdatable) {
+    if (this.updatable) {
       return TOOLTIP_UPDATE;
     }
     return TOOLTIP_GREETING;
-  };
+  }
+
+  private getTrayIcon(): NativeImage {
+    let iconName: TrayIconType = 'default';
+    if (this.recording) {
+      iconName = 'recording';
+    } else if (this.updatable) {
+      iconName = 'updatable';
+    }
+    return this.iconProvider.icon(iconName);
+  }
+
+  private getMenuItemTemplById(
+    contextMenuTempl: any,
+    id: string
+  ): MenuItemConstructorOptions | MenuItem {
+    return contextMenuTempl.find((m: any) => m.id === id);
+  }
 
   private makeAsTimeString = (h: number, m: number, s: number): string => {
     const hh = `${h}`.padStart(2, '0');

@@ -1,8 +1,8 @@
+import { Preferences } from '@domain/models/preferences';
+
 export interface AppTray {
-  refreshContextMenu(
-    shortcut?: string,
-    isUpdatable?: boolean,
-    isRecording?: boolean
-  ): void;
+  syncPrefs(prefs: Preferences): void;
+  setRecording(recording: boolean): void;
+  setUpdater(checkable: boolean, updatable: boolean): void;
   refreshRecTime(elapsedTimeInSec?: number): void;
 }

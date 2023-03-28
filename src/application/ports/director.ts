@@ -2,13 +2,22 @@ import { CaptureMode } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
 import { Screen } from '@domain/models/screen';
 
+export enum TrayRecordingState {
+  Ready = 0,
+  Recording = 1,
+}
+
+export enum TrayUpdaterState {
+  NonAvailable = 0,
+  Checkable = 1,
+  Updatable = 2,
+}
+
 export interface UiDirector {
   initialize(): void;
-  refreshTrayState(
-    prefs: Preferences,
-    updatable?: boolean,
-    recording?: boolean
-  ): Promise<void>;
+  updateTrayPrefs(prefs: Preferences): void;
+  updateTrayRecording(state: TrayRecordingState): void;
+  updateTrayUpdater(state: TrayUpdaterState): void;
   toggleRecordingTime(activate: boolean): void;
   quitApplication(): void;
   openReleaseNotes(): Promise<void>;

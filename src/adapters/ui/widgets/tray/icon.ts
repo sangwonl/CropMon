@@ -3,7 +3,7 @@ import { nativeImage, NativeImage } from 'electron';
 import { assetPathResolver } from '@utils/asset';
 import { isMac } from '@utils/process';
 
-type TrayIconType = 'default' | 'recording' | 'updatable';
+export type TrayIconType = 'default' | 'recording' | 'updatable';
 
 export default class TrayIconProvider {
   private iconCaches: { [key: string]: NativeImage } = {};
