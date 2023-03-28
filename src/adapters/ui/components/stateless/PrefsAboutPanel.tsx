@@ -170,7 +170,7 @@ function PrefsAboutPanel({
                 <button
                   type="button"
                   className={commStyles.primaryBtn}
-                  disabled={!!errorText || !licenseText || loading}
+                  disabled={!licenseText || loading}
                   onClick={handleLicenseRegister}
                 >
                   Register
