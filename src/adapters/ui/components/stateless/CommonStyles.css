@@ -1,0 +1,77 @@
+.primaryBtn {
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  appearance: none;
+  outline: none;
+  border-radius: 2px;
+  border-color: #3a9f3c;
+  background-color: #3a9f3c;
+  border: 1px solid #3a7f3c;
+  color: #fafafa;
+  transition: background-color 0.25s, border-color 0.25s, color 0.25s;
+}
+
+.primaryBtn:hover {
+  background-color: #3a8f3c;
+}
+
+.primaryBtn:active {
+  background-color: #3a7f3c;
+}
+
+.primaryBtn:disabled {
+  border: 1px solid #cdcdcd;
+  background-color: #dddddd;
+  color: #9a9a9a;
+}
+
+.secondaryBtn {
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  appearance: none;
+  outline: none;
+  border-radius: 2px;
+  background-color: #fafafa;
+  border: 1px solid #cdcdcd;
+  color: #333333;
+  transition: background-color 0.25s, border-color 0.25s, color 0.25s;
+}
+
+.secondaryBtn:hover {
+  background-color: #d5d5d5;
+  color: #555555;
+}
+
+.secondaryBtn:active {
+  background-color: #a5a5a5;
+}
+
+.secondaryBtn:disabled {
+  border: 1px solid #cdcdcd;
+  background-color: #dddddd;
+  color: #9a9a9a;
+}
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner:before {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin-top: -10px;
+  margin-left: -10px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  border-top-color: #000;
+  animation: spinner 0.6s linear infinite;
+}

@@ -138,7 +138,7 @@
 }
 
 .modalBody {
-  padding: 4px 12px;
+  padding: 8px 12px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -176,44 +176,6 @@
   column-gap: 8px;
 }
 
-.modalFooter button {
-  padding: 6px 8px;
-  font-size: 14px;
-  font-weight: 500;
-  appearance: none;
-  outline: none;
-  border-radius: 2px;
-  background-color: #fafafa;
-  border: 1px solid #cdcdcd;
-  color: #333333;
-  transition: background-color 0.25s, border-color 0.25s, color 0.25s;
-}
-
-.modalFooter button:hover {
-  background-color: #d5d5d5;
-  color: #555555;
-}
-
-.modalFooter button:active {
-  background-color: #a5a5a5;
-}
-
-.modalFooter button:disabled {
-  border: 1px solid #cdcdcd;
-  background-color: #dddddd;
-  color: #9a9a9a;
-}
-
-.modalFooter button:not([disabled]):first-child {
-  border-color: #3a9f3c;
-  background-color: #3a9f3c;
-  color: #fefefe;
-}
-
-.modalFooter button:not([disabled]):first-child:hover {
-  background-color: #3a8f3c;
-}
-
-.modalFooter button:not([disabled]):first-child:active {
-  background-color: #3a7f3c;
+.modalButtons button {
+  width: 80px;
 }

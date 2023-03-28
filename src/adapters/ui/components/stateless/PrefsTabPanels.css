@@ -55,31 +55,7 @@
   flex-grow: 1;
 }
 
-.container button {
-  border: 1px solid #cdcdcd;
-  border-radius: 2px;
-  background-color: #dddddd;
-  font-weight: 500;
-  color: #333333;
-  transition: background-color 0.25s, border-color 0.25s, color 0.25s;
-}
-
-.container button:hover {
-  background-color: #d5d5d5;
-  color: #555555;
-}
-
-.container button:active {
-  background-color: #a5a5a5;
-}
-
-.container button:disabled {
-  border: 1px solid #cdcdcd;
-  background-color: #dddddd;
-  color: #9a9a9a;
-}
-
-.optionRow button {
+.openDirBtn {
   width: 44px;
   margin-left: 8px;
 }
@@ -95,20 +71,6 @@
 
 .panelButtons button {
   width: 80px;
-}
-
-.panelButtons button:not([disabled]):first-child {
-  border-color: #3a9f3c;
-  background-color: #3a9f3c;
-  color: #fefefe;
-}
-
-.panelButtons button:not([disabled]):first-child:hover {
-  background-color: #3a8f3c;
-}
-
-.panelButtons button:not([disabled]):first-child:active {
-  background-color: #3a7f3c;
 }
 
 /* general tab */

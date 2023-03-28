@@ -18,6 +18,7 @@ import {
 
 import { Preferences } from '@domain/models/preferences';
 
+import commStyles from './CommonStyles.css';
 import styles from './PrefsTabPanels.css';
 
 type Props = {
@@ -190,7 +191,11 @@ function PrefsGeneralPanel({
           <legend>Output file will be saved to</legend>
           <div className={styles.optionRow}>
             <input type="text" value={recordHome} readOnly />
-            <button type="button" onClick={onChooseRecordHome}>
+            <button
+              type="button"
+              className={classNames(commStyles.secondaryBtn, styles.openDirBtn)}
+              onClick={onChooseRecordHome}
+            >
               ...
             </button>
           </div>
@@ -210,10 +215,20 @@ function PrefsGeneralPanel({
         </fieldset>
       </div>
       <div className={styles.panelButtons}>
-        <button type="button" disabled={!canSave()} onClick={handleSave}>
+        <button
+          type="button"
+          className={commStyles.primaryBtn}
+          disabled={!canSave()}
+          onClick={handleSave}
+        >
           Save
         </button>
-        <button tabIndex={1} type="button" onClick={onCancel}>
+        <button
+          tabIndex={1}
+          type="button"
+          className={commStyles.secondaryBtn}
+          onClick={onCancel}
+        >
           Close
         </button>
       </div>
