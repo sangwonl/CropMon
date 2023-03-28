@@ -5,6 +5,7 @@ import { injectable } from 'inversify';
 
 import { CaptureContext } from '@domain/models/capture';
 import { CaptureMode } from '@domain/models/common';
+import { License } from '@domain/models/license';
 import { Preferences } from '@domain/models/preferences';
 
 export type HookArgsAppUpdateChecked = {
@@ -51,6 +52,10 @@ export type HookArgsCaptureFinished = {
   error: boolean;
 };
 
+export type HookArgsLicenseRegistered = {
+  license: License;
+};
+
 interface HookArgsBlank {}
 
 type HookTypeArgsMap = {
@@ -71,6 +76,7 @@ type HookTypeArgsMap = {
   onCaptureStarting: HookArgsCaptureStarting;
   onCaptureFinishing: HookArgsCaptureFinishing;
   onCaptureFinished: HookArgsCaptureFinished;
+  onLicenseRegistered: HookArgsLicenseRegistered;
 };
 
 export type HookType = keyof HookTypeArgsMap;

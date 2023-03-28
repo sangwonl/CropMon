@@ -27,8 +27,9 @@ import {
 } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
 
-import { UiDirector } from '@application/ports/director';
+import { TrayRecordingState, TrayUpdaterState, UiDirector } from '@application/ports/director';
 import { UseCaseInteractor } from '@application/ports/interactor';
+import { LicenseManager } from '@application/ports/license';
 import { AnalyticsTracker } from '@application/ports/tracker';
 import HookManager, {
   HookArgsAppUpdateChecked,
@@ -41,6 +42,7 @@ import HookManager, {
   HookArgsCaptureFinishing,
   HookArgsCaptureFinished,
   HookArgsCaptureOptionsChanged,
+  HookArgsLicenseRegistered,
 } from '@application/services/hook';
 import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
 import CheckVersionUseCase from '@application/usecases/CheckVersion';
@@ -49,13 +51,14 @@ import PreferencesRepository from '@adapters/repositories/preferences';
 
 
 const UPDATE_CHECK_DELAY = 5 * 60 * 1000;
-const UPDATE_CHECK_INTERVAL = 4 * 60 * 60 * 1000;
+const UPDATE_CHECK_INTERVAL = 1 * 60 * 60 * 1000;
 
 @injectable()
 export default class BuiltinHooks {
   private lastUpdateCheckedAt?: number;
 
   constructor(
+    @inject(TYPES.LicenseManager) private licenseManager: LicenseManager,
     @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository,
     @inject(TYPES.UiDirector) private uiDirector: UiDirector,
     @inject(TYPES.AnalyticsTracker) private tracker: AnalyticsTracker,
@@ -81,53 +84,58 @@ export default class BuiltinHooks {
     this.hookManager.on('onCaptureStarting', this.onCaptureStarting);
     this.hookManager.on('onCaptureFinishing', this.onCaptureFinishing);
     this.hookManager.on('onCaptureFinished', this.onCaptureFinished);
+    this.hookManager.on('onLicenseRegistered', this.onLicenseRegistered);
   }
 
-  onAppLaunched = async () => {
+  private onAppLaunched = async () => {
     await this.checkVersionUseCase.execute();
 
-    this.uiDirector.refreshTrayState(
-      await this.prefsRepo.fetchPreferences()
-    );
+    const prefs = await this.prefsRepo.fetchPreferences();
+    this.uiDirector.updateTrayPrefs(prefs);
+
+    const license = await this.licenseManager.retrieveLicense();
+    if (!license?.validated) {
+      this.uiDirector.updateTrayUpdater(TrayUpdaterState.NonAvailable)
+    } else {
+      this.uiDirector.updateTrayUpdater(TrayUpdaterState.Checkable)
+    }
 
     this.tracker.eventL('app-lifecycle', 'launch', getPlatform());
     this.tracker.view('idle');
   };
 
-  onAppQuit = async () => {
+  private onAppQuit = async () => {
     this.tracker.event('app-lifecycle', 'quit');
   };
 
-  onAppUpdateChecked = async (args: HookArgsAppUpdateChecked) => {
-    this.uiDirector.refreshTrayState(
-      await this.prefsRepo.fetchPreferences(),
-      args.updateAvailable
-    );
-
+  private onAppUpdateChecked = async (args: HookArgsAppUpdateChecked) => {
+    if (args.updateAvailable) {
+      this.uiDirector.updateTrayUpdater(TrayUpdaterState.Updatable)
+    }
     this.lastUpdateCheckedAt = getTimeInSeconds();
   };
 
-  onAppUpdated = async (_args: HookArgsAppUpdated) => {
+  private onAppUpdated = async (_args: HookArgsAppUpdated) => {
     await this.uiDirector.openReleaseNotes();
   };
 
-  onInitialPrefsLoaded = async (_args: HookArgsInitialPrefsLoaded) => {
+  private onInitialPrefsLoaded = async (_args: HookArgsInitialPrefsLoaded) => {
     this.tracker.eventL('app-lifecycle', 'initial-launch', getPlatform());
   };
 
-  onPrefsLoaded = async (args: HookArgsPrefsLoaded) => {
+  private onPrefsLoaded = async (args: HookArgsPrefsLoaded) => {
     await this.handlePrefsHook(args.loadedPrefs);
   };
 
-  onPrefsUpdated = async (args: HookArgsPrefsUpdated) => {
+  private onPrefsUpdated = async (args: HookArgsPrefsUpdated) => {
     await this.handlePrefsHook(args.newPrefs, args.prevPrefs);
   };
 
-  onPrefsModalOpening = async () => {
+  private onPrefsModalOpening = async () => {
     this.tracker.view('preferences-modal');
   };
 
-  onCaptureOptionsChanged = async (args: HookArgsCaptureOptionsChanged) => {
+  private onCaptureOptionsChanged = async (args: HookArgsCaptureOptionsChanged) => {
     await this.setupInSelectionShortcut(true, args.captureMode);
 
     const prefs = await this.prefsRepo.fetchPreferences();
@@ -143,39 +151,33 @@ export default class BuiltinHooks {
     );
   };
 
-  onCaptureShortcutTriggered = async () => {
+  private onCaptureShortcutTriggered = async () => {
     const prefs = await this.prefsRepo.fetchPreferences();
     this.tracker.eventL('capture', 'shortcut-triggered', prefs.shortcut);
   };
 
-  onCaptureModeEnabled = async (args: HookArgsCaptureModeEnabled) => {
+  private onCaptureModeEnabled = async (args: HookArgsCaptureModeEnabled) => {
     await this.setupInSelectionShortcut(true, args.captureMode);
   };
 
-  onCaptureModeDisabled = async () => {
+  private onCaptureModeDisabled = async () => {
     await this.setupInSelectionShortcut(false);
   };
 
-  onCaptureSelectionStarting = async () => {
+  private onCaptureSelectionStarting = async () => {
     this.tracker.view('capture-area-selection');
   };
 
-  onCaptureSelectionFinished = async () => {};
+  private onCaptureSelectionFinished = async () => {};
 
-  onCaptureStarting = async (args: HookArgsCaptureStarting) => {
+  private onCaptureStarting = async (args: HookArgsCaptureStarting) => {
     // disable in selection shortcut
     await this.setupInSelectionShortcut(false);
 
     // refresh tray
     const { error } = args;
-
-    await this.uiDirector.refreshTrayState(
-      await this.prefsRepo.fetchPreferences(),
-      undefined,
-      !error
-    );
-
     if (!error) {
+      this.uiDirector.updateTrayRecording(TrayRecordingState.Recording);
       this.uiDirector.toggleRecordingTime(true);
     }
 
@@ -195,17 +197,12 @@ export default class BuiltinHooks {
     }
   };
 
-  onCaptureFinishing = async (_args: HookArgsCaptureFinishing) => {
-    await this.uiDirector.refreshTrayState(
-      await this.prefsRepo.fetchPreferences(),
-      undefined,
-      false
-    );
-
+  private onCaptureFinishing = async (_args: HookArgsCaptureFinishing) => {
+    this.uiDirector.updateTrayRecording(TrayRecordingState.Ready);
     this.uiDirector.toggleRecordingTime(false);
   };
 
-  onCaptureFinished = async (args: HookArgsCaptureFinished) => {
+  private onCaptureFinished = async (args: HookArgsCaptureFinished) => {
     const now = getTimeInSeconds();
     if (
       this.lastUpdateCheckedAt === undefined ||
@@ -228,6 +225,14 @@ export default class BuiltinHooks {
     this.tracker.view('idle');
   };
 
+  private onLicenseRegistered = async (args: HookArgsLicenseRegistered) => {
+    if (args.license.validated) {
+      this.uiDirector.updateTrayUpdater(TrayUpdaterState.Checkable);
+    } else {
+      this.uiDirector.updateTrayUpdater(TrayUpdaterState.NonAvailable);
+    }
+  }
+
   private handlePrefsHook = async (
     newPrefs: Preferences,
     prevPrefs?: Preferences
@@ -235,7 +240,7 @@ export default class BuiltinHooks {
     this.setupCaptureShortcut(newPrefs, prevPrefs);
     this.setupRunAtStartup(newPrefs);
     await this.askMediaAccess(newPrefs);
-    await this.uiDirector.refreshTrayState(newPrefs);
+    this.uiDirector.updateTrayPrefs(newPrefs);
   };
 
   private handleShortcutCaptureOpts = async (

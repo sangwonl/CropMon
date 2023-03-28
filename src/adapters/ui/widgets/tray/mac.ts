@@ -3,6 +3,8 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
+import { Preferences } from '@domain/models/preferences';
+
 import { UseCaseInteractor } from '@application/ports/interactor';
 import { AppTray } from '@application/ports/tray';
 
@@ -13,21 +15,25 @@ export default class MacAppTray implements AppTray {
   private core: AppTrayCore;
 
   constructor(
-    @inject(TYPES.UseCaseInteractor) private dispatcher: UseCaseInteractor
+    @inject(TYPES.UseCaseInteractor) private interactor: UseCaseInteractor
   ) {
     this.core = new AppTrayCore(
-      this.dispatcher,
+      this.interactor,
       this.buildMenuTempl.bind(this)
     );
     this.setupClickHandler();
   }
 
-  refreshContextMenu(
-    shortcut?: string | undefined,
-    isUpdatable?: boolean | undefined,
-    isRecording?: boolean | undefined
-  ): void {
-    this.core.refreshContextMenu(shortcut, isUpdatable, isRecording);
+  syncPrefs(prefs: Preferences): void {
+    this.core.syncPrefs(prefs);
+  }
+
+  setRecording(recording: boolean): void {
+    this.core.setRecording(recording);
+  }
+
+  setUpdater(checkable: boolean, updatable: boolean): void {
+    this.core.setUpdater(checkable, updatable);
   }
 
   refreshRecTime(elapsedTimeInSec?: number | undefined): void {
@@ -47,6 +53,7 @@ export default class MacAppTray implements AppTray {
         click: () => this.core.onDownloadAndInstall(),
       },
       {
+        id: 'separator1',
         type: 'separator',
       },
       {
@@ -54,6 +61,7 @@ export default class MacAppTray implements AppTray {
         click: () => this.core.onPreferences(),
       },
       {
+        id: 'separator2',
         type: 'separator',
       },
       {
@@ -73,6 +81,7 @@ export default class MacAppTray implements AppTray {
         click: () => this.core.onOpenFolder(),
       },
       {
+        id: 'separator3',
         type: 'separator',
       },
       {
@@ -84,15 +93,14 @@ export default class MacAppTray implements AppTray {
 
   private setupClickHandler(): void {
     this.core.tray.on('click', () => {
-      if (this.core.isRecording) {
+      if (this.core.recording) {
         this.core.tray.setContextMenu(null);
-        this.dispatcher.finishCapture();
+        this.interactor.finishCapture();
       } else {
         this.core.tray.setContextMenu(this.core.menu);
         this.core.tray.popUpContextMenu();
       }
     });
-
     this.core.tray.on('right-click', () => {
       this.core.tray.setContextMenu(this.core.menu);
       this.core.tray.popUpContextMenu();

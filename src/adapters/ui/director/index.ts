@@ -16,7 +16,11 @@ import { License } from '@domain/models/license';
 import { Preferences } from '@domain/models/preferences';
 import { Screen } from '@domain/models/screen';
 
-import { UiDirector } from '@application/ports/director';
+import {
+  TrayRecordingState,
+  TrayUpdaterState,
+  UiDirector,
+} from '@application/ports/director';
 import { AppTray } from '@application/ports/tray';
 
 import ElectronUiStateApplier from '@adapters/state';
@@ -58,16 +62,28 @@ export default class ElectronUiDirector implements UiDirector {
     });
   }
 
-  async refreshTrayState(
-    prefs: Preferences,
-    updatable?: boolean,
-    recording?: boolean
-  ): Promise<void> {
-    await this.appTray?.refreshContextMenu(
-      prefs.shortcut,
-      updatable,
-      recording
-    );
+  updateTrayPrefs(prefs: Preferences): void {
+    this.appTray?.syncPrefs(prefs);
+  }
+
+  updateTrayRecording(state: TrayRecordingState): void {
+    this.appTray?.setRecording(state === TrayRecordingState.Recording);
+  }
+
+  updateTrayUpdater(state: TrayUpdaterState): void {
+    switch (state) {
+      case TrayUpdaterState.NonAvailable:
+        this.appTray?.setUpdater(false, false);
+        break;
+      case TrayUpdaterState.Checkable:
+        this.appTray?.setUpdater(true, false);
+        break;
+      case TrayUpdaterState.Updatable:
+        this.appTray?.setUpdater(false, true);
+        break;
+      default:
+        break;
+    }
   }
 
   toggleRecordingTime(activate: boolean): void {
