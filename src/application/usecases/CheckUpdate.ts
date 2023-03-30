@@ -5,22 +5,22 @@ import { inject, injectable } from 'inversify';
 import TYPES from '@di/types';
 
 import { UiDirector } from '@application/ports/director';
-import { LicenseManager } from '@application/ports/license';
 import { AppUpdater } from '@application/ports/updater';
 import HookManager from '@application/services/hook';
+import LicenseService from '@application/services/license';
 import { UseCase } from '@application/usecases/UseCase';
 
 @injectable()
 export default class CheckUpdateUseCase implements UseCase<void> {
   constructor(
     private hookManager: HookManager,
+    private licenseService: LicenseService,
     @inject(TYPES.AppUpdater) private appUpdater: AppUpdater,
-    @inject(TYPES.UiDirector) private uiDirector: UiDirector,
-    @inject(TYPES.LicenseManager) private licenseManager: LicenseManager
+    @inject(TYPES.UiDirector) private uiDirector: UiDirector
   ) {}
 
   async execute() {
-    const license = await this.licenseManager.retrieveLicense();
+    const license = await this.licenseService.checkAndGetLicense();
     if (!license?.validated) {
       return;
     }

@@ -3,7 +3,7 @@ import { injectable } from 'inversify';
 import { Bounds, Point } from '@domain/models/screen';
 
 import { UiState } from '@application/models/ui';
-import StateManager from '@application/services/ui/state';
+import StateManager from '@application/services/state';
 import { UseCase } from '@application/usecases/UseCase';
 
 interface SelectingTargetUseCaseInput {

@@ -9,7 +9,7 @@ import { RecorderSource } from '@domain/services/recorder';
 
 import { INITIAL_UI_STATE, UiState } from '@application/models/ui';
 import { UiDirector } from '@application/ports/director';
-import StateManager from '@application/services/ui/state';
+import StateManager from '@application/services/state';
 
 import PreferencesRepository from '@adapters/repositories/preferences';
 

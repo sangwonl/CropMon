@@ -29,7 +29,6 @@ import { Preferences } from '@domain/models/preferences';
 
 import { TrayRecordingState, TrayUpdaterState, UiDirector } from '@application/ports/director';
 import { UseCaseInteractor } from '@application/ports/interactor';
-import { LicenseManager } from '@application/ports/license';
 import { AnalyticsTracker } from '@application/ports/tracker';
 import HookManager, {
   HookArgsAppUpdateChecked,
@@ -44,6 +43,7 @@ import HookManager, {
   HookArgsCaptureOptionsChanged,
   HookArgsLicenseRegistered,
 } from '@application/services/hook';
+import CheckLicenseUseCase from '@application/usecases/CheckLicense';
 import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
 import CheckVersionUseCase from '@application/usecases/CheckVersion';
 
@@ -58,12 +58,12 @@ export default class BuiltinHooks {
   private lastUpdateCheckedAt?: number;
 
   constructor(
-    @inject(TYPES.LicenseManager) private licenseManager: LicenseManager,
     @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository,
     @inject(TYPES.UiDirector) private uiDirector: UiDirector,
     @inject(TYPES.AnalyticsTracker) private tracker: AnalyticsTracker,
     @inject(TYPES.UseCaseInteractor) private interactor: UseCaseInteractor,
     private hookManager: HookManager,
+    private checkLicenseUseCase: CheckLicenseUseCase,
     private checkUpdateUseCase: CheckUpdateUseCase,
     private checkVersionUseCase: CheckVersionUseCase
   ) {
@@ -90,15 +90,8 @@ export default class BuiltinHooks {
   private onAppLaunched = async () => {
     await this.checkVersionUseCase.execute();
 
-    const prefs = await this.prefsRepo.fetchPreferences();
+    const prefs = await this.prefsRepo.fetchPreferences()
     this.uiDirector.updateTrayPrefs(prefs);
-
-    const license = await this.licenseManager.retrieveLicense();
-    if (!license?.validated) {
-      this.uiDirector.updateTrayUpdater(TrayUpdaterState.NonAvailable)
-    } else {
-      this.uiDirector.updateTrayUpdater(TrayUpdaterState.Checkable)
-    }
 
     this.tracker.eventL('app-lifecycle', 'launch', getPlatform());
     this.tracker.view('idle');
@@ -125,6 +118,8 @@ export default class BuiltinHooks {
 
   private onPrefsLoaded = async (args: HookArgsPrefsLoaded) => {
     await this.handlePrefsHook(args.loadedPrefs);
+
+    await this.checkLicenseUseCase.execute();
   };
 
   private onPrefsUpdated = async (args: HookArgsPrefsUpdated) => {
@@ -133,6 +128,8 @@ export default class BuiltinHooks {
 
   private onPrefsModalOpening = async () => {
     this.tracker.view('preferences-modal');
+
+    await this.checkLicenseUseCase.execute();
   };
 
   private onCaptureOptionsChanged = async (args: HookArgsCaptureOptionsChanged) => {
@@ -204,17 +201,16 @@ export default class BuiltinHooks {
 
   private onCaptureFinished = async (args: HookArgsCaptureFinished) => {
     const now = getTimeInSeconds();
-    if (
-      this.lastUpdateCheckedAt === undefined ||
-      now - this.lastUpdateCheckedAt > UPDATE_CHECK_INTERVAL
-    ) {
-      setTimeout(() => {
-        this.checkUpdateUseCase.execute();
-      }, UPDATE_CHECK_DELAY);
+    const lastCheckedAt = this.lastUpdateCheckedAt ?? 0;
+    const neverChecked = lastCheckedAt === 0;
+    const coolTimePassed = now - lastCheckedAt > UPDATE_CHECK_INTERVAL;
+
+    const shouldCheck =  neverChecked || coolTimePassed;
+    if (shouldCheck) {
+      setTimeout(() => this.checkUpdateUseCase.execute(), UPDATE_CHECK_DELAY);
     }
 
     const { captureContext, error } = args;
-
     if (!error) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const duration = captureContext.finishedAt! - captureContext.createdAt;

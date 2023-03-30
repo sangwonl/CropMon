@@ -7,7 +7,7 @@ import { Bounds, Point } from '@domain/models/screen';
 import { UiState } from '@application/models/ui';
 import { UiDirector } from '@application/ports/director';
 import HookManager from '@application/services/hook';
-import StateManager from '@application/services/ui/state';
+import StateManager from '@application/services/state';
 import { UseCase } from '@application/usecases/UseCase';
 
 interface StartSelectionUseCaseInput {

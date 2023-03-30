@@ -8,7 +8,7 @@ import CaptureSession from '@domain/services/capture';
 
 import { UiDirector } from '@application/ports/director';
 import HookManager from '@application/services/hook';
-import CaptureModeManager from '@application/services/ui/mode';
+import CaptureModeManager from '@application/services/mode';
 import { UseCase } from '@application/usecases/UseCase';
 
 const CONTAINING_PROGRESS = 10;

@@ -5,7 +5,7 @@ import TYPES from '@di/types';
 import CaptureSession from '@domain/services/capture';
 
 import HookManager from '@application/services/hook';
-import CaptureModeManager from '@application/services/ui/mode';
+import CaptureModeManager from '@application/services/mode';
 import { UseCase } from '@application/usecases/UseCase';
 
 import PreferencesRepository from '@adapters/repositories/preferences';

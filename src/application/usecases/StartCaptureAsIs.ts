@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 
 import { UiState } from '@application/models/ui';
-import StateManager from '@application/services/ui/state';
+import StateManager from '@application/services/state';
 import { UseCase } from '@application/usecases/UseCase';
 
 @injectable()
