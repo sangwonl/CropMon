@@ -15,10 +15,10 @@ export default class LicenseService {
 
   async checkAndGetLicense() {
     const license = await this.licenseManager.retrieveLicense();
-    if (!license?.validated) {
-      this.uiDirector.updateTrayUpdater(TrayUpdaterState.NonAvailable);
-    } else {
+    if (license?.validated) {
       this.uiDirector.updateTrayUpdater(TrayUpdaterState.Checkable);
+    } else {
+      this.uiDirector.updateTrayUpdater(TrayUpdaterState.NonAvailable);
     }
     return license;
   }
