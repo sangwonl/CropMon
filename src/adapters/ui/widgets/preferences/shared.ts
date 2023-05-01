@@ -1,6 +1,7 @@
 import { Preferences } from '@domain/models/preferences';
 
 export type PreferencesModalOptions = {
+  appName: string;
   version: string;
   preferences: Preferences;
 };

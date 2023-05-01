@@ -3,7 +3,7 @@ import { KeyboardEvent } from 'react';
 import { isMac } from '@utils/process';
 import { capitalize } from '@utils/strings';
 
-export const DEFAULT_SHORTCUT_CAPTURE = `Meta + Shift + E`;
+export const DEFAULT_SHORTCUT_CAPTURE = `Meta + Shift + Enter`;
 export const SHORTCUT_ENTER = 'Enter';
 export const SHORTCUT_ESCAPE = 'Escape';
 export const SHORTCUT_CAPTURE_MODE_SCREEN = isMac() ? 'Meta + 1' : 'Ctrl + 1';

@@ -13,11 +13,12 @@ import { usePlatformApi } from '@adapters/ui/hooks/platform';
 import { IPC_EVT_ON_CLOSE } from '@adapters/ui/widgets/preferences/shared';
 
 interface PropTypes {
+  appName: string;
   version: string;
   preferences: Preferences;
 }
 
-function PreferencesDialog({ version, preferences }: PropTypes) {
+function PreferencesDialog({ appName, version, preferences }: PropTypes) {
   const interactor = useUseCaseInteractor();
   const platformApi = usePlatformApi();
 
@@ -56,6 +57,7 @@ function PreferencesDialog({ version, preferences }: PropTypes) {
 
   return (
     <PrefsPanels
+      appName={appName}
       version={version}
       prefs={prefs}
       license={license}

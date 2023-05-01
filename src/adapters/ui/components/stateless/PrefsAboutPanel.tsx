@@ -21,6 +21,7 @@ import styles from './PrefsAboutPanel.css';
 const LINK_LICENSE_BUY = 'https://kropsaurus.pineple.com/buy';
 
 type Props = {
+  appName: string;
   version: string;
   prefs: Preferences;
   license: License | null;
@@ -46,6 +47,7 @@ function mapTimestampToDateString(timestamp: number): string {
 }
 
 function PrefsAboutPanel({
+  appName,
   version,
   prefs,
   license,
@@ -102,7 +104,7 @@ function PrefsAboutPanel({
     <div className={styles.container}>
       <div className={styles.appInfo}>
         <div className={styles.appTitle}>
-          <h2>Kropsaurus</h2>
+          <h2>{appName}</h2>
           <p className={styles.version}>v{version}</p>
         </div>
         <p
@@ -145,7 +147,7 @@ function PrefsAboutPanel({
         </div>
       </div>
       <div className={styles.copyright}>
-        <h2>Copyright @2023 Pineple</h2>
+        <h2>Copyright @ 2021-2023 Pineple</h2>
       </div>
       {showRegModal && (
         <ModalDialog>

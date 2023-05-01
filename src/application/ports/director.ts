@@ -21,7 +21,11 @@ export interface UiDirector {
   toggleRecordingTime(activate: boolean): void;
   quitApplication(): void;
   openReleaseNotes(): Promise<void>;
-  openPreferences(version: string, preferences: Preferences): Promise<void>;
+  openPreferences(
+    appName: string,
+    version: string,
+    preferences: Preferences
+  ): Promise<void>;
   enableCaptureMode(
     mode: CaptureMode,
     onActiveScreenBoundsChange: (

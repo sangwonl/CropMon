@@ -15,8 +15,10 @@ export default class TrayIconProvider {
     if (!iconImage) {
       iconImage = nativeImage.createFromPath(assetPathResolver(iconPath));
       if (isMac()) {
-        iconImage = iconImage.resize({ width: 18, height: 16 });
-        iconImage.setTemplateImage(true);
+        iconImage = iconImage.resize({ width: 18, height: 18 });
+        if (iconType !== 'recording') {
+          iconImage.setTemplateImage(true);
+        }
       }
       this.iconCaches[iconPath] = iconImage;
     }
