@@ -32,7 +32,7 @@ export default class AppTrayCore {
 
   constructor(
     private interactor: UseCaseInteractor,
-    private buildMenuTempl: any
+    private buildMenuTempl: () => Array<MenuItemConstructorOptions | MenuItem>
   ) {
     this.iconProvider = new TrayIconProvider();
     this.tray = new Tray(this.iconProvider.icon('default'));
@@ -120,6 +120,7 @@ export default class AppTrayCore {
     const menuCheckUpdate = this.getMenuItemTemplById(menuTmpl, 'check-update');
     const menuUpdate = this.getMenuItemTemplById(menuTmpl, 'update');
     const menuSeparator = this.getMenuItemTemplById(menuTmpl, 'separator1');
+
     if (!this.checkable && !this.updatable) {
       menuCheckUpdate.visible = false;
       menuUpdate.visible = false;
@@ -134,7 +135,13 @@ export default class AppTrayCore {
       menuSeparator.visible = true;
     }
 
-    return Menu.buildFromTemplate(menuTmpl);
+    return this.buildOnlyVisibleFromTemplate(menuTmpl);
+  }
+
+  private buildOnlyVisibleFromTemplate(
+    menuTmpl: Array<MenuItemConstructorOptions | MenuItem>
+  ): Menu {
+    return Menu.buildFromTemplate(menuTmpl.filter((item) => item.visible));
   }
 
   private composeTooltip(): string {
@@ -158,10 +165,10 @@ export default class AppTrayCore {
   }
 
   private getMenuItemTemplById(
-    contextMenuTempl: any,
+    contextMenuTempl: Array<MenuItemConstructorOptions | MenuItem>,
     id: string
   ): MenuItemConstructorOptions | MenuItem {
-    return contextMenuTempl.find((m: any) => m.id === id);
+    return contextMenuTempl.find((m: any) => m.id === id)!;
   }
 
   private makeAsTimeString = (h: number, m: number, s: number): string => {
