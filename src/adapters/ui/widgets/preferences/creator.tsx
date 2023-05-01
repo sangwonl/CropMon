@@ -9,8 +9,14 @@ import { preventZoomKeyEvent } from '@adapters/ui/widgets/utils';
 export default function PreferencesModalCreator(
   options: PreferencesModalOptions
 ) {
-  const { version, preferences } = options;
-  return <PreferencesDialog version={version} preferences={preferences} />;
+  const { appName, version, preferences } = options;
+  return (
+    <PreferencesDialog
+      appName={appName}
+      version={version}
+      preferences={preferences}
+    />
+  );
 }
 
 preventZoomKeyEvent();

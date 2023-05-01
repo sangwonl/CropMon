@@ -12,7 +12,6 @@ import diContainer from '@di/containers';
 import TYPES from '@di/types';
 
 import { CaptureMode } from '@domain/models/common';
-import { License } from '@domain/models/license';
 import { Preferences } from '@domain/models/preferences';
 import { Screen } from '@domain/models/screen';
 
@@ -131,6 +130,7 @@ export default class ElectronUiDirector implements UiDirector {
   }
 
   async openPreferences(
+    appName: string,
     version: string,
     preferences: Preferences
   ): Promise<void> {
@@ -139,7 +139,11 @@ export default class ElectronUiDirector implements UiDirector {
       return;
     }
 
-    this.prefsDialog = PreferencesDialog.create({ version, preferences });
+    this.prefsDialog = PreferencesDialog.create({
+      appName,
+      version,
+      preferences,
+    });
 
     this.prefsDialog.open();
   }

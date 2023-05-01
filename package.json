@@ -33,7 +33,7 @@
     ]
   },
   "build": {
-    "productName": "Kropsaurus",
+    "productName": "CropMon",
     "appId": "com.pineple.kropsaurus",
     "extraFiles": [],
     "files": [

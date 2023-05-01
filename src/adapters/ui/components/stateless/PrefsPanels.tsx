@@ -11,6 +11,7 @@ import SideTabs, { TabItem } from '@adapters/ui/components/stateless/SideTabs';
 import styles from './PrefsPanels.css';
 
 type Props = {
+  appName: string;
   version: string;
   prefs: Preferences;
   license: License | null;
@@ -32,6 +33,7 @@ const TAB_ITEMS: TabItem[] = [
 ];
 
 function PrefsPanels({
+  appName,
   version,
   prefs,
   license,
@@ -74,6 +76,7 @@ function PrefsPanels({
             ),
             [TAB_ABOUT]: (
               <PrefsAboutPanel
+                appName={appName}
                 version={version}
                 prefs={prefs}
                 license={license}
