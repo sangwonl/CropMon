@@ -19,6 +19,7 @@ import { UiStateApplier } from '@application/ports/state';
 import { AnalyticsTracker } from '@application/ports/tracker';
 import { AppTray } from '@application/ports/tray';
 import { AppUpdater } from '@application/ports/updater';
+import AppManager from '@application/services/app';
 import HookManager from '@application/services/hook';
 import LicenseService from '@application/services/license';
 import CaptureModeManager from '@application/services/mode';
@@ -129,6 +130,11 @@ diContainer
 
 diContainer
   .bind<UseCaseInteractorForMain>(UseCaseInteractorForMain)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<AppManager>(AppManager)
   .toSelf()
   .inSingletonScope();
 

@@ -1,22 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { injectable } from 'inversify';
 
-import { inject, injectable } from 'inversify';
-
-import TYPES from '@di/types';
-
-import { UiDirector } from '@application/ports/director';
-import HookManager from '@application/services/hook';
+import AppManager from '@application/services/app';
 import { UseCase } from '@application/usecases/UseCase';
 
 @injectable()
 export default class QuitAppUseCase implements UseCase<void> {
-  constructor(
-    private hookManager: HookManager,
-    @inject(TYPES.UiDirector) private uiDirector: UiDirector
-  ) {}
+  constructor(private appManager: AppManager) {}
 
   execute() {
-    this.uiDirector.quitApplication();
-    this.hookManager.emit('onAppQuit', {});
+    this.appManager.quit();
   }
 }

@@ -41,7 +41,6 @@ import HookManager, {
   HookArgsCaptureFinishing,
   HookArgsCaptureFinished,
   HookArgsCaptureOptionsChanged,
-  HookArgsLicenseRegistered,
 } from '@application/services/hook';
 import CheckLicenseUseCase from '@application/usecases/CheckLicense';
 import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
@@ -89,6 +88,8 @@ export default class BuiltinHooks {
 
   private onAppLaunched = async () => {
     await this.checkVersionUseCase.execute();
+
+    await this.checkUpdateUseCase.execute();
 
     const prefs = await this.prefsRepo.fetchPreferences()
     this.uiDirector.updateTrayPrefs(prefs);
@@ -221,12 +222,8 @@ export default class BuiltinHooks {
     this.tracker.view('idle');
   };
 
-  private onLicenseRegistered = async (args: HookArgsLicenseRegistered) => {
-    if (args.license.validated) {
-      this.uiDirector.updateTrayUpdater(TrayUpdaterState.Checkable);
-    } else {
-      this.uiDirector.updateTrayUpdater(TrayUpdaterState.NonAvailable);
-    }
+  private onLicenseRegistered = async () => {
+    this.checkLicenseUseCase.execute();
   }
 
   private handlePrefsHook = async (
