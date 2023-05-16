@@ -19,7 +19,6 @@ export interface UiDirector {
   updateTrayRecording(state: TrayRecordingState): void;
   updateTrayUpdater(state: TrayUpdaterState): void;
   toggleRecordingTime(activate: boolean): void;
-  quitApplication(): void;
   openReleaseNotes(): Promise<void>;
   openPreferences(
     appName: string,

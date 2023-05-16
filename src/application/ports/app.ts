@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-export interface AppUpdater {
+export interface AppManager {
   getCurAppVersion(): string;
+  isFreeVersion(): boolean;
   checkForUpdates(
     onUpdateAvailable: () => void,
     onUpdateNotAvailable: () => void,
@@ -11,4 +12,5 @@ export interface AppUpdater {
   cancelUpdate(): void;
   downloadUpdate(): void;
   quitAndInstall(): void;
+  quit(): void;
 }

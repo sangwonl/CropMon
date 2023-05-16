@@ -1,11 +1,13 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 
-import AppManager from '@application/services/app';
+import TYPES from '@di/types';
+
+import { AppManager } from '@application/ports/app';
 import { UseCase } from '@application/usecases/UseCase';
 
 @injectable()
 export default class QuitAppUseCase implements UseCase<void> {
-  constructor(private appManager: AppManager) {}
+  constructor(@inject(TYPES.AppManager) private appManager: AppManager) {}
 
   execute() {
     this.appManager.quit();

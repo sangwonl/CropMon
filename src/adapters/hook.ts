@@ -62,9 +62,9 @@ export default class BuiltinHooks {
     @inject(TYPES.AnalyticsTracker) private tracker: AnalyticsTracker,
     @inject(TYPES.UseCaseInteractor) private interactor: UseCaseInteractor,
     private hookManager: HookManager,
-    private checkLicenseUseCase: CheckLicenseUseCase,
+    private checkVersionUseCase: CheckVersionUseCase,
     private checkUpdateUseCase: CheckUpdateUseCase,
-    private checkVersionUseCase: CheckVersionUseCase
+    private checkLicenseUseCase: CheckLicenseUseCase,
   ) {
     this.hookManager.on('onAppLaunched', this.onAppLaunched);
     this.hookManager.on('onAppQuit', this.onAppQuit);

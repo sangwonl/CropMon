@@ -10,6 +10,7 @@ import CaptureSession from '@domain/services/capture';
 import { RecorderSource, ScreenRecorder } from '@domain/services/recorder';
 
 import UseCaseInteractorCore from '@application/controllers/interactor';
+import { AppManager } from '@application/ports/app';
 import { UiDirector } from '@application/ports/director';
 import { UseCaseInteractor } from '@application/ports/interactor';
 import { LicenseManager } from '@application/ports/license';
@@ -18,8 +19,6 @@ import { PreferencesStore } from '@application/ports/preferences';
 import { UiStateApplier } from '@application/ports/state';
 import { AnalyticsTracker } from '@application/ports/tracker';
 import { AppTray } from '@application/ports/tray';
-import { AppUpdater } from '@application/ports/updater';
-import AppManager from '@application/services/app';
 import HookManager from '@application/services/hook';
 import LicenseService from '@application/services/license';
 import CaptureModeManager from '@application/services/mode';
@@ -49,6 +48,7 @@ import StartSelectionUseCase from '@application/usecases/StartSelection';
 import ToggleCaptureUseCase from '@application/usecases/ToggleCaptureUseCase';
 import UpdateAppUseCase from '@application/usecases/UpdateApp';
 
+import ElectronAppManager from '@adapters/app';
 import SecureStore from '@adapters/crypto';
 import BuiltinHooks from '@adapters/hook';
 import UseCaseInteractorForMain from '@adapters/interactor/main';
@@ -62,7 +62,6 @@ import GoogleAnalyticsTracker from '@adapters/tracker';
 import ElectronUiDirector from '@adapters/ui/director';
 import MacAppTray from '@adapters/ui/widgets/tray/mac';
 import WinAppTray from '@adapters/ui/widgets/tray/win';
-import ElectronAppUpdater from '@adapters/updater';
 
 
 diContainer
@@ -99,8 +98,8 @@ diContainer
   .inSingletonScope();
 
 diContainer
-  .bind<AppUpdater>(TYPES.AppUpdater)
-  .to(ElectronAppUpdater)
+  .bind<AppManager>(TYPES.AppManager)
+  .to(ElectronAppManager)
   .inSingletonScope();
 
 diContainer
@@ -130,11 +129,6 @@ diContainer
 
 diContainer
   .bind<UseCaseInteractorForMain>(UseCaseInteractorForMain)
-  .toSelf()
-  .inSingletonScope();
-
-diContainer
-  .bind<AppManager>(AppManager)
   .toSelf()
   .inSingletonScope();
 

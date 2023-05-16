@@ -2,6 +2,7 @@
   "name": "kropsaurus",
   "productName": "CropMon",
   "version": "1.0.0",
+  "freeVersions": ["1.0.0"],
   "appId": "com.pineple.kropsaurus",
   "description": "Simple Screen Recorder",
   "main": "./dist/main.prod.js",

@@ -4,30 +4,25 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
+import { AppManager } from '@application/ports/app';
 import { UiDirector } from '@application/ports/director';
-import { AppUpdater } from '@application/ports/updater';
-import AppManager from '@application/services/app';
 import HookManager from '@application/services/hook';
 import LicenseService from '@application/services/license';
 import { UseCase } from '@application/usecases/UseCase';
-
-const FREE_VERSIONS = ['1.0.0'];
 
 @injectable()
 export default class CheckUpdateUseCase implements UseCase<void> {
   constructor(
     private hookManager: HookManager,
     private licenseService: LicenseService,
-    private appManager: AppManager,
-    @inject(TYPES.AppUpdater) private appUpdater: AppUpdater,
+    @inject(TYPES.AppManager) private appManager: AppManager,
     @inject(TYPES.UiDirector) private uiDirector: UiDirector
   ) {}
 
   async execute() {
     const license = await this.licenseService.checkAndGetLicense();
-    const curVersion = this.appUpdater.getCurAppVersion();
     if (!license?.validated) {
-      if (FREE_VERSIONS.includes(curVersion)) {
+      if (this.appManager.isFreeVersion()) {
         return;
       }
 
@@ -35,7 +30,7 @@ export default class CheckUpdateUseCase implements UseCase<void> {
       this.appManager.quit();
     }
 
-    await this.appUpdater.checkForUpdates(
+    await this.appManager.checkForUpdates(
       this.onUpdateAvailable,
       this.onUpdateNotAvailable,
       this.onDownloadProgress,

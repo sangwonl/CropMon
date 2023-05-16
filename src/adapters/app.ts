@@ -7,21 +7,22 @@ import { injectable } from 'inversify';
 
 import { isProduction } from '@utils/process';
 
-import { AppUpdater } from '@application/ports/updater';
+import { AppManager } from '@application/ports/app';
+import HookManager from '@application/services/hook';
 
-import { version as curVersion } from '../package.json';
-
-if (!isProduction()) {
-  app.getVersion = () => curVersion;
-}
+import { version as curVersion, freeVersions } from '../package.json';
 
 // this should be imported after version overriding in dev mode
 // eslint-disable-next-line import/order, import/first
 import { autoUpdater } from 'electron-updater';
 
+if (!isProduction()) {
+  app.getVersion = () => curVersion;
+}
+
 @injectable()
-export default class ElectronAppUpdater implements AppUpdater {
-  constructor() {
+export default class ElectronAppManager implements AppManager {
+  constructor(private hookManager: HookManager) {
     autoUpdater.logger = log;
     autoUpdater.autoDownload = false;
     autoUpdater.autoInstallOnAppQuit = true;
@@ -29,6 +30,10 @@ export default class ElectronAppUpdater implements AppUpdater {
 
   getCurAppVersion(): string {
     return app.getVersion();
+  }
+
+  isFreeVersion(): boolean {
+    return freeVersions.includes(this.getCurAppVersion());
   }
 
   async checkForUpdates(
@@ -58,5 +63,10 @@ export default class ElectronAppUpdater implements AppUpdater {
 
   quitAndInstall() {
     autoUpdater.quitAndInstall(true, true);
+  }
+
+  quit(): void {
+    app.quit();
+    this.hookManager.emit('onAppQuit', {});
   }
 }

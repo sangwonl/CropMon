@@ -1,7 +1,7 @@
 import fs from 'fs';
 
-import { app, shell } from 'electron';
-import { injectable } from 'inversify';
+import { shell } from 'electron';
+import { inject, injectable } from 'inversify';
 
 import { assetPathResolver } from '@utils/asset';
 import { getAllScreens, getScreenCursorOn } from '@utils/bounds';
@@ -15,6 +15,7 @@ import { CaptureMode } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
 import { Screen } from '@domain/models/screen';
 
+import { AppManager } from '@application/ports/app';
 import {
   TrayRecordingState,
   TrayUpdaterState,
@@ -42,7 +43,10 @@ export default class ElectronUiDirector implements UiDirector {
   private recTimeHandle?: ReturnType<typeof setInterval>;
   private recTimeStart?: number;
 
-  constructor(private uiStateApplier: ElectronUiStateApplier) {}
+  constructor(
+    private uiStateApplier: ElectronUiStateApplier,
+    @inject(TYPES.AppManager) private appManager: AppManager
+  ) {}
 
   initialize(): void {
     this.appTray = diContainer.get<AppTray>(TYPES.AppTray);
@@ -105,10 +109,6 @@ export default class ElectronUiDirector implements UiDirector {
       this.recTimeStart = undefined;
       this.appTray?.refreshRecTime();
     }
-  }
-
-  quitApplication(): void {
-    app.quit();
   }
 
   async openReleaseNotes(): Promise<void> {
@@ -234,7 +234,7 @@ export default class ElectronUiDirector implements UiDirector {
     if (shouldUpdate) {
       onQuitAndInstall();
       // WORKAROUND: to make sure app quits completely
-      setTimeout(() => this.quitApplication(), 2000);
+      setTimeout(() => this.appManager.quit(), 2000);
     } else {
       onCancel();
     }
