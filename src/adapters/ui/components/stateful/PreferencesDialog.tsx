@@ -12,6 +12,8 @@ import { useUseCaseInteractor } from '@adapters/ui/hooks/interactor';
 import { usePlatformApi } from '@adapters/ui/hooks/platform';
 import { IPC_EVT_ON_CLOSE } from '@adapters/ui/widgets/preferences/shared';
 
+const LINK_LICENSE_BUY = 'https://cropmon.pineple.com/buy';
+
 interface PropTypes {
   appName: string;
   version: string;
@@ -43,6 +45,10 @@ function PreferencesDialog({ appName, version, preferences }: PropTypes) {
     });
   }, []);
 
+  const handleBuyClick = useCallback(() => {
+    interactor.openExternal(LINK_LICENSE_BUY);
+  }, []);
+
   useEffect(() => {
     interactor.getLicense().then(setLicense);
   }, []);
@@ -65,6 +71,7 @@ function PreferencesDialog({ appName, version, preferences }: PropTypes) {
       recordHome={recordHome}
       onChooseRecordHome={handleRecordHome}
       onRegister={handleRegister}
+      onBuyClick={handleBuyClick}
       onSave={handleSave}
       onClose={handleClose}
     />

@@ -18,8 +18,6 @@ import ModalDialog from '@adapters/ui/components/stateless/ModalDialog';
 import commStyles from './CommonStyles.css';
 import styles from './PrefsAboutPanel.css';
 
-const LINK_LICENSE_BUY = 'https://kropsaurus.pineple.com/buy';
-
 type Props = {
   appName: string;
   version: string;
@@ -27,6 +25,7 @@ type Props = {
   license: License | null;
   registerError: string | null;
   onRegister: (email: string, licenseKey: string) => void;
+  onBuyClick: () => void;
 };
 
 function mapShortcutKeys(shortcut: string) {
@@ -53,6 +52,7 @@ function PrefsAboutPanel({
   license,
   registerError,
   onRegister,
+  onBuyClick,
 }: Props) {
   const { shortcut } = prefs;
 
@@ -85,10 +85,6 @@ function PrefsAboutPanel({
     setLicenseText('');
     setErrorText(null);
     setLoading(false);
-  }, []);
-
-  const handlePurchaseClick = useCallback(() => {
-    window.open(LINK_LICENSE_BUY, '_blank');
   }, []);
 
   useEffect(() => {
@@ -138,7 +134,7 @@ function PrefsAboutPanel({
                 Register
               </span>{' '}
               an existing license. (
-              <span className={styles.regLink} onClick={handlePurchaseClick}>
+              <span className={styles.regLink} onClick={onBuyClick}>
                 Click here
               </span>{' '}
               to purchase a license)

@@ -94,4 +94,8 @@ export default class UseCaseInteractorForRenderer implements UseCaseInteractor {
   registerLicense(email: string, licenseKey: string): Promise<License | null> {
     return ipcRenderer.invoke('registerLicense', email, licenseKey);
   }
+
+  openExternal(url: string): void {
+    ipcRenderer.send('openExternal', url);
+  }
 }

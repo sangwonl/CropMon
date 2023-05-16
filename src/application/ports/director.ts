@@ -48,4 +48,5 @@ export interface UiDirector {
   closePostProcessDialog(): void;
   progressPostProcess(percent: number): void;
   updatePostProcessMsg(message: string): void;
+  openExternal(url: string): void;
 }

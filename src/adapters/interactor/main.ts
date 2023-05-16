@@ -48,6 +48,9 @@ export default class UseCaseInteractorForMain implements UseCaseInteractor {
     ipcMain.handle('registerLicense', async (event, email, licenseKey) => {
       return this.registerLicense(email, licenseKey);
     });
+    ipcMain.on('openExternal', (_event, url) => {
+      this.openExternal(url);
+    });
   }
 
   initializeApp(): void {
@@ -132,5 +135,9 @@ export default class UseCaseInteractorForMain implements UseCaseInteractor {
 
   registerLicense(email: string, licenseKey: string): Promise<License | null> {
     return this.interactor.registerLicense(email, licenseKey);
+  }
+
+  openExternal(url: string): void {
+    this.interactor.openExternal(url);
   }
 }

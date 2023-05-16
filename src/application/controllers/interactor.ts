@@ -20,6 +20,7 @@ import OpenAboutPopupUseCase from '@application/usecases/OpenAboutPopup';
 import OpenCaptureFolderUseCase from '@application/usecases/OpenCaptureFolder';
 import OpenHelpPopupUseCase from '@application/usecases/OpenHelpPopup';
 import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
+import OpenUrlUseCase from '@application/usecases/OpenUrlUseCase';
 import QuitAppUseCase from '@application/usecases/QuitApp';
 import RegisterLicenseUseCase from '@application/usecases/RegisterLicenseUseCase';
 import SavePrefsUseCase from '@application/usecases/SavePrefsUseCase';
@@ -54,7 +55,8 @@ export default class UseCaseInteractorCore implements UseCaseInteractor {
     private getUiStateUseCase: GetUiStateUseCase,
     private savePrefsUseCase: SavePrefsUseCase,
     private getLicenseUseCase: GetLicenseUseCase,
-    private registerLicenseUseCase: RegisterLicenseUseCase
+    private registerLicenseUseCase: RegisterLicenseUseCase,
+    private openUrlUseCase: OpenUrlUseCase
   ) {}
 
   initializeApp = () => {
@@ -161,5 +163,9 @@ export default class UseCaseInteractorCore implements UseCaseInteractor {
       licenseKey,
     });
     return output.license;
+  }
+
+  openExternal(url: string): void {
+    this.openUrlUseCase.execute({ url });
   }
 }

@@ -262,4 +262,8 @@ export default class ElectronUiDirector implements UiDirector {
   updatePostProcessMsg(message: string): void {
     this.postProcessDialog?.setMessage(message);
   }
+
+  openExternal(url: string): void {
+    shell.openExternal(url);
+  }
 }

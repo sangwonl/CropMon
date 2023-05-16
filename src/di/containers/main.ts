@@ -38,6 +38,7 @@ import OpenAboutPopupUseCase from '@application/usecases/OpenAboutPopup';
 import OpenCaptureFolderUseCase from '@application/usecases/OpenCaptureFolder';
 import OpenHelpPopupUseCase from '@application/usecases/OpenHelpPopup';
 import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
+import OpenUrlUseCase from '@application/usecases/OpenUrlUseCase';
 import QuitAppUseCase from '@application/usecases/QuitApp';
 import RegisterLicenseUseCase from '@application/usecases/RegisterLicenseUseCase';
 import SavePrefsUseCase from '@application/usecases/SavePrefsUseCase';
@@ -279,6 +280,11 @@ diContainer
 
 diContainer
   .bind<RegisterLicenseUseCase>(RegisterLicenseUseCase)
+  .toSelf()
+  .inSingletonScope();
+
+diContainer
+  .bind<OpenUrlUseCase>(OpenUrlUseCase)
   .toSelf()
   .inSingletonScope();
 

@@ -19,6 +19,7 @@ type Props = {
   registerError: string | null;
   onChooseRecordHome: () => void;
   onRegister: (email: string, licenseKey: string) => void;
+  onBuyClick: () => void;
   onSave: (preferences: Preferences) => void;
   onClose: () => void;
 };
@@ -41,6 +42,7 @@ function PrefsPanels({
   registerError,
   onChooseRecordHome,
   onRegister,
+  onBuyClick,
   onSave,
   onClose,
 }: Props) {
@@ -82,6 +84,7 @@ function PrefsPanels({
                 license={license}
                 registerError={registerError}
                 onRegister={onRegister}
+                onBuyClick={onBuyClick}
               />
             ),
           }[curTabId]
