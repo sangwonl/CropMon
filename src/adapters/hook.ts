@@ -138,16 +138,10 @@ export default class BuiltinHooks {
     await this.setupInSelectionShortcut(true, args.captureMode);
 
     const prefs = await this.prefsRepo.fetchPreferences();
-    this.tracker.eventL(
-      'capture',
-      'options-changed',
-      `mode:${prefs.captureMode}`
-    );
-    this.tracker.eventL(
-      'capture',
-      'options-changed',
-      `outfmt:${prefs.outputFormat}`
-    );
+    this.tracker.eventLVS('capture', 'options-changed', {
+      mode: prefs.captureMode,
+      outfmt: prefs.outputFormat,
+    });
   };
 
   private onCaptureShortcutTriggered = async () => {
@@ -186,10 +180,12 @@ export default class BuiltinHooks {
         args.captureContext;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const { width, height } = target.bounds!;
-      this.tracker.eventL('capture', 'start-capture', `mode:${target.mode}`);
-      this.tracker.eventL('capture', 'start-capture', `area:${width}x${height}`);
-      this.tracker.eventL('capture', 'start-capture', `outfmt:${outputFormat}`);
-      this.tracker.eventL('capture', 'start-capture', `audio:${audioSources.map((s) => s.name).join(',')}`);
+      this.tracker.eventLVS('capture', 'start-capture', {
+        mode: target.mode,
+        area: `${width}x${height}`,
+        outfmt: outputFormat,
+        audio: audioSources.map((s) => s.name).join(','),
+      })
       this.tracker.view('in-recording');
     } else {
       this.tracker.eventL('capture', 'start-capture', 'fail');

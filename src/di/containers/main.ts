@@ -59,7 +59,7 @@ import ElectronPreferencesStore from '@adapters/preferences';
 import ElectronScreenRecorder from '@adapters/recorder/recorder';
 import PrefsRepositoryImpl from '@adapters/repositories/preferences';
 import ElectronUiStateApplier from '@adapters/state';
-import GoogleAnalyticsTracker from '@adapters/tracker';
+import MixPanelTracker from '@adapters/trackerMixPanel';
 import ElectronUiDirector from '@adapters/ui/director';
 import MacAppTray from '@adapters/ui/widgets/tray/mac';
 import WinAppTray from '@adapters/ui/widgets/tray/win';
@@ -95,7 +95,7 @@ diContainer
 
 diContainer
   .bind<AnalyticsTracker>(TYPES.AnalyticsTracker)
-  .to(GoogleAnalyticsTracker)
+  .to(MixPanelTracker)
   .inSingletonScope();
 
 diContainer

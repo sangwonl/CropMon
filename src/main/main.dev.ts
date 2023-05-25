@@ -40,5 +40,9 @@ const instanceLock = app.requestSingleInstanceLock();
 if (!instanceLock) {
   app.quit();
 } else {
+  app.commandLine.appendSwitch(
+    'disable-blink-features',
+    'BlockCredentialedSubresources'
+  );
   app.whenReady().then(start).catch(log.error);
 }
