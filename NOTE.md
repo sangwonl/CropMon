@@ -1,11 +1,11 @@
-- Package 들 업데이트할때 유의사항
+### Package 들 업데이트할때 유의사항
 
 1. npm pakcage update
    $ npx npm-check-updates -u
 
 2. rollback `chalk`, `node-fetch`, `rimraf` version
 
-- CropMon 최초 배포 계획
+### CropMon 최초 배포 계획
 
 1. cropmon.pineple.com 사이트 준비
 
@@ -20,3 +20,9 @@
 - 라이센스 등록 확인
 
 3. kropsaurus.pineple.com 도메인 cropmon 으로 redirect
+
+### ffmpeg 라이브러리 빌드
+
+1. sangwonl/ffmpeg-apple-arm64-build 받아서
+
+2. build.sh 실행

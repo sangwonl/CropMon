@@ -29,6 +29,7 @@ const Template: ComponentStory<typeof PrefsPanels> = (args) => (
 );
 
 const defaultArgs: ComponentProps<typeof PrefsPanels> = {
+  appName: 'CropMon',
   version: '0.9.5',
   license: null,
   recordHome: '/home/pineple/kropsaurus',
@@ -55,6 +56,7 @@ const defaultArgs: ComponentProps<typeof PrefsPanels> = {
   registerError: null,
   onChooseRecordHome: () => {},
   onClose: () => {},
+  onBuyClick: () => {},
   onRegister: (email: string, licenseKey: string) => {},
   onSave: (preferences: Preferences) => {},
 };

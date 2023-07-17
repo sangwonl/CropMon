@@ -103,20 +103,20 @@ function PrefsAboutPanel({
           <h2>{appName}</h2>
           <p className={styles.version}>v{version}</p>
         </div>
-        <p
+        {/* <p
           className={classNames(styles.license, {
             [styles.licenseUnregistered]: !license?.validated,
           })}
         >
           {license?.validated ? 'Registered' : 'Unregistered'}
-        </p>
+        </p> */}
       </div>
       <div className={styles.items}>
         <div key="shortcut" className={styles.item}>
           <h2>Recording Shortcut</h2>
           <p>{mapShortcutKeys(shortcut)}</p>
         </div>
-        <div key="license" className={styles.item}>
+        {/* <div key="license" className={styles.item}>
           <h2>Lifetime License</h2>
           {license?.validated && (
             <p className={styles.regDesc}>
@@ -140,7 +140,7 @@ function PrefsAboutPanel({
               to purchase a license)
             </p>
           )}
-        </div>
+        </div> */}
       </div>
       <div className={styles.copyright}>
         <h2>Copyright @ 2021-2023 Pineple</h2>

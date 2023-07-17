@@ -1,25 +1,39 @@
-import { inject, injectable } from 'inversify';
+/* eslint-disable prettier/prettier */
+import { injectable } from 'inversify';
 
-import TYPES from '@di/types';
+import { License } from '@domain/models/license';
 
-import { TrayUpdaterState, UiDirector } from '@application/ports/director';
-import { LicenseManager } from '@application/ports/license';
+// import TYPES from '@di/types';
+//
+// import { TrayUpdaterState, UiDirector } from '@application/ports/director';
+// import { LicenseManager } from '@application/ports/license';
 
 @injectable()
 export default class LicenseService {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor, prettier/prettier
   constructor(
-    // eslint-disable-next-line prettier/prettier
-    @inject(TYPES.LicenseManager) private licenseManager: LicenseManager,
-    @inject(TYPES.UiDirector) private uiDirector: UiDirector
+    // @inject(TYPES.LicenseManager) private licenseManager: LicenseManager,
+    // @inject(TYPES.UiDirector) private uiDirector: UiDirector
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   ) {}
 
-  async checkAndGetLicense() {
-    const license = await this.licenseManager.retrieveLicense();
-    if (license?.validated) {
-      this.uiDirector.updateTrayUpdater(TrayUpdaterState.Checkable);
-    } else {
-      this.uiDirector.updateTrayUpdater(TrayUpdaterState.NonAvailable);
-    }
-    return license;
+  async checkAndGetLicense(): Promise<License | null> {
+    // const license = await this.licenseManager.retrieveLicense();
+    // if (license?.validated) {
+    //   this.uiDirector.updateTrayUpdater(TrayUpdaterState.Checkable);
+    // } else {
+    //   this.uiDirector.updateTrayUpdater(TrayUpdaterState.NonAvailable);
+    // }
+    // return license;
+
+    // NOTE: 라이센스 체크를 스킵하기로 결정 (기존엔 라이센스 없으면 업데이트 메뉴 숨겼음)
+    // 이 함수를 사용하는 곳에서는 validated 만 사용하는 것으로 보여 나머지는 빈값으로 채움
+    return {
+      validated: true,
+      key: '',
+      email: '',
+      registeredAt: 0,
+      lastCheckedAt: 0,
+    };
   }
 }

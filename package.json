@@ -294,6 +294,7 @@
     "opencollective-postinstall": "^2.0.3",
     "postcss-flexbugs-fixes": "^5.0.2",
     "prettier": "^2.8.7",
+    "react-docgen-typescript-plugin": "^1.0.5",
     "react-refresh": "^0.14.0",
     "react-test-renderer": "^18.2.0",
     "rimraf": "^3.0.2",
