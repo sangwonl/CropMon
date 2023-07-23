@@ -149,7 +149,11 @@ class MediaRecordDelegatee {
     };
   }
 
-  private getVideoConstraint(srcId: string, bounds: Bounds): any {
+  private getVideoConstraint(
+    srcId: string,
+    bounds: Bounds,
+    frameRate?: number
+  ): any {
     return {
       audio: false,
       video: {
@@ -160,6 +164,7 @@ class MediaRecordDelegatee {
           minHeight: bounds.height,
           maxWidth: bounds.width,
           maxHeight: bounds.height,
+          maxFrameRate: frameRate,
         },
       },
     };
@@ -184,7 +189,11 @@ class MediaRecordDelegatee {
     const sliceToDrawable = async (slice: TargetSlice): Promise<Drawable> => {
       const { mediaSourceId, screenBounds, targetBounds } = slice;
 
-      const constraints = this.getVideoConstraint(mediaSourceId, screenBounds);
+      const constraints = this.getVideoConstraint(
+        mediaSourceId,
+        screenBounds,
+        frameRate
+      );
       const videoStream = await navigator.mediaDevices.getUserMedia(
         constraints
       );
@@ -218,6 +227,12 @@ class MediaRecordDelegatee {
   private createTransformStream = (drawContext: DrawContext): MediaStream => {
     const { canvasBounds } = drawContext;
 
+    const canvas = document.createElement('canvas');
+    canvas.width = canvasBounds.width;
+    canvas.height = canvasBounds.height;
+
+    const offscreenCanvas = canvas.transferControlToOffscreen();
+
     const generator = new MediaStreamTrackGenerator({ kind: 'video' });
     const { writable } = generator;
 
@@ -234,16 +249,68 @@ class MediaRecordDelegatee {
       };
     });
 
-    const { writable: nullWritable } = new MediaStreamTrackGenerator({
-      kind: 'video',
+    const nullWritables = drawContext.drawables.map(() => {
+      const { writable: nullWritable } = new MediaStreamTrackGenerator({
+        kind: 'video',
+      });
+      return nullWritable;
     });
 
     this.tranformWorker.postMessage(
-      { canvasBounds, boundsList, readables, writable, nullWritable },
-      [...readables, writable, nullWritable as any]
+      {
+        type: 'pipeline',
+        boundsList,
+        readables,
+        nullWritables,
+        writable,
+        canvas: offscreenCanvas,
+      },
+      [...readables, ...nullWritables, writable, offscreenCanvas]
     );
 
     return new MediaStream([generator]);
+  };
+
+  private createCanvasStream = (drawContext: DrawContext): MediaStream => {
+    const { canvasBounds } = drawContext;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = canvasBounds.width;
+    canvas.height = canvasBounds.height;
+
+    const canvasCtx = canvas.getContext('2d');
+    const canvasStream = canvas.captureStream(drawContext.frameRate);
+
+    const videos = drawContext.drawables.map(({ videoStream }) => {
+      const video = document.createElement('video');
+      video.srcObject = videoStream;
+      video.play();
+      return video;
+    });
+
+    function drawVideosOnCanvas() {
+      videos.forEach((video, i) => {
+        const { srcBounds, dstBounds } = drawContext.drawables[i];
+
+        canvasCtx?.drawImage(
+          video,
+          srcBounds.x,
+          srcBounds.y,
+          srcBounds.width,
+          srcBounds.height,
+          dstBounds.x,
+          dstBounds.y,
+          dstBounds.width,
+          dstBounds.height
+        );
+      });
+
+      requestAnimationFrame(drawVideosOnCanvas);
+    }
+
+    drawVideosOnCanvas();
+
+    return canvasStream;
   };
 
   private attachAudioTrack = async (
@@ -270,10 +337,16 @@ class MediaRecordDelegatee {
     const { outputFormat, recordAudio, audioSources } = recordCtx;
 
     const drawContext = await this.createDrawContext(recordCtx);
-    const videoStream =
-      recordCtx.captureMode === CaptureMode.SCREEN
-        ? this.createBypassStream(drawContext)
-        : this.createTransformStream(drawContext);
+    let videoStream: MediaStream;
+    if (recordCtx.captureMode === CaptureMode.SCREEN) {
+      videoStream = this.createBypassStream(drawContext);
+    } else {
+      videoStream = this.createTransformStream(drawContext);
+    }
+    // } else if (drawContext.drawables.length === 1) {
+    // } else {
+    //   videoStream = this.createCanvasStream(drawContext);
+    // }
 
     if (outputFormat === 'gif' || !recordAudio) {
       return videoStream;

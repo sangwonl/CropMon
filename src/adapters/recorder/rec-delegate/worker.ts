@@ -14,11 +14,20 @@ function simpleResizeTransform(srcBounds: Bounds): TransformStream {
       controller: TransformStreamDefaultController
     ) => {
       const resizedFrame = new VideoFrame(frame as any, { visibleRect });
-      frame.close();
 
       controller.enqueue(resizedFrame);
+
+      frame.close();
     },
   });
+}
+
+function composeSimpleResizePipeline(
+  readable: ReadableStream<VideoFrame>,
+  writable: WritableStream<VideoFrame>,
+  srcBounds: Bounds
+) {
+  readable.pipeThrough(simpleResizeTransform(srcBounds)).pipeTo(writable);
 }
 
 function resizeAndMergeTransform(
@@ -35,7 +44,6 @@ function resizeAndMergeTransform(
       controller: TransformStreamDefaultController
     ) => {
       const resizedFrame = new VideoFrame(frame as any, { visibleRect });
-      frame.close();
 
       canvasCtx.drawImage(
         resizedFrame,
@@ -44,6 +52,7 @@ function resizeAndMergeTransform(
         dstBounds.width,
         dstBounds.height
       );
+
       resizedFrame.close();
 
       if (!skipEnqueue) {
@@ -53,26 +62,19 @@ function resizeAndMergeTransform(
           })
         );
       }
+
+      frame.close();
     },
   });
 }
 
-function composeSimpleResizePipeline(
-  writable: WritableStream<VideoFrame>,
-  readable: ReadableStream<VideoFrame>,
-  srcBounds: Bounds
-) {
-  readable.pipeThrough(simpleResizeTransform(srcBounds)).pipeTo(writable);
-}
-
 function composeResizeAndMergePipeline(
-  writable: WritableStream<VideoFrame>,
-  nullWritable: WritableStream<VideoFrame>,
+  canvas: OffscreenCanvas,
   readables: ReadableStream<VideoFrame>[],
-  boundsList: { srcBounds: Bounds; dstBounds: Bounds }[],
-  canvasBounds: Bounds
+  nullWritables: WritableStream<VideoFrame>[],
+  writable: WritableStream<VideoFrame>,
+  boundsList: { srcBounds: Bounds; dstBounds: Bounds }[]
 ) {
-  const canvas = new OffscreenCanvas(canvasBounds.width, canvasBounds.height);
   const canvasCtx = canvas.getContext('2d')!;
 
   // 공용 캔바스를 하나 두고
@@ -86,7 +88,7 @@ function composeResizeAndMergePipeline(
       .pipeThrough(
         resizeAndMergeTransform(srcBounds, dstBounds, canvasCtx, true)
       )
-      .pipeTo(nullWritable);
+      .pipeTo(nullWritables[i]);
   }
 
   const lastReadableIdx = readables.length - 1;
@@ -98,24 +100,29 @@ function composeResizeAndMergePipeline(
     .pipeTo(writable);
 }
 
-onmessage = (event) => {
-  const { canvasBounds, boundsList, readables, writable, nullWritable } =
-    event.data;
+function processWithPipeline(data: any) {
+  const { canvas, readables, nullWritables, writable, boundsList } = data;
 
-  // simple resize 왜 안되냐..
-  // if (readables.length === 1) {
-  //   composeSimpleResizePipeline(
-  //     writable,
-  //     readables[0],
-  //     boundsList[0].srcBounds
-  //   );
-  // } else {
-  composeResizeAndMergePipeline(
-    writable,
-    nullWritable,
-    readables,
-    boundsList,
-    canvasBounds
-  );
-  // }
+  if (readables.length === 1) {
+    composeSimpleResizePipeline(
+      readables[0],
+      writable,
+      boundsList[0].srcBounds
+    );
+  } else {
+    composeResizeAndMergePipeline(
+      canvas,
+      readables,
+      nullWritables,
+      writable,
+      boundsList
+    );
+  }
+}
+
+onmessage = (event) => {
+  const { data } = event;
+  if (data.type === 'pipeline') {
+    processWithPipeline(data);
+  }
 };
