@@ -1,5 +1,11 @@
 ## Release Notes
 
+### v1.0.1
+
+_23 Jul 2023_
+
+- Fix broken recorded with invalid colors and distorted lines in Windows
+
 ### v1.0.0
 
 _18 May 2023_
