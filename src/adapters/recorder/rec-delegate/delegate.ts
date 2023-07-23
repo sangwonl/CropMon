@@ -11,7 +11,7 @@ import { ipcRenderer } from 'electron';
 import logger from 'electron-log';
 import ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
 
-import { mergeScreenBounds } from '@utils/bounds';
+import { alignedBounds, mergeScreenBounds } from '@utils/bounds';
 import { getDurationFromString, getNowAsYYYYMMDDHHmmss } from '@utils/date';
 import { isProduction, isWin } from '@utils/process';
 
@@ -149,7 +149,11 @@ class MediaRecordDelegatee {
     };
   }
 
-  private getVideoConstraint(srcId: string, bounds: Bounds): any {
+  private getVideoConstraint(
+    srcId: string,
+    bounds: Bounds,
+    frameRate?: number,
+  ): any {
     return {
       audio: false,
       video: {
@@ -160,18 +164,19 @@ class MediaRecordDelegatee {
           minHeight: bounds.height,
           maxWidth: bounds.width,
           maxHeight: bounds.height,
+          maxFrameRate: frameRate,
         },
       },
     };
   }
 
   private createDrawContext = async (
-    recordCtx: RecordContext
+    recordCtx: RecordContext,
   ): Promise<DrawContext> => {
     const { scaleDownFactor, frameRate, targetSlices } = recordCtx;
 
     const wholeTargetBounds = mergeScreenBounds(
-      targetSlices.map(({ targetBounds }) => targetBounds)
+      targetSlices.map(({ targetBounds }) => targetBounds),
     );
 
     const canvasBounds = {
@@ -184,9 +189,13 @@ class MediaRecordDelegatee {
     const sliceToDrawable = async (slice: TargetSlice): Promise<Drawable> => {
       const { mediaSourceId, screenBounds, targetBounds } = slice;
 
-      const constraints = this.getVideoConstraint(mediaSourceId, screenBounds);
+      const constraints = this.getVideoConstraint(
+        mediaSourceId,
+        screenBounds,
+        frameRate,
+      );
       const videoStream = await navigator.mediaDevices.getUserMedia(
-        constraints
+        constraints,
       );
 
       const srcBounds: Bounds = {
@@ -218,6 +227,13 @@ class MediaRecordDelegatee {
   private createTransformStream = (drawContext: DrawContext): MediaStream => {
     const { canvasBounds } = drawContext;
 
+    const canvas = document.createElement('canvas');
+    const alignedCanvasBounds = alignedBounds(canvasBounds);
+    canvas.width = alignedCanvasBounds.width;
+    canvas.height = alignedCanvasBounds.height;
+
+    const offscreenCanvas = canvas.transferControlToOffscreen();
+
     const generator = new MediaStreamTrackGenerator({ kind: 'video' });
     const { writable } = generator;
 
@@ -229,30 +245,93 @@ class MediaRecordDelegatee {
 
     const boundsList = drawContext.drawables.map(({ srcBounds, dstBounds }) => {
       return {
-        srcBounds,
-        dstBounds,
+        srcBounds: alignedBounds(srcBounds),
+        dstBounds: alignedBounds(dstBounds),
       };
     });
 
-    const { writable: nullWritable } = new MediaStreamTrackGenerator({
-      kind: 'video',
+    const nullWritables = drawContext.drawables.map(() => {
+      const { writable: nullWritable } = new MediaStreamTrackGenerator({
+        kind: 'video',
+      });
+      return nullWritable;
     });
 
     this.tranformWorker.postMessage(
-      { canvasBounds, boundsList, readables, writable, nullWritable },
-      [...readables, writable, nullWritable as any]
+      {
+        type: 'pipeline',
+        frameRate: drawContext.frameRate,
+        boundsList,
+        readables,
+        nullWritables,
+        writable,
+        canvas: offscreenCanvas,
+      },
+      [...readables, ...nullWritables, writable, offscreenCanvas],
     );
 
     return new MediaStream([generator]);
   };
 
+  private createCanvasStream = (drawContext: DrawContext): MediaStream => {
+    const { canvasBounds } = drawContext;
+
+    const canvas = document.createElement('canvas');
+    const alignedCanvasBounds = alignedBounds(canvasBounds);
+    canvas.width = alignedCanvasBounds.width;
+    canvas.height = alignedCanvasBounds.height;
+
+    const canvasCtx = canvas.getContext('2d');
+    const canvasStream = canvas.captureStream(drawContext.frameRate);
+
+    const videos = drawContext.drawables.map(({ videoStream }) => {
+      const video = document.createElement('video');
+      video.srcObject = videoStream;
+      video.play();
+      return video;
+    });
+
+    const alignedBoundsList = drawContext.drawables.map(
+      ({ srcBounds, dstBounds }) => {
+        return {
+          srcBounds: alignedBounds(srcBounds),
+          dstBounds: alignedBounds(dstBounds),
+        };
+      },
+    );
+
+    function drawVideosOnCanvas() {
+      videos.forEach((video, i) => {
+        const { srcBounds, dstBounds } = alignedBoundsList[i];
+
+        canvasCtx?.drawImage(
+          video,
+          srcBounds.x,
+          srcBounds.y,
+          srcBounds.width,
+          srcBounds.height,
+          dstBounds.x,
+          dstBounds.y,
+          dstBounds.width,
+          dstBounds.height,
+        );
+      });
+
+      requestAnimationFrame(drawVideosOnCanvas);
+    }
+
+    drawVideosOnCanvas();
+
+    return canvasStream;
+  };
+
   private attachAudioTrack = async (
     stream: MediaStream,
-    audioSource: AudioSource
+    audioSource: AudioSource,
   ): Promise<void> => {
     try {
       const audioStream = await navigator.mediaDevices.getUserMedia(
-        this.getAudioConstraint(audioSource)
+        this.getAudioConstraint(audioSource),
       );
 
       const tracks = audioStream.getAudioTracks();
@@ -265,22 +344,27 @@ class MediaRecordDelegatee {
   };
 
   private createStreamToRecord = async (
-    recordCtx: RecordContext
+    recordCtx: RecordContext,
   ): Promise<MediaStream> => {
     const { outputFormat, recordAudio, audioSources } = recordCtx;
 
     const drawContext = await this.createDrawContext(recordCtx);
-    const videoStream =
-      recordCtx.captureMode === CaptureMode.SCREEN
-        ? this.createBypassStream(drawContext)
-        : this.createTransformStream(drawContext);
+    let videoStream: MediaStream;
+    if (recordCtx.captureMode === CaptureMode.SCREEN) {
+      videoStream = this.createBypassStream(drawContext);
+    } else if (drawContext.drawables.length >= 1) {
+      videoStream = this.createTransformStream(drawContext);
+    } else {
+      // will never be reached
+      videoStream = this.createCanvasStream(drawContext);
+    }
 
     if (outputFormat === 'gif' || !recordAudio) {
       return videoStream;
     }
 
     await Promise.all(
-      audioSources.map((s) => this.attachAudioTrack(videoStream, s))
+      audioSources.map((s) => this.attachAudioTrack(videoStream, s)),
     );
 
     return videoStream;
@@ -327,7 +411,7 @@ class MediaRecordDelegatee {
 
     this.chunkHandler = setInterval(
       this.handleRecordedChunks,
-      CHUNK_HANLER_INTERVAL
+      CHUNK_HANLER_INTERVAL,
     );
 
     ipcRenderer.send('onRecordingStarted', {});
@@ -351,7 +435,7 @@ class MediaRecordDelegatee {
       gPlatformApi.getPath('temp'),
       'kropsaurus',
       'recording',
-      `tmp-${fileName}.webm`
+      `tmp-${fileName}.webm`,
     );
   }
 
@@ -389,7 +473,7 @@ class PostProcessorDelegate {
     outputPath: string,
     outputFormat: OutputFormat,
     enableMic: boolean,
-    onProgress: (progress: ProgressEvent) => void
+    onProgress: (progress: ProgressEvent) => void,
   ): Promise<void> {
     return new Promise((resolve) => {
       const finalizer = () => {
@@ -403,7 +487,7 @@ class PostProcessorDelegate {
         this.ffmpegCmd
           .outputFormat('gif')
           .videoFilter(
-            'fps=14,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse'
+            'fps=14,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse',
           );
       } else if (enableMic) {
         this.ffmpegCmd.videoCodec('copy').audioCodec('aac');
@@ -438,7 +522,7 @@ class PostProcessorDelegate {
           '..',
           'node_modules',
           'ffmpeg-static',
-          ffmpegFilename
+          ffmpegFilename,
         );
   }
 }
@@ -468,7 +552,7 @@ ipcRenderer.on('startPostProcess', async (_event, data) => {
     outputPath,
     outputFormat,
     enableMic,
-    handleProgress
+    handleProgress,
   );
 
   ipcRenderer.send('onPostProcessDone', { aborted: false });
