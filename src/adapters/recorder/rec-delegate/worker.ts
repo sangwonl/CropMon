@@ -1,19 +1,17 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { alignedBounds } from '@utils/bounds';
-
 import { Bounds } from '@domain/models/screen';
 
 function simpleResizeTransform(srcBounds: Bounds): TransformStream {
-  const visibleRect = alignedBounds(srcBounds);
-
   return new TransformStream({
     transform: async (
       frame: VideoFrame,
-      controller: TransformStreamDefaultController
+      controller: TransformStreamDefaultController,
     ) => {
-      const resizedFrame = new VideoFrame(frame as any, { visibleRect });
+      const resizedFrame = new VideoFrame(frame as any, {
+        visibleRect: srcBounds,
+      });
 
       controller.enqueue(resizedFrame);
 
@@ -25,45 +23,61 @@ function simpleResizeTransform(srcBounds: Bounds): TransformStream {
 function composeSimpleResizePipeline(
   readable: ReadableStream<VideoFrame>,
   writable: WritableStream<VideoFrame>,
-  srcBounds: Bounds
+  srcBounds: Bounds,
 ) {
   readable.pipeThrough(simpleResizeTransform(srcBounds)).pipeTo(writable);
+}
+
+function onTransformStream(
+  frame: VideoFrame,
+  controller: TransformStreamDefaultController,
+  canvasCtx: OffscreenCanvasRenderingContext2D,
+  srcBounds: Bounds,
+  dstBounds: Bounds,
+  skipEnqueue: boolean,
+) {
+  const resizedFrame = new VideoFrame(frame as any, { visibleRect: srcBounds });
+
+  canvasCtx.drawImage(
+    resizedFrame,
+    dstBounds.x,
+    dstBounds.y,
+    dstBounds.width,
+    dstBounds.height,
+  );
+
+  resizedFrame.close();
+
+  if (!skipEnqueue) {
+    controller.enqueue(
+      new VideoFrame(canvasCtx.canvas as any, {
+        timestamp: frame.timestamp!,
+      }),
+    );
+  }
+
+  frame.close();
 }
 
 function resizeAndMergeTransform(
   srcBounds: Bounds,
   dstBounds: Bounds,
   canvasCtx: OffscreenCanvasRenderingContext2D,
-  skipEnqueue: boolean
+  skipEnqueue: boolean,
 ): TransformStream {
-  const visibleRect = alignedBounds(srcBounds);
-
   return new TransformStream({
     transform: async (
       frame: VideoFrame,
-      controller: TransformStreamDefaultController
+      controller: TransformStreamDefaultController,
     ) => {
-      const resizedFrame = new VideoFrame(frame as any, { visibleRect });
-
-      canvasCtx.drawImage(
-        resizedFrame,
-        dstBounds.x,
-        dstBounds.y,
-        dstBounds.width,
-        dstBounds.height
+      onTransformStream(
+        frame,
+        controller,
+        canvasCtx,
+        srcBounds,
+        dstBounds,
+        skipEnqueue,
       );
-
-      resizedFrame.close();
-
-      if (!skipEnqueue) {
-        controller.enqueue(
-          new VideoFrame(canvasCtx.canvas as any, {
-            timestamp: frame.timestamp!,
-          })
-        );
-      }
-
-      frame.close();
     },
   });
 }
@@ -73,7 +87,7 @@ function composeResizeAndMergePipeline(
   readables: ReadableStream<VideoFrame>[],
   nullWritables: WritableStream<VideoFrame>[],
   writable: WritableStream<VideoFrame>,
-  boundsList: { srcBounds: Bounds; dstBounds: Bounds }[]
+  boundsList: { srcBounds: Bounds; dstBounds: Bounds }[],
 ) {
   const canvasCtx = canvas.getContext('2d')!;
 
@@ -86,7 +100,7 @@ function composeResizeAndMergePipeline(
     const { srcBounds, dstBounds } = boundsList[i];
     readables[i]
       .pipeThrough(
-        resizeAndMergeTransform(srcBounds, dstBounds, canvasCtx, true)
+        resizeAndMergeTransform(srcBounds, dstBounds, canvasCtx, true),
       )
       .pipeTo(nullWritables[i]);
   }
@@ -95,7 +109,7 @@ function composeResizeAndMergePipeline(
   const { srcBounds, dstBounds } = boundsList[lastReadableIdx];
   readables[lastReadableIdx]
     .pipeThrough(
-      resizeAndMergeTransform(srcBounds, dstBounds, canvasCtx, false)
+      resizeAndMergeTransform(srcBounds, dstBounds, canvasCtx, false),
     )
     .pipeTo(writable);
 }
@@ -107,7 +121,7 @@ function processWithPipeline(data: any) {
     composeSimpleResizePipeline(
       readables[0],
       writable,
-      boundsList[0].srcBounds
+      boundsList[0].srcBounds,
     );
   } else {
     composeResizeAndMergePipeline(
@@ -115,7 +129,7 @@ function processWithPipeline(data: any) {
       readables,
       nullWritables,
       writable,
-      boundsList
+      boundsList,
     );
   }
 }

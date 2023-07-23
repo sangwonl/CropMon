@@ -11,7 +11,7 @@ import { ipcRenderer } from 'electron';
 import logger from 'electron-log';
 import ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
 
-import { mergeScreenBounds } from '@utils/bounds';
+import { alignedBounds, mergeScreenBounds } from '@utils/bounds';
 import { getDurationFromString, getNowAsYYYYMMDDHHmmss } from '@utils/date';
 import { isProduction, isWin } from '@utils/process';
 
@@ -152,7 +152,7 @@ class MediaRecordDelegatee {
   private getVideoConstraint(
     srcId: string,
     bounds: Bounds,
-    frameRate?: number
+    frameRate?: number,
   ): any {
     return {
       audio: false,
@@ -171,12 +171,12 @@ class MediaRecordDelegatee {
   }
 
   private createDrawContext = async (
-    recordCtx: RecordContext
+    recordCtx: RecordContext,
   ): Promise<DrawContext> => {
     const { scaleDownFactor, frameRate, targetSlices } = recordCtx;
 
     const wholeTargetBounds = mergeScreenBounds(
-      targetSlices.map(({ targetBounds }) => targetBounds)
+      targetSlices.map(({ targetBounds }) => targetBounds),
     );
 
     const canvasBounds = {
@@ -192,10 +192,10 @@ class MediaRecordDelegatee {
       const constraints = this.getVideoConstraint(
         mediaSourceId,
         screenBounds,
-        frameRate
+        frameRate,
       );
       const videoStream = await navigator.mediaDevices.getUserMedia(
-        constraints
+        constraints,
       );
 
       const srcBounds: Bounds = {
@@ -228,8 +228,9 @@ class MediaRecordDelegatee {
     const { canvasBounds } = drawContext;
 
     const canvas = document.createElement('canvas');
-    canvas.width = canvasBounds.width;
-    canvas.height = canvasBounds.height;
+    const alignedCanvasBounds = alignedBounds(canvasBounds);
+    canvas.width = alignedCanvasBounds.width;
+    canvas.height = alignedCanvasBounds.height;
 
     const offscreenCanvas = canvas.transferControlToOffscreen();
 
@@ -244,8 +245,8 @@ class MediaRecordDelegatee {
 
     const boundsList = drawContext.drawables.map(({ srcBounds, dstBounds }) => {
       return {
-        srcBounds,
-        dstBounds,
+        srcBounds: alignedBounds(srcBounds),
+        dstBounds: alignedBounds(dstBounds),
       };
     });
 
@@ -259,13 +260,14 @@ class MediaRecordDelegatee {
     this.tranformWorker.postMessage(
       {
         type: 'pipeline',
+        frameRate: drawContext.frameRate,
         boundsList,
         readables,
         nullWritables,
         writable,
         canvas: offscreenCanvas,
       },
-      [...readables, ...nullWritables, writable, offscreenCanvas]
+      [...readables, ...nullWritables, writable, offscreenCanvas],
     );
 
     return new MediaStream([generator]);
@@ -275,8 +277,9 @@ class MediaRecordDelegatee {
     const { canvasBounds } = drawContext;
 
     const canvas = document.createElement('canvas');
-    canvas.width = canvasBounds.width;
-    canvas.height = canvasBounds.height;
+    const alignedCanvasBounds = alignedBounds(canvasBounds);
+    canvas.width = alignedCanvasBounds.width;
+    canvas.height = alignedCanvasBounds.height;
 
     const canvasCtx = canvas.getContext('2d');
     const canvasStream = canvas.captureStream(drawContext.frameRate);
@@ -288,9 +291,18 @@ class MediaRecordDelegatee {
       return video;
     });
 
+    const alignedBoundsList = drawContext.drawables.map(
+      ({ srcBounds, dstBounds }) => {
+        return {
+          srcBounds: alignedBounds(srcBounds),
+          dstBounds: alignedBounds(dstBounds),
+        };
+      },
+    );
+
     function drawVideosOnCanvas() {
       videos.forEach((video, i) => {
-        const { srcBounds, dstBounds } = drawContext.drawables[i];
+        const { srcBounds, dstBounds } = alignedBoundsList[i];
 
         canvasCtx?.drawImage(
           video,
@@ -301,7 +313,7 @@ class MediaRecordDelegatee {
           dstBounds.x,
           dstBounds.y,
           dstBounds.width,
-          dstBounds.height
+          dstBounds.height,
         );
       });
 
@@ -315,11 +327,11 @@ class MediaRecordDelegatee {
 
   private attachAudioTrack = async (
     stream: MediaStream,
-    audioSource: AudioSource
+    audioSource: AudioSource,
   ): Promise<void> => {
     try {
       const audioStream = await navigator.mediaDevices.getUserMedia(
-        this.getAudioConstraint(audioSource)
+        this.getAudioConstraint(audioSource),
       );
 
       const tracks = audioStream.getAudioTracks();
@@ -332,7 +344,7 @@ class MediaRecordDelegatee {
   };
 
   private createStreamToRecord = async (
-    recordCtx: RecordContext
+    recordCtx: RecordContext,
   ): Promise<MediaStream> => {
     const { outputFormat, recordAudio, audioSources } = recordCtx;
 
@@ -340,20 +352,19 @@ class MediaRecordDelegatee {
     let videoStream: MediaStream;
     if (recordCtx.captureMode === CaptureMode.SCREEN) {
       videoStream = this.createBypassStream(drawContext);
-    } else {
+    } else if (drawContext.drawables.length >= 1) {
       videoStream = this.createTransformStream(drawContext);
+    } else {
+      // will never be reached
+      videoStream = this.createCanvasStream(drawContext);
     }
-    // } else if (drawContext.drawables.length === 1) {
-    // } else {
-    //   videoStream = this.createCanvasStream(drawContext);
-    // }
 
     if (outputFormat === 'gif' || !recordAudio) {
       return videoStream;
     }
 
     await Promise.all(
-      audioSources.map((s) => this.attachAudioTrack(videoStream, s))
+      audioSources.map((s) => this.attachAudioTrack(videoStream, s)),
     );
 
     return videoStream;
@@ -400,7 +411,7 @@ class MediaRecordDelegatee {
 
     this.chunkHandler = setInterval(
       this.handleRecordedChunks,
-      CHUNK_HANLER_INTERVAL
+      CHUNK_HANLER_INTERVAL,
     );
 
     ipcRenderer.send('onRecordingStarted', {});
@@ -424,7 +435,7 @@ class MediaRecordDelegatee {
       gPlatformApi.getPath('temp'),
       'kropsaurus',
       'recording',
-      `tmp-${fileName}.webm`
+      `tmp-${fileName}.webm`,
     );
   }
 
@@ -462,7 +473,7 @@ class PostProcessorDelegate {
     outputPath: string,
     outputFormat: OutputFormat,
     enableMic: boolean,
-    onProgress: (progress: ProgressEvent) => void
+    onProgress: (progress: ProgressEvent) => void,
   ): Promise<void> {
     return new Promise((resolve) => {
       const finalizer = () => {
@@ -476,7 +487,7 @@ class PostProcessorDelegate {
         this.ffmpegCmd
           .outputFormat('gif')
           .videoFilter(
-            'fps=14,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse'
+            'fps=14,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse',
           );
       } else if (enableMic) {
         this.ffmpegCmd.videoCodec('copy').audioCodec('aac');
@@ -511,7 +522,7 @@ class PostProcessorDelegate {
           '..',
           'node_modules',
           'ffmpeg-static',
-          ffmpegFilename
+          ffmpegFilename,
         );
   }
 }
@@ -541,7 +552,7 @@ ipcRenderer.on('startPostProcess', async (_event, data) => {
     outputPath,
     outputFormat,
     enableMic,
-    handleProgress
+    handleProgress,
   );
 
   ipcRenderer.send('onPostProcessDone', { aborted: false });
