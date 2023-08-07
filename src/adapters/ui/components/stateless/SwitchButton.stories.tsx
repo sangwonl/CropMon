@@ -1,7 +1,7 @@
-import type { ComponentMeta, ComponentStory } from '@storybook/react';
+import type { StoryObj } from '@storybook/react';
 
 import { action } from '@storybook/addon-actions';
-import React from 'react';
+import React, { type ComponentProps } from 'react';
 
 import SwitchButton from '@adapters/ui/components/stateless/SwitchButton';
 
@@ -11,12 +11,11 @@ import micIcon from '@assets/mic.png';
 export default {
   title: 'Kropsaurus/SwitchButton',
   component: SwitchButton,
-  argTypes: {},
-} as ComponentMeta<typeof SwitchButton>;
+};
 
-const handleToggle = action('onToggle');
+type Story = StoryObj<typeof SwitchButton>;
 
-const Template: ComponentStory<typeof SwitchButton> = args => {
+const Template = (args: ComponentProps<typeof SwitchButton>) => {
   return (
     <div style={{ width: '80px', height: '40px' }}>
       <SwitchButton {...args} />
@@ -24,22 +23,28 @@ const Template: ComponentStory<typeof SwitchButton> = args => {
   );
 };
 
-export const Default = Template.bind({});
-Default.args = {
-  activeItemIndex: 0,
-  items: [
-    { title: 'MP4', alt: 'Record as MP4' },
-    { title: 'GIF', alt: 'Record as GIF' },
-    { icon: closeIcon, alt: 'Close' },
-  ],
-  onSelect: handleToggle,
+const handleToggle = action('onToggle');
+
+export const Default: Story = {
+  args: {
+    activeItemIndex: 0,
+    items: [
+      { title: 'MP4', alt: 'Record as MP4' },
+      { title: 'GIF', alt: 'Record as GIF' },
+      { icon: closeIcon, alt: 'Close' },
+    ],
+    onSelect: handleToggle,
+  },
+  render: Template,
 };
 
-export const WithIcon = Template.bind({});
-WithIcon.args = {
-  ...Default.args,
-  items: [
-    { icon: micIcon, alt: 'Record audio' },
-    { icon: closeIcon, alt: 'Close' },
-  ],
+export const WithIcon: Story = {
+  args: {
+    ...Default.args,
+    items: [
+      { icon: micIcon, alt: 'Record audio' },
+      { icon: closeIcon, alt: 'Close' },
+    ],
+  },
+  render: Template,
 };

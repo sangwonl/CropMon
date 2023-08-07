@@ -1,4 +1,4 @@
-import type { ComponentMeta, ComponentStory } from '@storybook/react';
+import type { StoryObj } from '@storybook/react';
 
 import { action } from '@storybook/addon-actions';
 import React from 'react';
@@ -8,12 +8,13 @@ import CloseButton from '@adapters/ui/components/stateless/CloseButton';
 export default {
   title: 'Kropsaurus/CloseButton',
   component: CloseButton,
-  argTypes: {},
-} as ComponentMeta<typeof CloseButton>;
+};
+
+type Story = StoryObj<typeof CloseButton>;
 
 const handleClick = action('onClick');
 
-const Template: ComponentStory<typeof CloseButton> = () => {
+const Template = () => {
   return (
     <div style={{ height: '40px' }}>
       <CloseButton onClick={handleClick} />
@@ -21,4 +22,6 @@ const Template: ComponentStory<typeof CloseButton> = () => {
   );
 };
 
-export const Default = Template.bind({});
+export const Default: Story = {
+  render: Template,
+};

@@ -1,53 +1,60 @@
-import type { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { StoryObj } from '@storybook/react';
 
-import React from 'react';
+import React, { type ComponentProps } from 'react';
 
 import ProgressDialog from '@adapters/ui/components/stateless/ProgressDialog';
 
 export default {
   title: 'Kropsaurus/ProgressDialog',
   component: ProgressDialog,
-  argTypes: {},
-} as ComponentMeta<typeof ProgressDialog>;
+};
 
-const Template: ComponentStory<typeof ProgressDialog> = args => (
+type Story = StoryObj<typeof ProgressDialog>;
+
+const Template = (args: ComponentProps<typeof ProgressDialog>) => (
   <div style={{ height: '400px' }}>
     <ProgressDialog {...args} />
   </div>
 );
 
-export const InProgressState = Template.bind({});
-InProgressState.args = {
-  title: 'In Progress Dialog',
-  message: 'This is message',
-  buttons: {
-    cancelTitle: 'Cancel',
-    actionTitle: 'Restart',
-    actionHideInProgress: true,
+export const InProgressState: Story = {
+  args: {
+    title: 'In Progress Dialog',
+    message: 'This is message',
+    buttons: {
+      cancelTitle: 'Cancel',
+      actionTitle: 'Restart',
+      actionHideInProgress: true,
+    },
+    progress: 40,
   },
-  progress: 40,
+  render: Template,
 };
 
-export const AlwaysShowActionButton = Template.bind({});
-AlwaysShowActionButton.args = {
-  title: 'In Progress Dialog',
-  message: 'This is message',
-  buttons: {
-    cancelTitle: 'Cancel',
-    actionTitle: 'Restart',
-    actionHideInProgress: false,
+export const AlwaysShowActionButton: Story = {
+  args: {
+    title: 'In Progress Dialog',
+    message: 'This is message',
+    buttons: {
+      cancelTitle: 'Cancel',
+      actionTitle: 'Restart',
+      actionHideInProgress: false,
+    },
+    progress: 40,
   },
-  progress: 40,
+  render: Template,
 };
 
-export const CompletedState = Template.bind({});
-CompletedState.args = {
-  title: 'Completed Progress Dialog',
-  message: 'This is message',
-  buttons: {
-    cancelTitle: 'Cancel',
-    actionTitle: 'Quit & Install',
-    actionHideInProgress: true,
+export const CompletedState: Story = {
+  args: {
+    title: 'Completed Progress Dialog',
+    message: 'This is message',
+    buttons: {
+      cancelTitle: 'Cancel',
+      actionTitle: 'Quit & Install',
+      actionHideInProgress: true,
+    },
+    progress: 100,
   },
-  progress: 100,
+  render: Template,
 };
