@@ -2,10 +2,10 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { License } from '@domain/models/license';
+import type { License } from '@domain/models/license';
 
-import { LicenseManager } from '@application/ports/license';
-import { UseCase } from '@application/usecases/UseCase';
+import type { LicenseManager } from '@application/ports/license';
+import type { UseCase } from '@application/usecases/UseCase';
 
 interface GetLicenseUseCaseOutput {
   license: License | null;
@@ -14,7 +14,7 @@ interface GetLicenseUseCaseOutput {
 @injectable()
 export default class GetLicenseUseCase implements UseCase<void> {
   constructor(
-    @inject(TYPES.LicenseManager) private licenseManager: LicenseManager
+    @inject(TYPES.LicenseManager) private licenseManager: LicenseManager,
   ) {}
 
   async execute(): Promise<GetLicenseUseCaseOutput> {

@@ -1,35 +1,49 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { ipcRenderer } from 'electron';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
 import '@di/containers/renderer';
 
+import HelloSvelteWidgetCreator from '@adapters/ui/widgets/hellosvelte/creator';
 import CaptureOverlayCreator from '@adapters/ui/widgets/overlays/creator';
 import PreferencesModalCreator from '@adapters/ui/widgets/preferences/creator';
 import ProgressDialogCreator from '@adapters/ui/widgets/progressdialog/creator';
 import StaticPagePopupCreator from '@adapters/ui/widgets/staticpage/creator';
 import { WidgetType } from '@adapters/ui/widgets/types';
 
-type WidgetCreator = (options: any) => JSX.Element;
-interface WidgetCreatorMap {
-  [widgetType: number]: WidgetCreator;
-}
+type ReactWidgetCreatorMap = {
+  [widgetType: number]:
+    | typeof CaptureOverlayCreator
+    | typeof PreferencesModalCreator
+    | typeof ProgressDialogCreator
+    | typeof StaticPagePopupCreator;
+};
 
-const creators: WidgetCreatorMap = {
+type SvelteWidgetCreatorMap = {
+  [widgetType: number]: typeof HelloSvelteWidgetCreator;
+};
+
+const reactWidgetCreators: ReactWidgetCreatorMap = {
   [WidgetType.PROGRESS_DIALOG]: ProgressDialogCreator,
   [WidgetType.STATIC_PAGE_POPUP]: StaticPagePopupCreator,
   [WidgetType.PREFERENECS_MODAL]: PreferencesModalCreator,
   [WidgetType.CAPTURE_OVERLAY]: CaptureOverlayCreator,
 };
 
+const svelteWidgetCreators: SvelteWidgetCreatorMap = {
+  [WidgetType.HELLO_SVELTE]: HelloSvelteWidgetCreator,
+};
+
 ipcRenderer.on('loadWidget', (_event, data) => {
   const { type: widgetType, options } = data;
-  const root = createRoot(document.getElementById('root')!);
 
-  const Widget = creators[widgetType];
-  // eslint-disable-next-line react/jsx-props-no-spreading
-  root.render(<Widget {...options} />);
+  if (widgetType === WidgetType.HELLO_SVELTE) {
+    const createSvelteWidget = svelteWidgetCreators[widgetType];
+    createSvelteWidget(options);
+    return;
+  }
+
+  const ReactWidget = reactWidgetCreators[widgetType];
+  const root = createRoot(document.getElementById('root')!);
+  root.render(<ReactWidget {...options} />);
 });

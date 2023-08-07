@@ -1,13 +1,10 @@
-/* eslint-disable promise/always-return */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { app } from 'electron';
 import log from 'electron-log';
 import { injectable } from 'inversify';
 
 import { isProduction } from '@utils/process';
 
-import { AppManager } from '@application/ports/app';
+import type { AppManager } from '@application/ports/app';
 import HookManager from '@application/services/hook';
 
 import { version as curVersion, freeVersions } from '../package.json';
@@ -33,24 +30,30 @@ export default class ElectronAppManager implements AppManager {
   }
 
   isFreeVersion(): boolean {
-    return freeVersions.includes(this.getCurAppVersion());
+    return (freeVersions as string[]).includes(this.getCurAppVersion());
   }
 
   async checkForUpdates(
     onUpdateAvailable: () => void,
     onUpdateNotAvailable: () => void,
-    onDownloadProgress: (progressInfo: any) => void,
-    onUpdateDownloaded: () => void
+    onDownloadProgress: (progressInfo: {
+      total: number;
+      transferred: number;
+    }) => void,
+    onUpdateDownloaded: () => void,
   ): Promise<void> {
     autoUpdater.once('update-available', onUpdateAvailable);
     autoUpdater.once('update-not-available', onUpdateNotAvailable);
     autoUpdater.once('download-progress', onDownloadProgress);
     autoUpdater.once('update-downloaded', onUpdateDownloaded);
 
-    return autoUpdater
-      .checkForUpdates()
-      .then(() => {})
-      .catch(() => {});
+    return (
+      autoUpdater
+        .checkForUpdates()
+        // eslint-disable-next-line promise/always-return
+        .then(() => {})
+        .catch(() => {})
+    );
   }
 
   cancelUpdate() {

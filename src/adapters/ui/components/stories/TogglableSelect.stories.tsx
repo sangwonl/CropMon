@@ -1,7 +1,7 @@
-/* eslint-disable react/jsx-props-no-spreading */
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
+
 import { action } from '@storybook/addon-actions';
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import React, { ComponentProps } from 'react';
+import React, { type ComponentProps } from 'react';
 
 import TogglableSelect from '@adapters/ui/components/stateless/TogglableSelect';
 
@@ -27,8 +27,7 @@ const items = [
   { checked: true, title: 'System Microphone' },
 ];
 
-// eslint-disable-next-line react/function-component-definition
-const Template: ComponentStory<typeof TogglableSelect> = (args) => {
+const Template: ComponentStory<typeof TogglableSelect> = args => {
   return (
     <div style={{ width: '60px', height: '40px' }}>
       <TogglableSelect {...args} />

@@ -16,8 +16,8 @@ const installDevTools = async () => {
 
   installExtensions
     .default(
-      extensions.map((name) => installExtensions[name]),
-      forceDownload
+      extensions.map(name => installExtensions[name]),
+      forceDownload,
     )
     .catch(console.log);
 };

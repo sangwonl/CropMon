@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 export enum CaptureStatus {
   IN_IDLE = 1,
   IN_SELECTING,

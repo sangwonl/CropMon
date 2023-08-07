@@ -5,10 +5,10 @@ import { isProduction } from '@utils/process';
 
 import TYPES from '@di/types';
 
-import { License } from '@domain/models/license';
+import type { License } from '@domain/models/license';
 
-import { LicenseManager } from '@application/ports/license';
-import { PreferencesStore } from '@application/ports/preferences';
+import type { LicenseManager } from '@application/ports/license';
+import type { PreferencesStore } from '@application/ports/preferences';
 
 import SafeCipher from '@adapters/crypto';
 
@@ -21,7 +21,7 @@ export default class SimpleLicenseManager implements LicenseManager {
     // eslint-disable-next-line prettier/prettier
     @inject(TYPES.PreferencesStore) private prefsStore: PreferencesStore,
     private cipher: SafeCipher,
-    @optional() private apiBaseUrl: string
+    @optional() private apiBaseUrl: string,
   ) {
     if (!apiBaseUrl) {
       this.apiBaseUrl = isProduction() ? API_BASE_URL_PROD : API_BASE_URL_DEV;
@@ -30,7 +30,7 @@ export default class SimpleLicenseManager implements LicenseManager {
 
   async validateLicenseKey(
     email: string,
-    licenseKey: string
+    licenseKey: string,
   ): Promise<License | null> {
     const res = await fetch(`${this.apiBaseUrl}/validateLicenseKey`, {
       method: 'POST',

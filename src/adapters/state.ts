@@ -1,8 +1,9 @@
-import { WebContents } from 'electron';
+import type { WebContents } from 'electron';
+
 import { injectable } from 'inversify';
 
-import { UiState } from '@application/models/ui';
-import { UiStateApplier } from '@application/ports/state';
+import type { UiState } from '@application/models/ui';
+import type { UiStateApplier } from '@application/ports/state';
 
 import Widget from '@adapters/ui/widgets/widget';
 
@@ -19,20 +20,20 @@ export default class ElectronUiStateApplier implements UiStateApplier {
       }
     }
 
-    destroyedIds.forEach((id) => {
+    destroyedIds.forEach(id => {
       this.webContents.delete(id);
     });
 
-    this.webContents.forEach((w) => {
+    this.webContents.forEach(w => {
       w.send('syncStates', newState);
     });
   }
 
-  joinForSyncStates(widget: Widget): void {
+  joinForSyncStates(widget: Widget<unknown>): void {
     this.webContents.set(widget.id, widget.webContents);
   }
 
-  leaveFromSyncStates(widget: Widget): void {
+  leaveFromSyncStates(widget: Widget<unknown>): void {
     if (this.webContents.has(widget.id)) {
       this.webContents.delete(widget.id);
     }

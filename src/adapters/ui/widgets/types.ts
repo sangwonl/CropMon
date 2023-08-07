@@ -5,4 +5,5 @@ export enum WidgetType {
   STATIC_PAGE_POPUP = 2,
   PREFERENECS_MODAL = 3,
   CAPTURE_OVERLAY = 4,
+  HELLO_SVELTE = 5,
 }

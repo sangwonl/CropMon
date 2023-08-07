@@ -1,4 +1,4 @@
-import { Preferences } from '@domain/models/preferences';
+import type { Preferences } from '@domain/models/preferences';
 
 export interface PreferencesStore {
   loadPreferences(): Promise<Preferences>;

@@ -1,13 +1,10 @@
-/* eslint-disable jsx-a11y/tabindex-no-positive */
-/* eslint-disable jsx-a11y/label-has-associated-control */
-
 import classNames from 'classnames';
 import React, {
   useState,
   useCallback,
   useEffect,
-  ChangeEvent,
-  KeyboardEvent,
+  type ChangeEvent,
+  type KeyboardEvent,
 } from 'react';
 
 import {
@@ -16,7 +13,7 @@ import {
   shortcutForDisplay,
 } from '@utils/shortcut';
 
-import { Preferences } from '@domain/models/preferences';
+import type { Preferences } from '@domain/models/preferences';
 
 import commStyles from './CommonStyles.css';
 import styles from './PrefsTabPanels.css';
@@ -42,12 +39,12 @@ function PrefsGeneralPanel({
   // General options
   const [runAtStartup, setRunAtStartup] = useState<boolean>(prefs.runAtStartup);
   const [showCountdown, setShowCountdown] = useState<boolean>(
-    prefs.showCountdown
+    prefs.showCountdown,
   );
 
   // Output options
   const [openRecordHome, setOpenRecordHome] = useState<boolean>(
-    prefs.openRecordHomeWhenRecordCompleted
+    prefs.openRecordHomeWhenRecordCompleted,
   );
 
   // Shortcut options
@@ -71,7 +68,7 @@ function PrefsGeneralPanel({
         setShortcutKey(extracted);
       }
     },
-    [resetShortcut]
+    [resetShortcut],
   );
 
   // Dirty and saveability check

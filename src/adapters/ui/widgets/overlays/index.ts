@@ -2,13 +2,13 @@ import { BrowserWindow } from 'electron';
 
 import { isDebugMode, isMac } from '@utils/process';
 
-import { CaptureOverlayOptions } from '@adapters/ui/widgets/overlays/shared';
+import type { CaptureOverlayOptions } from '@adapters/ui/widgets/overlays/shared';
 import { WidgetType } from '@adapters/ui/widgets/types';
 import Widget from '@adapters/ui/widgets/widget';
 
 const TRAFFIC_LIGHT_OFFSET_FOR_HIDING = { x: -256, y: -256 };
 
-export default class CaptureOverlay extends Widget {
+export default class CaptureOverlay extends Widget<CaptureOverlayOptions> {
   constructor(options: CaptureOverlayOptions) {
     super(WidgetType.CAPTURE_OVERLAY, options);
     this.window.loadURL(`file://${__dirname}/../overlays/index.html`);

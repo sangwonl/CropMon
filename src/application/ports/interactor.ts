@@ -1,15 +1,16 @@
-import { CaptureOptions } from '@domain/models/capture';
-import { License } from '@domain/models/license';
-import { Preferences } from '@domain/models/preferences';
-import { Bounds, Point } from '@domain/models/screen';
+/* eslint-disable no-unused-vars */
 
-import { UiState } from '@application/models/ui';
+import type { CaptureOptions } from '@domain/models/capture';
+import type { License } from '@domain/models/license';
+import type { Preferences } from '@domain/models/preferences';
+import type { Bounds, Point } from '@domain/models/screen';
+
+import type { UiState } from '@application/models/ui';
 
 export interface UseCaseInteractor {
   initializeApp(): void;
   checkForUpdates(): void;
   downloadAndInstall(): void;
-  showHelp(): void;
   quitApplication(): void;
   openPreferences(): void;
   openCaptureFolder(): void;

@@ -2,11 +2,11 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { License } from '@domain/models/license';
+import type { License } from '@domain/models/license';
 
-import { LicenseManager } from '@application/ports/license';
+import type { LicenseManager } from '@application/ports/license';
 import HookManager from '@application/services/hook';
-import { UseCase } from '@application/usecases/UseCase';
+import type { UseCase } from '@application/usecases/UseCase';
 
 interface RegisterLicenseUseCaseInput {
   email: string;
@@ -23,16 +23,16 @@ export default class RegisterLicenseUseCase
 {
   constructor(
     @inject(TYPES.LicenseManager) private licenseManager: LicenseManager,
-    private hookManager: HookManager
+    private hookManager: HookManager,
   ) {}
 
   async execute(
-    input: RegisterLicenseUseCaseInput
+    input: RegisterLicenseUseCaseInput,
   ): Promise<RegisterLicenseUseCaseOutput> {
     const { email, licenseKey } = input;
     const license = await this.licenseManager.validateLicenseKey(
       email,
-      licenseKey
+      licenseKey,
     );
 
     if (license) {

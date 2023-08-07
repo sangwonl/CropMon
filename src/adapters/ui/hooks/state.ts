@@ -1,12 +1,18 @@
-import { ipcRenderer, IpcRendererEvent } from 'electron';
-import { useState, useRef, useEffect, SetStateAction, Dispatch } from 'react';
+import { ipcRenderer, type IpcRendererEvent } from 'electron';
+import {
+  useState,
+  useRef,
+  useEffect,
+  type SetStateAction,
+  type Dispatch,
+} from 'react';
 
-import { UiState } from '@application/models/ui';
+import type { UiState } from '@application/models/ui';
 
 import { useUseCaseInteractor } from '@adapters/ui/hooks/interactor';
 
 export const useStateWithGetter = <S>(
-  initialState: S
+  initialState: S,
 ): [S, () => S, Dispatch<SetStateAction<S>>] => {
   const [state, setState] = useState<S>(initialState);
   const stateRef = useRef<S>(state);

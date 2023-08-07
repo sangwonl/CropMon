@@ -2,13 +2,13 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { INITIAL_UI_STATE, UiState } from '@application/models/ui';
-import { UiStateApplier } from '@application/ports/state';
+import { INITIAL_UI_STATE, type UiState } from '@application/models/ui';
+import type { UiStateApplier } from '@application/ports/state';
 
 @injectable()
 export default class StateManager {
   constructor(
-    @inject(TYPES.UiStateApplier) private uiStateApplier: UiStateApplier
+    @inject(TYPES.UiStateApplier) private uiStateApplier: UiStateApplier,
   ) {}
 
   private uiState: UiState = INITIAL_UI_STATE;

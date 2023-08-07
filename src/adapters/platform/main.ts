@@ -14,7 +14,7 @@ export default class PlatformApiForMain implements PlatformApi {
       event.returnValue = this.getPath(name);
     });
 
-    ipcMain.on('getCursorScreenPoint', (event) => {
+    ipcMain.on('getCursorScreenPoint', event => {
       event.returnValue = this.getCursorScreenPoint();
     });
 

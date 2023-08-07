@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { TransformWorkerMessage } from './types';
 
-import { Bounds } from '@domain/models/screen';
+import type { Bounds } from '@domain/models/screen';
 
 function simpleResizeTransform(srcBounds: Bounds): TransformStream {
   return new TransformStream({
@@ -9,7 +8,7 @@ function simpleResizeTransform(srcBounds: Bounds): TransformStream {
       frame: VideoFrame,
       controller: TransformStreamDefaultController,
     ) => {
-      const resizedFrame = new VideoFrame(frame as any, {
+      const resizedFrame = new VideoFrame(frame, {
         visibleRect: srcBounds,
       });
 
@@ -36,7 +35,7 @@ function onTransformStream(
   dstBounds: Bounds,
   skipEnqueue: boolean,
 ) {
-  const resizedFrame = new VideoFrame(frame as any, { visibleRect: srcBounds });
+  const resizedFrame = new VideoFrame(frame, { visibleRect: srcBounds });
 
   canvasCtx.drawImage(
     resizedFrame,
@@ -50,7 +49,7 @@ function onTransformStream(
 
   if (!skipEnqueue) {
     controller.enqueue(
-      new VideoFrame(canvasCtx.canvas as any, {
+      new VideoFrame(canvasCtx.canvas, {
         timestamp: frame.timestamp!,
       }),
     );
@@ -114,7 +113,7 @@ function composeResizeAndMergePipeline(
     .pipeTo(writable);
 }
 
-function processWithPipeline(data: any) {
+function processWithPipeline(data: TransformWorkerMessage) {
   const { canvas, readables, nullWritables, writable, boundsList } = data;
 
   if (readables.length === 1) {
@@ -134,7 +133,7 @@ function processWithPipeline(data: any) {
   }
 }
 
-onmessage = (event) => {
+onmessage = event => {
   const { data } = event;
   if (data.type === 'pipeline') {
     processWithPipeline(data);

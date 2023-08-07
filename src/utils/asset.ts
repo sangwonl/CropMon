@@ -6,6 +6,7 @@ const RESOURCES_PATH = app.isPackaged
   ? process.resourcesPath
   : path.join(__dirname, '../../');
 
+// eslint-disable-next-line no-unused-vars
 export type AssetPathResolverFunc = (assetPath: string) => string;
 
 export const assetPathResolver = (...assetPaths: string[]): string => {

@@ -1,10 +1,8 @@
-/* eslint-disable import/prefer-default-export */
-
-import { MouseEvent } from 'react';
+import type { MouseEvent } from 'react';
 
 export const withStopPropagation = (
   e: MouseEvent<HTMLElement>,
-  handler?: () => void
+  handler?: () => void,
 ) => {
   e.stopPropagation();
   if (handler) {

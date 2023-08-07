@@ -1,23 +1,21 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { inject, injectable } from 'inversify';
 import semver from 'semver';
 
 import TYPES from '@di/types';
 
-import { AppManager } from '@application/ports/app';
+import type { AppManager } from '@application/ports/app';
 import HookManager from '@application/services/hook';
-import { UseCase } from '@application/usecases/UseCase';
+import type { UseCase } from '@application/usecases/UseCase';
 
 import PreferencesRepository from '@adapters/repositories/preferences';
 
 @injectable()
 export default class CheckVersionUseCase implements UseCase<void> {
   constructor(
-    // eslint-disable-next-line prettier/prettier
-    @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository,
+    @inject(TYPES.PreferencesRepository)
+    private prefsRepo: PreferencesRepository,
     @inject(TYPES.AppManager) private appManager: AppManager,
-    private hookManager: HookManager
+    private hookManager: HookManager,
   ) {}
 
   async execute() {

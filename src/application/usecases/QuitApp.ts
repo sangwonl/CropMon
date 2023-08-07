@@ -2,8 +2,8 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { AppManager } from '@application/ports/app';
-import { UseCase } from '@application/usecases/UseCase';
+import type { AppManager } from '@application/ports/app';
+import type { UseCase } from '@application/usecases/UseCase';
 
 @injectable()
 export default class QuitAppUseCase implements UseCase<void> {

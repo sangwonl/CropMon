@@ -1,6 +1,6 @@
-import { Bounds } from '@domain/models/screen';
-
 import { getIntersection } from '@utils/bounds';
+
+import type { Bounds } from '@domain/models/screen';
 
 describe('getIntersection', () => {
   it('should return zero-based bounds', () => {
@@ -15,10 +15,10 @@ describe('getIntersection', () => {
     ];
 
     expect(getIntersection(selectedBounds, screenBounds[0])).toEqual(
-      expectedSlices[0]
+      expectedSlices[0],
     );
     expect(getIntersection(selectedBounds, screenBounds[1])).toEqual(
-      expectedSlices[1]
+      expectedSlices[1],
     );
   });
 
@@ -34,10 +34,10 @@ describe('getIntersection', () => {
     ];
 
     expect(getIntersection(selectedBounds, screenBounds[0])).toEqual(
-      expectedSlices[0]
+      expectedSlices[0],
     );
     expect(getIntersection(selectedBounds, screenBounds[1])).toEqual(
-      expectedSlices[1]
+      expectedSlices[1],
     );
   });
 });

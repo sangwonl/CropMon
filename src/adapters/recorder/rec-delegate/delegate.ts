@@ -1,6 +1,4 @@
 /* eslint-disable max-classes-per-file */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable prefer-const */
 
 import fs from 'fs';
@@ -19,12 +17,16 @@ import diContainer from '@di/containers';
 import '@di/containers/renderer';
 import TYPES from '@di/types';
 
-import { AudioSource, CaptureMode, OutputFormat } from '@domain/models/common';
-import { Bounds } from '@domain/models/screen';
-
-import { PlatformApi } from '@application/ports/platform';
-
 import {
+  CaptureMode,
+  type AudioSource,
+  type OutputFormat,
+} from '@domain/models/common';
+import type { Bounds } from '@domain/models/screen';
+
+import type { PlatformApi } from '@application/ports/platform';
+
+import type {
   RecordContext,
   TargetSlice,
 } from '@adapters/recorder/rec-delegate/types';
@@ -108,7 +110,7 @@ class MediaRecordDelegatee {
     const audioSources: AudioSource[] = [];
 
     const devices = await navigator.mediaDevices.enumerateDevices();
-    devices.forEach((d) => {
+    devices.forEach(d => {
       if (
         d.deviceId === 'default' ||
         d.kind !== 'audioinput' ||
@@ -140,7 +142,7 @@ class MediaRecordDelegatee {
     return { mimeType: mType };
   }
 
-  private getAudioConstraint(audioSource: AudioSource): any {
+  private getAudioConstraint(audioSource: AudioSource): unknown {
     return {
       audio: {
         deviceId: audioSource.id,
@@ -153,7 +155,7 @@ class MediaRecordDelegatee {
     srcId: string,
     bounds: Bounds,
     frameRate?: number,
-  ): any {
+  ): unknown {
     return {
       audio: false,
       video: {
@@ -189,13 +191,12 @@ class MediaRecordDelegatee {
     const sliceToDrawable = async (slice: TargetSlice): Promise<Drawable> => {
       const { mediaSourceId, screenBounds, targetBounds } = slice;
 
-      const constraints = this.getVideoConstraint(
-        mediaSourceId,
-        screenBounds,
-        frameRate,
-      );
       const videoStream = await navigator.mediaDevices.getUserMedia(
-        constraints,
+        this.getVideoConstraint(
+          mediaSourceId,
+          screenBounds,
+          frameRate,
+        ) as MediaStreamConstraints,
       );
 
       const srcBounds: Bounds = {
@@ -331,7 +332,7 @@ class MediaRecordDelegatee {
   ): Promise<void> => {
     try {
       const audioStream = await navigator.mediaDevices.getUserMedia(
-        this.getAudioConstraint(audioSource),
+        this.getAudioConstraint(audioSource) as MediaStreamConstraints,
       );
 
       const tracks = audioStream.getAudioTracks();
@@ -364,7 +365,7 @@ class MediaRecordDelegatee {
     }
 
     await Promise.all(
-      audioSources.map((s) => this.attachAudioTrack(videoStream, s)),
+      audioSources.map(s => this.attachAudioTrack(videoStream, s)),
     );
 
     return videoStream;
@@ -406,6 +407,7 @@ class MediaRecordDelegatee {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private handleRecordStart = (_event: Event) => {
     this.recordState = 'recording';
 
@@ -417,6 +419,7 @@ class MediaRecordDelegatee {
     ipcRenderer.send('onRecordingStarted', {});
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private handleRecordStop = (_event: Event) => {
     this.recordState = 'stopped';
 
@@ -473,11 +476,11 @@ class PostProcessorDelegate {
     outputPath: string,
     outputFormat: OutputFormat,
     enableMic: boolean,
+    // eslint-disable-next-line no-unused-vars
     onProgress: (progress: ProgressEvent) => void,
   ): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const finalizer = () => {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         fs.unlink(tempPath, () => {});
         resolve();
       };
@@ -534,6 +537,7 @@ ipcRenderer.on('startRecord', async (_event, data) => {
   await recorder.start(data.recordContext);
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 ipcRenderer.on('stopRecord', (_event, _data) => {
   recorder.stop();
 });

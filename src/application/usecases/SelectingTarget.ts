@@ -1,10 +1,10 @@
 import { injectable } from 'inversify';
 
-import { Bounds, Point } from '@domain/models/screen';
+import type { Bounds, Point } from '@domain/models/screen';
 
-import { UiState } from '@application/models/ui';
+import type { UiState } from '@application/models/ui';
 import StateManager from '@application/services/state';
-import { UseCase } from '@application/usecases/UseCase';
+import type { UseCase } from '@application/usecases/UseCase';
 
 interface SelectingTargetUseCaseInput {
   targetBounds: Bounds;

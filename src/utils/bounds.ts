@@ -1,6 +1,6 @@
-import { Display, screen } from 'electron';
+import { screen, type Display } from 'electron';
 
-import { Bounds, Point, Screen } from '@domain/models/screen';
+import type { Bounds, Point, Screen } from '@domain/models/screen';
 
 export const MIN_REQUIRED_SIZE = 16; // limited by code macroblock size
 
@@ -94,7 +94,7 @@ export function getScreenCursorOn(): Screen {
   const cursorPoint = screen.getCursorScreenPoint();
   const screens = getAllScreens();
 
-  const foundScreen = screens.find((s) => {
+  const foundScreen = screens.find(s => {
     return isPointInsideBounds(cursorPoint, s.bounds);
   });
 

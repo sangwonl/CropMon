@@ -1,9 +1,8 @@
-/* eslint-disable react/prop-types */
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React, { useState } from 'react';
 
-import { RecordOptions } from '@domain/models/capture';
+import type { RecordOptions } from '@domain/models/capture';
 import { CaptureMode } from '@domain/models/common';
 
 import CaptureControl from '@adapters/ui/components/stateless/CaptureControl';
@@ -14,7 +13,6 @@ export default {
   argTypes: {},
 } as ComponentMeta<typeof CaptureControl>;
 
-// eslint-disable-next-line react/function-component-definition
 const Template: ComponentStory<typeof CaptureControl> = ({
   captureMode,
   recordOptions,

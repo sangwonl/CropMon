@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import React from 'react';
 
-import { Bounds } from '@domain/models/screen';
+import type { Bounds } from '@domain/models/screen';
 
 import styles from './CaptureRecording.css';
 
-const getAreaStyles = (bounds: Bounds): any => {
+const getAreaStyles = (bounds: Bounds): { [key: string]: number | string } => {
   const layoutStyle = {
     left: bounds.x - 2,
     top: bounds.y - 2,

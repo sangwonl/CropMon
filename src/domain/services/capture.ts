@@ -7,11 +7,11 @@ import {
   CaptureOptionsNotPreparedException,
   InvalidCaptureStatusException,
 } from '@domain/exceptions';
-import { CaptureContext, CaptureOptions } from '@domain/models/capture';
+import { CaptureContext, type CaptureOptions } from '@domain/models/capture';
 import { CaptureStatus } from '@domain/models/common';
-import { Progress } from '@domain/models/ui';
-import { PreferencesRepository } from '@domain/repositories/preferences';
-import { ScreenRecorder } from '@domain/services/recorder';
+import type { Progress } from '@domain/models/ui';
+import type { PreferencesRepository } from '@domain/repositories/preferences';
+import type { ScreenRecorder } from '@domain/services/recorder';
 
 @injectable()
 export default class CaptureSession {
@@ -20,9 +20,9 @@ export default class CaptureSession {
   private curCaptureStatus: CaptureStatus;
 
   constructor(
-    // eslint-disable-next-line prettier/prettier
-    @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository,
-    @inject(TYPES.ScreenRecorder) private screenRecorder: ScreenRecorder
+    @inject(TYPES.PreferencesRepository)
+    private prefsRepo: PreferencesRepository,
+    @inject(TYPES.ScreenRecorder) private screenRecorder: ScreenRecorder,
   ) {
     this.curCaptureStatus = CaptureStatus.IN_IDLE;
   }
@@ -78,14 +78,13 @@ export default class CaptureSession {
   public async finishCapture(
     onFinishing?: (captureCtx: CaptureContext) => void,
     onPostProgress?: (progress: Progress, captureCtx: CaptureContext) => void,
-    onFinished?: () => void
+    onFinished?: () => void,
   ): Promise<CaptureContext> {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const curCaptureCtx = this.curCaptureCtx!;
 
     if (this.curCaptureStatus !== CaptureStatus.IN_PROGRESS) {
       throw new InvalidCaptureStatusException(
-        `Can't finish capturing which is not in progress`
+        `Can't finish capturing which is not in progress`,
       );
     }
 
@@ -93,7 +92,7 @@ export default class CaptureSession {
       await this.screenRecorder.finish(
         curCaptureCtx,
         () => onFinishing?.(curCaptureCtx),
-        (progress) => onPostProgress?.(progress, curCaptureCtx)
+        progress => onPostProgress?.(progress, curCaptureCtx),
       );
 
       curCaptureCtx.finishCapture();

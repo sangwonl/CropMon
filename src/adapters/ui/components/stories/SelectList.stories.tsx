@@ -1,7 +1,6 @@
-/* eslint-disable react/jsx-props-no-spreading */
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 import { action } from '@storybook/addon-actions';
-import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
 import SelectList from '@adapters/ui/components/stateless/SelectList';
@@ -19,8 +18,7 @@ const items = [
   { checked: true, title: 'System Microphone' },
 ];
 
-// eslint-disable-next-line react/function-component-definition
-const Template: ComponentStory<typeof SelectList> = (args) => {
+const Template: ComponentStory<typeof SelectList> = args => {
   return (
     <div style={{ height: '80px' }}>
       <SelectList {...args} />

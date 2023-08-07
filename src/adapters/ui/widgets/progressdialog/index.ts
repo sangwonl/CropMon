@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 import { BrowserWindow, ipcMain } from 'electron';
 
 import { assetPathResolver } from '@utils/asset';
@@ -9,15 +7,18 @@ import { WidgetType } from '@adapters/ui/widgets/types';
 import Widget from '@adapters/ui/widgets/widget';
 
 import {
-  ProgressDialogOptions,
+  type ProgressDialogOptions,
   IPC_EVT_ON_ACTION,
   IPC_EVT_SET_PROGRESS,
   IPC_EVT_ON_CANCEL,
   IPC_EVT_SET_MESSAGE,
 } from './shared';
 
-export default class ProgressDialog extends Widget {
-  constructor(private options: ProgressDialogOptions, onReady?: () => void) {
+export default class ProgressDialog extends Widget<ProgressDialogOptions> {
+  constructor(
+    private options: ProgressDialogOptions,
+    onReady?: () => void,
+  ) {
     super(WidgetType.PROGRESS_DIALOG, options);
 
     this.window.loadURL(`file://${__dirname}/../progressdialog/index.html`);
@@ -25,7 +26,10 @@ export default class ProgressDialog extends Widget {
     this.window.on('ready-to-show', () => onReady?.());
   }
 
-  protected createWindow({ width, height }: any): BrowserWindow {
+  protected createWindow({
+    width,
+    height,
+  }: ProgressDialogOptions): BrowserWindow {
     return new BrowserWindow({
       icon: assetPathResolver('icon.png'),
       show: false,

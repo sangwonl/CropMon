@@ -1,7 +1,6 @@
-/* eslint-disable prettier/prettier */
 import { injectable } from 'inversify';
 
-import { License } from '@domain/models/license';
+import type { License } from '@domain/models/license';
 
 // import TYPES from '@di/types';
 //
@@ -10,12 +9,7 @@ import { License } from '@domain/models/license';
 
 @injectable()
 export default class LicenseService {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor, prettier/prettier
-  constructor(
-    // @inject(TYPES.LicenseManager) private licenseManager: LicenseManager,
-    // @inject(TYPES.UiDirector) private uiDirector: UiDirector
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  ) {}
+  constructor() {}
 
   async checkAndGetLicense(): Promise<License | null> {
     // const license = await this.licenseManager.retrieveLicense();

@@ -5,20 +5,20 @@ import { isMac } from '@utils/process';
 import diContainer from '@di/containers';
 import TYPES from '@di/types';
 
-import { PreferencesRepository } from '@domain/repositories/preferences';
+import type { PreferencesRepository } from '@domain/repositories/preferences';
 import CaptureSession from '@domain/services/capture';
-import { RecorderSource, ScreenRecorder } from '@domain/services/recorder';
+import type { RecorderSource, ScreenRecorder } from '@domain/services/recorder';
 
 import UseCaseInteractorCore from '@application/controllers/interactor';
-import { AppManager } from '@application/ports/app';
-import { UiDirector } from '@application/ports/director';
-import { UseCaseInteractor } from '@application/ports/interactor';
-import { LicenseManager } from '@application/ports/license';
-import { PlatformApi } from '@application/ports/platform';
-import { PreferencesStore } from '@application/ports/preferences';
-import { UiStateApplier } from '@application/ports/state';
-import { AnalyticsTracker } from '@application/ports/tracker';
-import { AppTray } from '@application/ports/tray';
+import type { AppManager } from '@application/ports/app';
+import type { UiDirector } from '@application/ports/director';
+import type { UseCaseInteractor } from '@application/ports/interactor';
+import type { LicenseManager } from '@application/ports/license';
+import type { PlatformApi } from '@application/ports/platform';
+import type { PreferencesStore } from '@application/ports/preferences';
+import type { UiStateApplier } from '@application/ports/state';
+import type { AnalyticsTracker } from '@application/ports/tracker';
+import type { AppTray } from '@application/ports/tray';
 import HookManager from '@application/services/hook';
 import LicenseService from '@application/services/license';
 import CaptureModeManager from '@application/services/mode';
@@ -34,9 +34,7 @@ import FinishSelectionUseCase from '@application/usecases/FinishSelection';
 import GetLicenseUseCase from '@application/usecases/GetLicenseUseCase';
 import GetUiStateUseCase from '@application/usecases/GetUiStateUseCase';
 import InitializeAppUseCase from '@application/usecases/InitializeApp';
-import OpenAboutPopupUseCase from '@application/usecases/OpenAboutPopup';
 import OpenCaptureFolderUseCase from '@application/usecases/OpenCaptureFolder';
-import OpenHelpPopupUseCase from '@application/usecases/OpenHelpPopup';
 import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
 import OpenUrlUseCase from '@application/usecases/OpenUrlUseCase';
 import QuitAppUseCase from '@application/usecases/QuitApp';
@@ -63,7 +61,6 @@ import MixPanelTracker from '@adapters/trackerMixPanel';
 import ElectronUiDirector from '@adapters/ui/director';
 import MacAppTray from '@adapters/ui/widgets/tray/mac';
 import WinAppTray from '@adapters/ui/widgets/tray/win';
-
 
 diContainer
   .bind<ScreenRecorder>(TYPES.ScreenRecorder)
@@ -108,10 +105,7 @@ diContainer
   .to(PlatformApiForMain)
   .inSingletonScope();
 
-diContainer
-  .bind<SecureStore>(SecureStore)
-  .toSelf()
-  .inSingletonScope();
+diContainer.bind<SecureStore>(SecureStore).toSelf().inSingletonScope();
 
 diContainer
   .bind<LicenseManager>(TYPES.LicenseManager)
@@ -133,45 +127,27 @@ diContainer
   .toSelf()
   .inSingletonScope();
 
-diContainer
-  .bind<StateManager>(StateManager)
-  .toSelf()
-  .inSingletonScope();
+diContainer.bind<StateManager>(StateManager).toSelf().inSingletonScope();
 
-diContainer
-  .bind<HookManager>(HookManager)
-  .toSelf()
-  .inSingletonScope();
+diContainer.bind<HookManager>(HookManager).toSelf().inSingletonScope();
 
 diContainer
   .bind<CaptureModeManager>(CaptureModeManager)
   .toSelf()
   .inSingletonScope();
 
-diContainer
-  .bind<LicenseService>(LicenseService)
-  .toSelf()
-  .inSingletonScope();
+diContainer.bind<LicenseService>(LicenseService).toSelf().inSingletonScope();
 
-diContainer
-  .bind<CaptureSession>(CaptureSession)
-  .toSelf()
-  .inSingletonScope();
+diContainer.bind<CaptureSession>(CaptureSession).toSelf().inSingletonScope();
 
-diContainer
-  .bind<BuiltinHooks>(BuiltinHooks)
-  .toSelf()
-  .inSingletonScope();
+diContainer.bind<BuiltinHooks>(BuiltinHooks).toSelf().inSingletonScope();
 
 diContainer
   .bind<InitializeAppUseCase>(InitializeAppUseCase)
   .toSelf()
   .inSingletonScope();
 
-diContainer
-  .bind<QuitAppUseCase>(QuitAppUseCase)
-  .toSelf()
-  .inSingletonScope();
+diContainer.bind<QuitAppUseCase>(QuitAppUseCase).toSelf().inSingletonScope();
 
 diContainer
   .bind<CheckLicenseUseCase>(CheckLicenseUseCase)
@@ -190,16 +166,6 @@ diContainer
 
 diContainer
   .bind<CheckVersionUseCase>(CheckVersionUseCase)
-  .toSelf()
-  .inSingletonScope();
-
-diContainer
-  .bind<OpenAboutPopupUseCase>(OpenAboutPopupUseCase)
-  .toSelf()
-  .inSingletonScope();
-
-diContainer
-  .bind<OpenHelpPopupUseCase>(OpenHelpPopupUseCase)
   .toSelf()
   .inSingletonScope();
 
@@ -283,21 +249,12 @@ diContainer
   .toSelf()
   .inSingletonScope();
 
-diContainer
-  .bind<OpenUrlUseCase>(OpenUrlUseCase)
-  .toSelf()
-  .inSingletonScope();
+diContainer.bind<OpenUrlUseCase>(OpenUrlUseCase).toSelf().inSingletonScope();
 
 if (isMac()) {
-  diContainer
-    .bind<AppTray>(TYPES.AppTray)
-    .to(MacAppTray)
-    .inSingletonScope();
+  diContainer.bind<AppTray>(TYPES.AppTray).to(MacAppTray).inSingletonScope();
 } else {
-  diContainer
-    .bind<AppTray>(TYPES.AppTray)
-    .to(WinAppTray)
-    .inSingletonScope();
+  diContainer.bind<AppTray>(TYPES.AppTray).to(WinAppTray).inSingletonScope();
 }
 
 export default diContainer;

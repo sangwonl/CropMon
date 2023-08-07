@@ -3,11 +3,11 @@ import { injectable } from 'inversify';
 import { DomainException } from '@domain/exceptions';
 import CaptureSession from '@domain/services/capture';
 
-import { UiState } from '@application/models/ui';
+import type { UiState } from '@application/models/ui';
 import HookManager from '@application/services/hook';
 import CaptureModeManager from '@application/services/mode';
 import StateManager from '@application/services/state';
-import { UseCase } from '@application/usecases/UseCase';
+import type { UseCase } from '@application/usecases/UseCase';
 
 @injectable()
 export default class StartCaptureUseCase implements UseCase<void> {
@@ -15,7 +15,7 @@ export default class StartCaptureUseCase implements UseCase<void> {
     private stateManager: StateManager,
     private hookManager: HookManager,
     private captureModeManager: CaptureModeManager,
-    private captureSession: CaptureSession
+    private captureSession: CaptureSession,
   ) {}
 
   async execute() {

@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { isDebugMode } from '@utils/process';
 
-import { AnalyticsTracker } from '@application/ports/tracker';
+import type { AnalyticsTracker } from '@application/ports/tracker';
 
 import { version as curVersion, productName, appId } from '../package.json';
 
@@ -45,7 +45,7 @@ export default class MixPanelTracker implements AnalyticsTracker {
     category: string,
     action: string,
     label: string,
-    value: number
+    value: string | number,
   ): void {
     this.mixpanel.track(action, {
       ...this.getProperties(),
@@ -55,7 +55,11 @@ export default class MixPanelTracker implements AnalyticsTracker {
     });
   }
 
-  eventLVS(category: string, action: string, lvs: any): void {
+  eventLVS(
+    category: string,
+    action: string,
+    lvs: { [key: string]: string | number },
+  ): void {
     this.mixpanel.track(action, {
       ...this.getProperties(),
       category,
@@ -63,7 +67,7 @@ export default class MixPanelTracker implements AnalyticsTracker {
     });
   }
 
-  private getProperties(): any {
+  private getProperties(): { [key: string]: string } {
     return {
       distinct_id: this.getTrackUid(),
       product_name: productName,

@@ -9,7 +9,10 @@
   background-color: #3a9f3c;
   border: 1px solid #3a7f3c;
   color: #fafafa;
-  transition: background-color 0.25s, border-color 0.25s, color 0.25s;
+  transition:
+    background-color 0.25s,
+    border-color 0.25s,
+    color 0.25s;
 }
 
 .primaryBtn:hover {
@@ -36,7 +39,10 @@
   background-color: #fafafa;
   border: 1px solid #cdcdcd;
   color: #333333;
-  transition: background-color 0.25s, border-color 0.25s, color 0.25s;
+  transition:
+    background-color 0.25s,
+    border-color 0.25s,
+    color 0.25s;
 }
 
 .secondaryBtn:hover {

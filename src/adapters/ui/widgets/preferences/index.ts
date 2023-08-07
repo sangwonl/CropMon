@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { BrowserWindow, ipcMain } from 'electron';
 
 import { assetPathResolver } from '@utils/asset';
@@ -7,12 +5,12 @@ import { isDebugMode } from '@utils/process';
 
 import {
   IPC_EVT_ON_CLOSE,
-  PreferencesModalOptions,
+  type PreferencesModalOptions,
 } from '@adapters/ui/widgets/preferences/shared';
 import { WidgetType } from '@adapters/ui/widgets/types';
 import Widget from '@adapters/ui/widgets/widget';
 
-export default class PreferencesModal extends Widget {
+export default class PreferencesModal extends Widget<PreferencesModalOptions> {
   private constructor(options: PreferencesModalOptions) {
     super(WidgetType.PREFERENECS_MODAL, options);
 

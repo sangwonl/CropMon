@@ -17,7 +17,7 @@ export default class PlatformApiForRenderer implements PlatformApi {
 
   promptDirectory(defaultPath: string): Promise<string> {
     return Promise.resolve(
-      ipcRenderer.sendSync('promptDirectory', defaultPath)
+      ipcRenderer.sendSync('promptDirectory', defaultPath),
     );
   }
 }

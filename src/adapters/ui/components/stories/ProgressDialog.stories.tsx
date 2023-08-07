@@ -1,6 +1,5 @@
-/* eslint-disable react/jsx-props-no-spreading */
+import type { ComponentStory, ComponentMeta } from '@storybook/react';
 
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 
 import ProgressDialog from '@adapters/ui/components/stateless/ProgressDialog';
@@ -11,8 +10,7 @@ export default {
   argTypes: {},
 } as ComponentMeta<typeof ProgressDialog>;
 
-// eslint-disable-next-line react/function-component-definition
-const Template: ComponentStory<typeof ProgressDialog> = (args) => (
+const Template: ComponentStory<typeof ProgressDialog> = args => (
   <div style={{ height: '400px' }}>
     <ProgressDialog {...args} />
   </div>

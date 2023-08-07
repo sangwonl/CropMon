@@ -1,4 +1,8 @@
-import { AudioSource, CaptureMode, OutputFormat } from '@domain/models/common';
+import {
+  type AudioSource,
+  type OutputFormat,
+  CaptureMode,
+} from '@domain/models/common';
 
 export type AppearancesColors = {
   selectingBackground: string;

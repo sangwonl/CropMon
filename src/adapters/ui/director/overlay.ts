@@ -16,7 +16,7 @@ export default class CaptureOverlayWrap {
   show() {
     this.syncWidgetsToScreens();
 
-    Object.values(this.widgets).forEach((widget) => {
+    Object.values(this.widgets).forEach(widget => {
       widget.setIgnoreMouseEvents(false);
       widget.show();
     });
@@ -26,7 +26,7 @@ export default class CaptureOverlayWrap {
     // WORKAROUND: should wait for react component render process done
     // it's trade off between interval of re-entern capture mode and illusion
     setTimeout(() => {
-      Object.values(this.widgets).forEach((widget) => {
+      Object.values(this.widgets).forEach(widget => {
         widget.hide();
       });
     }, 100);
@@ -38,19 +38,19 @@ export default class CaptureOverlayWrap {
   }
 
   blur() {
-    Object.values(this.widgets).forEach((widget) => {
+    Object.values(this.widgets).forEach(widget => {
       widget.blur();
     });
   }
 
   close() {
-    Object.values(this.widgets).forEach((widget) => {
+    Object.values(this.widgets).forEach(widget => {
       widget.close();
     });
   }
 
   ignoreMouseEvents() {
-    Object.values(this.widgets).forEach((widget) => {
+    Object.values(this.widgets).forEach(widget => {
       widget.setIgnoreMouseEvents(true);
     });
   }
@@ -58,7 +58,7 @@ export default class CaptureOverlayWrap {
   private syncWidgetsToScreens() {
     const curScreenIds: string[] = [];
 
-    getAllScreens().forEach((screen) => {
+    getAllScreens().forEach(screen => {
       const screenId = screen.id.toString();
       curScreenIds.push(screenId);
 
@@ -74,10 +74,10 @@ export default class CaptureOverlayWrap {
     });
 
     const unpluggedScreenIds = Object.keys(this.widgets).filter(
-      (sId) => !curScreenIds.includes(sId)
+      sId => !curScreenIds.includes(sId),
     );
 
-    unpluggedScreenIds.forEach((sId) => {
+    unpluggedScreenIds.forEach(sId => {
       const widget = this.widgets[sId];
       this.uiStateApplier.leaveFromSyncStates(widget);
 

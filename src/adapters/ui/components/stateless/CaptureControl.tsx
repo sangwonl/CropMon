@@ -3,7 +3,7 @@ import React, {
   useState,
   useCallback,
   useMemo,
-  ComponentProps,
+  type ComponentProps,
 } from 'react';
 
 import { withStopPropagation } from '@utils/events';
@@ -15,8 +15,8 @@ import {
   SHORTCUT_OUTPUT_MP4,
 } from '@utils/shortcut';
 
-import { RecordOptions } from '@domain/models/capture';
-import { CaptureMode, OutputFormat } from '@domain/models/common';
+import type { RecordOptions } from '@domain/models/capture';
+import { CaptureMode } from '@domain/models/common';
 
 import CloseButton from '@adapters/ui/components/stateless/CloseButton';
 import SwitchButton from '@adapters/ui/components/stateless/SwitchButton';
@@ -30,27 +30,27 @@ import styles from './CaptureControl.css';
 
 const BUTTON_ITEMS_CAPT_MODES = [
   {
-    value: CaptureMode.SCREEN,
+    value: CaptureMode.SCREEN as string,
     icon: fullscreenIcon,
     alt: `Record Screen (${shortcutForDisplay(SHORTCUT_CAPTURE_MODE_SCREEN)})`,
   },
   {
-    value: CaptureMode.AREA,
+    value: CaptureMode.AREA as string,
     icon: selectionIcon,
     alt: `Record Selected Area (${shortcutForDisplay(
-      SHORTCUT_CAPTURE_MODE_AREA
+      SHORTCUT_CAPTURE_MODE_AREA,
     )})`,
   },
 ];
 
 const BUTTON_ITEMS_REC_OPTS = [
   {
-    value: 'mp4' as OutputFormat,
+    value: 'mp4', // as OutputFormat,
     title: 'MP4',
     alt: `Output as MP4 (${shortcutForDisplay(SHORTCUT_OUTPUT_MP4)})`,
   },
   {
-    value: 'gif' as OutputFormat,
+    value: 'gif', // as OutputFormat,
     title: 'GIF',
     alt: `Output as GIF (${shortcutForDisplay(SHORTCUT_OUTPUT_GIF)})`,
   },
@@ -82,7 +82,7 @@ function CaptureControl({
 
   const audioItems: ComponentProps<typeof TogglableSelect>['items'] =
     useMemo(() => {
-      const items = recOpts.audioSources.map((s) => ({
+      const items = recOpts.audioSources.map(s => ({
         title: s.name,
         checked: s.active,
       }));
@@ -103,7 +103,7 @@ function CaptureControl({
       setCaptMode(mode);
       onCaptureModeChange(mode);
     },
-    [onCaptureModeChange]
+    [onCaptureModeChange],
   );
 
   const handleRecOptsChange = useCallback(
@@ -111,7 +111,7 @@ function CaptureControl({
       setRecOpts(opts);
       onRecordOptionsChange(opts);
     },
-    [onRecordOptionsChange]
+    [onRecordOptionsChange],
   );
 
   useEffect(() => {
@@ -133,19 +133,21 @@ function CaptureControl({
       <div className={styles.btnGroup}>
         <SwitchButton
           activeItemIndex={BUTTON_ITEMS_CAPT_MODES.findIndex(
-            (item) => item.value === captMode
+            item => item.value === captMode,
           )}
           items={BUTTON_ITEMS_CAPT_MODES}
           onSelect={(index: number) => {
-            handleCaptModeChange(BUTTON_ITEMS_CAPT_MODES[index].value);
+            handleCaptModeChange(
+              BUTTON_ITEMS_CAPT_MODES[index].value as CaptureMode,
+            );
           }}
         />
       </div>
       <div className={styles.divider} />
       <div className={styles.btnGroup}>
         <SwitchButton
-          activeItemIndex={BUTTON_ITEMS_REC_OPTS.findIndex((item) =>
-            recOpts.outputAsGif ? item.value === 'gif' : item.value === 'mp4'
+          activeItemIndex={BUTTON_ITEMS_REC_OPTS.findIndex(item =>
+            recOpts.outputAsGif ? item.value === 'gif' : item.value === 'mp4',
           )}
           items={BUTTON_ITEMS_REC_OPTS}
           onSelect={(index: number) => {

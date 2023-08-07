@@ -1,7 +1,5 @@
-/* eslint-disable react/function-component-definition */
-/* eslint-disable react/jsx-props-no-spreading */
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
 import StaticPage from '@adapters/ui/components/stateless/StaticPage';
@@ -12,7 +10,7 @@ export default {
   argTypes: {},
 } as ComponentMeta<typeof StaticPage>;
 
-const Template: ComponentStory<typeof StaticPage> = (args) => {
+const Template: ComponentStory<typeof StaticPage> = args => {
   return <StaticPage {...args} />;
 };
 

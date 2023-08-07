@@ -1,6 +1,9 @@
-import { AudioSource, CaptureMode } from '@domain/models/common';
-import { Preferences, DEFAULT_APPEAR_COLORS } from '@domain/models/preferences';
-import { Screen, Bounds, Point } from '@domain/models/screen';
+import { CaptureMode, type AudioSource } from '@domain/models/common';
+import {
+  DEFAULT_APPEAR_COLORS,
+  type Preferences,
+} from '@domain/models/preferences';
+import type { Screen, Bounds, Point } from '@domain/models/screen';
 
 export type PreferencesModal = {
   show: boolean;

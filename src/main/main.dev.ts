@@ -19,8 +19,8 @@ import diContainer from '@di/containers';
 import '@di/containers/main';
 import TYPES from '@di/types';
 
-import { UseCaseInteractor } from '@application/ports/interactor';
-import { PlatformApi } from '@application/ports/platform';
+import type { UseCaseInteractor } from '@application/ports/interactor';
+import type { PlatformApi } from '@application/ports/platform';
 
 import BuiltinHooks from '@adapters/hook';
 import UseCaseInteractorForMain from '@adapters/interactor/main';
@@ -42,7 +42,7 @@ if (!instanceLock) {
 } else {
   app.commandLine.appendSwitch(
     'disable-blink-features',
-    'BlockCredentialedSubresources'
+    'BlockCredentialedSubresources',
   );
   app.whenReady().then(start).catch(log.error);
 }

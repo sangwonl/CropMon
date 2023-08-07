@@ -3,13 +3,13 @@ import { inject, injectable } from 'inversify';
 import TYPES from '@di/types';
 
 import { CaptureContext } from '@domain/models/capture';
-import { Progress } from '@domain/models/ui';
+import type { Progress } from '@domain/models/ui';
 import CaptureSession from '@domain/services/capture';
 
-import { UiDirector } from '@application/ports/director';
+import type { UiDirector } from '@application/ports/director';
 import HookManager from '@application/services/hook';
 import CaptureModeManager from '@application/services/mode';
-import { UseCase } from '@application/usecases/UseCase';
+import type { UseCase } from '@application/usecases/UseCase';
 
 const CONTAINING_PROGRESS = 10;
 
@@ -19,7 +19,7 @@ export default class FinishCaptureUseCase implements UseCase<void> {
     @inject(TYPES.UiDirector) private uiDirector: UiDirector,
     private hookManager: HookManager,
     private captureModeManager: CaptureModeManager,
-    private captureSession: CaptureSession
+    private captureSession: CaptureSession,
   ) {}
 
   async execute() {
@@ -44,10 +44,10 @@ export default class FinishCaptureUseCase implements UseCase<void> {
             this.uiDirector.updatePostProcessMsg('Converting to GIF format...');
           }
           this.uiDirector.progressPostProcess(
-            progress.percent + CONTAINING_PROGRESS
+            progress.percent + CONTAINING_PROGRESS,
           );
         },
-        () => this.uiDirector.progressPostProcess(100)
+        () => this.uiDirector.progressPostProcess(100),
       );
       this.uiDirector.closePostProcessDialog();
 

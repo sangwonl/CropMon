@@ -1,20 +1,21 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import Color from 'color';
-import React, { MouseEvent, useCallback } from 'react';
+import React, { type MouseEvent, useCallback } from 'react';
 
 import { isCapturableBounds } from '@utils/bounds';
 
-import { Bounds, Point } from '@domain/models/screen';
+import type { Bounds, Point } from '@domain/models/screen';
 
-import { CaptureAreaColors } from '@application/models/ui';
+import type { CaptureAreaColors } from '@application/models/ui';
 
 import styles from './CaptureTargetingScreen.css';
 
 const COLOR_ALPHA_AREA = 0.2;
 const COLOR_ALPHA_AREA_SHADOW = 1.0;
 
-const getAreaStyles = (bounds: Bounds, colors: CaptureAreaColors): any => {
+const getAreaStyles = (
+  bounds: Bounds,
+  colors: CaptureAreaColors,
+): { [key: string]: number | string } => {
   const layoutStyle = {
     left: 0,
     top: 0,
@@ -56,7 +57,7 @@ function CaptureTargetingScreen(props: Props) {
         onCancel();
       }
     },
-    [targetBounds]
+    [targetBounds],
   );
 
   return (

@@ -2,9 +2,13 @@ import path from 'path';
 
 import { getNowAsYYYYMMDDHHmmss, getTimeInSeconds } from '@utils/date';
 
-import { CaptureMode, AudioSource, OutputFormat } from '@domain/models/common';
-import { Preferences } from '@domain/models/preferences';
-import { Bounds } from '@domain/models/screen';
+import {
+  CaptureMode,
+  type AudioSource,
+  type OutputFormat,
+} from '@domain/models/common';
+import type { Preferences } from '@domain/models/preferences';
+import type { Bounds } from '@domain/models/screen';
 
 export type CaptureTarget = {
   mode: CaptureMode;
@@ -32,7 +36,7 @@ export class CaptureContext {
     public outputPath: string,
     public outputFormat: OutputFormat,
     public recordAudio: boolean,
-    public audioSources: AudioSource[]
+    public audioSources: AudioSource[],
   ) {
     this.createdAt = getTimeInSeconds();
   }
@@ -44,12 +48,12 @@ export class CaptureContext {
   static create(
     prefs: Preferences,
     target: CaptureTarget,
-    recordOptions: RecordOptions
+    recordOptions: RecordOptions,
   ): CaptureContext {
     const fileName = getNowAsYYYYMMDDHHmmss();
     const output = path.join(
       prefs.recordHome,
-      `${fileName}.${prefs.outputFormat}`
+      `${fileName}.${prefs.outputFormat}`,
     );
 
     return new CaptureContext(
@@ -57,7 +61,7 @@ export class CaptureContext {
       output,
       recordOptions.outputAsGif ? 'gif' : 'mp4',
       recordOptions.recordAudio,
-      recordOptions.audioSources
+      recordOptions.audioSources,
     );
   }
 }

@@ -1,9 +1,3 @@
-/* eslint-disable react/button-has-type */
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react/display-name */
-
 import React from 'react';
 
 import ProgressBar from '@adapters/ui/components/stateless/ProgressBar';

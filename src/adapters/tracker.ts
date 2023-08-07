@@ -6,7 +6,7 @@ import { injectable } from 'inversify';
 import ua from 'universal-analytics';
 import { v4 as uuidv4 } from 'uuid';
 
-import { AnalyticsTracker } from '@application/ports/tracker';
+import type { AnalyticsTracker } from '@application/ports/tracker';
 
 import { version as curVersion, productName, appId } from '../package.json';
 
@@ -33,7 +33,8 @@ export default class GoogleAnalyticsTracker implements AnalyticsTracker {
         this.tracker.set('ul', app.getLocale());
         this.tracker.set('sr', this.getScreenResolution());
       })
-      .catch((_e) => {});
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .catch(_e => {});
   }
 
   view(name: string): void {
@@ -55,13 +56,17 @@ export default class GoogleAnalyticsTracker implements AnalyticsTracker {
     category: string,
     action: string,
     label: string,
-    value: number
+    value: string | number,
   ): void {
     this.tracker.event(category, action, label, value).send();
   }
 
-  eventLVS(category: string, action: string, lvs: any): void {
-    Object.keys(lvs).forEach((k) => {
+  eventLVS(
+    category: string,
+    action: string,
+    lvs: { [key: string]: string | number },
+  ): void {
+    Object.keys(lvs).forEach(k => {
       this.tracker.event(category, action, k, lvs[k]).send();
     });
   }

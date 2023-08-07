@@ -3,31 +3,31 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { CaptureOptions } from '@domain/models/capture';
-import { License } from '@domain/models/license';
-import { Preferences } from '@domain/models/preferences';
-import { Bounds, Point } from '@domain/models/screen';
+import type { CaptureOptions } from '@domain/models/capture';
+import type { License } from '@domain/models/license';
+import type { Preferences } from '@domain/models/preferences';
+import type { Bounds, Point } from '@domain/models/screen';
 
-import { UiState } from '@application/models/ui';
-import { UseCaseInteractor } from '@application/ports/interactor';
+import type { UiState } from '@application/models/ui';
+import type { UseCaseInteractor } from '@application/ports/interactor';
 
 @injectable()
 export default class UseCaseInteractorForMain implements UseCaseInteractor {
   constructor(
-    @inject(TYPES.UseCaseInteractor) private interactor: UseCaseInteractor
+    @inject(TYPES.UseCaseInteractor) private interactor: UseCaseInteractor,
   ) {
     ipcMain.on('disableCaptureMode', () => this.disableCaptureMode());
     ipcMain.on(
       'startTargetSelection',
       (_event, targetBounds, cursorPosition): void => {
         this.startTargetSelection(targetBounds, cursorPosition);
-      }
+      },
     );
     ipcMain.on(
       'selectingTarget',
       (_event, targetBounds, cursorPosition): void => {
         this.selectingTarget(targetBounds, cursorPosition);
-      }
+      },
     );
     ipcMain.on('finishTargetSelection', (_event, targetBounds): void => {
       this.finishTargetSelection(targetBounds);
@@ -36,16 +36,16 @@ export default class UseCaseInteractorForMain implements UseCaseInteractor {
     ipcMain.on('changeCaptureOptions', (_event, options) => {
       this.changeCaptureOptions(options);
     });
-    ipcMain.on('getUiState', (event) => {
+    ipcMain.on('getUiState', event => {
       event.returnValue = this.getUiState();
     });
-    ipcMain.handle('savePreferences', async (event, prefs: Preferences) => {
+    ipcMain.handle('savePreferences', async (_event, prefs: Preferences) => {
       return this.savePreferences(prefs);
     });
-    ipcMain.handle('getLicense', async (event) => {
+    ipcMain.handle('getLicense', async () => {
       return this.getLicense();
     });
-    ipcMain.handle('registerLicense', async (event, email, licenseKey) => {
+    ipcMain.handle('registerLicense', async (_event, email, licenseKey) => {
       return this.registerLicense(email, licenseKey);
     });
     ipcMain.on('openExternal', (_event, url) => {
@@ -62,10 +62,6 @@ export default class UseCaseInteractorForMain implements UseCaseInteractor {
   }
 
   downloadAndInstall(): void {
-    throw new Error('Method not implemented.');
-  }
-
-  showHelp(): void {
     throw new Error('Method not implemented.');
   }
 

@@ -4,11 +4,11 @@ import { inject, injectable } from 'inversify';
 import TYPES from '@di/types';
 
 import { CaptureMode } from '@domain/models/common';
-import { Screen } from '@domain/models/screen';
-import { RecorderSource } from '@domain/services/recorder';
+import type { Screen } from '@domain/models/screen';
+import type { RecorderSource } from '@domain/services/recorder';
 
-import { INITIAL_UI_STATE, UiState } from '@application/models/ui';
-import { UiDirector } from '@application/ports/director';
+import { INITIAL_UI_STATE, type UiState } from '@application/models/ui';
+import type { UiDirector } from '@application/ports/director';
 import StateManager from '@application/services/state';
 
 import PreferencesRepository from '@adapters/repositories/preferences';
@@ -17,10 +17,11 @@ import PreferencesRepository from '@adapters/repositories/preferences';
 export default class CaptureModeManager {
   constructor(
     // eslint-disable-next-line prettier/prettier
-    @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository,
+    @inject(TYPES.PreferencesRepository)
+    private prefsRepo: PreferencesRepository,
     @inject(TYPES.UiDirector) private uiDirector: UiDirector,
     @inject(TYPES.RecorderSource) private recorderSource: RecorderSource,
-    private stateManager: StateManager
+    private stateManager: StateManager,
   ) {}
 
   async enableCaptureMode(captureMode: CaptureMode) {
@@ -30,11 +31,11 @@ export default class CaptureModeManager {
       systemPreferences.getMediaAccessStatus('microphone') === 'granted';
 
     const enabledAudioSrcIds = prefs.audioSources
-      .filter((s) => s.active)
-      .map((s) => s.id);
+      .filter(s => s.active)
+      .map(s => s.id);
 
     const audioSources = await this.recorderSource.fetchAudioSources();
-    audioSources.forEach((s) => {
+    audioSources.forEach(s => {
       s.active = micGranted && enabledAudioSrcIds.includes(s.id);
     });
 
@@ -42,7 +43,7 @@ export default class CaptureModeManager {
       captureMode,
       async (screens: Screen[], screenCursorOn?: Screen) => {
         const screenMap: { [screenId: number]: Screen } = {};
-        screens.forEach((s) => {
+        screens.forEach(s => {
           screenMap[s.id] = s;
         });
 
@@ -70,7 +71,7 @@ export default class CaptureModeManager {
             captureAreaColors: prefs.colors,
           };
         });
-      }
+      },
     );
   }
 

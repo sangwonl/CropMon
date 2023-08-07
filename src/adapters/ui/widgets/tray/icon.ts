@@ -1,4 +1,4 @@
-import { nativeImage, NativeImage } from 'electron';
+import { nativeImage, type NativeImage } from 'electron';
 
 import { assetPathResolver } from '@utils/asset';
 import { isMac } from '@utils/process';

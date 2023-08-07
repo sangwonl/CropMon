@@ -1,12 +1,6 @@
-/* eslint-disable jsx-a11y/interactive-supports-focus */
-/* eslint-disable jsx-a11y/tabindex-no-positive */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/label-has-associated-control */
-
 import React, { useState, useCallback } from 'react';
 
-import { Preferences } from '@domain/models/preferences';
+import type { Preferences } from '@domain/models/preferences';
 
 import ColorPalette from '@adapters/ui/components/stateless/ColorPalette';
 
@@ -24,19 +18,19 @@ const isChanged = (a: OptionType, b: OptionType) => a !== b;
 
 function PrefsAppearancesPanel({ prefs, onSave, onCancel }: Props) {
   const [colorSelectingBg, setColorSelectingBg] = useState(
-    prefs.colors.selectingBackground
+    prefs.colors.selectingBackground,
   );
 
   const [colorSelectingText, setColorSelectingText] = useState(
-    prefs.colors.selectingText
+    prefs.colors.selectingText,
   );
 
   const [colorCountdownBg, setColorCountdownBg] = useState(
-    prefs.colors.countdownBackground
+    prefs.colors.countdownBackground,
   );
 
   const [colorCountdownText, setColorCountdownText] = useState(
-    prefs.colors.countdownText
+    prefs.colors.countdownText,
   );
 
   const canSave = useCallback(() => {

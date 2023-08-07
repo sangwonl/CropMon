@@ -64,14 +64,14 @@ describe('LicenseManager', () => {
     licenseManager = new SimpleLicenseManager(
       prefsStore,
       safeCipher,
-      apiBaseUrl
+      apiBaseUrl,
     );
   });
 
   it('should validate given license key through api', async () => {
     const license = await licenseManager.validateLicenseKey(
       licenseData.email,
-      licenseData.key
+      licenseData.key,
     );
     expect(license).not.toBeNull();
     expect(license?.key).toEqual(TEST_KEY);
