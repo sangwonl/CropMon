@@ -40,6 +40,7 @@ dist
 dll
 main.js
 main.js.map
+external
 
 .idea
 npm-debug.log.*
