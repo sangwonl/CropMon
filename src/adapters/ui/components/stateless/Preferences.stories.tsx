@@ -1,4 +1,4 @@
-import type { ComponentMeta, ComponentStory } from '@storybook/react';
+import type { StoryObj } from '@storybook/react';
 
 import React, { type ComponentProps } from 'react';
 
@@ -10,10 +10,11 @@ import PrefsPanels from '@adapters/ui/components/stateless/PrefsPanels';
 export default {
   title: 'Kropsaurus/Preferences',
   component: PrefsPanels,
-  argTypes: {},
-} as ComponentMeta<typeof PrefsPanels>;
+};
 
-const Template: ComponentStory<typeof PrefsPanels> = args => (
+type Story = StoryObj<typeof PrefsPanels>;
+
+const Template = (args: ComponentProps<typeof PrefsPanels>) => (
   <div
     style={{
       width: 700,
@@ -61,23 +62,29 @@ const defaultArgs: ComponentProps<typeof PrefsPanels> = {
   onSave: (_preferences: Preferences) => {},
 };
 
-export const Default = Template.bind({});
-Default.args = defaultArgs;
-
-export const RegisterError = Template.bind({});
-RegisterError.args = {
-  ...defaultArgs,
-  registerError: 'Invalid license!',
+export const Default: Story = {
+  args: defaultArgs,
+  render: Template,
 };
 
-export const Registered = Template.bind({});
-Registered.args = {
-  ...defaultArgs,
-  license: {
-    validated: true,
-    key: 'ABCD',
-    email: 'gamzabaw@gmail.com',
-    registeredAt: 1679902671075,
-    lastCheckedAt: 1679902671075,
+export const RegisterError: Story = {
+  args: {
+    ...defaultArgs,
+    registerError: 'Invalid license!',
   },
+  render: Template,
+};
+
+export const Registered: Story = {
+  args: {
+    ...defaultArgs,
+    license: {
+      validated: true,
+      key: 'ABCD',
+      email: 'gamzabaw@gmail.com',
+      registeredAt: 1679902671075,
+      lastCheckedAt: 1679902671075,
+    },
+  },
+  render: Template,
 };

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';

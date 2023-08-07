@@ -1,9 +1,9 @@
 import { ipcRenderer } from 'electron';
 import { injectable } from 'inversify';
 
-import { Point } from '@domain/models/screen';
+import type { Point } from '@domain/models/screen';
 
-import { PlatformApi, PathType } from '@application/ports/platform';
+import type { PlatformApi, PathType } from '@application/ports/platform';
 
 @injectable()
 export default class PlatformApiForRenderer implements PlatformApi {

@@ -2,6 +2,7 @@
   "name": "kropsaurus",
   "description": "Simple Screen Recorder",
   "scripts": {
+    "inst": "npm i --legacy-peer-deps",
     "prepare": "husky install",
     "build": "concurrently \"npm run build:main\" \"npm run build:renderer\"",
     "build:main": "cross-env NODE_ENV=production webpack --config ./.build/configs/webpack.config.main.prod.js",
@@ -16,11 +17,12 @@
     "start:main": "cross-env NODE_ENV=development electron -r ./.build/scripts/FixDevAppName.js -r ./.build/scripts/BabelRegister ./src/main/main.dev.ts --inspect=5858 --remote-debugging-port=9223",
     "start:renderer": "cross-env NODE_ENV=development webpack serve --config ./.build/configs/webpack.config.renderer.dev.js",
     "test": "jest",
-    "storybook": "start-storybook -p 6006 -s ./",
-    "build-storybook": "build-storybook"
+    "storybook-svelte": "storybook dev -p 6006 -c .storybook-svelte",
+    "storybook-react": "storybook dev -p 6006 -c .storybook-react",
+    "build-storybook": "storybook build"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
+    "*.{js,jsx,ts,tsx,svelte}": [
       "cross-env NODE_ENV=development eslint --cache"
     ]
   },
@@ -209,10 +211,17 @@
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@storybook/addon-actions": "^7.1.0",
     "@storybook/addon-essentials": "^7.1.0",
+    "@storybook/addon-interactions": "^7.2.1",
     "@storybook/addon-links": "^7.1.0",
+    "@storybook/addon-svelte-csf": "^2.0.11",
+    "@storybook/blocks": "^7.2.1",
     "@storybook/builder-webpack5": "^7.1.0",
     "@storybook/manager-webpack5": "^6.5.16",
     "@storybook/react": "^7.1.0",
+    "@storybook/react-webpack5": "^7.2.1",
+    "@storybook/svelte": "^7.2.1",
+    "@storybook/svelte-webpack5": "^7.2.1",
+    "@storybook/testing-library": "^0.2.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
     "@tsconfig/svelte": "^5.0.0",
@@ -266,7 +275,7 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-import-resolver-typescript": "^3.5.5",
     "eslint-import-resolver-webpack": "^0.13.2",
-    "eslint-plugin-compat": "^4.1.4",
+    "eslint-plugin-compat": "^3.5.1",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-jest": "^27.2.3",
     "eslint-plugin-prettier": "^5.0.0",
@@ -293,6 +302,7 @@
     "react-test-renderer": "^18.2.0",
     "rimraf": "^3.0.2",
     "sass-loader": "^13.3.2",
+    "storybook": "^7.2.1",
     "style-loader": "^3.3.3",
     "terser-webpack-plugin": "^5.3.9",
     "ts-jest": "^29.1.1",
