@@ -22,6 +22,12 @@ module.exports = {
           },
         },
       },
+      {
+        test: /\.svelte$/,
+        use: {
+          loader: 'svelte-loader',
+        },
+      },
     ],
   },
 
@@ -35,7 +41,7 @@ module.exports = {
    * Determine the array of extensions that should be used to resolve modules.
    */
   resolve: {
-    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx', '.css', '.scss', '.sass'],
+    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx', '.svelte', '.css', '.scss', '.sass'],
     modules: [path.join(__dirname, '../src'), 'node_modules'],
     plugins: [new TsconfigPathsPlugin({})],
   },
