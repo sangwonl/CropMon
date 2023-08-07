@@ -12,19 +12,20 @@ import diContainer from '@di/containers';
 import TYPES from '@di/types';
 
 import { CaptureMode } from '@domain/models/common';
-import { Preferences } from '@domain/models/preferences';
-import { Screen } from '@domain/models/screen';
+import type { Preferences } from '@domain/models/preferences';
+import type { Screen } from '@domain/models/screen';
 
-import { AppManager } from '@application/ports/app';
+import type { AppManager } from '@application/ports/app';
 import {
   TrayRecordingState,
   TrayUpdaterState,
-  UiDirector,
+  type UiDirector,
 } from '@application/ports/director';
-import { AppTray } from '@application/ports/tray';
+import type { AppTray } from '@application/ports/tray';
 
 import ElectronUiStateApplier from '@adapters/state';
 import CaptureOverlayWrap from '@adapters/ui/director/overlay';
+import HelloSvelteWidget from '@adapters/ui/widgets/hellosvelte';
 import PreferencesDialog from '@adapters/ui/widgets/preferences';
 import ProgressDialog from '@adapters/ui/widgets/progressdialog';
 import StaticPageDialog from '@adapters/ui/widgets/staticpage';
@@ -45,7 +46,7 @@ export default class ElectronUiDirector implements UiDirector {
 
   constructor(
     private uiStateApplier: ElectronUiStateApplier,
-    @inject(TYPES.AppManager) private appManager: AppManager
+    @inject(TYPES.AppManager) private appManager: AppManager,
   ) {}
 
   initialize(): void {
@@ -132,8 +133,15 @@ export default class ElectronUiDirector implements UiDirector {
   async openPreferences(
     appName: string,
     version: string,
-    preferences: Preferences
+    preferences: Preferences,
   ): Promise<void> {
+    const hello = HelloSvelteWidget.create({
+      width: 440,
+      height: 480,
+    });
+    hello.webContents.openDevTools();
+    hello.open();
+
     if (this.prefsDialog && !this.prefsDialog.isDestroyed()) {
       this.prefsDialog.show();
       return;
@@ -152,8 +160,8 @@ export default class ElectronUiDirector implements UiDirector {
     mode: CaptureMode,
     onActiveScreenBoundsChange: (
       screens: Screen[],
-      screenCursorOn?: Screen
-    ) => void
+      screenCursorOn?: Screen,
+    ) => void,
   ): void {
     this.resetScreenBoundsDetector();
 
@@ -209,7 +217,7 @@ export default class ElectronUiDirector implements UiDirector {
   async startDownloadAndInstall(
     onReady: () => void,
     onCancel: () => void,
-    onQuitAndInstall: () => void
+    onQuitAndInstall: () => void,
   ): Promise<void> {
     this.updateProgressDialog = new ProgressDialog(
       {
@@ -224,7 +232,7 @@ export default class ElectronUiDirector implements UiDirector {
         width: 400,
         height: 200,
       },
-      onReady
+      onReady,
     );
 
     const shouldUpdate = await this.updateProgressDialog?.open();

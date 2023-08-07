@@ -1,4 +1,4 @@
-import { KeyboardEvent } from 'react';
+import type { KeyboardEvent } from 'react';
 
 import { isMac } from '@utils/process';
 import { capitalize } from '@utils/strings';
@@ -80,7 +80,7 @@ export const validateShortcut = (s: string): boolean => {
   const modifiers = ['Meta', 'Shift', 'Alt', 'Ctrl'];
 
   let validateModifier = false;
-  modifiers.forEach((m) => {
+  modifiers.forEach(m => {
     const idx = keys.indexOf(m, 0);
     if (idx > -1) {
       validateModifier = true;

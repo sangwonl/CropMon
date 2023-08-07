@@ -4,8 +4,8 @@
 import { ipcRenderer } from 'electron';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { License } from '@domain/models/license';
-import { Preferences } from '@domain/models/preferences';
+import type { License } from '@domain/models/license';
+import type { Preferences } from '@domain/models/preferences';
 
 import PrefsPanels from '@adapters/ui/components/stateless/PrefsPanels';
 import { useUseCaseInteractor } from '@adapters/ui/hooks/interactor';
@@ -36,7 +36,7 @@ function PreferencesDialog({ appName, version, preferences }: PropTypes) {
 
   const handleRegister = useCallback((email: string, licenseKey: string) => {
     setRegisterError(null);
-    interactor.registerLicense(email, licenseKey).then((validatedLicense) => {
+    interactor.registerLicense(email, licenseKey).then(validatedLicense => {
       if (validatedLicense) {
         setLicense(validatedLicense);
       } else {

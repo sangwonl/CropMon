@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 
-import { License } from '@domain/models/license';
-import { Preferences } from '@domain/models/preferences';
+import type { License } from '@domain/models/license';
+import type { Preferences } from '@domain/models/preferences';
 
 import PrefsAboutPanel from '@adapters/ui/components/stateless/PrefsAboutPanel';
 import PrefsAppearancesTabPanel from '@adapters/ui/components/stateless/PrefsAppearancePanel';
 import PrefsGeneralPanel from '@adapters/ui/components/stateless/PrefsGeneralPanel';
-import SideTabs, { TabItem } from '@adapters/ui/components/stateless/SideTabs';
+import SideTabs, {
+  type TabItem,
+} from '@adapters/ui/components/stateless/SideTabs';
 
 import styles from './PrefsPanels.css';
 

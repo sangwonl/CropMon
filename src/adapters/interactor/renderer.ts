@@ -1,13 +1,13 @@
 import { ipcRenderer } from 'electron';
 import { injectable } from 'inversify';
 
-import { CaptureOptions } from '@domain/models/capture';
-import { License } from '@domain/models/license';
-import { Preferences } from '@domain/models/preferences';
-import { Bounds, Point } from '@domain/models/screen';
+import type { CaptureOptions } from '@domain/models/capture';
+import type { License } from '@domain/models/license';
+import type { Preferences } from '@domain/models/preferences';
+import type { Bounds, Point } from '@domain/models/screen';
 
-import { UiState } from '@application/models/ui';
-import { UseCaseInteractor } from '@application/ports/interactor';
+import type { UiState } from '@application/models/ui';
+import type { UseCaseInteractor } from '@application/ports/interactor';
 
 @injectable()
 export default class UseCaseInteractorForRenderer implements UseCaseInteractor {
@@ -20,10 +20,6 @@ export default class UseCaseInteractorForRenderer implements UseCaseInteractor {
   }
 
   downloadAndInstall(): void {
-    throw new Error('Method not implemented.');
-  }
-
-  showHelp(): void {
     throw new Error('Method not implemented.');
   }
 

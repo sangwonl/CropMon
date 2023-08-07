@@ -1,14 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { AppManager } from '@application/ports/app';
-import { UiDirector } from '@application/ports/director';
+import type { AppManager } from '@application/ports/app';
+import type { UiDirector } from '@application/ports/director';
 import HookManager from '@application/services/hook';
 import LicenseService from '@application/services/license';
-import { UseCase } from '@application/usecases/UseCase';
+import type { UseCase } from '@application/usecases/UseCase';
 
 @injectable()
 export default class CheckUpdateUseCase implements UseCase<void> {
@@ -16,7 +14,7 @@ export default class CheckUpdateUseCase implements UseCase<void> {
     private hookManager: HookManager,
     private licenseService: LicenseService,
     @inject(TYPES.AppManager) private appManager: AppManager,
-    @inject(TYPES.UiDirector) private uiDirector: UiDirector
+    @inject(TYPES.UiDirector) private uiDirector: UiDirector,
   ) {}
 
   async execute() {
@@ -34,7 +32,7 @@ export default class CheckUpdateUseCase implements UseCase<void> {
       this.onUpdateAvailable,
       this.onUpdateNotAvailable,
       this.onDownloadProgress,
-      this.onUpdateDownloaded
+      this.onUpdateDownloaded,
     );
   }
 
@@ -46,12 +44,15 @@ export default class CheckUpdateUseCase implements UseCase<void> {
     this.hookManager.emit('onAppUpdateChecked', { updateAvailable: false });
   };
 
-  private onDownloadProgress = (progressInfo: any) => {
+  private onDownloadProgress = (progressInfo: {
+    total: number;
+    transferred: number;
+  }) => {
     const maxPercentage = 0.95; // yield marking 100% to onUpdateDownloaded()
     let percent = 0;
     if (progressInfo.total > 0) {
       percent = Math.floor(
-        (progressInfo.transferred / progressInfo.total) * 100 * maxPercentage
+        (progressInfo.transferred / progressInfo.total) * 100 * maxPercentage,
       );
     }
     this.uiDirector.progressUpdateDownload(percent);

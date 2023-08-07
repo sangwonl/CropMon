@@ -2,13 +2,13 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { Bounds, Point } from '@domain/models/screen';
+import type { Bounds, Point } from '@domain/models/screen';
 
-import { UiState } from '@application/models/ui';
-import { UiDirector } from '@application/ports/director';
+import type { UiState } from '@application/models/ui';
+import type { UiDirector } from '@application/ports/director';
 import HookManager from '@application/services/hook';
 import StateManager from '@application/services/state';
-import { UseCase } from '@application/usecases/UseCase';
+import type { UseCase } from '@application/usecases/UseCase';
 
 interface StartSelectionUseCaseInput {
   targetBounds: Bounds;
@@ -22,7 +22,7 @@ export default class StartSelectionUseCase
   constructor(
     @inject(TYPES.UiDirector) private uiDirector: UiDirector,
     private stateManager: StateManager,
-    private hookManager: HookManager
+    private hookManager: HookManager,
   ) {}
 
   execute(input: StartSelectionUseCaseInput) {

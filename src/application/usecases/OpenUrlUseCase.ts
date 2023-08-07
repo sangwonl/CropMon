@@ -2,8 +2,8 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { UiDirector } from '@application/ports/director';
-import { UseCase } from '@application/usecases/UseCase';
+import type { UiDirector } from '@application/ports/director';
+import type { UseCase } from '@application/usecases/UseCase';
 
 interface OpenUrlUseCaseInput {
   url: string;

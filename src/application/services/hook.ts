@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-empty-interface */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { injectable } from 'inversify';
+
+import type { ValueOf } from '@utils/types';
 
 import { CaptureContext } from '@domain/models/capture';
 import { CaptureMode } from '@domain/models/common';
-import { License } from '@domain/models/license';
-import { Preferences } from '@domain/models/preferences';
+import type { License } from '@domain/models/license';
+import type { Preferences } from '@domain/models/preferences';
 
 export type HookArgsAppUpdateChecked = {
   updateAvailable: boolean;
@@ -81,13 +80,15 @@ type HookTypeArgsMap = {
 
 export type HookType = keyof HookTypeArgsMap;
 
+type HookHandler = (args: ValueOf<HookTypeArgsMap>) => void;
+
 @injectable()
 export default class HookManager {
-  private hooks: Map<HookType, Array<(args: any) => void>> = new Map();
+  private hooks: Map<HookType, Array<HookHandler>> = new Map();
 
   on<K extends HookType>(
     hook: K,
-    handler: (args: HookTypeArgsMap[K]) => void
+    handler: (args: HookTypeArgsMap[K]) => void,
   ): this {
     let handlers = this.hooks.get(hook);
     if (!handlers) {
@@ -95,8 +96,8 @@ export default class HookManager {
       this.hooks.set(hook, handlers);
     }
 
-    if (!handlers.find((h) => h === handler)) {
-      handlers.push(handler);
+    if (!handlers.find(h => h === handler)) {
+      handlers.push(handler as HookHandler);
     }
 
     return this;
@@ -105,7 +106,7 @@ export default class HookManager {
   emit<K extends HookType>(hook: K, args: HookTypeArgsMap[K]): void {
     const handlers = this.hooks.get(hook);
     if (handlers) {
-      handlers.forEach((h) => setTimeout(() => h(args), 0));
+      handlers.forEach(h => setTimeout(() => h(args), 0));
     }
   }
 }

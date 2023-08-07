@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import classNames from 'classnames';
 import Color from 'color';
-import React, { MutableRefObject, useRef, useEffect } from 'react';
+import React, { type MutableRefObject, useRef, useEffect } from 'react';
 
 import {
   emptyBounds,
@@ -11,9 +9,9 @@ import {
   isPointInsideBounds,
 } from '@utils/bounds';
 
-import { Bounds, Point } from '@domain/models/screen';
+import type { Bounds, Point } from '@domain/models/screen';
 
-import { CaptureAreaColors } from '@application/models/ui';
+import type { CaptureAreaColors } from '@application/models/ui';
 
 import styles from './CaptureTargetingArea.css';
 
@@ -70,8 +68,8 @@ const getAreaStyles = (
   selCtx: AreaSelectionCtx,
   bounds: Bounds,
   captureBounds: Bounds,
-  colors: CaptureAreaColors
-): any => {
+  colors: CaptureAreaColors,
+): { [key: string]: number | string } => {
   if (selCtx.selected || isEmptyBounds(bounds)) {
     return {
       display: 'none',
@@ -108,8 +106,8 @@ const getCursorHintStyles = (
   screenBounds: Bounds,
   colors: CaptureAreaColors,
   startPt?: Point,
-  curPt?: Point
-): any => {
+  curPt?: Point,
+): { [key: string]: number | string } => {
   if (
     !startPt ||
     !curPt ||
@@ -183,10 +181,12 @@ const getCursorHintStyles = (
 
 const handleMouseDown = (
   e: MouseEvent,
+  // eslint-disable-next-line no-unused-vars
   onStart: (cursorPosition: Point) => void,
+  // eslint-disable-next-line no-unused-vars
   onSelecting: (bounds: Bounds, cursorPosition: Point) => void,
   onCancel: () => void,
-  selCtxRef: MutableRefObject<AreaSelectionCtx>
+  selCtxRef: MutableRefObject<AreaSelectionCtx>,
 ) => {
   const selCtx = selCtxRef.current;
 
@@ -212,8 +212,9 @@ const handleMouseDown = (
 
 const handleMouseMove = (
   e: MouseEvent,
+  // eslint-disable-next-line no-unused-vars
   onSelecting: (bounds: Bounds, cursorPosition: Point) => void,
-  selCtxRef: MutableRefObject<AreaSelectionCtx>
+  selCtxRef: MutableRefObject<AreaSelectionCtx>,
 ) => {
   const selCtx = selCtxRef.current;
 
@@ -229,10 +230,12 @@ const handleMouseMove = (
 
 const handleMouseUp = (
   e: MouseEvent,
+  // eslint-disable-next-line no-unused-vars
   onSelecting: (bounds: Bounds, cursorPosition: Point) => void,
   onCancel: () => void,
+  // eslint-disable-next-line no-unused-vars
   onFinish: (bounds: Bounds) => void,
-  selCtxRef: MutableRefObject<AreaSelectionCtx>
+  selCtxRef: MutableRefObject<AreaSelectionCtx>,
 ) => {
   const selCtx = selCtxRef.current;
 
@@ -266,9 +269,12 @@ type Props = {
   startCursorPosition: Point | undefined;
   curCursorPosition: Point | undefined;
   areaColors: CaptureAreaColors;
+  // eslint-disable-next-line no-unused-vars
   onStart: (cursorPosition: Point) => void;
+  // eslint-disable-next-line no-unused-vars
   onSelecting: (bounds: Bounds, cursorPosition: Point) => void;
   onCancel: () => void;
+  // eslint-disable-next-line no-unused-vars
   onFinish: (bounds: Bounds) => void;
 };
 
@@ -313,7 +319,7 @@ function CaptureTargetingArea(props: Props) {
 
   const entireCaptureBounds = getBoundsFromPoint(
     startCursorPosition,
-    curCursorPosition
+    curCursorPosition,
   );
 
   return (
@@ -326,7 +332,7 @@ function CaptureTargetingArea(props: Props) {
           selCtxRef.current,
           targetBounds,
           entireCaptureBounds,
-          areaColors
+          areaColors,
         )}
       />
       {!selCtxRef.current.selected && (
@@ -337,7 +343,7 @@ function CaptureTargetingArea(props: Props) {
             screenBounds,
             areaColors,
             startCursorPosition,
-            curCursorPosition
+            curCursorPosition,
           )}
         >
           {entireCaptureBounds.width}x{entireCaptureBounds.height}

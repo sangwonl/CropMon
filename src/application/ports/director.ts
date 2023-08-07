@@ -1,6 +1,8 @@
+/* eslint-disable no-unused-vars */
+
 import { CaptureMode } from '@domain/models/common';
-import { Preferences } from '@domain/models/preferences';
-import { Screen } from '@domain/models/screen';
+import type { Preferences } from '@domain/models/preferences';
+import type { Screen } from '@domain/models/screen';
 
 export enum TrayRecordingState {
   Ready = 0,
@@ -23,14 +25,14 @@ export interface UiDirector {
   openPreferences(
     appName: string,
     version: string,
-    preferences: Preferences
+    preferences: Preferences,
   ): Promise<void>;
   enableCaptureMode(
     mode: CaptureMode,
     onActiveScreenBoundsChange: (
       screens: Screen[],
-      screenCursorOn?: Screen
-    ) => void
+      screenCursorOn?: Screen,
+    ) => void,
   ): void;
   disableCaptureMode(): void;
   startTargetSelection(): void;
@@ -41,7 +43,7 @@ export interface UiDirector {
   startDownloadAndInstall(
     onReady: () => void,
     onCancel: () => void,
-    onQuitAndInstall: () => void
+    onQuitAndInstall: () => void,
   ): Promise<void>;
   progressUpdateDownload(percent: number): void;
   openPostProcessDialog(): Promise<boolean>;

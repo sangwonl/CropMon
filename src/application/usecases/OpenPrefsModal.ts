@@ -2,21 +2,21 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { PreferencesRepository } from '@domain/repositories/preferences';
+import type { PreferencesRepository } from '@domain/repositories/preferences';
 
-import { UiDirector } from '@application/ports/director';
+import type { UiDirector } from '@application/ports/director';
 import HookManager from '@application/services/hook';
-import { UseCase } from '@application/usecases/UseCase';
+import type { UseCase } from '@application/usecases/UseCase';
 
 import { version as curVersion, productName } from '../../package.json';
 
 @injectable()
 export default class OpenPrefsModalUseCase implements UseCase<void> {
   public constructor(
-    // eslint-disable-next-line prettier/prettier
-    @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository,
+    @inject(TYPES.PreferencesRepository)
+    private prefsRepo: PreferencesRepository,
     @inject(TYPES.UiDirector) private uiDirector: UiDirector,
-    private hookManager: HookManager
+    private hookManager: HookManager,
   ) {}
 
   async execute() {

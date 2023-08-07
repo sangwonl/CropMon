@@ -2,15 +2,15 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { Bounds } from '@domain/models/screen';
-import { PreferencesRepository } from '@domain/repositories/preferences';
+import type { Bounds } from '@domain/models/screen';
+import type { PreferencesRepository } from '@domain/repositories/preferences';
 import CaptureSession from '@domain/services/capture';
 
-import { UiState } from '@application/models/ui';
-import { UiDirector } from '@application/ports/director';
+import type { UiState } from '@application/models/ui';
+import type { UiDirector } from '@application/ports/director';
 import HookManager from '@application/services/hook';
 import StateManager from '@application/services/state';
-import { UseCase } from '@application/usecases/UseCase';
+import type { UseCase } from '@application/usecases/UseCase';
 
 interface FinishSelectionUseCaseInput {
   targetBounds: Bounds;
@@ -22,11 +22,12 @@ export default class FinishSelectionUseCase
 {
   constructor(
     // eslint-disable-next-line prettier/prettier
-    @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository,
+    @inject(TYPES.PreferencesRepository)
+    private prefsRepo: PreferencesRepository,
     @inject(TYPES.UiDirector) private uiDirector: UiDirector,
     private stateManager: StateManager,
     private hookManager: HookManager,
-    private captureSession: CaptureSession
+    private captureSession: CaptureSession,
   ) {}
 
   async execute(input: FinishSelectionUseCaseInput) {
@@ -64,7 +65,7 @@ export default class FinishSelectionUseCase
       recordOptions: {
         outputAsGif: controlPanel.outputAsGif,
         recordAudio: controlPanel.recordAudio,
-        audioSources: controlPanel.audioSources.filter((s) => s.active),
+        audioSources: controlPanel.audioSources.filter(s => s.active),
       },
     });
   }

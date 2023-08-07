@@ -1,15 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { BrowserWindow, Rectangle, WebContents } from 'electron';
+import { BrowserWindow, type Rectangle, type WebContents } from 'electron';
 
 import { WidgetType } from '@adapters/ui/widgets/types';
 
-export default abstract class Widget {
+export default abstract class Widget<T> {
   protected window: BrowserWindow;
 
-  protected abstract createWindow(options?: any): BrowserWindow;
+  protected abstract createWindow(options?: T): BrowserWindow;
 
-  constructor(type: WidgetType, options?: any) {
+  constructor(type: WidgetType, options?: T) {
     this.window = this.createWindow(options);
 
     this.window.removeMenu();

@@ -15,9 +15,9 @@ function CloseButton({ onClick }: Props) {
     <button
       type="button"
       className={styles.btn}
-      onMouseUp={(e) => withStopPropagation(e)}
-      onMouseDown={(e) => withStopPropagation(e)}
-      onClick={(e) => withStopPropagation(e, onClick)}
+      onMouseUp={e => withStopPropagation(e)}
+      onMouseDown={e => withStopPropagation(e)}
+      onClick={e => withStopPropagation(e, onClick)}
     >
       <img src={closeIcon} alt="Close" />
     </button>

@@ -1,7 +1,6 @@
-/* eslint-disable react/jsx-props-no-spreading */
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 import { action } from '@storybook/addon-actions';
-import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
 import SwitchButton from '@adapters/ui/components/stateless/SwitchButton';
@@ -17,8 +16,7 @@ export default {
 
 const handleToggle = action('onToggle');
 
-// eslint-disable-next-line react/function-component-definition
-const Template: ComponentStory<typeof SwitchButton> = (args) => {
+const Template: ComponentStory<typeof SwitchButton> = args => {
   return (
     <div style={{ width: '80px', height: '40px' }}>
       <SwitchButton {...args} />

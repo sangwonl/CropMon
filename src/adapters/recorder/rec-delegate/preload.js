@@ -1,12 +1,12 @@
 /* eslint-disable prefer-rest-params */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { app, contextBridge } = require('electron');
 // const path = require('path');
 // const fs = require('fs');
 
 contextBridge.exposeInMainWorld('remote', {
-  getAppPath: (name) => app.getPath(name),
+  getAppPath: name => app.getPath(name),
   // getAppTempPath: () => remote.app.getPath('temp'),
   // newBuffer: (blob) => Buffer.from(blob),
   // pathExt: (p) => path.extname(p),

@@ -1,5 +1,5 @@
-import { RecordOptions } from '@domain/models/capture';
-import { Preferences } from '@domain/models/preferences';
+import type { RecordOptions } from '@domain/models/capture';
+import type { Preferences } from '@domain/models/preferences';
 
 export interface PreferencesRepository {
   fetchPreferences(): Promise<Preferences>;

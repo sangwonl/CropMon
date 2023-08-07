@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import Color from 'color';
 import React from 'react';
 
-import { Bounds } from '@domain/models/screen';
+import type { Bounds } from '@domain/models/screen';
 
-import { CaptureAreaColors } from '@application/models/ui';
+import type { CaptureAreaColors } from '@application/models/ui';
 
 import styles from './CaptureCountdown.css';
 
@@ -19,7 +17,10 @@ const COLOR_ALPHA_AREA = 0.2;
 const COLOR_ALPHA_AREA_SHADOW = 1.0;
 const COLOR_ALPHA_TEXT_SHADOW = 0.3;
 
-const getAreaStyles = (bounds: Bounds, colors: CaptureAreaColors): any => {
+const getAreaStyles = (
+  bounds: Bounds,
+  colors: CaptureAreaColors,
+): { [key: string]: number | string } => {
   const layoutStyle = {
     left: bounds.x - 1,
     top: bounds.y - 1,

@@ -1,15 +1,10 @@
-/* eslint-disable react/no-danger */
-/* eslint-disable react/display-name */
-
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
 import styles from './StaticPage.css';
 
 type Props = {
-  // eslint-disable-next-line react/require-default-props
   markdown?: string;
-  // eslint-disable-next-line react/require-default-props
   html?: string;
 };
 

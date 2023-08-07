@@ -21,16 +21,18 @@ import {
 
 import TYPES from '@di/types';
 
-import {
-  CaptureMode,
-  OutputFormat,
-} from '@domain/models/common';
-import { Preferences } from '@domain/models/preferences';
+import { CaptureMode, type OutputFormat } from '@domain/models/common';
+import type { Preferences } from '@domain/models/preferences';
 
-import { TrayRecordingState, TrayUpdaterState, UiDirector } from '@application/ports/director';
-import { UseCaseInteractor } from '@application/ports/interactor';
-import { AnalyticsTracker } from '@application/ports/tracker';
-import HookManager, {
+import {
+  TrayRecordingState,
+  TrayUpdaterState,
+  type UiDirector,
+} from '@application/ports/director';
+import type { UseCaseInteractor } from '@application/ports/interactor';
+import type{ AnalyticsTracker } from '@application/ports/tracker';
+import HookManager from '@application/services/hook';
+import type {
   HookArgsAppUpdateChecked,
   HookArgsAppUpdated,
   HookArgsInitialPrefsLoaded,
@@ -48,7 +50,6 @@ import CheckVersionUseCase from '@application/usecases/CheckVersion';
 
 import PreferencesRepository from '@adapters/repositories/preferences';
 
-
 const UPDATE_CHECK_DELAY = 5 * 60 * 1000;
 const UPDATE_CHECK_INTERVAL = 1 * 60 * 60 * 1000;
 
@@ -57,7 +58,8 @@ export default class BuiltinHooks {
   private lastUpdateCheckedAt?: number;
 
   constructor(
-    @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository,
+    @inject(TYPES.PreferencesRepository)
+    private prefsRepo: PreferencesRepository,
     @inject(TYPES.UiDirector) private uiDirector: UiDirector,
     @inject(TYPES.AnalyticsTracker) private tracker: AnalyticsTracker,
     @inject(TYPES.UseCaseInteractor) private interactor: UseCaseInteractor,
@@ -74,12 +76,24 @@ export default class BuiltinHooks {
     this.hookManager.on('onPrefsLoaded', this.onPrefsLoaded);
     this.hookManager.on('onPrefsUpdated', this.onPrefsUpdated);
     this.hookManager.on('onPrefsModalOpening', this.onPrefsModalOpening);
-    this.hookManager.on('onCaptureOptionsChanged', this.onCaptureOptionsChanged);
-    this.hookManager.on('onCaptureShortcutTriggered', this.onCaptureShortcutTriggered);
+    this.hookManager.on(
+      'onCaptureOptionsChanged',
+      this.onCaptureOptionsChanged,
+    );
+    this.hookManager.on(
+      'onCaptureShortcutTriggered',
+      this.onCaptureShortcutTriggered,
+    );
     this.hookManager.on('onCaptureModeEnabled', this.onCaptureModeEnabled);
     this.hookManager.on('onCaptureModeDisabled', this.onCaptureModeDisabled);
-    this.hookManager.on('onCaptureSelectionStarting', this.onCaptureSelectionStarting);
-    this.hookManager.on('onCaptureSelectionFinished', this.onCaptureSelectionFinished);
+    this.hookManager.on(
+      'onCaptureSelectionStarting',
+      this.onCaptureSelectionStarting,
+    );
+    this.hookManager.on(
+      'onCaptureSelectionFinished',
+      this.onCaptureSelectionFinished,
+    );
     this.hookManager.on('onCaptureStarting', this.onCaptureStarting);
     this.hookManager.on('onCaptureFinishing', this.onCaptureFinishing);
     this.hookManager.on('onCaptureFinished', this.onCaptureFinished);
@@ -91,7 +105,7 @@ export default class BuiltinHooks {
 
     await this.checkUpdateUseCase.execute();
 
-    const prefs = await this.prefsRepo.fetchPreferences()
+    const prefs = await this.prefsRepo.fetchPreferences();
     this.uiDirector.updateTrayPrefs(prefs);
 
     this.tracker.eventL('app-lifecycle', 'launch', getPlatform());
@@ -104,15 +118,17 @@ export default class BuiltinHooks {
 
   private onAppUpdateChecked = async (args: HookArgsAppUpdateChecked) => {
     if (args.updateAvailable) {
-      this.uiDirector.updateTrayUpdater(TrayUpdaterState.Updatable)
+      this.uiDirector.updateTrayUpdater(TrayUpdaterState.Updatable);
     }
     this.lastUpdateCheckedAt = getTimeInSeconds();
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private onAppUpdated = async (_args: HookArgsAppUpdated) => {
     await this.uiDirector.openReleaseNotes();
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private onInitialPrefsLoaded = async (_args: HookArgsInitialPrefsLoaded) => {
     await this.uiDirector.openReleaseNotes();
     this.tracker.eventL('app-lifecycle', 'initial-launch', getPlatform());
@@ -134,7 +150,9 @@ export default class BuiltinHooks {
     await this.checkLicenseUseCase.execute();
   };
 
-  private onCaptureOptionsChanged = async (args: HookArgsCaptureOptionsChanged) => {
+  private onCaptureOptionsChanged = async (
+    args: HookArgsCaptureOptionsChanged,
+  ) => {
     await this.setupInSelectionShortcut(true, args.captureMode);
 
     const prefs = await this.prefsRepo.fetchPreferences();
@@ -176,22 +194,22 @@ export default class BuiltinHooks {
 
     // tracking
     if (!error) {
-      const { target, outputFormat, audioSources } =
-        args.captureContext;
+      const { target, outputFormat, audioSources } = args.captureContext;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const { width, height } = target.bounds!;
       this.tracker.eventLVS('capture', 'start-capture', {
         mode: target.mode,
         area: `${width}x${height}`,
         outfmt: outputFormat,
-        audio: audioSources.map((s) => s.name).join(','),
-      })
+        audio: audioSources.map(s => s.name).join(','),
+      });
       this.tracker.view('in-recording');
     } else {
       this.tracker.eventL('capture', 'start-capture', 'fail');
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private onCaptureFinishing = async (_args: HookArgsCaptureFinishing) => {
     this.uiDirector.updateTrayRecording(TrayRecordingState.Ready);
     this.uiDirector.toggleRecordingTime(false);
@@ -203,7 +221,7 @@ export default class BuiltinHooks {
     const neverChecked = lastCheckedAt === 0;
     const coolTimePassed = now - lastCheckedAt > UPDATE_CHECK_INTERVAL;
 
-    const shouldCheck =  neverChecked || coolTimePassed;
+    const shouldCheck = neverChecked || coolTimePassed;
     if (shouldCheck) {
       setTimeout(() => this.checkUpdateUseCase.execute(), UPDATE_CHECK_DELAY);
     }
@@ -221,11 +239,11 @@ export default class BuiltinHooks {
 
   private onLicenseRegistered = async () => {
     this.checkLicenseUseCase.execute();
-  }
+  };
 
   private handlePrefsHook = async (
     newPrefs: Preferences,
-    prevPrefs?: Preferences
+    prevPrefs?: Preferences,
   ): Promise<void> => {
     this.setupCaptureShortcut(newPrefs, prevPrefs);
     this.setupRunAtStartup(newPrefs);
@@ -235,7 +253,7 @@ export default class BuiltinHooks {
 
   private handleShortcutCaptureOpts = async (
     mode?: CaptureMode,
-    fmt?: OutputFormat
+    fmt?: OutputFormat,
   ) => {
     const prefs = await this.prefsRepo.fetchPreferences();
     const recOpts = this.prefsRepo.getRecOptionsFromPrefs(prefs);
@@ -248,32 +266,35 @@ export default class BuiltinHooks {
     });
   };
 
-  private setupInSelectionShortcut = async (enable: boolean, captureMode?: CaptureMode) => {
+  private setupInSelectionShortcut = async (
+    enable: boolean,
+    captureMode?: CaptureMode,
+  ) => {
     if (enable) {
       if (captureMode === CaptureMode.SCREEN) {
         globalShortcut.register(SHORTCUT_ENTER, () =>
-          this.interactor.startCaptureWithCurrentStates()
+          this.interactor.startCaptureWithCurrentStates(),
         );
       }
 
       globalShortcut.register(SHORTCUT_ESCAPE, () =>
-        this.interactor.disableCaptureMode()
+        this.interactor.disableCaptureMode(),
       );
 
       globalShortcut.register(SHORTCUT_CAPTURE_MODE_SCREEN, () =>
-        this.handleShortcutCaptureOpts(CaptureMode.SCREEN)
+        this.handleShortcutCaptureOpts(CaptureMode.SCREEN),
       );
 
       globalShortcut.register(SHORTCUT_CAPTURE_MODE_AREA, () =>
-        this.handleShortcutCaptureOpts(CaptureMode.AREA)
+        this.handleShortcutCaptureOpts(CaptureMode.AREA),
       );
 
       globalShortcut.register(SHORTCUT_OUTPUT_MP4, () =>
-        this.handleShortcutCaptureOpts(undefined, 'mp4')
+        this.handleShortcutCaptureOpts(undefined, 'mp4'),
       );
 
       globalShortcut.register(SHORTCUT_OUTPUT_GIF, () =>
-        this.handleShortcutCaptureOpts(undefined, 'gif')
+        this.handleShortcutCaptureOpts(undefined, 'gif'),
       );
     } else {
       globalShortcut.unregister(SHORTCUT_ENTER);
@@ -287,17 +308,17 @@ export default class BuiltinHooks {
 
   private setupCaptureShortcut = (
     newPrefs: Preferences,
-    prevPrefs?: Preferences
+    prevPrefs?: Preferences,
   ): void => {
     if (!prevPrefs || prevPrefs.shortcut !== newPrefs.shortcut) {
       if (prevPrefs) {
         globalShortcut.unregister(
-          prevPrefs.shortcut.replace(/Win|Cmd/, 'Meta')
+          prevPrefs.shortcut.replace(/Win|Cmd/, 'Meta'),
         );
       }
       globalShortcut.register(
         newPrefs.shortcut.replace(/Win|Cmd/, 'Meta'),
-        this.interactor.onCaptureToggleShortcut
+        this.interactor.onCaptureToggleShortcut,
       );
     }
   };

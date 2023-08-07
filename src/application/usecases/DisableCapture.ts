@@ -4,14 +4,14 @@ import CaptureSession from '@domain/services/capture';
 
 import HookManager from '@application/services/hook';
 import CaptureModeManager from '@application/services/mode';
-import { UseCase } from '@application/usecases/UseCase';
+import type { UseCase } from '@application/usecases/UseCase';
 
 @injectable()
 export default class DisableCaptureUseCase implements UseCase<void> {
   constructor(
     private hookManager: HookManager,
     private captureModeManager: CaptureModeManager,
-    private captureSession: CaptureSession
+    private captureSession: CaptureSession,
   ) {}
 
   execute(): void {

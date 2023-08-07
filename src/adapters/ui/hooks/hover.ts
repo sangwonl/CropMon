@@ -1,17 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { useEffect, RefObject } from 'react';
+import { useEffect, type RefObject } from 'react';
 
 function useOnClickOutside<T extends HTMLElement = HTMLElement>(
   ref: RefObject<T>,
-  handler: (event: any) => void,
-  triggerEvent: 'mousedown' | 'mouseup' = 'mouseup'
+  handler: (event: MouseEvent) => void,
+  triggerEvent: 'mousedown' | 'mouseup' = 'mouseup',
 ): void {
   useEffect(
     () => {
-      const listener = (event: any) => {
+      const listener = (event: MouseEvent) => {
         // Do nothing if clicking ref's element or descendent elements
-        if (!ref.current || ref.current.contains(event.target)) {
+        if (!ref.current || ref.current.contains(event.target as Node)) {
           return;
         }
         handler(event);
@@ -27,7 +25,7 @@ function useOnClickOutside<T extends HTMLElement = HTMLElement>(
     // ... callback/cleanup to run every render. It's not a big deal ...
     // ... but to optimize you can wrap handler in useCallback before ...
     // ... passing it into this hook.
-    [ref, handler, triggerEvent]
+    [ref, handler, triggerEvent],
   );
 }
 

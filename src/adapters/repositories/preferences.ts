@@ -15,7 +15,7 @@ export default class PrefsRepositoryImpl implements PreferencesRepository {
 
   public constructor(
     private hookManager: HookManager,
-    @inject(TYPES.PreferencesStore) private preferencesStore: PreferencesStore
+    @inject(TYPES.PreferencesStore) private preferencesStore: PreferencesStore,
   ) {}
 
   async fetchPreferences(): Promise<Preferences> {

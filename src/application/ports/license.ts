@@ -1,4 +1,4 @@
-import { License } from '@domain/models/license';
+import type { License } from '@domain/models/license';
 
 // Usecase #1: 입력한 라이센스키의 유효성을 검사
 // Usecase #2: 라이센스 정보를 (암호화하여) 로컬에 저장
@@ -6,7 +6,7 @@ import { License } from '@domain/models/license';
 export interface LicenseManager {
   validateLicenseKey(
     email: string,
-    licenseKey: string
+    licenseKey: string,
   ): Promise<License | null>;
   storeLicense(license: License): Promise<void>;
   retrieveLicense(): Promise<License | null>;

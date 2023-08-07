@@ -1,4 +1,4 @@
-import { Point } from '@domain/models/screen';
+import type { Point } from '@domain/models/screen';
 
 export type PathType =
   | 'home'

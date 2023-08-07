@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-unused-vars */
 
 export interface AppManager {
   getCurAppVersion(): string;
@@ -6,8 +6,11 @@ export interface AppManager {
   checkForUpdates(
     onUpdateAvailable: () => void,
     onUpdateNotAvailable: () => void,
-    onDownloadProgress: (progressInfo: any) => void,
-    onUpdateDownloaded: () => void
+    onDownloadProgress: (progressInfo: {
+      total: number;
+      transferred: number;
+    }) => void,
+    onUpdateDownloaded: () => void,
   ): Promise<void>;
   cancelUpdate(): void;
   downloadUpdate(): void;

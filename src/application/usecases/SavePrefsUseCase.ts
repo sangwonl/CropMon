@@ -2,10 +2,10 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { Preferences } from '@domain/models/preferences';
-import { PreferencesRepository } from '@domain/repositories/preferences';
+import type { Preferences } from '@domain/models/preferences';
+import type { PreferencesRepository } from '@domain/repositories/preferences';
 
-import { UseCase } from '@application/usecases/UseCase';
+import type { UseCase } from '@application/usecases/UseCase';
 
 interface SavePrefsUseCaseInput {
   prefs: Preferences;
@@ -20,8 +20,8 @@ export default class SavePrefsUseCase
   implements UseCase<SavePrefsUseCaseInput>
 {
   constructor(
-    // eslint-disable-next-line prettier/prettier
-    @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository
+    @inject(TYPES.PreferencesRepository)
+    private prefsRepo: PreferencesRepository,
   ) {}
 
   async execute(input: SavePrefsUseCaseInput): Promise<SavePrefsUseCaseOutput> {

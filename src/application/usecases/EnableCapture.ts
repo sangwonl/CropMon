@@ -6,7 +6,7 @@ import CaptureSession from '@domain/services/capture';
 
 import HookManager from '@application/services/hook';
 import CaptureModeManager from '@application/services/mode';
-import { UseCase } from '@application/usecases/UseCase';
+import type { UseCase } from '@application/usecases/UseCase';
 
 import PreferencesRepository from '@adapters/repositories/preferences';
 
@@ -14,10 +14,11 @@ import PreferencesRepository from '@adapters/repositories/preferences';
 export default class EnableCaptureUseCase implements UseCase<void> {
   constructor(
     // eslint-disable-next-line prettier/prettier
-    @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository,
+    @inject(TYPES.PreferencesRepository)
+    private prefsRepo: PreferencesRepository,
     private hookManager: HookManager,
     private captureModeManager: CaptureModeManager,
-    private captureSession: CaptureSession
+    private captureSession: CaptureSession,
   ) {}
 
   async execute() {

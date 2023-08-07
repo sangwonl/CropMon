@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-
 import classNames from 'classnames';
 import React, { useCallback, useState, useEffect } from 'react';
 
@@ -33,7 +31,7 @@ function SwitchButton({ activeItemIndex, items, onSelect }: Props) {
     (index: number) => {
       onSelect(index);
     },
-    [onSelect]
+    [onSelect],
   );
 
   useEffect(() => {
@@ -52,9 +50,7 @@ function SwitchButton({ activeItemIndex, items, onSelect }: Props) {
             })}
             onMouseUp={withStopPropagation}
             onMouseDown={withStopPropagation}
-            onClick={(e) =>
-              withStopPropagation(e, () => handleItemClick(index))
-            }
+            onClick={e => withStopPropagation(e, () => handleItemClick(index))}
           >
             {item.icon && (
               <img className={styles.btnIcon} src={item.icon} alt={item.alt} />

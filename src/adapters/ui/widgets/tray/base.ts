@@ -1,19 +1,19 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 // eslint-disable-next-line import/order
 import {
   Tray,
   Menu,
-  MenuItemConstructorOptions,
   MenuItem,
-  NativeImage,
+  type MenuItemConstructorOptions,
+  type NativeImage,
 } from 'electron';
 
-import { Preferences } from '@domain/models/preferences';
+import type { Preferences } from '@domain/models/preferences';
 
-import { UseCaseInteractor } from '@application/ports/interactor';
+import type { UseCaseInteractor } from '@application/ports/interactor';
 
-import TrayIconProvider, { TrayIconType } from '@adapters/ui/widgets/tray/icon';
+import TrayIconProvider, {
+  type TrayIconType,
+} from '@adapters/ui/widgets/tray/icon';
 
 const TOOLTIP_GREETING = "Roar! I'm here to help you record the screen";
 const TOOLTIP_UPDATE = 'New update available, please make me stronger!';
@@ -31,8 +31,10 @@ export default class AppTrayCore {
   updatable = false;
 
   constructor(
+    // eslint-disable-next-line no-unused-vars
     private interactor: UseCaseInteractor,
-    private buildMenuTempl: () => Array<MenuItemConstructorOptions | MenuItem>
+    // eslint-disable-next-line no-unused-vars
+    private buildMenuTempl: () => Array<MenuItemConstructorOptions | MenuItem>,
   ) {
     this.iconProvider = new TrayIconProvider();
     this.tray = new Tray(this.iconProvider.icon('default'));
@@ -139,9 +141,9 @@ export default class AppTrayCore {
   }
 
   private buildOnlyVisibleFromTemplate(
-    menuTmpl: Array<MenuItemConstructorOptions | MenuItem>
+    menuTmpl: Array<MenuItemConstructorOptions | MenuItem>,
   ): Menu {
-    return Menu.buildFromTemplate(menuTmpl.filter((item) => item.visible));
+    return Menu.buildFromTemplate(menuTmpl.filter(item => item.visible));
   }
 
   private composeTooltip(): string {
@@ -166,9 +168,9 @@ export default class AppTrayCore {
 
   private getMenuItemTemplById(
     contextMenuTempl: Array<MenuItemConstructorOptions | MenuItem>,
-    id: string
+    id: string,
   ): MenuItemConstructorOptions | MenuItem {
-    return contextMenuTempl.find((m: any) => m.id === id)!;
+    return contextMenuTempl.find(m => m.id === id)!;
   }
 
   private makeAsTimeString = (h: number, m: number, s: number): string => {

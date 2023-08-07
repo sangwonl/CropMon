@@ -1,17 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { ipcRenderer } from 'electron';
 import React, { useEffect, useState } from 'react';
 
 import ProgressDialog from '@adapters/ui/components/stateless/ProgressDialog';
 import {
-  ProgressDialogOptions,
-  IpcEvtSetProgress,
+  type ProgressDialogOptions,
+  type IpcEvtSetProgress,
+  type IpcEvtSetMessage,
   IPC_EVT_SET_PROGRESS,
   IPC_EVT_ON_ACTION,
   IPC_EVT_ON_CANCEL,
   IPC_EVT_SET_MESSAGE,
-  IpcEvtSetMessage,
 } from '@adapters/ui/widgets/progressdialog/shared';
 import { preventZoomKeyEvent } from '@adapters/ui/widgets/utils';
 
@@ -23,11 +21,12 @@ export default function ProgressDialogCreator(options: ProgressDialogOptions) {
   useEffect(() => {
     ipcRenderer.on(
       IPC_EVT_SET_PROGRESS,
-      (_event: any, data: IpcEvtSetProgress) => setProgress(data.progress)
+      (_event: unknown, data: IpcEvtSetProgress) => setProgress(data.progress),
     );
 
-    ipcRenderer.on(IPC_EVT_SET_MESSAGE, (_event: any, data: IpcEvtSetMessage) =>
-      setMessage(data.message)
+    ipcRenderer.on(
+      IPC_EVT_SET_MESSAGE,
+      (_event: unknown, data: IpcEvtSetMessage) => setMessage(data.message),
     );
   }, []);
 

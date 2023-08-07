@@ -1,7 +1,4 @@
 /* eslint-disable no-plusplus */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/label-has-associated-control */
-
 import classNames from 'classnames';
 import React, { useCallback, useRef, useState } from 'react';
 
@@ -23,7 +20,7 @@ type Props = {
 function SelectList({ multiSelect, items, onSelect }: Props) {
   const checkStatesRef = useRef<boolean[]>(items.map(({ checked }) => checked));
   const [checkStates, updateCheckStates] = useState<boolean[]>(
-    checkStatesRef.current
+    checkStatesRef.current,
   );
 
   const toggleCheck = useCallback(
@@ -49,7 +46,7 @@ function SelectList({ multiSelect, items, onSelect }: Props) {
       });
       onSelect(indices);
     },
-    [onSelect, multiSelect]
+    [onSelect, multiSelect],
   );
 
   return (

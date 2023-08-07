@@ -1,10 +1,9 @@
-/* eslint-disable react/jsx-props-no-spreading */
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import React, { ComponentProps } from 'react';
+import React, { type ComponentProps } from 'react';
 
 import { CaptureMode } from '@domain/models/common';
-import { Preferences } from '@domain/models/preferences';
+import type { Preferences } from '@domain/models/preferences';
 
 import PrefsPanels from '@adapters/ui/components/stateless/PrefsPanels';
 
@@ -14,8 +13,7 @@ export default {
   argTypes: {},
 } as ComponentMeta<typeof PrefsPanels>;
 
-// eslint-disable-next-line react/function-component-definition
-const Template: ComponentStory<typeof PrefsPanels> = (args) => (
+const Template: ComponentStory<typeof PrefsPanels> = args => (
   <div
     style={{
       width: 700,
@@ -57,8 +55,10 @@ const defaultArgs: ComponentProps<typeof PrefsPanels> = {
   onChooseRecordHome: () => {},
   onClose: () => {},
   onBuyClick: () => {},
-  onRegister: (email: string, licenseKey: string) => {},
-  onSave: (preferences: Preferences) => {},
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onRegister: (_email: string, _licenseKey: string) => {},
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onSave: (_preferences: Preferences) => {},
 };
 
 export const Default = Template.bind({});

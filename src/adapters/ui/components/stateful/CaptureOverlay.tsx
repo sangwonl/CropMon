@@ -1,13 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-unused-vars */
 
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 
 import { emptyBounds, getIntersection, isEmptyBounds } from '@utils/bounds';
 
-import { CaptureOptions, RecordOptions } from '@domain/models/capture';
+import {
+  type CaptureOptions,
+  type RecordOptions,
+} from '@domain/models/capture';
 import { CaptureMode } from '@domain/models/common';
-import { Bounds, Point } from '@domain/models/screen';
+import type { Bounds, Point } from '@domain/models/screen';
 
 import CaptureControl from '@adapters/ui/components/stateless/CaptureControl';
 import CaptureCountdown from '@adapters/ui/components/stateless/CaptureCountdown';
@@ -107,7 +110,7 @@ function CaptureOverlay(props: PropTypes) {
     (bounds: Bounds, cursorPosition: Point) => {
       interactor.selectingTarget(bounds, cursorPosition);
     },
-    []
+    [],
   );
 
   const onSelectionFinish = useCallback(
@@ -116,7 +119,7 @@ function CaptureOverlay(props: PropTypes) {
 
       startCountdown(() => interactor.startCapture());
     },
-    [controlPanel.captureMode, captureOverlay.showCountdown]
+    [controlPanel.captureMode, captureOverlay.showCountdown],
   );
 
   const onCaptureCancel = useCallback(() => {
@@ -136,21 +139,21 @@ function CaptureOverlay(props: PropTypes) {
         },
       };
     },
-    [controlPanel]
+    [controlPanel],
   );
 
   const onCaptureModeChange = useCallback(
     (mode: CaptureMode) => {
       interactor.changeCaptureOptions(composeOptions(mode));
     },
-    [controlPanel]
+    [controlPanel],
   );
 
   const onRecOptionsChange = useCallback(
     (recOpts: RecordOptions) => {
       interactor.changeCaptureOptions(composeOptions(undefined, recOpts));
     },
-    [controlPanel]
+    [controlPanel],
   );
 
   useEffect(() => {

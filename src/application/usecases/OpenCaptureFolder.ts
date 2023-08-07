@@ -2,17 +2,17 @@ import { inject, injectable } from 'inversify';
 
 import TYPES from '@di/types';
 
-import { PreferencesRepository } from '@domain/repositories/preferences';
+import type { PreferencesRepository } from '@domain/repositories/preferences';
 
-import { UiDirector } from '@application/ports/director';
-import { UseCase } from '@application/usecases/UseCase';
+import type { UiDirector } from '@application/ports/director';
+import type { UseCase } from '@application/usecases/UseCase';
 
 @injectable()
 export default class OpenCaptureFolderUseCase implements UseCase<void> {
   public constructor(
-    // eslint-disable-next-line prettier/prettier
-    @inject(TYPES.PreferencesRepository) private prefsRepo: PreferencesRepository,
-    @inject(TYPES.UiDirector) private uiDirector: UiDirector
+    @inject(TYPES.PreferencesRepository)
+    private prefsRepo: PreferencesRepository,
+    @inject(TYPES.UiDirector) private uiDirector: UiDirector,
   ) {}
 
   async execute() {

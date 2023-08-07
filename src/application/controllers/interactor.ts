@@ -1,12 +1,14 @@
+/* eslint-disable no-unused-vars */
+
 import { injectable } from 'inversify';
 
-import { CaptureOptions } from '@domain/models/capture';
-import { License } from '@domain/models/license';
-import { Preferences } from '@domain/models/preferences';
-import { Bounds, Point } from '@domain/models/screen';
+import type { CaptureOptions } from '@domain/models/capture';
+import type { License } from '@domain/models/license';
+import type { Preferences } from '@domain/models/preferences';
+import type { Bounds, Point } from '@domain/models/screen';
 
-import { UiState } from '@application/models/ui';
-import { UseCaseInteractor } from '@application/ports/interactor';
+import type { UiState } from '@application/models/ui';
+import type { UseCaseInteractor } from '@application/ports/interactor';
 import ChangeCaptureOptionsUseCase from '@application/usecases/ChangeCaptureOptions';
 import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
 import DisableCaptureUseCase from '@application/usecases/DisableCapture';
@@ -16,9 +18,7 @@ import FinishSelectionUseCase from '@application/usecases/FinishSelection';
 import GetLicenseUseCase from '@application/usecases/GetLicenseUseCase';
 import GetUiStateUseCase from '@application/usecases/GetUiStateUseCase';
 import InitializeAppUseCase from '@application/usecases/InitializeApp';
-import OpenAboutPopupUseCase from '@application/usecases/OpenAboutPopup';
 import OpenCaptureFolderUseCase from '@application/usecases/OpenCaptureFolder';
-import OpenHelpPopupUseCase from '@application/usecases/OpenHelpPopup';
 import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
 import OpenUrlUseCase from '@application/usecases/OpenUrlUseCase';
 import QuitAppUseCase from '@application/usecases/QuitApp';
@@ -38,8 +38,6 @@ export default class UseCaseInteractorCore implements UseCaseInteractor {
     private quitAppUseCase: QuitAppUseCase,
     private checkUpdateUseCase: CheckUpdateUseCase,
     private updateAppUseCase: UpdateAppUseCase,
-    private openAboutPopupUseCase: OpenAboutPopupUseCase,
-    private openHelpPopupUseCase: OpenHelpPopupUseCase,
     private openPrefsModalUseCase: OpenPrefsModalUseCase,
     private openCaptureFolderUseCase: OpenCaptureFolderUseCase,
     private startSelectionUseCase: StartSelectionUseCase,
@@ -56,7 +54,7 @@ export default class UseCaseInteractorCore implements UseCaseInteractor {
     private savePrefsUseCase: SavePrefsUseCase,
     private getLicenseUseCase: GetLicenseUseCase,
     private registerLicenseUseCase: RegisterLicenseUseCase,
-    private openUrlUseCase: OpenUrlUseCase
+    private openUrlUseCase: OpenUrlUseCase,
   ) {}
 
   initializeApp = () => {
@@ -69,14 +67,6 @@ export default class UseCaseInteractorCore implements UseCaseInteractor {
 
   downloadAndInstall = () => {
     this.updateAppUseCase.execute();
-  };
-
-  showAbout = () => {
-    this.openAboutPopupUseCase.execute();
-  };
-
-  showHelp = () => {
-    this.openHelpPopupUseCase.execute();
   };
 
   quitApplication = () => {
@@ -156,7 +146,7 @@ export default class UseCaseInteractorCore implements UseCaseInteractor {
 
   async registerLicense(
     email: string,
-    licenseKey: string
+    licenseKey: string,
   ): Promise<License | null> {
     const output = await this.registerLicenseUseCase.execute({
       email,

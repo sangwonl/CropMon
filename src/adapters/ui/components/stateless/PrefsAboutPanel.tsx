@@ -1,7 +1,6 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-import classNames from 'classnames';
+// import classNames from 'classnames';
 import React, {
-  ChangeEvent,
+  type ChangeEvent,
   useCallback,
   useEffect,
   useRef,
@@ -10,8 +9,8 @@ import React, {
 
 import { shortcutForDisplay } from '@utils/shortcut';
 
-import { License } from '@domain/models/license';
-import { Preferences } from '@domain/models/preferences';
+import type { License } from '@domain/models/license';
+import type { Preferences } from '@domain/models/preferences';
 
 import ModalDialog from '@adapters/ui/components/stateless/ModalDialog';
 
@@ -38,6 +37,7 @@ function mapShortcutKeys(shortcut: string) {
   ));
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function mapTimestampToDateString(timestamp: number): string {
   const date = new Date(timestamp);
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -52,7 +52,6 @@ function PrefsAboutPanel({
   license,
   registerError,
   onRegister,
-  onBuyClick,
 }: Props) {
   const { shortcut } = prefs;
 
@@ -67,7 +66,7 @@ function PrefsAboutPanel({
       setLicenseText(e.target.value);
       setErrorText(null);
     },
-    []
+    [],
   );
 
   const handleLicenseRegister = useCallback(() => {
@@ -80,6 +79,7 @@ function PrefsAboutPanel({
     setShowRegModal(false);
   }, []);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleRegModalOpen = useCallback(() => {
     setShowRegModal(true);
     setLicenseText('');

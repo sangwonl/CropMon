@@ -1,6 +1,5 @@
-/* eslint-disable react/jsx-props-no-spreading */
+import type { ComponentStory, ComponentMeta } from '@storybook/react';
 
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 
 import ProgressBar from '@adapters/ui/components/stateless/ProgressBar';
@@ -11,8 +10,7 @@ export default {
   argTypes: {},
 } as ComponentMeta<typeof ProgressBar>;
 
-// eslint-disable-next-line react/function-component-definition
-const Template: ComponentStory<typeof ProgressBar> = (args) => (
+const Template: ComponentStory<typeof ProgressBar> = args => (
   <div style={{ height: '40px' }}>
     <ProgressBar {...args} />
   </div>

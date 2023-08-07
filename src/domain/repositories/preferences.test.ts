@@ -12,14 +12,13 @@ import {
 import { DEFAULT_SHORTCUT_CAPTURE } from '@utils/shortcut';
 
 import { CaptureMode } from '@domain/models/common';
-import { Preferences } from '@domain/models/preferences';
+import type { Preferences } from '@domain/models/preferences';
+import type { PreferencesRepository } from '@domain/repositories/preferences';
 
-import { PreferencesStore } from '@application/ports/preferences';
+import type { PreferencesStore } from '@application/ports/preferences';
 import HookManager from '@application/services/hook';
 
 import PrefsRepositoryImpl from '@adapters/repositories/preferences';
-
-import { PreferencesRepository } from './preferences';
 
 describe('PreferencesRepository', () => {
   let mockedPrefsStore: PreferencesStore;
