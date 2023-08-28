@@ -3,19 +3,17 @@
 import { app, session, screen } from 'electron';
 import Store from 'electron-store';
 import { injectable } from 'inversify';
-import Mixpanel from 'mixpanel';
+import ua from 'universal-analytics';
 import { v4 as uuidv4 } from 'uuid';
-
-import { isDebugMode } from '@utils/process';
 
 import type { AnalyticsTracker } from '@application/ports/tracker';
 
-import { version as curVersion, productName, appId } from '../package.json';
+import { version as curVersion, productName, appId } from '../../package.json';
 
 @injectable()
-export default class MixPanelTracker implements AnalyticsTracker {
+export default class GoogleAnalyticsTracker implements AnalyticsTracker {
   store!: Store;
-  mixpanel!: typeof Mixpanel;
+  tracker!: ua.Visitor;
 
   constructor() {
     this.store = new Store({
@@ -24,21 +22,34 @@ export default class MixPanelTracker implements AnalyticsTracker {
       accessPropertiesByDotNotation: false,
     });
 
-    this.mixpanel = Mixpanel.init('a6c899ecfb1c503e9edac87a15374a7a', {
-      debug: isDebugMode(),
-    });
+    this.tracker = ua('UA-197078322-1', this.getTrackUid());
+    this.tracker.set('aid', appId);
+    this.tracker.set('an', productName);
+    this.tracker.set('av', curVersion);
+    app
+      .whenReady()
+      .then(() => {
+        this.tracker.set('ua', session.defaultSession.getUserAgent());
+        this.tracker.set('ul', app.getLocale());
+        this.tracker.set('sr', this.getScreenResolution());
+      })
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .catch(_e => {});
   }
 
   view(name: string): void {
-    this.mixpanel.track('view', { ...this.getProperties(), view: name });
+    this.tracker.pageview(`/views/${name}`).send();
+    this.tracker
+      .screenview(`/views/${name}`, productName, curVersion, appId)
+      .send();
   }
 
   event(category: string, action: string): void {
-    this.mixpanel.track(action, { ...this.getProperties(), category });
+    this.tracker.event(category, action).send();
   }
 
   eventL(category: string, action: string, label: string): void {
-    this.mixpanel.track(action, { ...this.getProperties(), category, label });
+    this.tracker.event(category, action, label).send();
   }
 
   eventLV(
@@ -47,12 +58,7 @@ export default class MixPanelTracker implements AnalyticsTracker {
     label: string,
     value: string | number,
   ): void {
-    this.mixpanel.track(action, {
-      ...this.getProperties(),
-      category,
-      label,
-      value,
-    });
+    this.tracker.event(category, action, label, value).send();
   }
 
   eventLVS(
@@ -60,23 +66,9 @@ export default class MixPanelTracker implements AnalyticsTracker {
     action: string,
     lvs: { [key: string]: string | number },
   ): void {
-    this.mixpanel.track(action, {
-      ...this.getProperties(),
-      category,
-      ...lvs,
+    Object.keys(lvs).forEach(k => {
+      this.tracker.event(category, action, k, lvs[k]).send();
     });
-  }
-
-  private getProperties(): { [key: string]: string } {
-    return {
-      distinct_id: this.getTrackUid(),
-      product_name: productName,
-      app_id: appId,
-      app_version: curVersion,
-      user_agent: session.defaultSession.getUserAgent(),
-      locale: app.getLocale(),
-      screens: this.getScreenResolution(),
-    };
   }
 
   private getTrackUid(): string {
@@ -88,8 +80,8 @@ export default class MixPanelTracker implements AnalyticsTracker {
     return uid;
   }
 
-  private getScreenResolution(): string {
-    return screen
+  private getScreenResolution = (): string =>
+    screen
       .getAllDisplays()
       .map(({ bounds, scaleFactor: s }) => {
         const width = bounds.width * s;
@@ -97,5 +89,4 @@ export default class MixPanelTracker implements AnalyticsTracker {
         return `${width}x${height}`;
       })
       .join(',');
-  }
 }
