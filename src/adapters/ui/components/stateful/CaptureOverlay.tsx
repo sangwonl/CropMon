@@ -12,11 +12,11 @@ import {
 import { CaptureMode } from '@domain/models/common';
 import type { Bounds, Point } from '@domain/models/screen';
 
-import CaptureControl from '@adapters/ui/components/stateless/CaptureControl';
-import CaptureCountdown from '@adapters/ui/components/stateless/CaptureCountdown';
-import CaptureRecording from '@adapters/ui/components/stateless/CaptureRecording';
-import CaptureTargetingArea from '@adapters/ui/components/stateless/CaptureTargetingArea';
-import CaptureTargetingScreen from '@adapters/ui/components/stateless/CaptureTargetingScreen';
+import { CaptureControl } from '@adapters/ui/components/stateless/CaptureControl';
+import { CaptureCountdown } from '@adapters/ui/components/stateless/CaptureCountdown';
+import { CaptureRecording } from '@adapters/ui/components/stateless/CaptureRecording';
+import { CaptureTargetingArea } from '@adapters/ui/components/stateless/CaptureTargetingArea';
+import { CaptureTargetingScreen } from '@adapters/ui/components/stateless/CaptureTargetingScreen';
 import { useUseCaseInteractor } from '@adapters/ui/hooks/interactor';
 import { useRootUiState } from '@adapters/ui/hooks/state';
 
@@ -35,7 +35,7 @@ interface PropTypes {
   assignedScreenId: number;
 }
 
-function CaptureOverlay(props: PropTypes) {
+export function CaptureOverlay(props: PropTypes) {
   const { assignedScreenId } = props;
 
   const interactor = useUseCaseInteractor();
@@ -277,5 +277,3 @@ function CaptureOverlay(props: PropTypes) {
     </div>
   );
 }
-
-export default CaptureOverlay;

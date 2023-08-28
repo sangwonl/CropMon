@@ -1,6 +1,6 @@
-import { Preferences } from '@domain/models/preferences';
+import type { Preferences } from '@domain/models/preferences';
 
-export type PreferencesModalOptions = {
+export type PreferencesDialogOptions = {
   appName: string;
   version: string;
   preferences: Preferences;

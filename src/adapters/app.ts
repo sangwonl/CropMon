@@ -5,7 +5,7 @@ import { injectable } from 'inversify';
 import { isProduction } from '@utils/process';
 
 import type { AppManager } from '@application/ports/app';
-import HookManager from '@application/services/hook';
+import { HookManager } from '@application/services/hook';
 
 import { version as curVersion, freeVersions } from '../package.json';
 
@@ -18,7 +18,7 @@ if (!isProduction()) {
 }
 
 @injectable()
-export default class ElectronAppManager implements AppManager {
+export class ElectronAppManager implements AppManager {
   constructor(private hookManager: HookManager) {
     autoUpdater.logger = log;
     autoUpdater.autoDownload = false;

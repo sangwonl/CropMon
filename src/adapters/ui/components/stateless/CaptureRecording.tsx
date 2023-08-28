@@ -24,7 +24,7 @@ type Props = {
   targetBounds: Bounds;
 };
 
-function CaptureRecording(props: Props) {
+export function CaptureRecording(props: Props) {
   const { targetBounds } = props;
 
   return (
@@ -33,5 +33,3 @@ function CaptureRecording(props: Props) {
     </div>
   );
 }
-
-export default CaptureRecording;

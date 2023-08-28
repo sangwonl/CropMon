@@ -11,15 +11,16 @@ import type { Preferences } from '@domain/models/preferences';
 
 import type { UseCaseInteractor } from '@application/ports/interactor';
 
-import TrayIconProvider, {
+import {
   type TrayIconType,
+  TrayIconProvider,
 } from '@adapters/ui/widgets/tray/icon';
 
 const TOOLTIP_GREETING = "Roar! I'm here to help you record the screen";
 const TOOLTIP_UPDATE = 'New update available, please make me stronger!';
 const TOOLTIP_RECORDING = 'Now recording. Click to stop';
 
-export default class AppTrayCore {
+export class AppTrayCore {
   iconProvider: TrayIconProvider;
 
   tray: Tray;

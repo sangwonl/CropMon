@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 
 import { INITIAL_UI_STATE, type UiState } from '@application/models/ui';
-import StateManager from '@application/services/state';
+import { StateManager } from '@application/services/state';
 import type { UseCase } from '@application/usecases/UseCase';
 
 interface GetUiStateUseCaseOutput {
@@ -9,7 +9,7 @@ interface GetUiStateUseCaseOutput {
 }
 
 @injectable()
-export default class GetUiStateUseCase implements UseCase<void> {
+export class GetUiStateUseCase implements UseCase<void> {
   constructor(private stateManager: StateManager) {}
 
   execute(): GetUiStateUseCaseOutput {

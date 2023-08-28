@@ -19,10 +19,11 @@ import {
   SHORTCUT_OUTPUT_MP4,
 } from '@utils/shortcut';
 
-import TYPES from '@di/types';
+import { TYPES } from '@di/types';
 
 import { CaptureMode, type OutputFormat } from '@domain/models/common';
 import type { Preferences } from '@domain/models/preferences';
+import type { PreferencesRepository } from '@domain/repositories/preferences';
 
 import {
   TrayRecordingState,
@@ -31,7 +32,7 @@ import {
 } from '@application/ports/director';
 import type { UseCaseInteractor } from '@application/ports/interactor';
 import type{ AnalyticsTracker } from '@application/ports/tracker';
-import HookManager from '@application/services/hook';
+import { HookManager } from '@application/services/hook';
 import type {
   HookArgsAppUpdateChecked,
   HookArgsAppUpdated,
@@ -44,17 +45,15 @@ import type {
   HookArgsCaptureFinished,
   HookArgsCaptureOptionsChanged,
 } from '@application/services/hook';
-import CheckLicenseUseCase from '@application/usecases/CheckLicense';
-import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
-import CheckVersionUseCase from '@application/usecases/CheckVersion';
-
-import PreferencesRepository from '@adapters/repositories/preferences';
+import { CheckLicenseUseCase } from '@application/usecases/CheckLicense';
+import { CheckUpdateUseCase } from '@application/usecases/CheckUpdate';
+import { CheckVersionUseCase } from '@application/usecases/CheckVersion';
 
 const UPDATE_CHECK_DELAY = 5 * 60 * 1000;
 const UPDATE_CHECK_INTERVAL = 1 * 60 * 60 * 1000;
 
 @injectable()
-export default class BuiltinHooks {
+export class BuiltinHooks {
   private lastUpdateCheckedAt?: number;
 
   constructor(

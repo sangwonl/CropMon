@@ -6,7 +6,7 @@ import type { Point } from '@domain/models/screen';
 import type { PlatformApi, PathType } from '@application/ports/platform';
 
 @injectable()
-export default class PlatformApiForRenderer implements PlatformApi {
+export class PlatformApiForRenderer implements PlatformApi {
   getPath(name: PathType): string {
     return ipcRenderer.sendSync('getPath', name);
   }

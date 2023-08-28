@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 
-import TYPES from '@di/types';
+import { TYPES } from '@di/types';
 
 import type { License } from '@domain/models/license';
 
@@ -12,7 +12,7 @@ interface GetLicenseUseCaseOutput {
 }
 
 @injectable()
-export default class GetLicenseUseCase implements UseCase<void> {
+export class GetLicenseUseCase implements UseCase<void> {
   constructor(
     @inject(TYPES.LicenseManager) private licenseManager: LicenseManager,
   ) {}

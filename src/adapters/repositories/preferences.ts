@@ -1,16 +1,16 @@
 import { inject, injectable } from 'inversify';
 
-import TYPES from '@di/types';
+import { TYPES } from '@di/types';
 
-import { RecordOptions } from '@domain/models/capture';
-import { Preferences } from '@domain/models/preferences';
-import { PreferencesRepository } from '@domain/repositories/preferences';
+import type { RecordOptions } from '@domain/models/capture';
+import type { Preferences } from '@domain/models/preferences';
+import type { PreferencesRepository } from '@domain/repositories/preferences';
 
-import { PreferencesStore } from '@application/ports/preferences';
-import HookManager from '@application/services/hook';
+import type { PreferencesStore } from '@application/ports/preferences';
+import { HookManager } from '@application/services/hook';
 
 @injectable()
-export default class PrefsRepositoryImpl implements PreferencesRepository {
+export class PrefsRepositoryImpl implements PreferencesRepository {
   private cachedUserPrefs?: Preferences;
 
   public constructor(

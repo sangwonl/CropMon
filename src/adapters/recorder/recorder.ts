@@ -13,7 +13,7 @@ import {
   type ScreenRecorder,
 } from '@domain/services/recorder';
 
-import RecorderDelegate from '@adapters/recorder/rec-delegate';
+import { RecorderDelegate } from '@adapters/recorder/rec-delegate';
 import {
   type RecordContext,
   type TargetSlice,
@@ -22,9 +22,7 @@ import {
 const FRAMERATE = 30;
 
 @injectable()
-export default class ElectronScreenRecorder
-  implements ScreenRecorder, RecorderSource
-{
+export class ElectronScreenRecorder implements ScreenRecorder, RecorderSource {
   delegate?: RecorderDelegate;
 
   constructor() {

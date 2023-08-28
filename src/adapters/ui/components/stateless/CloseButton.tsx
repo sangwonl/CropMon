@@ -10,7 +10,7 @@ type Props = {
   onClick: () => void;
 };
 
-function CloseButton({ onClick }: Props) {
+export function CloseButton({ onClick }: Props) {
   return (
     <button
       type="button"
@@ -23,5 +23,3 @@ function CloseButton({ onClick }: Props) {
     </button>
   );
 }
-
-export default CloseButton;

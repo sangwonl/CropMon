@@ -13,7 +13,7 @@ import type { AnalyticsTracker } from '@application/ports/tracker';
 import { version as curVersion, productName, appId } from '../../package.json';
 
 @injectable()
-export default class MixPanelTracker implements AnalyticsTracker {
+export class MixPanelTracker implements AnalyticsTracker {
   store!: Store;
   mixpanel!: typeof Mixpanel;
 

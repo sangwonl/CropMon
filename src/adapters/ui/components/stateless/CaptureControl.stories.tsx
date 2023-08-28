@@ -5,7 +5,7 @@ import React, { useState, type ComponentProps } from 'react';
 import type { RecordOptions } from '@domain/models/capture';
 import { CaptureMode } from '@domain/models/common';
 
-import CaptureControl from '@adapters/ui/components/stateless/CaptureControl';
+import { CaptureControl } from '@adapters/ui/components/stateless/CaptureControl';
 
 export default {
   title: 'Kropsaurus/CaptureControl',

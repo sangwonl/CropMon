@@ -39,7 +39,7 @@ const PREFS_APPEAR_COLOR_COUNTDOWN_TEXT = 'appearances.colors.countdownText';
 const PREFS_LICENSE = 'license';
 
 @injectable()
-export default class ElectronPreferencesStore implements PreferencesStore {
+export class ElectronPreferencesStore implements PreferencesStore {
   store!: Store;
 
   constructor() {

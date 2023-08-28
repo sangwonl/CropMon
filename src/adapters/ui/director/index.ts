@@ -8,8 +8,8 @@ import { getAllScreens, getScreenCursorOn } from '@utils/bounds';
 import { getTimeInSeconds } from '@utils/date';
 import { isMac } from '@utils/process';
 
-import diContainer from '@di/containers';
-import TYPES from '@di/types';
+import { diContainer } from '@di/containers/common';
+import { TYPES } from '@di/types';
 
 import { CaptureMode } from '@domain/models/common';
 import type { Preferences } from '@domain/models/preferences';
@@ -23,15 +23,15 @@ import {
 } from '@application/ports/director';
 import type { AppTray } from '@application/ports/tray';
 
-import ElectronUiStateApplier from '@adapters/state';
-import CaptureOverlayWrap from '@adapters/ui/director/overlay';
-import HelloSvelteWidget from '@adapters/ui/widgets/hellosvelte';
-import PreferencesDialog from '@adapters/ui/widgets/preferences';
-import ProgressDialog from '@adapters/ui/widgets/progressdialog';
-import StaticPageDialog from '@adapters/ui/widgets/staticpage';
+import { ElectronUiStateApplier } from '@adapters/state';
+import { CaptureOverlayWrap } from '@adapters/ui/director/overlay';
+import { HelloSvelteWidget } from '@adapters/ui/widgets/hellosvelte';
+import { PreferencesDialog } from '@adapters/ui/widgets/preferences';
+import { ProgressDialog } from '@adapters/ui/widgets/progressdialog';
+import { StaticPageDialog } from '@adapters/ui/widgets/staticpage';
 
 @injectable()
-export default class ElectronUiDirector implements UiDirector {
+export class ElectronUiDirector implements UiDirector {
   private appTray?: AppTray;
   private captureOverlay?: CaptureOverlayWrap;
 

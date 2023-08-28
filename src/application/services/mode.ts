@@ -1,20 +1,19 @@
 import { systemPreferences } from 'electron';
 import { inject, injectable } from 'inversify';
 
-import TYPES from '@di/types';
+import { TYPES } from '@di/types';
 
 import { CaptureMode } from '@domain/models/common';
 import type { Screen } from '@domain/models/screen';
+import type { PreferencesRepository } from '@domain/repositories/preferences';
 import type { RecorderSource } from '@domain/services/recorder';
 
 import { INITIAL_UI_STATE, type UiState } from '@application/models/ui';
 import type { UiDirector } from '@application/ports/director';
-import StateManager from '@application/services/state';
-
-import PreferencesRepository from '@adapters/repositories/preferences';
+import { StateManager } from '@application/services/state';
 
 @injectable()
-export default class CaptureModeManager {
+export class CaptureModeManager {
   constructor(
     // eslint-disable-next-line prettier/prettier
     @inject(TYPES.PreferencesRepository)

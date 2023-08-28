@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ProgressBar from '@adapters/ui/components/stateless/ProgressBar';
+import { ProgressBar } from '@adapters/ui/components/stateless/ProgressBar';
 
 import styles from './ProgressDialog.css';
 
@@ -19,7 +19,7 @@ type Props = {
   onActionClick: () => void;
 };
 
-function ProgressDialog(props: Props) {
+export function ProgressDialog(props: Props) {
   const { title, message, buttons, progress } = props;
   const { cancelTitle, actionTitle, actionHideInProgress = true } = buttons;
 
@@ -45,5 +45,3 @@ function ProgressDialog(props: Props) {
     </div>
   );
 }
-
-export default ProgressDialog;

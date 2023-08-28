@@ -6,7 +6,7 @@ type Props = {
   progress: number;
 };
 
-function ProgressBar(props: Props) {
+export function ProgressBar(props: Props) {
   const { progress } = props;
   return (
     <div className={styles.wrapper}>
@@ -19,5 +19,3 @@ function ProgressBar(props: Props) {
     </div>
   );
 }
-
-export default ProgressBar;

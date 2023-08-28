@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import { CaptureMode } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
 
-import HookManager from '@application/services/hook';
+import { HookManager } from '@application/services/hook';
 
 describe('HookManager', () => {
   const hookMgr: HookManager = new HookManager();

@@ -83,7 +83,7 @@ export type HookType = keyof HookTypeArgsMap;
 type HookHandler = (args: ValueOf<HookTypeArgsMap>) => void;
 
 @injectable()
-export default class HookManager {
+export class HookManager {
   private hooks: Map<HookType, Array<HookHandler>> = new Map();
 
   on<K extends HookType>(

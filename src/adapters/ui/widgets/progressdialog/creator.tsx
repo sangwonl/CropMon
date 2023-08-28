@@ -1,7 +1,7 @@
 import { ipcRenderer } from 'electron';
 import React, { useEffect, useState } from 'react';
 
-import ProgressDialog from '@adapters/ui/components/stateless/ProgressDialog';
+import { ProgressDialog } from '@adapters/ui/components/stateless/ProgressDialog';
 import {
   type ProgressDialogOptions,
   type IpcEvtSetProgress,
@@ -13,7 +13,7 @@ import {
 } from '@adapters/ui/widgets/progressdialog/shared';
 import { preventZoomKeyEvent } from '@adapters/ui/widgets/utils';
 
-export default function ProgressDialogCreator(options: ProgressDialogOptions) {
+export function ProgressDialogCreator(options: ProgressDialogOptions) {
   const { message: givenMsg, title, buttons } = options;
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState(givenMsg);

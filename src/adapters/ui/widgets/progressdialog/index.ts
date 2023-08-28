@@ -4,7 +4,7 @@ import { assetPathResolver } from '@utils/asset';
 import { isDebugMode } from '@utils/process';
 
 import { WidgetType } from '@adapters/ui/widgets/types';
-import Widget from '@adapters/ui/widgets/widget';
+import { Widget } from '@adapters/ui/widgets/widget';
 
 import {
   type ProgressDialogOptions,
@@ -14,7 +14,7 @@ import {
   IPC_EVT_SET_MESSAGE,
 } from './shared';
 
-export default class ProgressDialog extends Widget<ProgressDialogOptions> {
+export class ProgressDialog extends Widget<ProgressDialogOptions> {
   constructor(
     private options: ProgressDialogOptions,
     onReady?: () => void,

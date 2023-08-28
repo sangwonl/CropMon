@@ -5,14 +5,14 @@ import { isDebugMode } from '@utils/process';
 
 import {
   IPC_EVT_ON_CLOSE,
-  type PreferencesModalOptions,
+  type PreferencesDialogOptions,
 } from '@adapters/ui/widgets/preferences/shared';
 import { WidgetType } from '@adapters/ui/widgets/types';
-import Widget from '@adapters/ui/widgets/widget';
+import { Widget } from '@adapters/ui/widgets/widget';
 
-export default class PreferencesModal extends Widget<PreferencesModalOptions> {
-  private constructor(options: PreferencesModalOptions) {
-    super(WidgetType.PREFERENECS_MODAL, options);
+export class PreferencesDialog extends Widget<PreferencesDialogOptions> {
+  private constructor(options: PreferencesDialogOptions) {
+    super(WidgetType.PREFERENECS_DIALOG, options);
 
     this.window.loadURL(`file://${__dirname}/../preferences/index.html`);
 
@@ -43,7 +43,7 @@ export default class PreferencesModal extends Widget<PreferencesModalOptions> {
     });
   }
 
-  static create(options: PreferencesModalOptions): PreferencesModal {
-    return new PreferencesModal(options);
+  static create(options: PreferencesDialogOptions): PreferencesDialog {
+    return new PreferencesDialog(options);
   }
 }

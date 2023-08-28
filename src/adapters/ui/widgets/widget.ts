@@ -2,7 +2,7 @@ import { BrowserWindow, type Rectangle, type WebContents } from 'electron';
 
 import { WidgetType } from '@adapters/ui/widgets/types';
 
-export default abstract class Widget<T> {
+export abstract class Widget<T> {
   protected window: BrowserWindow;
 
   protected abstract createWindow(options?: T): BrowserWindow;

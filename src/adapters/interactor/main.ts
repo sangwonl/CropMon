@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
 import { inject, injectable } from 'inversify';
 
-import TYPES from '@di/types';
+import { TYPES } from '@di/types';
 
 import type { CaptureOptions } from '@domain/models/capture';
 import type { License } from '@domain/models/license';
@@ -12,7 +12,7 @@ import type { UiState } from '@application/models/ui';
 import type { UseCaseInteractor } from '@application/ports/interactor';
 
 @injectable()
-export default class UseCaseInteractorForMain implements UseCaseInteractor {
+export class UseCaseInteractorForMain implements UseCaseInteractor {
   constructor(
     @inject(TYPES.UseCaseInteractor) private interactor: UseCaseInteractor,
   ) {

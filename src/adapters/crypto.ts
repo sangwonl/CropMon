@@ -2,7 +2,7 @@ import { safeStorage } from 'electron';
 import { injectable } from 'inversify';
 
 @injectable()
-export default class SafeCipher {
+export class SafeCipher {
   encrypt<T>(data: T): string | null {
     try {
       const encrypted = safeStorage.encryptString(JSON.stringify(data));

@@ -8,7 +8,7 @@ import type { Point } from '@domain/models/screen';
 import type { PlatformApi, PathType } from '@application/ports/platform';
 
 @injectable()
-export default class PlatformApiForMain implements PlatformApi {
+export class PlatformApiForMain implements PlatformApi {
   constructor() {
     ipcMain.on('getPath', (event, name) => {
       event.returnValue = this.getPath(name);

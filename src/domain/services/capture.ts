@@ -1,7 +1,7 @@
 import logger from 'electron-log';
 import { inject, injectable } from 'inversify';
 
-import TYPES from '@di/types';
+import { TYPES } from '@di/types';
 
 import {
   CaptureOptionsNotPreparedException,
@@ -14,7 +14,7 @@ import type { PreferencesRepository } from '@domain/repositories/preferences';
 import type { ScreenRecorder } from '@domain/services/recorder';
 
 @injectable()
-export default class CaptureSession {
+export class CaptureSession {
   private curCaptureOptions?: CaptureOptions;
   private curCaptureCtx?: CaptureContext;
   private curCaptureStatus: CaptureStatus;

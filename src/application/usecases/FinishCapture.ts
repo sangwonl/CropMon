@@ -1,20 +1,20 @@
 import { inject, injectable } from 'inversify';
 
-import TYPES from '@di/types';
+import { TYPES } from '@di/types';
 
 import { CaptureContext } from '@domain/models/capture';
 import type { Progress } from '@domain/models/ui';
-import CaptureSession from '@domain/services/capture';
+import { CaptureSession } from '@domain/services/capture';
 
 import type { UiDirector } from '@application/ports/director';
-import HookManager from '@application/services/hook';
-import CaptureModeManager from '@application/services/mode';
+import { HookManager } from '@application/services/hook';
+import { CaptureModeManager } from '@application/services/mode';
 import type { UseCase } from '@application/usecases/UseCase';
 
 const CONTAINING_PROGRESS = 10;
 
 @injectable()
-export default class FinishCaptureUseCase implements UseCase<void> {
+export class FinishCaptureUseCase implements UseCase<void> {
   constructor(
     @inject(TYPES.UiDirector) private uiDirector: UiDirector,
     private hookManager: HookManager,

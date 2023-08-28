@@ -10,7 +10,7 @@ import type { UiState } from '@application/models/ui';
 import type { UseCaseInteractor } from '@application/ports/interactor';
 
 @injectable()
-export default class UseCaseInteractorForRenderer implements UseCaseInteractor {
+export class UseCaseInteractorForRenderer implements UseCaseInteractor {
   initializeApp(): void {
     throw new Error('Method not implemented.');
   }

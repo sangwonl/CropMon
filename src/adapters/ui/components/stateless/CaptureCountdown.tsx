@@ -72,7 +72,7 @@ type Props = {
   countdown: number;
 };
 
-function CaptureCountdown(props: Props) {
+export function CaptureCountdown(props: Props) {
   const { targetBounds, countdown, areaColors } = props;
 
   return (
@@ -93,5 +93,3 @@ function CaptureCountdown(props: Props) {
     </div>
   );
 }
-
-export default CaptureCountdown;

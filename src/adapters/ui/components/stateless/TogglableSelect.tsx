@@ -3,8 +3,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { withStopPropagation } from '@utils/events';
 
-import SelectList from '@adapters/ui/components/stateless/SelectList';
-import useOnClickOutside from '@adapters/ui/hooks/hover';
+import { SelectList } from '@adapters/ui/components/stateless/SelectList';
+import { useOnClickOutside } from '@adapters/ui/hooks/hover';
 
 import styles from './TogglableSelect.css';
 
@@ -27,7 +27,7 @@ type Props = {
   onSelect: (indices: number[]) => void;
 };
 
-function TogglableSelect({
+export function TogglableSelect({
   enabled,
   toggleButton,
   items,
@@ -133,5 +133,3 @@ function TogglableSelect({
     </>
   );
 }
-
-export default TogglableSelect;

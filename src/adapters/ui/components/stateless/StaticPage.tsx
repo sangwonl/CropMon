@@ -8,7 +8,7 @@ type Props = {
   html?: string;
 };
 
-function StaticPage(props: Props) {
+export function StaticPage(props: Props) {
   const { markdown, html } = props;
   return (
     <div className={styles.container}>
@@ -17,5 +17,3 @@ function StaticPage(props: Props) {
     </div>
   );
 }
-
-export default StaticPage;

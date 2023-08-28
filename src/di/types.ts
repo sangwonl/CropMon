@@ -1,4 +1,4 @@
-const TYPES = {
+export const TYPES = {
   AppManager: Symbol.for('AppManager'),
   AppTray: Symbol.for('AppTray'),
   UiDirector: Symbol.for('UiDirector'),
@@ -12,5 +12,3 @@ const TYPES = {
   PreferencesRepository: Symbol.for('PreferencesRepository'),
   LicenseManager: Symbol.for('LicenseManager'),
 };
-
-export default TYPES;

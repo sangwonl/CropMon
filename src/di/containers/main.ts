@@ -1,12 +1,10 @@
-/* eslint-disable prettier/prettier */
-
 import { isMac } from '@utils/process';
 
-import diContainer from '@di/containers';
-import TYPES from '@di/types';
+import { diContainer } from '@di/containers/common';
+import { TYPES } from '@di/types';
 
 import type { PreferencesRepository } from '@domain/repositories/preferences';
-import CaptureSession from '@domain/services/capture';
+import { CaptureSession } from '@domain/services/capture';
 import type { RecorderSource, ScreenRecorder } from '@domain/services/recorder';
 
 import type { AppManager } from '@application/ports/app';
@@ -18,49 +16,49 @@ import type { PreferencesStore } from '@application/ports/preferences';
 import type { UiStateApplier } from '@application/ports/state';
 import type { AnalyticsTracker } from '@application/ports/tracker';
 import type { AppTray } from '@application/ports/tray';
-import HookManager from '@application/services/hook';
-import LicenseService from '@application/services/license';
-import CaptureModeManager from '@application/services/mode';
-import StateManager from '@application/services/state';
-import ChangeCaptureOptionsUseCase from '@application/usecases/ChangeCaptureOptions';
-import CheckLicenseUseCase from '@application/usecases/CheckLicense';
-import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
-import CheckVersionUseCase from '@application/usecases/CheckVersion';
-import DisableCaptureUseCase from '@application/usecases/DisableCapture';
-import EnableCaptureUseCase from '@application/usecases/EnableCapture';
-import FinishCaptureUseCase from '@application/usecases/FinishCapture';
-import FinishSelectionUseCase from '@application/usecases/FinishSelection';
-import GetLicenseUseCase from '@application/usecases/GetLicense';
-import GetUiStateUseCase from '@application/usecases/GetUiState';
-import InitializeAppUseCase from '@application/usecases/InitializeApp';
-import OpenCaptureFolderUseCase from '@application/usecases/OpenCaptureFolder';
-import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
-import OpenUrlUseCase from '@application/usecases/OpenUrl';
-import QuitAppUseCase from '@application/usecases/QuitApp';
-import RegisterLicenseUseCase from '@application/usecases/RegisterLicense';
-import SavePrefsUseCase from '@application/usecases/SavePrefs';
-import SelectingTargetUseCase from '@application/usecases/SelectingTarget';
-import StartCaptureUseCase from '@application/usecases/StartCapture';
-import StartCaptureAsIsUseCase from '@application/usecases/StartCaptureAsIs';
-import StartSelectionUseCase from '@application/usecases/StartSelection';
-import ToggleCaptureUseCase from '@application/usecases/ToggleCapture';
-import UpdateAppUseCase from '@application/usecases/UpdateApp';
+import { HookManager } from '@application/services/hook';
+import { LicenseService } from '@application/services/license';
+import { CaptureModeManager } from '@application/services/mode';
+import { StateManager } from '@application/services/state';
+import { ChangeCaptureOptionsUseCase } from '@application/usecases/ChangeCaptureOptions';
+import { CheckLicenseUseCase } from '@application/usecases/CheckLicense';
+import { CheckUpdateUseCase } from '@application/usecases/CheckUpdate';
+import { CheckVersionUseCase } from '@application/usecases/CheckVersion';
+import { DisableCaptureUseCase } from '@application/usecases/DisableCapture';
+import { EnableCaptureUseCase } from '@application/usecases/EnableCapture';
+import { FinishCaptureUseCase } from '@application/usecases/FinishCapture';
+import { FinishSelectionUseCase } from '@application/usecases/FinishSelection';
+import { GetLicenseUseCase } from '@application/usecases/GetLicense';
+import { GetUiStateUseCase } from '@application/usecases/GetUiState';
+import { InitializeAppUseCase } from '@application/usecases/InitializeApp';
+import { OpenCaptureFolderUseCase } from '@application/usecases/OpenCaptureFolder';
+import { OpenPrefsModalUseCase } from '@application/usecases/OpenPrefsModal';
+import { OpenUrlUseCase } from '@application/usecases/OpenUrl';
+import { QuitAppUseCase } from '@application/usecases/QuitApp';
+import { RegisterLicenseUseCase } from '@application/usecases/RegisterLicense';
+import { SavePrefsUseCase } from '@application/usecases/SavePrefs';
+import { SelectingTargetUseCase } from '@application/usecases/SelectingTarget';
+import { StartCaptureUseCase } from '@application/usecases/StartCapture';
+import { StartCaptureAsIsUseCase } from '@application/usecases/StartCaptureAsIs';
+import { StartSelectionUseCase } from '@application/usecases/StartSelection';
+import { ToggleCaptureUseCase } from '@application/usecases/ToggleCapture';
+import { UpdateAppUseCase } from '@application/usecases/UpdateApp';
 
-import ElectronAppManager from '@adapters/app';
-import SecureStore from '@adapters/crypto';
-import BuiltinHooks from '@adapters/hook';
-import UseCaseInteractorCore from '@adapters/interactor/core';
-import UseCaseInteractorForMain from '@adapters/interactor/main';
-import SimpleLicenseManager from '@adapters/license';
-import PlatformApiForMain from '@adapters/platform/main';
-import ElectronPreferencesStore from '@adapters/preferences';
-import ElectronScreenRecorder from '@adapters/recorder/recorder';
-import PrefsRepositoryImpl from '@adapters/repositories/preferences';
-import ElectronUiStateApplier from '@adapters/state';
-import MixPanelTracker from '@adapters/tracker/mixPanel';
-import ElectronUiDirector from '@adapters/ui/director';
-import MacAppTray from '@adapters/ui/widgets/tray/mac';
-import WinAppTray from '@adapters/ui/widgets/tray/win';
+import { ElectronAppManager } from '@adapters/app';
+import { SafeCipher } from '@adapters/crypto';
+import { BuiltinHooks } from '@adapters/hook';
+import { UseCaseInteractorCore } from '@adapters/interactor/core';
+import { UseCaseInteractorForMain } from '@adapters/interactor/main';
+import { SimpleLicenseManager } from '@adapters/license';
+import { PlatformApiForMain } from '@adapters/platform/main';
+import { ElectronPreferencesStore } from '@adapters/preferences';
+import { ElectronScreenRecorder } from '@adapters/recorder/recorder';
+import { PrefsRepositoryImpl } from '@adapters/repositories/preferences';
+import { ElectronUiStateApplier } from '@adapters/state';
+import { MixPanelTracker } from '@adapters/tracker/mixPanel';
+import { ElectronUiDirector } from '@adapters/ui/director';
+import { MacAppTray } from '@adapters/ui/widgets/tray/mac';
+import { WinAppTray } from '@adapters/ui/widgets/tray/win';
 
 diContainer
   .bind<ScreenRecorder>(TYPES.ScreenRecorder)
@@ -105,7 +103,7 @@ diContainer
   .to(PlatformApiForMain)
   .inSingletonScope();
 
-diContainer.bind<SecureStore>(SecureStore).toSelf().inSingletonScope();
+diContainer.bind<SafeCipher>(SafeCipher).toSelf().inSingletonScope();
 
 diContainer
   .bind<LicenseManager>(TYPES.LicenseManager)
@@ -257,4 +255,4 @@ if (isMac()) {
   diContainer.bind<AppTray>(TYPES.AppTray).to(WinAppTray).inSingletonScope();
 }
 
-export default diContainer;
+export { diContainer };

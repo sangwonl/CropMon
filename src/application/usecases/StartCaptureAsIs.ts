@@ -1,11 +1,11 @@
 import { injectable } from 'inversify';
 
 import type { UiState } from '@application/models/ui';
-import StateManager from '@application/services/state';
+import { StateManager } from '@application/services/state';
 import type { UseCase } from '@application/usecases/UseCase';
 
 @injectable()
-export default class StartCaptureAsIsUseCase implements UseCase<void> {
+export class StartCaptureAsIsUseCase implements UseCase<void> {
   constructor(private stateManager: StateManager) {}
 
   execute(): void {

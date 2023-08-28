@@ -16,7 +16,7 @@ import type { Preferences } from '@domain/models/preferences';
 import type { PreferencesRepository } from '@domain/repositories/preferences';
 
 import type { PreferencesStore } from '@application/ports/preferences';
-import HookManager from '@application/services/hook';
+import { HookManager } from '@application/services/hook';
 
 import PrefsRepositoryImpl from '@adapters/repositories/preferences';
 

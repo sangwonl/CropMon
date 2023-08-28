@@ -2,13 +2,13 @@ import { injectable } from 'inversify';
 
 import type { License } from '@domain/models/license';
 
-// import TYPES from '@di/types';
+// import { TYPES } from '@di/types';
 //
 // import { TrayUpdaterState, UiDirector } from '@application/ports/director';
 // import { LicenseManager } from '@application/ports/license';
 
 @injectable()
-export default class LicenseService {
+export class LicenseService {
   constructor() {}
 
   async checkAndGetLicense(): Promise<License | null> {

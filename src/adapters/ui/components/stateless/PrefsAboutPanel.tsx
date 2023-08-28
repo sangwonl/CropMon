@@ -12,7 +12,7 @@ import { shortcutForDisplay } from '@utils/shortcut';
 import type { License } from '@domain/models/license';
 import type { Preferences } from '@domain/models/preferences';
 
-import ModalDialog from '@adapters/ui/components/stateless/ModalDialog';
+import { ModalDialog } from '@adapters/ui/components/stateless/ModalDialog';
 
 import commStyles from './CommonStyles.css';
 import styles from './PrefsAboutPanel.css';
@@ -45,7 +45,7 @@ function mapTimestampToDateString(timestamp: number): string {
   return `${date.getFullYear()}-${month}-${day}`;
 }
 
-function PrefsAboutPanel({
+export function PrefsAboutPanel({
   appName,
   version,
   prefs,
@@ -189,5 +189,3 @@ function PrefsAboutPanel({
     </div>
   );
 }
-
-export default PrefsAboutPanel;
