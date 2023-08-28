@@ -5,10 +5,10 @@ import { injectable } from 'inversify';
 import type { UiState } from '@application/models/ui';
 import type { UiStateApplier } from '@application/ports/state';
 
-import Widget from '@adapters/ui/widgets/widget';
+import { Widget } from '@adapters/ui/widgets/widget';
 
 @injectable()
-export default class ElectronUiStateApplier implements UiStateApplier {
+export class ElectronUiStateApplier implements UiStateApplier {
   private webContents: Map<number, WebContents> = new Map();
 
   apply(newState: UiState): void {

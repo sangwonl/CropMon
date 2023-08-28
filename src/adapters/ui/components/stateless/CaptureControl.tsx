@@ -18,9 +18,9 @@ import {
 import type { RecordOptions } from '@domain/models/capture';
 import { CaptureMode } from '@domain/models/common';
 
-import CloseButton from '@adapters/ui/components/stateless/CloseButton';
-import SwitchButton from '@adapters/ui/components/stateless/SwitchButton';
-import TogglableSelect from '@adapters/ui/components/stateless/TogglableSelect';
+import { CloseButton } from '@adapters/ui/components/stateless/CloseButton';
+import { SwitchButton } from '@adapters/ui/components/stateless/SwitchButton';
+import { TogglableSelect } from '@adapters/ui/components/stateless/TogglableSelect';
 
 import fullscreenIcon from '@assets/fullscreen.png';
 import micIcon from '@assets/mic.png';
@@ -70,7 +70,7 @@ type Props = {
   onCaptureCancel: () => void;
 };
 
-function CaptureControl({
+export function CaptureControl({
   captureMode,
   recordOptions,
   onCaptureModeChange,
@@ -189,5 +189,3 @@ function CaptureControl({
     </div>
   );
 }
-
-export default CaptureControl;

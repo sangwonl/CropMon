@@ -29,7 +29,7 @@ type Props = {
 type OptionType = string | number | boolean;
 const isChanged = (a: OptionType, b: OptionType) => a !== b;
 
-function PrefsGeneralPanel({
+export function PrefsGeneralPanel({
   prefs,
   recordHome,
   onChooseRecordHome,
@@ -232,5 +232,3 @@ function PrefsGeneralPanel({
     </div>
   );
 }
-
-export default PrefsGeneralPanel;

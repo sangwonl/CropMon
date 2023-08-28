@@ -1,17 +1,17 @@
 import { inject, injectable } from 'inversify';
 
-import TYPES from '@di/types';
+import { TYPES } from '@di/types';
 
 import type { PreferencesRepository } from '@domain/repositories/preferences';
 
 import type { UiDirector } from '@application/ports/director';
-import HookManager from '@application/services/hook';
+import { HookManager } from '@application/services/hook';
 import type { UseCase } from '@application/usecases/UseCase';
 
 import { version as curVersion, productName } from '../../package.json';
 
 @injectable()
-export default class OpenPrefsModalUseCase implements UseCase<void> {
+export class OpenPrefsModalUseCase implements UseCase<void> {
   public constructor(
     @inject(TYPES.PreferencesRepository)
     private prefsRepo: PreferencesRepository,

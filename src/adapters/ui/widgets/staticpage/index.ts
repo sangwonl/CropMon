@@ -5,11 +5,11 @@ import { isDebugMode } from '@utils/process';
 
 import type { StaticPageDialogOptions } from '@adapters/ui/widgets/staticpage/shared';
 import { WidgetType } from '@adapters/ui/widgets/types';
-import Widget from '@adapters/ui/widgets/widget';
+import { Widget } from '@adapters/ui/widgets/widget';
 
-export default class StaticPageDialog extends Widget<StaticPageDialogOptions> {
+export class StaticPageDialog extends Widget<StaticPageDialogOptions> {
   private constructor(options: StaticPageDialogOptions) {
-    super(WidgetType.STATIC_PAGE_POPUP, options);
+    super(WidgetType.STATIC_PAGE_DIALOG, options);
 
     this.window.loadURL(`file://${__dirname}/../staticpage/index.html`);
   }

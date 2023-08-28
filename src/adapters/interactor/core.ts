@@ -9,30 +9,30 @@ import type { Bounds, Point } from '@domain/models/screen';
 
 import type { UiState } from '@application/models/ui';
 import type { UseCaseInteractor } from '@application/ports/interactor';
-import ChangeCaptureOptionsUseCase from '@application/usecases/ChangeCaptureOptions';
-import CheckUpdateUseCase from '@application/usecases/CheckUpdate';
-import DisableCaptureUseCase from '@application/usecases/DisableCapture';
-import EnableCaptureUseCase from '@application/usecases/EnableCapture';
-import FinishCaptureUseCase from '@application/usecases/FinishCapture';
-import FinishSelectionUseCase from '@application/usecases/FinishSelection';
-import GetLicenseUseCase from '@application/usecases/GetLicense';
-import GetUiStateUseCase from '@application/usecases/GetUiState';
-import InitializeAppUseCase from '@application/usecases/InitializeApp';
-import OpenCaptureFolderUseCase from '@application/usecases/OpenCaptureFolder';
-import OpenPrefsModalUseCase from '@application/usecases/OpenPrefsModal';
-import OpenUrlUseCase from '@application/usecases/OpenUrl';
-import QuitAppUseCase from '@application/usecases/QuitApp';
-import RegisterLicenseUseCase from '@application/usecases/RegisterLicense';
-import SavePrefsUseCase from '@application/usecases/SavePrefs';
-import SelectingTargetUseCase from '@application/usecases/SelectingTarget';
-import StartCaptureUseCase from '@application/usecases/StartCapture';
-import StartCaptureAsIsUseCase from '@application/usecases/StartCaptureAsIs';
-import StartSelectionUseCase from '@application/usecases/StartSelection';
-import ToggleCaptureUseCase from '@application/usecases/ToggleCapture';
-import UpdateAppUseCase from '@application/usecases/UpdateApp';
+import { ChangeCaptureOptionsUseCase } from '@application/usecases/ChangeCaptureOptions';
+import { CheckUpdateUseCase } from '@application/usecases/CheckUpdate';
+import { DisableCaptureUseCase } from '@application/usecases/DisableCapture';
+import { EnableCaptureUseCase } from '@application/usecases/EnableCapture';
+import { FinishCaptureUseCase } from '@application/usecases/FinishCapture';
+import { FinishSelectionUseCase } from '@application/usecases/FinishSelection';
+import { GetLicenseUseCase } from '@application/usecases/GetLicense';
+import { GetUiStateUseCase } from '@application/usecases/GetUiState';
+import { InitializeAppUseCase } from '@application/usecases/InitializeApp';
+import { OpenCaptureFolderUseCase } from '@application/usecases/OpenCaptureFolder';
+import { OpenPrefsModalUseCase } from '@application/usecases/OpenPrefsModal';
+import { OpenUrlUseCase } from '@application/usecases/OpenUrl';
+import { QuitAppUseCase } from '@application/usecases/QuitApp';
+import { RegisterLicenseUseCase } from '@application/usecases/RegisterLicense';
+import { SavePrefsUseCase } from '@application/usecases/SavePrefs';
+import { SelectingTargetUseCase } from '@application/usecases/SelectingTarget';
+import { StartCaptureUseCase } from '@application/usecases/StartCapture';
+import { StartCaptureAsIsUseCase } from '@application/usecases/StartCaptureAsIs';
+import { StartSelectionUseCase } from '@application/usecases/StartSelection';
+import { ToggleCaptureUseCase } from '@application/usecases/ToggleCapture';
+import { UpdateAppUseCase } from '@application/usecases/UpdateApp';
 
 @injectable()
-export default class UseCaseInteractorCore implements UseCaseInteractor {
+export class UseCaseInteractorCore implements UseCaseInteractor {
   constructor(
     private initializeAppUseCase: InitializeAppUseCase,
     private quitAppUseCase: QuitAppUseCase,

@@ -5,7 +5,7 @@ import { isMac } from '@utils/process';
 
 export type TrayIconType = 'default' | 'recording' | 'updatable';
 
-export default class TrayIconProvider {
+export class TrayIconProvider {
   private iconCaches: { [key: string]: NativeImage } = {};
 
   icon(iconType: TrayIconType): NativeImage {

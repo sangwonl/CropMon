@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 
-import diContainer from '@di/containers';
-import TYPES from '@di/types';
+import { diContainer } from '@di/containers/common';
+import { TYPES } from '@di/types';
 
 import type { PlatformApi } from '@application/ports/platform';
 

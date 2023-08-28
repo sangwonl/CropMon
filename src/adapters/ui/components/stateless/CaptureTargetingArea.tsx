@@ -278,7 +278,7 @@ type Props = {
   onFinish: (bounds: Bounds) => void;
 };
 
-function CaptureTargetingArea(props: Props) {
+export function CaptureTargetingArea(props: Props) {
   const {
     targetBounds,
     screenBounds,
@@ -352,5 +352,3 @@ function CaptureTargetingArea(props: Props) {
     </>
   );
 }
-
-export default CaptureTargetingArea;

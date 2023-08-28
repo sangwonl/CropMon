@@ -4,19 +4,19 @@ import { createRoot } from 'react-dom/client';
 
 import '@di/containers/renderer';
 
-import HelloSvelteWidgetCreator from '@adapters/ui/widgets/hellosvelte/creator';
-import CaptureOverlayCreator from '@adapters/ui/widgets/overlays/creator';
-import PreferencesModalCreator from '@adapters/ui/widgets/preferences/creator';
-import ProgressDialogCreator from '@adapters/ui/widgets/progressdialog/creator';
-import StaticPagePopupCreator from '@adapters/ui/widgets/staticpage/creator';
+import { HelloSvelteWidgetCreator } from '@adapters/ui/widgets/hellosvelte/creator';
+import { CaptureOverlayCreator } from '@adapters/ui/widgets/overlays/creator';
+import { PreferencesDialogCreator } from '@adapters/ui/widgets/preferences/creator';
+import { ProgressDialogCreator } from '@adapters/ui/widgets/progressdialog/creator';
+import { StaticPageDialogCreator } from '@adapters/ui/widgets/staticpage/creator';
 import { WidgetType } from '@adapters/ui/widgets/types';
 
 type ReactWidgetCreatorMap = {
   [widgetType: number]:
     | typeof CaptureOverlayCreator
-    | typeof PreferencesModalCreator
+    | typeof PreferencesDialogCreator
     | typeof ProgressDialogCreator
-    | typeof StaticPagePopupCreator;
+    | typeof StaticPageDialogCreator;
 };
 
 type SvelteWidgetCreatorMap = {
@@ -25,8 +25,8 @@ type SvelteWidgetCreatorMap = {
 
 const reactWidgetCreators: ReactWidgetCreatorMap = {
   [WidgetType.PROGRESS_DIALOG]: ProgressDialogCreator,
-  [WidgetType.STATIC_PAGE_POPUP]: StaticPagePopupCreator,
-  [WidgetType.PREFERENECS_MODAL]: PreferencesModalCreator,
+  [WidgetType.STATIC_PAGE_DIALOG]: StaticPageDialogCreator,
+  [WidgetType.PREFERENECS_DIALOG]: PreferencesDialogCreator,
   [WidgetType.CAPTURE_OVERLAY]: CaptureOverlayCreator,
 };
 

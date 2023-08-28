@@ -5,9 +5,9 @@ import { isDebugMode } from '@utils/process';
 
 import type { HelloSvelteOptions } from '@adapters/ui/widgets/hellosvelte/shared';
 import { WidgetType } from '@adapters/ui/widgets/types';
-import Widget from '@adapters/ui/widgets/widget';
+import { Widget } from '@adapters/ui/widgets/widget';
 
-export default class HelloSvelteWidget extends Widget<HelloSvelteOptions> {
+export class HelloSvelteWidget extends Widget<HelloSvelteOptions> {
   private constructor(options: HelloSvelteOptions) {
     super(WidgetType.HELLO_SVELTE, options);
 

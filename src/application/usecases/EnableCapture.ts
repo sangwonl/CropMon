@@ -1,17 +1,16 @@
 import { inject, injectable } from 'inversify';
 
-import TYPES from '@di/types';
+import { TYPES } from '@di/types';
 
-import CaptureSession from '@domain/services/capture';
+import type { PreferencesRepository } from '@domain/repositories/preferences';
+import { CaptureSession } from '@domain/services/capture';
 
-import HookManager from '@application/services/hook';
-import CaptureModeManager from '@application/services/mode';
+import { HookManager } from '@application/services/hook';
+import { CaptureModeManager } from '@application/services/mode';
 import type { UseCase } from '@application/usecases/UseCase';
 
-import PreferencesRepository from '@adapters/repositories/preferences';
-
 @injectable()
-export default class EnableCaptureUseCase implements UseCase<void> {
+export class EnableCaptureUseCase implements UseCase<void> {
   constructor(
     // eslint-disable-next-line prettier/prettier
     @inject(TYPES.PreferencesRepository)

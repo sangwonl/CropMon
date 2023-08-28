@@ -3,11 +3,12 @@ import React, { useState } from 'react';
 import type { License } from '@domain/models/license';
 import type { Preferences } from '@domain/models/preferences';
 
-import PrefsAboutPanel from '@adapters/ui/components/stateless/PrefsAboutPanel';
-import PrefsAppearancesTabPanel from '@adapters/ui/components/stateless/PrefsAppearancePanel';
-import PrefsGeneralPanel from '@adapters/ui/components/stateless/PrefsGeneralPanel';
-import SideTabs, {
+import { PrefsAboutPanel } from '@adapters/ui/components/stateless/PrefsAboutPanel';
+import { PrefsAppearancesPanel } from '@adapters/ui/components/stateless/PrefsAppearancePanel';
+import { PrefsGeneralPanel } from '@adapters/ui/components/stateless/PrefsGeneralPanel';
+import {
   type TabItem,
+  SideTabs,
 } from '@adapters/ui/components/stateless/SideTabs';
 
 import styles from './PrefsPanels.css';
@@ -35,7 +36,7 @@ const TAB_ITEMS: TabItem[] = [
   { tabId: TAB_ABOUT, title: 'About' },
 ];
 
-function PrefsPanels({
+export function PrefsPanels({
   appName,
   version,
   prefs,
@@ -72,7 +73,7 @@ function PrefsPanels({
               />
             ),
             [TAB_APPEARANCES]: (
-              <PrefsAppearancesTabPanel
+              <PrefsAppearancesPanel
                 prefs={prefs}
                 onSave={onSave}
                 onCancel={onClose}
@@ -95,5 +96,3 @@ function PrefsPanels({
     </div>
   );
 }
-
-export default PrefsPanels;

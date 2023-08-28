@@ -45,7 +45,7 @@ type Props = {
   onFinish: () => void;
 };
 
-function CaptureTargetingScreen(props: Props) {
+export function CaptureTargetingScreen(props: Props) {
   const { areaColors, targetBounds, onStart, onCancel, onFinish } = props;
 
   const handleMouseEvent = useCallback(
@@ -68,5 +68,3 @@ function CaptureTargetingScreen(props: Props) {
     />
   );
 }
-
-export default CaptureTargetingScreen;

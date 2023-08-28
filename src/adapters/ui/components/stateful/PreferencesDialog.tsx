@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import type { License } from '@domain/models/license';
 import type { Preferences } from '@domain/models/preferences';
 
-import PrefsPanels from '@adapters/ui/components/stateless/PrefsPanels';
+import { PrefsPanels } from '@adapters/ui/components/stateless/PrefsPanels';
 import { useUseCaseInteractor } from '@adapters/ui/hooks/interactor';
 import { usePlatformApi } from '@adapters/ui/hooks/platform';
 import { IPC_EVT_ON_CLOSE } from '@adapters/ui/widgets/preferences/shared';
@@ -20,7 +20,11 @@ interface PropTypes {
   preferences: Preferences;
 }
 
-function PreferencesDialog({ appName, version, preferences }: PropTypes) {
+export function PreferencesDialog({
+  appName,
+  version,
+  preferences,
+}: PropTypes) {
   const interactor = useUseCaseInteractor();
   const platformApi = usePlatformApi();
 
@@ -77,5 +81,3 @@ function PreferencesDialog({ appName, version, preferences }: PropTypes) {
     />
   );
 }
-
-export default PreferencesDialog;

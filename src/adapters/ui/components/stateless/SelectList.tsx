@@ -1,4 +1,3 @@
-/* eslint-disable no-plusplus */
 import classNames from 'classnames';
 import React, { useCallback, useRef, useState } from 'react';
 
@@ -17,7 +16,7 @@ type Props = {
   onSelect: (indices: number[]) => void;
 };
 
-function SelectList({ multiSelect, items, onSelect }: Props) {
+export function SelectList({ multiSelect, items, onSelect }: Props) {
   const checkStatesRef = useRef<boolean[]>(items.map(({ checked }) => checked));
   const [checkStates, updateCheckStates] = useState<boolean[]>(
     checkStatesRef.current,
@@ -92,5 +91,3 @@ function SelectList({ multiSelect, items, onSelect }: Props) {
     </div>
   );
 }
-
-export default SelectList;

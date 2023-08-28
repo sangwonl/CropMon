@@ -2,24 +2,23 @@
 
 import { inject, injectable } from 'inversify';
 
-import TYPES from '@di/types';
+import { TYPES } from '@di/types';
 
 import type { CaptureOptions } from '@domain/models/capture';
+import type { PreferencesRepository } from '@domain/repositories/preferences';
 
 import type { UiState } from '@application/models/ui';
-import HookManager from '@application/services/hook';
-import CaptureModeManager from '@application/services/mode';
-import StateManager from '@application/services/state';
+import { HookManager } from '@application/services/hook';
+import { CaptureModeManager } from '@application/services/mode';
+import { StateManager } from '@application/services/state';
 import type { UseCase } from '@application/usecases/UseCase';
-
-import PreferencesRepository from '@adapters/repositories/preferences';
 
 interface ChangeCaptureOptionsUseCaseInput {
   captureOptions: CaptureOptions;
 }
 
 @injectable()
-export default class ChangeCaptureOptionsUseCase
+export class ChangeCaptureOptionsUseCase
   implements UseCase<ChangeCaptureOptionsUseCaseInput>
 {
   constructor(

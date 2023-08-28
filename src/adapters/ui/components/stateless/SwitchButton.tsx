@@ -23,7 +23,7 @@ type Props = {
   onSelect: (itemIndex: number) => void;
 };
 
-function SwitchButton({ activeItemIndex, items, onSelect }: Props) {
+export function SwitchButton({ activeItemIndex, items, onSelect }: Props) {
   const [selectedBtnIndex, setSelectedBtnIndex] =
     useState<number>(activeItemIndex);
 
@@ -64,5 +64,3 @@ function SwitchButton({ activeItemIndex, items, onSelect }: Props) {
     </div>
   );
 }
-
-export default SwitchButton;

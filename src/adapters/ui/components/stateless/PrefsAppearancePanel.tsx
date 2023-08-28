@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 
 import type { Preferences } from '@domain/models/preferences';
 
-import ColorPalette from '@adapters/ui/components/stateless/ColorPalette';
+import { ColorPalette } from '@adapters/ui/components/stateless/ColorPalette';
 
 import commStyles from './CommonStyles.css';
 import styles from './PrefsTabPanels.css';
@@ -16,7 +16,7 @@ type Props = {
 type OptionType = string | number | boolean;
 const isChanged = (a: OptionType, b: OptionType) => a !== b;
 
-function PrefsAppearancesPanel({ prefs, onSave, onCancel }: Props) {
+export function PrefsAppearancesPanel({ prefs, onSave, onCancel }: Props) {
   const [colorSelectingBg, setColorSelectingBg] = useState(
     prefs.colors.selectingBackground,
   );
@@ -149,5 +149,3 @@ function PrefsAppearancesPanel({ prefs, onSave, onCancel }: Props) {
     </div>
   );
 }
-
-export default PrefsAppearancesPanel;

@@ -3,20 +3,20 @@ import fetch from 'node-fetch';
 
 import { isProduction } from '@utils/process';
 
-import TYPES from '@di/types';
+import { TYPES } from '@di/types';
 
 import type { License } from '@domain/models/license';
 
 import type { LicenseManager } from '@application/ports/license';
 import type { PreferencesStore } from '@application/ports/preferences';
 
-import SafeCipher from '@adapters/crypto';
+import { SafeCipher } from '@adapters/crypto';
 
 const API_BASE_URL_DEV = 'https://dev-kropsaurus-api.pineple.com';
 const API_BASE_URL_PROD = 'https://kropsaurus-api.pineple.com';
 
 @injectable()
-export default class SimpleLicenseManager implements LicenseManager {
+export class SimpleLicenseManager implements LicenseManager {
   constructor(
     // eslint-disable-next-line prettier/prettier
     @inject(TYPES.PreferencesStore) private prefsStore: PreferencesStore,

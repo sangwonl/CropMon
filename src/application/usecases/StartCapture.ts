@@ -1,16 +1,16 @@
 import { injectable } from 'inversify';
 
 import { DomainException } from '@domain/exceptions';
-import CaptureSession from '@domain/services/capture';
+import { CaptureSession } from '@domain/services/capture';
 
 import type { UiState } from '@application/models/ui';
-import HookManager from '@application/services/hook';
-import CaptureModeManager from '@application/services/mode';
-import StateManager from '@application/services/state';
+import { HookManager } from '@application/services/hook';
+import { CaptureModeManager } from '@application/services/mode';
+import { StateManager } from '@application/services/state';
 import type { UseCase } from '@application/usecases/UseCase';
 
 @injectable()
-export default class StartCaptureUseCase implements UseCase<void> {
+export class StartCaptureUseCase implements UseCase<void> {
   constructor(
     private stateManager: StateManager,
     private hookManager: HookManager,

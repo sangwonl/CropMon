@@ -22,10 +22,8 @@ const installDevTools = async () => {
     .catch(console.log);
 };
 
-const initializeDevEnv = () => {
+export const initializeDevEnv = () => {
   if (!isProduction() && isDebugMode()) {
     installDevTools();
   }
 };
-
-export default initializeDevEnv;

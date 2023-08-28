@@ -11,7 +11,7 @@ import type { AnalyticsTracker } from '@application/ports/tracker';
 import { version as curVersion, productName, appId } from '../../package.json';
 
 @injectable()
-export default class GoogleAnalyticsTracker implements AnalyticsTracker {
+export class GoogleAnalyticsTracker implements AnalyticsTracker {
   store!: Store;
   tracker!: ua.Visitor;
 

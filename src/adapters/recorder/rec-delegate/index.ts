@@ -2,7 +2,7 @@ import { BrowserWindow } from 'electron';
 
 import { isDebugMode } from '@utils/process';
 
-export default class RecorderDelegate extends BrowserWindow {
+export class RecorderDelegate extends BrowserWindow {
   constructor() {
     super({
       show: false,

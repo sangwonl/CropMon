@@ -1,17 +1,17 @@
 import { MenuItem, type MenuItemConstructorOptions } from 'electron';
 import { inject, injectable } from 'inversify';
 
-import TYPES from '@di/types';
+import { TYPES } from '@di/types';
 
 import type { Preferences } from '@domain/models/preferences';
 
 import type { UseCaseInteractor } from '@application/ports/interactor';
 import type { AppTray } from '@application/ports/tray';
 
-import AppTrayCore from '@adapters/ui/widgets/tray/base';
+import { AppTrayCore } from '@adapters/ui/widgets/tray/base';
 
 @injectable()
-export default class MacAppTray implements AppTray {
+export class MacAppTray implements AppTray {
   private core: AppTrayCore;
 
   constructor(

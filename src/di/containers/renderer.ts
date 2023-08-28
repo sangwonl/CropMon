@@ -1,13 +1,13 @@
 import 'reflect-metadata';
 
-import diContainer from '@di/containers';
-import TYPES from '@di/types';
+import { diContainer } from '@di/containers/common';
+import { TYPES } from '@di/types';
 
 import type { UseCaseInteractor } from '@application/ports/interactor';
 import type { PlatformApi } from '@application/ports/platform';
 
-import UseCaseInteractorForRenderer from '@adapters/interactor/renderer';
-import PlatformApiForRenderer from '@adapters/platform/renderer';
+import { UseCaseInteractorForRenderer } from '@adapters/interactor/renderer';
+import { PlatformApiForRenderer } from '@adapters/platform/renderer';
 
 diContainer
   .bind<UseCaseInteractor>(TYPES.UseCaseInteractor)
@@ -19,4 +19,4 @@ diContainer
   .to(PlatformApiForRenderer)
   .inSingletonScope();
 
-export default diContainer;
+export { diContainer };

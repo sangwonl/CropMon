@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 
-import SideTab from '@adapters/ui/components/stateless/SideTab';
+import { SideTab } from '@adapters/ui/components/stateless/SideTab';
 
 import styles from './SideTabs.css';
 
@@ -15,7 +15,7 @@ type Props = {
   onTabItemSelect: (tabId: string) => void;
 };
 
-function SideTabs({ defaultTabId, tabItems, onTabItemSelect }: Props) {
+export function SideTabs({ defaultTabId, tabItems, onTabItemSelect }: Props) {
   const [selectedTabId, setSelectedTabId] = useState(
     () => defaultTabId ?? tabItems[0].tabId,
   );
@@ -41,5 +41,3 @@ function SideTabs({ defaultTabId, tabItems, onTabItemSelect }: Props) {
     </div>
   );
 }
-
-export default SideTabs;

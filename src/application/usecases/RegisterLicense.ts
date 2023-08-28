@@ -1,11 +1,11 @@
 import { inject, injectable } from 'inversify';
 
-import TYPES from '@di/types';
+import { TYPES } from '@di/types';
 
 import type { License } from '@domain/models/license';
 
 import type { LicenseManager } from '@application/ports/license';
-import HookManager from '@application/services/hook';
+import { HookManager } from '@application/services/hook';
 import type { UseCase } from '@application/usecases/UseCase';
 
 interface RegisterLicenseUseCaseInput {
@@ -18,7 +18,7 @@ interface RegisterLicenseUseCaseOutput {
 }
 
 @injectable()
-export default class RegisterLicenseUseCase
+export class RegisterLicenseUseCase
   implements UseCase<RegisterLicenseUseCaseInput>
 {
   constructor(

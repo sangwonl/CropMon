@@ -1,15 +1,15 @@
 import { inject, injectable } from 'inversify';
 
-import TYPES from '@di/types';
+import { TYPES } from '@di/types';
 
 import type { AppManager } from '@application/ports/app';
 import type { UiDirector } from '@application/ports/director';
-import HookManager from '@application/services/hook';
-import LicenseService from '@application/services/license';
+import { HookManager } from '@application/services/hook';
+import { LicenseService } from '@application/services/license';
 import type { UseCase } from '@application/usecases/UseCase';
 
 @injectable()
-export default class CheckUpdateUseCase implements UseCase<void> {
+export class CheckUpdateUseCase implements UseCase<void> {
   constructor(
     private hookManager: HookManager,
     private licenseService: LicenseService,

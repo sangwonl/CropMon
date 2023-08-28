@@ -1,16 +1,16 @@
 import { inject, injectable } from 'inversify';
 import semver from 'semver';
 
-import TYPES from '@di/types';
+import { TYPES } from '@di/types';
+
+import type { PreferencesRepository } from '@domain/repositories/preferences';
 
 import type { AppManager } from '@application/ports/app';
-import HookManager from '@application/services/hook';
+import { HookManager } from '@application/services/hook';
 import type { UseCase } from '@application/usecases/UseCase';
 
-import PreferencesRepository from '@adapters/repositories/preferences';
-
 @injectable()
-export default class CheckVersionUseCase implements UseCase<void> {
+export class CheckVersionUseCase implements UseCase<void> {
   constructor(
     @inject(TYPES.PreferencesRepository)
     private prefsRepo: PreferencesRepository,

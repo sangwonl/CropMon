@@ -10,7 +10,7 @@ type Props = {
   onSelect: (tabId: string) => void;
 };
 
-function SideTab({ tabId, title, selected, onSelect }: Props) {
+export function SideTab({ tabId, title, selected, onSelect }: Props) {
   return (
     <div
       className={classNames(styles.tabItem, {
@@ -23,5 +23,3 @@ function SideTab({ tabId, title, selected, onSelect }: Props) {
     </div>
   );
 }
-
-export default SideTab;

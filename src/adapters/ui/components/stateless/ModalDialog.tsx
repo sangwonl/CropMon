@@ -6,7 +6,7 @@ type Props = {
   children: ReactNode;
 };
 
-function ModalDialog({ children }: Props) {
+export function ModalDialog({ children }: Props) {
   return (
     <div className={styles.modal}>
       <div className={styles.container}>
@@ -15,5 +15,3 @@ function ModalDialog({ children }: Props) {
     </div>
   );
 }
-
-export default ModalDialog;

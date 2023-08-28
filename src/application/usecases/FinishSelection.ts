@@ -1,15 +1,15 @@
 import { inject, injectable } from 'inversify';
 
-import TYPES from '@di/types';
+import { TYPES } from '@di/types';
 
 import type { Bounds } from '@domain/models/screen';
 import type { PreferencesRepository } from '@domain/repositories/preferences';
-import CaptureSession from '@domain/services/capture';
+import { CaptureSession } from '@domain/services/capture';
 
 import type { UiState } from '@application/models/ui';
 import type { UiDirector } from '@application/ports/director';
-import HookManager from '@application/services/hook';
-import StateManager from '@application/services/state';
+import { HookManager } from '@application/services/hook';
+import { StateManager } from '@application/services/state';
 import type { UseCase } from '@application/usecases/UseCase';
 
 interface FinishSelectionUseCaseInput {
@@ -17,7 +17,7 @@ interface FinishSelectionUseCaseInput {
 }
 
 @injectable()
-export default class FinishSelectionUseCase
+export class FinishSelectionUseCase
   implements UseCase<FinishSelectionUseCaseInput>
 {
   constructor(
