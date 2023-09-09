@@ -76,7 +76,7 @@ export class AppTrayCore {
       this.tray.setTitle('');
     } else {
       const h = Math.floor(elapsedTimeInSec / 3600);
-      const m = Math.floor(elapsedTimeInSec / 60);
+      const m = Math.floor((elapsedTimeInSec - 3600 * h) / 60);
       const s = elapsedTimeInSec % 60;
       this.tray.setTitle(this.makeAsTimeString(h, m, s), {
         fontType: 'monospacedDigit',
