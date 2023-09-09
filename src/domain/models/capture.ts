@@ -50,16 +50,15 @@ export class CaptureContext {
     target: CaptureTarget,
     recordOptions: RecordOptions,
   ): CaptureContext {
+    // const outputFormat = recordOptions.outputAsGif ? 'gif' : 'mp4';
+    const outputFormat = recordOptions.outputAsGif ? 'gif' : 'webm';
     const fileName = getNowAsYYYYMMDDHHmmss();
-    const output = path.join(
-      prefs.recordHome,
-      `${fileName}.${prefs.outputFormat}`,
-    );
+    const output = path.join(prefs.recordHome, `${fileName}.${outputFormat}`);
 
     return new CaptureContext(
       target,
       output,
-      recordOptions.outputAsGif ? 'gif' : 'mp4',
+      outputFormat,
       recordOptions.recordAudio,
       recordOptions.audioSources,
     );

@@ -20,7 +20,7 @@ export class CaptureOverlay extends Widget<CaptureOverlayOptions> {
 
     // Not to expose traffic light buttons
     if (isMac()) {
-      this.window.setTrafficLightPosition(TRAFFIC_LIGHT_OFFSET_FOR_HIDING);
+      this.window.setWindowButtonPosition(TRAFFIC_LIGHT_OFFSET_FOR_HIDING);
     }
   }
 

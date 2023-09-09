@@ -1,6 +1,3 @@
-/* eslint-disable max-classes-per-file */
-/* eslint-disable prefer-const */
-
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
@@ -47,13 +44,17 @@ type RecordState = 'initial' | 'recording' | 'stopping' | 'stopped';
 const RECORD_TIMESLICE_MS = 200;
 const NUM_CHUNKS_TO_FLUSH = 50;
 const CHUNK_HANLER_INTERVAL = 1000;
-const MEDIA_MIME_TYPE = 'video/webm; codecs=h264,opus';
-// const MEDIA_MIME_TYPE = 'video/webm; codecs=vp8,opus';
-// const MEDIA_MIME_TYPE = 'video/webm; codecs=vp9,opus';
+const MEDIA_MIME_TYPES: Record<OutputFormat, string> = {
+  mp4: 'video/webm; codecs=h264,opus',
+  gif: 'video/webm; codecs=vp8,opus',
+  webm: 'video/webm; codecs=vp8,opus',
+  // webm: 'video/webm; codecs=vp9,opus',
+};
 
 const gPlatformApi = diContainer.get<PlatformApi>(TYPES.PlatformApi);
 
 class MediaRecordDelegatee {
+  private mimeType?: string;
   private mediaRecorder?: MediaRecorder;
   private recordState: RecordState = 'initial';
   private tempFilePath?: string;
@@ -68,10 +69,11 @@ class MediaRecordDelegatee {
   }
 
   public start = async (recordCtx: RecordContext) => {
-    const { videoBitrates } = recordCtx;
+    const { outputFormat, videoBitrates } = recordCtx;
+    this.mimeType = MEDIA_MIME_TYPES[outputFormat];
 
     const stream = await this.createStreamToRecord(recordCtx);
-    const recOpts = this.recorderOpts(MEDIA_MIME_TYPE, videoBitrates);
+    const recOpts = this.recorderOpts(this.mimeType, videoBitrates);
     this.mediaRecorder = new MediaRecorder(stream, recOpts);
     this.mediaRecorder.onstart = this.handleRecordStart;
     this.mediaRecorder.ondataavailable = this.handleStreamDataAvailable;
@@ -130,8 +132,8 @@ class MediaRecordDelegatee {
     return audioSources;
   };
 
-  private recorderOpts(mimeType?: string, videoBitrates?: number) {
-    const mType = mimeType ?? MEDIA_MIME_TYPE;
+  private recorderOpts(mimeType: string, videoBitrates?: number) {
+    const mType = mimeType;
     if (videoBitrates !== undefined) {
       return {
         mimeType: mType,
@@ -376,7 +378,7 @@ class MediaRecordDelegatee {
       return;
     }
 
-    const blob = new Blob(chunks, { type: MEDIA_MIME_TYPE });
+    const blob = new Blob(chunks, { type: this.mimeType });
     const buffer = Buffer.from(await blob.arrayBuffer());
     await fs.promises.appendFile(this.tempFilePath!, buffer);
   };
@@ -435,7 +437,7 @@ class MediaRecordDelegatee {
     const fileName = getNowAsYYYYMMDDHHmmss();
     return path.join(
       gPlatformApi.getPath('temp'),
-      'kropsaurus',
+      'cropmon',
       'recording',
       `tmp-${fileName}.webm`,
     );
