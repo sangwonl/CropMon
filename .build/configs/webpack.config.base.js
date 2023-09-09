@@ -44,6 +44,7 @@ module.exports = {
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx', '.svelte', '.css', '.scss', '.sass'],
     modules: [path.join(__dirname, '../src'), 'node_modules'],
     plugins: [new TsconfigPathsPlugin({})],
+    conditionNames: ['svelte', 'browser', 'import'],
   },
 
   plugins: [
