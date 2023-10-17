@@ -34,15 +34,16 @@
     "**/node_modules": true
   },
 
-  "editor.tabSize": 2,
-  "editor.insertSpaces": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": false,
+
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
 
-  "eslint.validate": ["typescript", "javascript", "svelte"],
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+
+  "eslint.validate": ["typescript", "javascript"],
 
   "jestrunner.jestCommand": "npm run test --"
 }

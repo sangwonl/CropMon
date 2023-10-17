@@ -7,8 +7,6 @@
     "plugin:import/recommended",
     "plugin:promise/recommended",
     "plugin:storybook/recommended",
-    "plugin:svelte/recommended",
-    "plugin:svelte/prettier",
     "plugin:prettier/recommended"
   ],
   "plugins": ["@typescript-eslint"],
@@ -84,17 +82,9 @@
     "ecmaVersion": 2020,
     "sourceType": "module",
     "createDefaultProgram": true,
-    "extraFileExtensions": [".svelte"]
+    "extraFileExtensions": []
   },
-  "overrides": [
-    {
-      "files": ["*.svelte"],
-      "parser": "svelte-eslint-parser",
-      "parserOptions": {
-        "parser": "@typescript-eslint/parser"
-      }
-    }
-  ],
+  "overrides": [],
   "settings": {
     "import/resolver": {
       // See https://github.com/benmosher/eslint-plugin-import/issues/1396#issuecomment-575727774 for line below

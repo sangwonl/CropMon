@@ -2,7 +2,7 @@ import type { StoryObj } from '@storybook/react';
 
 import React, { type ComponentProps } from 'react';
 
-import StaticPage from '@adapters/ui/components/stateless/StaticPage';
+import { StaticPage } from '@adapters/ui/components/stateless/StaticPage';
 
 export default {
   title: 'Kropsaurus/StaticPage',

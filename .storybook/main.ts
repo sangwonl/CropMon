@@ -1,30 +1,30 @@
-import type { StorybookConfig } from '@storybook/svelte-webpack5';
+import type { StorybookConfig } from '@storybook/react-webpack5';
 
 const config: StorybookConfig = {
-  stories: ['../src/**/*.mdx', '../src/**/*.stories.@(svelte)'],
+  stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
   staticDirs: ['../assets'],
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
+    '@storybook/addon-onboarding',
     '@storybook/addon-interactions',
-    '@storybook/addon-svelte-csf',
   ],
   framework: {
-    name: '@storybook/svelte-webpack5',
+    name: '@storybook/react-webpack5',
     options: {},
   },
   docs: {
     autodocs: 'tag',
   },
   features: {
-    storyStoreV7: false, // 👈 Opt out of on-demand story loading
+    storyStoreV7: true, // 👈 Opt out of on-demand story loading
   },
   webpackFinal: (config) => {
     if (!config?.module?.rules) {
       return config;
     }
 
-    config.module.rules.splice(8, 1);
+    config.module.rules.splice(6, 1);
     config.module.rules.push({
       test: /\.global\.(c|sc|sa)ss$/,
       use: [

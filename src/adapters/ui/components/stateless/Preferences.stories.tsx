@@ -5,7 +5,7 @@ import React, { type ComponentProps } from 'react';
 import { CaptureMode } from '@domain/models/common';
 import type { Preferences } from '@domain/models/preferences';
 
-import PrefsPanels from '@adapters/ui/components/stateless/PrefsPanels';
+import { PrefsPanels } from '@adapters/ui/components/stateless/PrefsPanels';
 
 export default {
   title: 'Kropsaurus/Preferences',

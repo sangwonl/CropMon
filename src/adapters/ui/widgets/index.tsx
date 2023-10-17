@@ -4,7 +4,6 @@ import { createRoot } from 'react-dom/client';
 
 import '@di/containers/renderer';
 
-import { HelloSvelteWidgetCreator } from '@adapters/ui/widgets/hellosvelte/creator';
 import { CaptureOverlayCreator } from '@adapters/ui/widgets/overlays/creator';
 import { PreferencesDialogCreator } from '@adapters/ui/widgets/preferences/creator';
 import { ProgressDialogCreator } from '@adapters/ui/widgets/progressdialog/creator';
@@ -19,10 +18,6 @@ type ReactWidgetCreatorMap = {
     | typeof StaticPageDialogCreator;
 };
 
-type SvelteWidgetCreatorMap = {
-  [widgetType: number]: typeof HelloSvelteWidgetCreator;
-};
-
 const reactWidgetCreators: ReactWidgetCreatorMap = {
   [WidgetType.PROGRESS_DIALOG]: ProgressDialogCreator,
   [WidgetType.STATIC_PAGE_DIALOG]: StaticPageDialogCreator,
@@ -30,19 +25,8 @@ const reactWidgetCreators: ReactWidgetCreatorMap = {
   [WidgetType.CAPTURE_OVERLAY]: CaptureOverlayCreator,
 };
 
-const svelteWidgetCreators: SvelteWidgetCreatorMap = {
-  [WidgetType.HELLO_SVELTE]: HelloSvelteWidgetCreator,
-};
-
 ipcRenderer.on('loadWidget', (_event, data) => {
   const { type: widgetType, options } = data;
-
-  if (widgetType === WidgetType.HELLO_SVELTE) {
-    const createSvelteWidget = svelteWidgetCreators[widgetType];
-    createSvelteWidget(options);
-    return;
-  }
-
   const ReactWidget = reactWidgetCreators[widgetType];
   const root = createRoot(document.getElementById('root')!);
   root.render(<ReactWidget {...options} />);

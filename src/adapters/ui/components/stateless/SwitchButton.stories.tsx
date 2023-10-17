@@ -3,7 +3,7 @@ import type { StoryObj } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import React, { type ComponentProps } from 'react';
 
-import SwitchButton from '@adapters/ui/components/stateless/SwitchButton';
+import { SwitchButton } from '@adapters/ui/components/stateless/SwitchButton';
 
 import closeIcon from '@assets/close.png';
 import micIcon from '@assets/mic.png';

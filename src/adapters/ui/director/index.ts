@@ -25,7 +25,6 @@ import type { AppTray } from '@application/ports/tray';
 
 import { ElectronUiStateApplier } from '@adapters/state';
 import { CaptureOverlayWrap } from '@adapters/ui/director/overlay';
-import { HelloSvelteWidget } from '@adapters/ui/widgets/hellosvelte';
 import { PreferencesDialog } from '@adapters/ui/widgets/preferences';
 import { ProgressDialog } from '@adapters/ui/widgets/progressdialog';
 import { StaticPageDialog } from '@adapters/ui/widgets/staticpage';
@@ -135,13 +134,6 @@ export class ElectronUiDirector implements UiDirector {
     version: string,
     preferences: Preferences,
   ): Promise<void> {
-    const hello = HelloSvelteWidget.create({
-      width: 440,
-      height: 480,
-    });
-    hello.webContents.openDevTools();
-    hello.open();
-
     if (this.prefsDialog && !this.prefsDialog.isDestroyed()) {
       this.prefsDialog.show();
       return;

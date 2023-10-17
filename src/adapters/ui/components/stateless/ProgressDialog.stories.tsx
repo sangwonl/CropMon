@@ -2,7 +2,7 @@ import type { StoryObj } from '@storybook/react';
 
 import React, { type ComponentProps } from 'react';
 
-import ProgressDialog from '@adapters/ui/components/stateless/ProgressDialog';
+import { ProgressDialog } from '@adapters/ui/components/stateless/ProgressDialog';
 
 export default {
   title: 'Kropsaurus/ProgressDialog',

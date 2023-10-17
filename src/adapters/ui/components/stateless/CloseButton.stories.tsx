@@ -3,7 +3,7 @@ import type { StoryObj } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import React from 'react';
 
-import CloseButton from '@adapters/ui/components/stateless/CloseButton';
+import { CloseButton } from '@adapters/ui/components/stateless/CloseButton';
 
 export default {
   title: 'Kropsaurus/CloseButton',

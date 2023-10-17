@@ -3,7 +3,7 @@ import type { StoryObj } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import React, { type ComponentProps } from 'react';
 
-import SelectList from '@adapters/ui/components/stateless/SelectList';
+import { SelectList } from '@adapters/ui/components/stateless/SelectList';
 
 export default {
   title: 'Kropsaurus/SelectList',

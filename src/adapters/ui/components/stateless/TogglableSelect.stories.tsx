@@ -3,7 +3,7 @@ import type { StoryObj } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import React, { type ComponentProps } from 'react';
 
-import TogglableSelect from '@adapters/ui/components/stateless/TogglableSelect';
+import { TogglableSelect } from '@adapters/ui/components/stateless/TogglableSelect';
 
 import micIcon from '@assets/mic.png';
 
