@@ -46,9 +46,8 @@ const NUM_CHUNKS_TO_FLUSH = 50;
 const CHUNK_HANLER_INTERVAL = 1000;
 const MEDIA_MIME_TYPES: Record<OutputFormat, string> = {
   mp4: 'video/webm; codecs=h264,opus',
-  gif: 'video/webm; codecs=vp8,opus',
   webm: 'video/webm; codecs=vp8,opus',
-  // webm: 'video/webm; codecs=vp9,opus',
+  gif: 'video/webm; codecs=vp8,opus',
 };
 
 const gPlatformApi = diContainer.get<PlatformApi>(TYPES.PlatformApi);

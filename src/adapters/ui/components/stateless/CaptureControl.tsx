@@ -11,12 +11,13 @@ import {
   shortcutForDisplay,
   SHORTCUT_CAPTURE_MODE_AREA,
   SHORTCUT_CAPTURE_MODE_SCREEN,
-  SHORTCUT_OUTPUT_GIF,
   SHORTCUT_OUTPUT_MP4,
+  SHORTCUT_OUTPUT_WEBM,
+  SHORTCUT_OUTPUT_GIF,
 } from '@utils/shortcut';
 
 import type { RecordOptions } from '@domain/models/capture';
-import { CaptureMode } from '@domain/models/common';
+import { CaptureMode, OutputFormat } from '@domain/models/common';
 
 import { CloseButton } from '@adapters/ui/components/stateless/CloseButton';
 import { SwitchButton } from '@adapters/ui/components/stateless/SwitchButton';
@@ -48,6 +49,11 @@ const BUTTON_ITEMS_REC_OPTS = [
     value: 'mp4', // as OutputFormat,
     title: 'MP4',
     alt: `Output as MP4 (${shortcutForDisplay(SHORTCUT_OUTPUT_MP4)})`,
+  },
+  {
+    value: 'webm', // as OutputFormat,
+    title: 'WebM',
+    alt: `Output as WebM (${shortcutForDisplay(SHORTCUT_OUTPUT_WEBM)})`,
   },
   {
     value: 'gif', // as OutputFormat,
@@ -94,9 +100,9 @@ export function CaptureControl({
       return items;
     }, [recOpts.audioSources]);
 
-  const toggleEnabled = useMemo(() => {
-    return !recOpts.outputAsGif && recOpts.audioSources.length > 0;
-  }, [recOpts.outputAsGif, recOpts.audioSources]);
+  const toggleAudioEnabled = useMemo(() => {
+    return recOpts.outputFormat !== 'gif' && recOpts.audioSources.length > 0;
+  }, [recOpts.outputFormat, recOpts.audioSources]);
 
   const handleCaptModeChange = useCallback(
     (mode: CaptureMode) => {
@@ -146,14 +152,14 @@ export function CaptureControl({
       <div className={styles.divider} />
       <div className={styles.btnGroup}>
         <SwitchButton
-          activeItemIndex={BUTTON_ITEMS_REC_OPTS.findIndex(item =>
-            recOpts.outputAsGif ? item.value === 'gif' : item.value === 'mp4',
+          activeItemIndex={BUTTON_ITEMS_REC_OPTS.findIndex(
+            item => recOpts.outputFormat === (item.value as OutputFormat),
           )}
           items={BUTTON_ITEMS_REC_OPTS}
           onSelect={(index: number) => {
             handleRecOptsChange({
               ...recOpts,
-              outputAsGif: BUTTON_ITEMS_REC_OPTS[index].value === 'gif',
+              outputFormat: BUTTON_ITEMS_REC_OPTS[index].value as OutputFormat,
             });
           }}
         />
@@ -161,7 +167,7 @@ export function CaptureControl({
       <div className={styles.divider} />
       <div className={styles.btnGroup}>
         <TogglableSelect
-          enabled={toggleEnabled}
+          enabled={toggleAudioEnabled}
           toggleButton={{
             ...BUTTON_AUDIO_TOGGLE,
             active: recOpts.recordAudio,

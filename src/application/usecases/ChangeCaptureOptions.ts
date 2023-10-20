@@ -49,7 +49,7 @@ export class ChangeCaptureOptionsUseCase
         controlPanel: {
           ...state.controlPanel,
           captureMode: options.target.mode,
-          outputAsGif: options.recordOptions.outputAsGif,
+          outputFormat: options.recordOptions.outputFormat,
           recordAudio: options.recordOptions.recordAudio,
           audioSources: options.recordOptions.audioSources,
           confirmedToCaptureAsIs: false,

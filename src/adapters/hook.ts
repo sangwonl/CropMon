@@ -15,8 +15,9 @@ import {
   SHORTCUT_CAPTURE_MODE_SCREEN,
   SHORTCUT_ENTER,
   SHORTCUT_ESCAPE,
-  SHORTCUT_OUTPUT_GIF,
   SHORTCUT_OUTPUT_MP4,
+  SHORTCUT_OUTPUT_WEBM,
+  SHORTCUT_OUTPUT_GIF,
 } from '@utils/shortcut';
 
 import { TYPES } from '@di/types';
@@ -260,7 +261,7 @@ export class BuiltinHooks {
       target: { mode: mode ?? prefs.captureMode },
       recordOptions: {
         ...recOpts,
-        outputAsGif: (fmt ?? prefs.outputFormat) === 'gif',
+        outputFormat: (fmt ?? prefs.outputFormat),
       },
     });
   };
@@ -292,6 +293,10 @@ export class BuiltinHooks {
         this.handleShortcutCaptureOpts(undefined, 'mp4'),
       );
 
+      globalShortcut.register(SHORTCUT_OUTPUT_WEBM, () =>
+        this.handleShortcutCaptureOpts(undefined, 'webm'),
+      );
+
       globalShortcut.register(SHORTCUT_OUTPUT_GIF, () =>
         this.handleShortcutCaptureOpts(undefined, 'gif'),
       );
@@ -301,6 +306,7 @@ export class BuiltinHooks {
       globalShortcut.unregister(SHORTCUT_CAPTURE_MODE_SCREEN);
       globalShortcut.unregister(SHORTCUT_CAPTURE_MODE_AREA);
       globalShortcut.unregister(SHORTCUT_OUTPUT_MP4);
+      globalShortcut.unregister(SHORTCUT_OUTPUT_WEBM);
       globalShortcut.unregister(SHORTCUT_OUTPUT_GIF);
     }
   };

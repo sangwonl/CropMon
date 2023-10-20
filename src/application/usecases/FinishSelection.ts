@@ -63,7 +63,7 @@ export class FinishSelectionUseCase
         screenId: captureOverlay.selectedScreenId,
       },
       recordOptions: {
-        outputAsGif: controlPanel.outputAsGif,
+        outputFormat: controlPanel.outputFormat,
         recordAudio: controlPanel.recordAudio,
         audioSources: controlPanel.audioSources.filter(s => s.active),
       },

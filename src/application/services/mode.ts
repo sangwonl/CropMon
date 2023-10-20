@@ -53,7 +53,7 @@ export class CaptureModeManager {
               ...INITIAL_UI_STATE.controlPanel,
               show: true,
               captureMode,
-              outputAsGif: prefs.outputFormat === 'gif',
+              outputFormat: prefs.outputFormat,
               recordAudio: prefs.recordAudio,
               audioSources,
             },

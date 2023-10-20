@@ -21,7 +21,7 @@ const Template = (args: ComponentProps<typeof CaptureControl>) => {
   const [recOpts, setRecOpts] = useState<RecordOptions>(recordOptions);
 
   return (
-    <div style={{ width: '400px', height: '56px' }}>
+    <div style={{ width: '440px', height: '56px' }}>
       <CaptureControl
         captureMode={captMode}
         recordOptions={recOpts}
@@ -37,7 +37,7 @@ export const Default: Story = {
   args: {
     captureMode: CaptureMode.AREA,
     recordOptions: {
-      outputAsGif: false,
+      outputFormat: 'mp4',
       recordAudio: true,
       audioSources: [
         {
@@ -60,7 +60,7 @@ export const NoAudioSources: Story = {
   args: {
     captureMode: CaptureMode.AREA,
     recordOptions: {
-      outputAsGif: false,
+      outputFormat: 'gif',
       recordAudio: true,
       audioSources: [],
     },

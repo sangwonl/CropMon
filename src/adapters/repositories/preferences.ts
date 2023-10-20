@@ -44,7 +44,7 @@ export class PrefsRepositoryImpl implements PreferencesRepository {
   }
 
   applyRecOptionsToPrefs(prefs: Preferences, recOpts: RecordOptions) {
-    prefs.outputFormat = recOpts.outputAsGif ? 'gif' : 'mp4';
+    prefs.outputFormat = recOpts.outputFormat;
     prefs.recordAudio = recOpts.recordAudio;
     if (recOpts.audioSources?.length > 0) {
       prefs.audioSources = recOpts.audioSources;
@@ -53,7 +53,7 @@ export class PrefsRepositoryImpl implements PreferencesRepository {
 
   getRecOptionsFromPrefs(prefs: Preferences): RecordOptions {
     return {
-      outputAsGif: prefs.outputFormat === 'gif',
+      outputFormat: prefs.outputFormat,
       recordAudio: prefs.recordAudio,
       audioSources: prefs.audioSources,
     };

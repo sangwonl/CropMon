@@ -1,4 +1,8 @@
-import { CaptureMode, type AudioSource } from '@domain/models/common';
+import {
+  CaptureMode,
+  type AudioSource,
+  OutputFormat,
+} from '@domain/models/common';
 import {
   DEFAULT_APPEAR_COLORS,
   type Preferences,
@@ -13,7 +17,7 @@ export type PreferencesModal = {
 export type ControlPanel = {
   show: boolean;
   captureMode: CaptureMode;
-  outputAsGif: boolean;
+  outputFormat: OutputFormat;
   recordAudio: boolean;
   audioSources: AudioSource[];
   confirmedToCaptureAsIs: boolean;
@@ -50,7 +54,7 @@ export const INITIAL_UI_STATE: UiState = {
     show: false,
     captureMode: CaptureMode.AREA,
     audioSources: [],
-    outputAsGif: false,
+    outputFormat: 'mp4',
     recordAudio: false,
     confirmedToCaptureAsIs: false,
   },

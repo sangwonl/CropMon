@@ -15,12 +15,12 @@
   color: #eee;
   user-select: none;
   cursor: default;
-  min-width: 40px;
+  min-width: 42px;
   height: 100%;
 }
 
 .btnIcon {
-  height: 70%;
+  height: 72%;
   width: auto;
 }
 

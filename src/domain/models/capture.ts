@@ -17,7 +17,7 @@ export type CaptureTarget = {
 };
 
 export type RecordOptions = {
-  outputAsGif: boolean;
+  outputFormat: OutputFormat;
   recordAudio: boolean;
   audioSources: AudioSource[];
 };
@@ -50,8 +50,7 @@ export class CaptureContext {
     target: CaptureTarget,
     recordOptions: RecordOptions,
   ): CaptureContext {
-    // const outputFormat = recordOptions.outputAsGif ? 'gif' : 'mp4';
-    const outputFormat = recordOptions.outputAsGif ? 'gif' : 'webm';
+    const outputFormat = recordOptions.outputFormat;
     const fileName = getNowAsYYYYMMDDHHmmss();
     const output = path.join(prefs.recordHome, `${fileName}.${outputFormat}`);
 
