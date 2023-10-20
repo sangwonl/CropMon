@@ -24,7 +24,7 @@ export class MixPanelTracker implements AnalyticsTracker {
       accessPropertiesByDotNotation: false,
     });
 
-    this.mixpanel = Mixpanel.init('a6c899ecfb1c503e9edac87a15374a7a', {
+    this.mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN, {
       debug: isDebugMode(),
     });
   }

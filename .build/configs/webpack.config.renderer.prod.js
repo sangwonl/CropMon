@@ -9,6 +9,7 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { merge } = require('webpack-merge');
 const TerserPlugin = require('terser-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 const baseConfig = require('./webpack.config.base');
 const CheckNodeEnv = require('../scripts/CheckNodeEnv');
 const DeleteSourceMaps = require('../scripts/DeleteSourceMaps');
@@ -181,6 +182,11 @@ module.exports = merge(baseConfig, {
   },
 
   plugins: [
+    new Dotenv({
+      path: path.join(__dirname, '../../.env'),
+      allowEmptyValues: true
+    }),
+
     /**
      * Create global constants which can be configured at compile time.
      *

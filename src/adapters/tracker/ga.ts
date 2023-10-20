@@ -22,7 +22,7 @@ export class GoogleAnalyticsTracker implements AnalyticsTracker {
       accessPropertiesByDotNotation: false,
     });
 
-    this.tracker = ua('UA-197078322-1', this.getTrackUid());
+    this.tracker = ua(process.env.GA_ACCOUNT_ID, this.getTrackUid());
     this.tracker.set('aid', appId);
     this.tracker.set('an', productName);
     this.tracker.set('av', curVersion);

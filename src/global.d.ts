@@ -1,11 +1,8 @@
-export {};
+declare namespace NodeJS {
+  interface ProcessEnv {
+    GA_ACCOUNT_ID: string;
+    MIXPANEL_TOKEN: string;
+  }
 
-// declare namespace NodeJS {
-//   export interface Global {
-//   }
-// }
-
-// declare global {
-//   interface Window {
-//   }
-// }
+  interface Global {}
+}

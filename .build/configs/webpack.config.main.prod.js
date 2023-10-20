@@ -7,6 +7,7 @@ const webpack = require('webpack');
 const { merge } = require('webpack-merge');
 const TerserPlugin = require('terser-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const Dotenv = require('dotenv-webpack');
 const baseConfig = require('./webpack.config.base');
 const CheckNodeEnv = require('../scripts/CheckNodeEnv');
 const DeleteSourceMaps = require('../scripts/DeleteSourceMaps');
@@ -41,6 +42,11 @@ module.exports = merge(baseConfig, {
   },
 
   plugins: [
+    new Dotenv({
+      path: path.join(__dirname, '../../.env'),
+      allowEmptyValues: true
+    }),
+
     new BundleAnalyzerPlugin({
       analyzerMode:
         process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',

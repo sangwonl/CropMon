@@ -43,4 +43,4 @@ npm-debug.log.*
 
 # Misc
 csc
-.env*
+.env

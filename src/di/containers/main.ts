@@ -55,6 +55,7 @@ import { ElectronPreferencesStore } from '@adapters/preferences';
 import { ElectronScreenRecorder } from '@adapters/recorder/recorder';
 import { PrefsRepositoryImpl } from '@adapters/repositories/preferences';
 import { ElectronUiStateApplier } from '@adapters/state';
+import { FakeTracker } from '@adapters/tracker/fake';
 import { MixPanelTracker } from '@adapters/tracker/mixPanel';
 import { ElectronUiDirector } from '@adapters/ui/director';
 import { MacAppTray } from '@adapters/ui/widgets/tray/mac';
@@ -90,7 +91,7 @@ diContainer
 
 diContainer
   .bind<AnalyticsTracker>(TYPES.AnalyticsTracker)
-  .to(MixPanelTracker)
+  .to(process.env.MIXPANEL_TOKEN ? MixPanelTracker : FakeTracker)
   .inSingletonScope();
 
 diContainer
