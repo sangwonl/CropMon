@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-import type { License } from '@domain/models/license';
 import type { Preferences } from '@domain/models/preferences';
 
 import { PrefsAboutPanel } from '@adapters/ui/components/stateless/PrefsAboutPanel';
@@ -17,12 +16,8 @@ type Props = {
   appName: string;
   version: string;
   prefs: Preferences;
-  license: License | null;
   recordHome: string;
-  registerError: string | null;
   onChooseRecordHome: () => void;
-  onRegister: (email: string, licenseKey: string) => void;
-  onBuyClick: () => void;
   onSave: (preferences: Preferences) => void;
   onClose: () => void;
 };
@@ -40,12 +35,8 @@ export function PrefsPanels({
   appName,
   version,
   prefs,
-  license,
   recordHome,
-  registerError,
   onChooseRecordHome,
-  onRegister,
-  onBuyClick,
   onSave,
   onClose,
 }: Props) {
@@ -84,10 +75,6 @@ export function PrefsPanels({
                 appName={appName}
                 version={version}
                 prefs={prefs}
-                license={license}
-                registerError={registerError}
-                onRegister={onRegister}
-                onBuyClick={onBuyClick}
               />
             ),
           }[curTabId]

@@ -2,7 +2,6 @@ import { ipcRenderer } from 'electron';
 import { injectable } from 'inversify';
 
 import type { CaptureOptions } from '@domain/models/capture';
-import type { License } from '@domain/models/license';
 import type { Preferences } from '@domain/models/preferences';
 import type { Bounds, Point } from '@domain/models/screen';
 
@@ -81,14 +80,6 @@ export class UseCaseInteractorForRenderer implements UseCaseInteractor {
 
   savePreferences(prefs: Preferences): Promise<Preferences> {
     return ipcRenderer.invoke('savePreferences', prefs);
-  }
-
-  getLicense(): Promise<License | null> {
-    return ipcRenderer.invoke('getLicense');
-  }
-
-  registerLicense(email: string, licenseKey: string): Promise<License | null> {
-    return ipcRenderer.invoke('registerLicense', email, licenseKey);
   }
 
   openExternal(url: string): void {

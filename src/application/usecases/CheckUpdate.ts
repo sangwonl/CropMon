@@ -5,29 +5,17 @@ import { TYPES } from '@di/types';
 import type { AppManager } from '@application/ports/app';
 import type { UiDirector } from '@application/ports/director';
 import { HookManager } from '@application/services/hook';
-import { LicenseService } from '@application/services/license';
 import type { UseCase } from '@application/usecases/UseCase';
 
 @injectable()
 export class CheckUpdateUseCase implements UseCase<void> {
   constructor(
     private hookManager: HookManager,
-    private licenseService: LicenseService,
     @inject(TYPES.AppManager) private appManager: AppManager,
     @inject(TYPES.UiDirector) private uiDirector: UiDirector,
   ) {}
 
   async execute() {
-    const license = await this.licenseService.checkAndGetLicense();
-    if (!license?.validated) {
-      if (this.appManager.isFreeVersion()) {
-        return;
-      }
-
-      // 무료 버전이 아닌데 라이센스가 올바르지 않으면 강제 종료
-      this.appManager.quit();
-    }
-
     await this.appManager.checkForUpdates(
       this.onUpdateAvailable,
       this.onUpdateNotAvailable,

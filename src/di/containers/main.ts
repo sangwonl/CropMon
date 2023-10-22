@@ -10,32 +10,27 @@ import type { RecorderSource, ScreenRecorder } from '@domain/services/recorder';
 import type { AppManager } from '@application/ports/app';
 import type { UiDirector } from '@application/ports/director';
 import type { UseCaseInteractor } from '@application/ports/interactor';
-import type { LicenseManager } from '@application/ports/license';
 import type { PlatformApi } from '@application/ports/platform';
 import type { PreferencesStore } from '@application/ports/preferences';
 import type { UiStateApplier } from '@application/ports/state';
 import type { AnalyticsTracker } from '@application/ports/tracker';
 import type { AppTray } from '@application/ports/tray';
 import { HookManager } from '@application/services/hook';
-import { LicenseService } from '@application/services/license';
 import { CaptureModeManager } from '@application/services/mode';
 import { StateManager } from '@application/services/state';
 import { ChangeCaptureOptionsUseCase } from '@application/usecases/ChangeCaptureOptions';
-import { CheckLicenseUseCase } from '@application/usecases/CheckLicense';
 import { CheckUpdateUseCase } from '@application/usecases/CheckUpdate';
 import { CheckVersionUseCase } from '@application/usecases/CheckVersion';
 import { DisableCaptureUseCase } from '@application/usecases/DisableCapture';
 import { EnableCaptureUseCase } from '@application/usecases/EnableCapture';
 import { FinishCaptureUseCase } from '@application/usecases/FinishCapture';
 import { FinishSelectionUseCase } from '@application/usecases/FinishSelection';
-import { GetLicenseUseCase } from '@application/usecases/GetLicense';
 import { GetUiStateUseCase } from '@application/usecases/GetUiState';
 import { InitializeAppUseCase } from '@application/usecases/InitializeApp';
 import { OpenCaptureFolderUseCase } from '@application/usecases/OpenCaptureFolder';
 import { OpenPrefsModalUseCase } from '@application/usecases/OpenPrefsModal';
 import { OpenUrlUseCase } from '@application/usecases/OpenUrl';
 import { QuitAppUseCase } from '@application/usecases/QuitApp';
-import { RegisterLicenseUseCase } from '@application/usecases/RegisterLicense';
 import { SavePrefsUseCase } from '@application/usecases/SavePrefs';
 import { SelectingTargetUseCase } from '@application/usecases/SelectingTarget';
 import { StartCaptureUseCase } from '@application/usecases/StartCapture';
@@ -49,7 +44,6 @@ import { SafeCipher } from '@adapters/crypto';
 import { BuiltinHooks } from '@adapters/hook';
 import { UseCaseInteractorCore } from '@adapters/interactor/core';
 import { UseCaseInteractorForMain } from '@adapters/interactor/main';
-import { SimpleLicenseManager } from '@adapters/license';
 import { PlatformApiForMain } from '@adapters/platform/main';
 import { ElectronPreferencesStore } from '@adapters/preferences';
 import { ElectronScreenRecorder } from '@adapters/recorder/recorder';
@@ -107,11 +101,6 @@ diContainer
 diContainer.bind<SafeCipher>(SafeCipher).toSelf().inSingletonScope();
 
 diContainer
-  .bind<LicenseManager>(TYPES.LicenseManager)
-  .to(SimpleLicenseManager)
-  .inSingletonScope();
-
-diContainer
   .bind<PreferencesRepository>(TYPES.PreferencesRepository)
   .to(PrefsRepositoryImpl)
   .inSingletonScope();
@@ -135,8 +124,6 @@ diContainer
   .toSelf()
   .inSingletonScope();
 
-diContainer.bind<LicenseService>(LicenseService).toSelf().inSingletonScope();
-
 diContainer.bind<CaptureSession>(CaptureSession).toSelf().inSingletonScope();
 
 diContainer.bind<BuiltinHooks>(BuiltinHooks).toSelf().inSingletonScope();
@@ -147,11 +134,6 @@ diContainer
   .inSingletonScope();
 
 diContainer.bind<QuitAppUseCase>(QuitAppUseCase).toSelf().inSingletonScope();
-
-diContainer
-  .bind<CheckLicenseUseCase>(CheckLicenseUseCase)
-  .toSelf()
-  .inSingletonScope();
 
 diContainer
   .bind<CheckUpdateUseCase>(CheckUpdateUseCase)
@@ -235,16 +217,6 @@ diContainer
 
 diContainer
   .bind<SavePrefsUseCase>(SavePrefsUseCase)
-  .toSelf()
-  .inSingletonScope();
-
-diContainer
-  .bind<GetLicenseUseCase>(GetLicenseUseCase)
-  .toSelf()
-  .inSingletonScope();
-
-diContainer
-  .bind<RegisterLicenseUseCase>(RegisterLicenseUseCase)
   .toSelf()
   .inSingletonScope();
 

@@ -18,7 +18,7 @@ import type { PreferencesRepository } from '@domain/repositories/preferences';
 import type { PreferencesStore } from '@application/ports/preferences';
 import { HookManager } from '@application/services/hook';
 
-import PrefsRepositoryImpl from '@adapters/repositories/preferences';
+import { PrefsRepositoryImpl } from '@adapters/repositories/preferences';
 
 describe('PreferencesRepository', () => {
   let mockedPrefsStore: PreferencesStore;
@@ -47,7 +47,6 @@ describe('PreferencesRepository', () => {
       countdownBackground: '#fefefe',
       countdownText: '#efefef',
     },
-    license: null,
   };
 
   beforeEach(() => {

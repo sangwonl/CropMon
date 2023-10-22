@@ -46,7 +46,6 @@ import type {
   HookArgsCaptureFinished,
   HookArgsCaptureOptionsChanged,
 } from '@application/services/hook';
-import { CheckLicenseUseCase } from '@application/usecases/CheckLicense';
 import { CheckUpdateUseCase } from '@application/usecases/CheckUpdate';
 import { CheckVersionUseCase } from '@application/usecases/CheckVersion';
 
@@ -66,7 +65,6 @@ export class BuiltinHooks {
     private hookManager: HookManager,
     private checkVersionUseCase: CheckVersionUseCase,
     private checkUpdateUseCase: CheckUpdateUseCase,
-    private checkLicenseUseCase: CheckLicenseUseCase,
   ) {
     this.hookManager.on('onAppLaunched', this.onAppLaunched);
     this.hookManager.on('onAppQuit', this.onAppQuit);
@@ -97,7 +95,6 @@ export class BuiltinHooks {
     this.hookManager.on('onCaptureStarting', this.onCaptureStarting);
     this.hookManager.on('onCaptureFinishing', this.onCaptureFinishing);
     this.hookManager.on('onCaptureFinished', this.onCaptureFinished);
-    this.hookManager.on('onLicenseRegistered', this.onLicenseRegistered);
   }
 
   private onAppLaunched = async () => {
@@ -136,8 +133,6 @@ export class BuiltinHooks {
 
   private onPrefsLoaded = async (args: HookArgsPrefsLoaded) => {
     await this.handlePrefsHook(args.loadedPrefs);
-
-    await this.checkLicenseUseCase.execute();
   };
 
   private onPrefsUpdated = async (args: HookArgsPrefsUpdated) => {
@@ -146,8 +141,6 @@ export class BuiltinHooks {
 
   private onPrefsModalOpening = async () => {
     this.tracker.view('preferences-modal');
-
-    await this.checkLicenseUseCase.execute();
   };
 
   private onCaptureOptionsChanged = async (
@@ -235,10 +228,6 @@ export class BuiltinHooks {
       this.tracker.eventL('capture', 'finish-capture', 'fail');
     }
     this.tracker.view('idle');
-  };
-
-  private onLicenseRegistered = async () => {
-    this.checkLicenseUseCase.execute();
   };
 
   private handlePrefsHook = async (

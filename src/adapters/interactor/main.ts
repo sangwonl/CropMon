@@ -4,7 +4,6 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '@di/types';
 
 import type { CaptureOptions } from '@domain/models/capture';
-import type { License } from '@domain/models/license';
 import type { Preferences } from '@domain/models/preferences';
 import type { Bounds, Point } from '@domain/models/screen';
 
@@ -41,12 +40,6 @@ export class UseCaseInteractorForMain implements UseCaseInteractor {
     });
     ipcMain.handle('savePreferences', async (_event, prefs: Preferences) => {
       return this.savePreferences(prefs);
-    });
-    ipcMain.handle('getLicense', async () => {
-      return this.getLicense();
-    });
-    ipcMain.handle('registerLicense', async (_event, email, licenseKey) => {
-      return this.registerLicense(email, licenseKey);
     });
     ipcMain.on('openExternal', (_event, url) => {
       this.openExternal(url);
@@ -123,14 +116,6 @@ export class UseCaseInteractorForMain implements UseCaseInteractor {
 
   savePreferences(prefs: Preferences): Promise<Preferences> {
     return this.interactor.savePreferences(prefs);
-  }
-
-  getLicense(): Promise<License | null> {
-    return this.interactor.getLicense();
-  }
-
-  registerLicense(email: string, licenseKey: string): Promise<License | null> {
-    return this.interactor.registerLicense(email, licenseKey);
   }
 
   openExternal(url: string): void {

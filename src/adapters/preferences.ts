@@ -36,7 +36,6 @@ const PREFS_APPEAR_COLOR_SELECT_TEXT = 'appearances.colors.selectingText';
 const PREFS_APPEAR_COLOR_COUNTDOWN_BG =
   'appearances.colors.countdownBackground';
 const PREFS_APPEAR_COLOR_COUNTDOWN_TEXT = 'appearances.colors.countdownText';
-const PREFS_LICENSE = 'license';
 
 @injectable()
 export class ElectronPreferencesStore implements PreferencesStore {
@@ -68,7 +67,6 @@ export class ElectronPreferencesStore implements PreferencesStore {
             recordAudio: false,
             audioSources: [],
             colors: DEFAULT_APPEAR_COLORS,
-            license: null,
           };
 
           store.set(PREFS_GENERAL_RUNATSTARTUP, curPrefs.runAtStartup);
@@ -117,9 +115,6 @@ export class ElectronPreferencesStore implements PreferencesStore {
           store.set(PREFS_RECORDING_AUDIOSOURCES, []);
           store.delete(PREFS_RECORDING_MICROPHONE);
         },
-        '1.0.0': store => {
-          store.set(PREFS_LICENSE, null);
-        },
       },
     });
   }
@@ -163,7 +158,6 @@ export class ElectronPreferencesStore implements PreferencesStore {
       PREFS_APPEAR_COLOR_COUNTDOWN_TEXT,
       prefs.colors.countdownText,
     );
-    this.store.set(PREFS_LICENSE, prefs.license);
   }
 
   private initialPreferences(): Preferences {
@@ -180,7 +174,6 @@ export class ElectronPreferencesStore implements PreferencesStore {
       recordAudio: false,
       audioSources: [],
       colors: DEFAULT_APPEAR_COLORS,
-      license: null,
     };
   }
 
@@ -240,7 +233,6 @@ export class ElectronPreferencesStore implements PreferencesStore {
         [],
       ) as AudioSource[],
       colors,
-      license: this.store.get(PREFS_LICENSE, null) as string,
     };
   }
 }

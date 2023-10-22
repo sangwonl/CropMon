@@ -1,30 +1,15 @@
-// import classNames from 'classnames';
-import React, {
-  type ChangeEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React from 'react';
 
 import { shortcutForDisplay } from '@utils/shortcut';
 
-import type { License } from '@domain/models/license';
 import type { Preferences } from '@domain/models/preferences';
 
-import { ModalDialog } from '@adapters/ui/components/stateless/ModalDialog';
-
-import commStyles from './CommonStyles.css';
 import styles from './PrefsAboutPanel.css';
 
 type Props = {
   appName: string;
   version: string;
   prefs: Preferences;
-  license: License | null;
-  registerError: string | null;
-  onRegister: (email: string, licenseKey: string) => void;
-  onBuyClick: () => void;
 };
 
 function mapShortcutKeys(shortcut: string) {
@@ -37,64 +22,8 @@ function mapShortcutKeys(shortcut: string) {
   ));
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function mapTimestampToDateString(timestamp: number): string {
-  const date = new Date(timestamp);
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${date.getFullYear()}-${month}-${day}`;
-}
-
-export function PrefsAboutPanel({
-  appName,
-  version,
-  prefs,
-  license,
-  registerError,
-  onRegister,
-}: Props) {
+export function PrefsAboutPanel({ appName, version, prefs }: Props) {
   const { shortcut } = prefs;
-
-  const [showRegModal, setShowRegModal] = useState(false);
-  const [licenseText, setLicenseText] = useState<string>('');
-  const licenseTextRef = useRef<HTMLTextAreaElement>(null);
-  const [errorText, setErrorText] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const handleLicenseTextChange = useCallback(
-    (e: ChangeEvent<HTMLTextAreaElement>) => {
-      setLicenseText(e.target.value);
-      setErrorText(null);
-    },
-    [],
-  );
-
-  const handleLicenseRegister = useCallback(() => {
-    setLoading(true);
-    const licenseKey = licenseTextRef.current?.value ?? '';
-    onRegister('', licenseKey);
-  }, [onRegister]);
-
-  const handleRegModalClose = useCallback(() => {
-    setShowRegModal(false);
-  }, []);
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleRegModalOpen = useCallback(() => {
-    setShowRegModal(true);
-    setLicenseText('');
-    setErrorText(null);
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    if (!registerError && license?.validated) {
-      setShowRegModal(false);
-    } else {
-      setErrorText(registerError);
-    }
-    setLoading(false);
-  }, [license, registerError]);
 
   return (
     <div className={styles.container}>
@@ -103,89 +32,16 @@ export function PrefsAboutPanel({
           <h2>{appName}</h2>
           <p className={styles.version}>v{version}</p>
         </div>
-        {/* <p
-          className={classNames(styles.license, {
-            [styles.licenseUnregistered]: !license?.validated,
-          })}
-        >
-          {license?.validated ? 'Registered' : 'Unregistered'}
-        </p> */}
       </div>
       <div className={styles.items}>
         <div key="shortcut" className={styles.item}>
           <h2>Recording Shortcut</h2>
           <p>{mapShortcutKeys(shortcut)}</p>
         </div>
-        {/* <div key="license" className={styles.item}>
-          <h2>Lifetime License</h2>
-          {license?.validated && (
-            <p className={styles.regDesc}>
-              The license was registered to{' '}
-              <span className={styles.regEmail}>{license.email}</span> on{' '}
-              <span className={styles.regDate}>
-                {mapTimestampToDateString(license.registeredAt)}
-              </span>
-              .
-            </p>
-          )}
-          {!license?.validated && (
-            <p className={styles.regDesc}>
-              <span className={styles.regLink} onClick={handleRegModalOpen}>
-                Register
-              </span>{' '}
-              an existing license. (
-              <span className={styles.regLink} onClick={onBuyClick}>
-                Click here
-              </span>{' '}
-              to purchase a license)
-            </p>
-          )}
-        </div> */}
       </div>
       <div className={styles.copyright}>
         <h2>Copyright @ 2021-2023 Pineple</h2>
       </div>
-      {showRegModal && (
-        <ModalDialog>
-          <div className={styles.modalContainer}>
-            <div className={styles.modalHeader}>Enter License</div>
-            <div className={styles.modalBody}>
-              <textarea
-                ref={licenseTextRef}
-                className={styles.modalLicenseText}
-                value={licenseText}
-                onChange={handleLicenseTextChange}
-              />
-            </div>
-            <div className={styles.modalFooter}>
-              <p className={styles.modalRegisterResult}>
-                {loading && <span className={commStyles.spinner} />}
-                {!loading && errorText && (
-                  <span className={styles.modalRegisterError}>{errorText}</span>
-                )}
-              </p>
-              <div className={styles.modalButtons}>
-                <button
-                  type="button"
-                  className={commStyles.primaryBtn}
-                  disabled={!licenseText || loading}
-                  onClick={handleLicenseRegister}
-                >
-                  Register
-                </button>
-                <button
-                  type="button"
-                  className={commStyles.secondaryBtn}
-                  disabled={loading}
-                  onClick={handleRegModalClose}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </ModalDialog>
-      )}
     </div>
   );
 }

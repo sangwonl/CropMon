@@ -3,7 +3,6 @@
 import { injectable } from 'inversify';
 
 import type { CaptureOptions } from '@domain/models/capture';
-import type { License } from '@domain/models/license';
 import type { Preferences } from '@domain/models/preferences';
 import type { Bounds, Point } from '@domain/models/screen';
 
@@ -15,14 +14,12 @@ import { DisableCaptureUseCase } from '@application/usecases/DisableCapture';
 import { EnableCaptureUseCase } from '@application/usecases/EnableCapture';
 import { FinishCaptureUseCase } from '@application/usecases/FinishCapture';
 import { FinishSelectionUseCase } from '@application/usecases/FinishSelection';
-import { GetLicenseUseCase } from '@application/usecases/GetLicense';
 import { GetUiStateUseCase } from '@application/usecases/GetUiState';
 import { InitializeAppUseCase } from '@application/usecases/InitializeApp';
 import { OpenCaptureFolderUseCase } from '@application/usecases/OpenCaptureFolder';
 import { OpenPrefsModalUseCase } from '@application/usecases/OpenPrefsModal';
 import { OpenUrlUseCase } from '@application/usecases/OpenUrl';
 import { QuitAppUseCase } from '@application/usecases/QuitApp';
-import { RegisterLicenseUseCase } from '@application/usecases/RegisterLicense';
 import { SavePrefsUseCase } from '@application/usecases/SavePrefs';
 import { SelectingTargetUseCase } from '@application/usecases/SelectingTarget';
 import { StartCaptureUseCase } from '@application/usecases/StartCapture';
@@ -52,8 +49,6 @@ export class UseCaseInteractorCore implements UseCaseInteractor {
     private toggleCaptureUseCase: ToggleCaptureUseCase,
     private getUiStateUseCase: GetUiStateUseCase,
     private savePrefsUseCase: SavePrefsUseCase,
-    private getLicenseUseCase: GetLicenseUseCase,
-    private registerLicenseUseCase: RegisterLicenseUseCase,
     private openUrlUseCase: OpenUrlUseCase,
   ) {}
 
@@ -137,22 +132,6 @@ export class UseCaseInteractorCore implements UseCaseInteractor {
   async savePreferences(prefs: Preferences): Promise<Preferences> {
     const output = await this.savePrefsUseCase.execute({ prefs });
     return output.prefs;
-  }
-
-  async getLicense(): Promise<License | null> {
-    const output = await this.getLicenseUseCase.execute();
-    return output.license;
-  }
-
-  async registerLicense(
-    email: string,
-    licenseKey: string,
-  ): Promise<License | null> {
-    const output = await this.registerLicenseUseCase.execute({
-      email,
-      licenseKey,
-    });
-    return output.license;
   }
 
   openExternal(url: string): void {

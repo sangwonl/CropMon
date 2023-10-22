@@ -30,7 +30,6 @@ const Template = (args: ComponentProps<typeof PrefsPanels>) => (
 const defaultArgs: ComponentProps<typeof PrefsPanels> = {
   appName: 'CropMon',
   version: '0.9.5',
-  license: null,
   recordHome: '/home/pineple/kropsaurus',
   prefs: {
     initialLoaded: false,
@@ -50,41 +49,14 @@ const defaultArgs: ComponentProps<typeof PrefsPanels> = {
       countdownBackground: '#efefef',
       countdownText: '#232323',
     },
-    license: null,
   },
-  registerError: null,
   onChooseRecordHome: () => {},
   onClose: () => {},
-  onBuyClick: () => {},
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onRegister: (_email: string, _licenseKey: string) => {},
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onSave: (_preferences: Preferences) => {},
 };
 
 export const Default: Story = {
   args: defaultArgs,
-  render: Template,
-};
-
-export const RegisterError: Story = {
-  args: {
-    ...defaultArgs,
-    registerError: 'Invalid license!',
-  },
-  render: Template,
-};
-
-export const Registered: Story = {
-  args: {
-    ...defaultArgs,
-    license: {
-      validated: true,
-      key: 'ABCD',
-      email: 'gamzabaw@gmail.com',
-      registeredAt: 1679902671075,
-      lastCheckedAt: 1679902671075,
-    },
-  },
   render: Template,
 };

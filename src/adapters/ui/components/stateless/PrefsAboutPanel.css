@@ -37,17 +37,6 @@
   cursor: default;
 }
 
-.license {
-  margin: 0px;
-  font-size: 16px;
-  font-weight: 200;
-  cursor: default;
-}
-
-.licenseUnregistered {
-  color: red;
-}
-
 .items {
   margin-top: 20px;
   display: flex;
@@ -85,29 +74,6 @@
   cursor: default;
 }
 
-.regDesc:first-of-type {
-  margin-top: 14px;
-}
-
-.regDesc {
-  margin: 6px 0px;
-  font-size: 14px;
-  cursor: default;
-}
-
-.regEmail {
-  font-weight: 500;
-}
-
-.regDate {
-  font-weight: 500;
-}
-
-.regLink {
-  text-decoration: underline;
-  cursor: pointer;
-}
-
 .copyright {
   display: flex;
   flex-direction: column;
@@ -120,62 +86,4 @@
   font-size: 14px;
   font-weight: 500;
   cursor: default;
-}
-
-.modalContainer {
-  width: 400px;
-  height: 180px;
-  display: flex;
-  flex-direction: column;
-}
-
-.modalHeader {
-  padding: 8px 12px 8px 12px;
-  font-size: 16px;
-  font-weight: 400;
-  color: #4c4c4c;
-  cursor: default;
-}
-
-.modalBody {
-  padding: 8px 12px;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
-.modalLicenseText {
-  resize: none;
-  height: 100%;
-  font-size: 16px;
-  border-color: #4c4c4c;
-  border-radius: 2px;
-  color: #555555;
-}
-
-.modalFooter {
-  padding: 8px 12px 12px 12px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-.modalRegisterResult {
-  margin: 0px;
-  padding: 4px 2px;
-  font-size: 14px;
-}
-
-.modalRegisterError {
-  color: #d43333;
-}
-
-.modalButtons {
-  display: flex;
-  flex-direction: row;
-  column-gap: 8px;
-}
-
-.modalButtons button {
-  width: 80px;
 }

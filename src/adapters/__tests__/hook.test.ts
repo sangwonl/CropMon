@@ -1,4 +1,7 @@
+/* eslint-disable jest/no-done-callback */
 import 'reflect-metadata';
+
+import { CountdownLatch } from '@utils/tests';
 
 import { CaptureMode } from '@domain/models/common';
 import { Preferences } from '@domain/models/preferences';
@@ -27,41 +30,55 @@ describe('HookManager', () => {
     },
   };
 
-  it('should get hook handler registered by on chaining', () => {
+  it('should get hook handler registered by on chaining', done => {
+    const barrier = new CountdownLatch(2);
+
     let prefsLoadedHookCalled = 0;
 
     hookMgr
       .on('onPrefsLoaded', () => {
+        barrier.countDown();
         prefsLoadedHookCalled += 1;
       })
       .on('onPrefsLoaded', () => {
+        barrier.countDown();
         prefsLoadedHookCalled += 1;
       });
 
     hookMgr.emit('onPrefsLoaded', { loadedPrefs: defaultPrefs });
 
-    expect(prefsLoadedHookCalled).toEqual(2);
+    barrier.await(() => {
+      expect(prefsLoadedHookCalled).toEqual(2);
+      done();
+    });
   });
 
-  it('should call all registered handlers per hook', () => {
+  it('should call all registered handlers per hook', done => {
+    const barrier = new CountdownLatch(5);
+
     let prefsLoadedHookCalled = 0;
     let prefsUpdatedHookCalled = 0;
 
     hookMgr
       .on('onPrefsLoaded', () => {
         prefsLoadedHookCalled += 1;
+        barrier.countDown();
       })
       .on('onPrefsLoaded', () => {
         prefsLoadedHookCalled += 1;
+        barrier.countDown();
       })
       .on('onPrefsUpdated', () => {
         prefsUpdatedHookCalled += 1;
+        barrier.countDown();
       })
       .on('onPrefsUpdated', () => {
         prefsUpdatedHookCalled += 1;
+        barrier.countDown();
       })
       .on('onPrefsUpdated', () => {
         prefsUpdatedHookCalled += 1;
+        barrier.countDown();
       });
 
     hookMgr.emit('onPrefsLoaded', { loadedPrefs: defaultPrefs });
@@ -70,11 +87,16 @@ describe('HookManager', () => {
       newPrefs: defaultPrefs,
     });
 
-    expect(prefsLoadedHookCalled).toEqual(2);
-    expect(prefsUpdatedHookCalled).toEqual(3);
+    barrier.await(() => {
+      expect(prefsLoadedHookCalled).toEqual(2);
+      expect(prefsUpdatedHookCalled).toEqual(3);
+      done();
+    });
   });
 
-  it('should register the same handler once', () => {
+  it('should register the same handler once', done => {
+    const barrier = new CountdownLatch(5);
+
     let prefsLoadedHookCalled = 0;
     const handler = () => {
       prefsLoadedHookCalled += 1;
@@ -84,6 +106,9 @@ describe('HookManager', () => {
 
     hookMgr.emit('onPrefsLoaded', { loadedPrefs: defaultPrefs });
 
-    expect(prefsLoadedHookCalled).toEqual(1);
+    barrier.await(() => {
+      expect(prefsLoadedHookCalled).toEqual(1);
+      done();
+    });
   });
 });
